@@ -1,0 +1,15 @@
+{
+  "name": "plang",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "repl": "node dist/repl.js",
+    "pcomp": "node dist/comp.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
