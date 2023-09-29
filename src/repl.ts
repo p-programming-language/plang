@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { tokenize, Token} from "./plang";
 import { readln } from "./lib/utilities";
 

@@ -27,14 +27,19 @@ class Lexer {
 
     public advance(): void {
         const char = this.getCurrentCharacter();
-        this.position++;
-        this.col++;
-
+        
         if (char === "\n") {
             this.line++;
             this.col = 1;
+        } else {
+            this.col++;
+        }
+    
+        if (!this.isEndOfFile()) {
+            this.position++;
         }
     }
+    
 
     public isEndOfFile(): boolean {
         return this.position >= this.source.length;
@@ -61,7 +66,7 @@ export function tokenize(input: string): Token[] {
             let isFloat = false;
 
             while (!lexer.isEndOfFile() && (
-                /^[0-9]$/.test(lexer.peek() || '') || (lexer.peek() === '.' && !isFloat)
+                /^[0-9]$/.test(lexer.peek() || '') || (!isFloat && lexer.peek() === '.')
             )) {
                 if (lexer.peek() === '.') {
                     isFloat = true;
@@ -78,7 +83,7 @@ export function tokenize(input: string): Token[] {
         } else if (char === '\n') {
             lexer.advance();
         } else {
-            throw new TokenizationError(`Unexpected character: ${char} at line ${lexer.getCurrentPosition().line}, col ${lexer.getCurrentPosition().col}`);
+            throw new TokenizationError(`Unexpected character: ${char} at line ${lexer.getCurrentPosition().line}, column ${lexer.getCurrentPosition().col}`);
         }
 
         lexer.advance();
@@ -86,3 +91,4 @@ export function tokenize(input: string): Token[] {
 
     return tokens;
 }
+
