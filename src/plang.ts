@@ -30,7 +30,7 @@ class Lexer {
         
         if (char === "\n") {
             this.line++;
-            this.col = 1;
+            this.col = 0;
         } else {
             this.col++;
         }

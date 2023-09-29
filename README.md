@@ -11,7 +11,7 @@ becuz im bored
 ## installing
 To install plang run:
 ```bash
-yarn install
+yarn run install
 ```
 
 ## Current features
