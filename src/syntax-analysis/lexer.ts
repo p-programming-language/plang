@@ -1,13 +1,8 @@
-import { TokenizationError } from "./errors";
-import Syntax from "./syntax";
+import { TokenizationError } from "../errors";
+import Syntax from "./syntax-type";
+import Token from "./token";
 
-export type Token = {
-    syntax: Syntax;
-    lexeme: string;
-    value: any;
-}
-
-class Lexer {
+export class Lexer {
     private position = 0;
     private line = 1;
     private col = 1;

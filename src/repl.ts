@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { tokenize, Token} from "./plang";
+import { tokenize, Token} from "./syntax-analysis/lexer";
 import { readln } from "./lib/utilities";
 
 async function main() {

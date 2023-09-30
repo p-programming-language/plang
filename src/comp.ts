@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync } from 'fs';
-import { tokenize, Token } from './plang';
+import { tokenize, Token } from './syntax-analysis/lexer';
 
 function main() {
     const args = process.argv.slice(2);

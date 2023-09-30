@@ -1,4 +1,4 @@
-import { tokenize, Token } from "./plang";
+import { Lexer } from "./syntax-analysis/lexer";
 
 
 async function main() {
@@ -7,7 +7,8 @@ async function main() {
     2
     `
 
-    let tokens: Token[] = tokenize(code);
+    const lexer = new Lexer(code);
+    const tokens = lexer.tokenize();
     console.log(tokens);
 }
 
