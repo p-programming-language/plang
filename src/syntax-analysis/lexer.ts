@@ -29,6 +29,81 @@ export class Lexer {
     private lex(): void {
         const char = this.currentCharacter;
         switch(char) {
+            case "(":
+                return this.addToken(Syntax.LPAREN);
+            case ")":
+                return this.addToken(Syntax.LPAREN);
+            case "[":
+                return this.addToken(Syntax.LBRACKET);
+            case "]":
+                return this.addToken(Syntax.RBRACKET);
+            case "{":
+                return this.addToken(Syntax.LBRACE);
+            case "}":
+                return this.addToken(Syntax.RBRACE);
+            case ".":
+                return this.addToken(Syntax.DOT);
+            case ":":
+                return this.addToken(Syntax.COLON);
+            case ">": {
+                if (this.match("="))
+                    return this.addToken(Syntax.GTE);
+                else
+                    return this.addToken(Syntax.GT);
+            }
+            case "<": {
+                if (this.match("="))
+                    return this.addToken(Syntax.LTE);
+                else
+                    return this.addToken(Syntax.LT);
+            }
+            case "+": {
+                if (this.match("="))
+                    return this.addToken(Syntax.PLUS_EQUAL);
+                else if (this.match("+"))
+                    return this.addToken(Syntax.PLUS_PLUS);
+                else
+                    return this.addToken(Syntax.PLUS);
+            }
+            case "-": {
+                if (this.match("="))
+                    return this.addToken(Syntax.MINUS_EQUAL);
+                else if (this.match("-"))
+                    return this.addToken(Syntax.MINUS_MINUS);
+                else
+                    return this.addToken(Syntax.MINUS);
+            }
+            case "*": {
+                if (this.match("="))
+                    return this.addToken(Syntax.STAR_EQUAL);
+                else
+                    return this.addToken(Syntax.STAR);
+            }
+            case "/": {
+                if (this.match("="))
+                    return this.addToken(Syntax.SLASH_EQUAL);
+                else
+                    return this.addToken(Syntax.SLASH);
+            }
+            case "^": {
+                if (this.match("="))
+                    return this.addToken(Syntax.CARAT_EQUAL);
+                else
+                    return this.addToken(Syntax.CARAT);
+            }
+            case "%": {
+                if (this.match("="))
+                    return this.addToken(Syntax.PERCENT_EQUAL);
+                else
+                    return this.addToken(Syntax.PERCENT);
+            }
+            case "=": {
+                if (this.match("="))
+                    return this.addToken(Syntax.EQUAL_EQUAL);
+                else
+                    return this.addToken(Syntax.EQUAL);
+            }
+
             case '"':
             case "'":
                 return this.readString();
@@ -101,6 +176,15 @@ export class Lexer {
         this.tokens.push(new Token(type, this.currentLexeme, value, locationSpan));
         this.currentLexemeCharacters = [];
         this.lastLocation = this.currentLocation;
+    }
+
+    private match(char: string): boolean {
+        if (this.peek() === char) {
+            this.advance();
+            return true;
+        }
+
+        return false;
     }
 
     private advance(): string {
