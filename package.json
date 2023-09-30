@@ -4,14 +4,14 @@
   "description": "",
   "main": "dist/main.js",
   "bin": {
-    "pcomp": "dist/comp.js",
+    "gpc": "dist/comp.js",
     "prepl": "dist/repl.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "repl": "yarn dist/repl.js",
-    "pcomp": "yarn dist/comp.js",
+    "gpc": "yarn dist/comp.js",
     "install": "tsc && yarn link"
   },
   "keywords": [],

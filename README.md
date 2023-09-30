@@ -3,7 +3,7 @@ The P programming language
 ## Why?
 becuz im bored
 ## Tools
-- pcomp 
+- gpc
     - The general Plang compiler
 - prepl
     - A interactive repl to run plang in your terminal
@@ -11,7 +11,7 @@ becuz im bored
 ## installing
 To install plang run:
 ```bash
-yarn run install
+yarn install
 ```
 
 ## Current features

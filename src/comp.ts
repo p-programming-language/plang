@@ -1,12 +1,20 @@
 #!/usr/bin/env node
 import { readFileSync } from "fs";
-import { Lexer} from "./syntax-analysis/lexer";
+import { Lexer } from "./syntax-analysis/lexer";
 
 function main() {
     const args = process.argv.slice(2);
 
     if (args.length !== 1) {
-        console.error("Usage: pcomp <file>");
+        console.error(`
+Usage: gpc <file>
+
+GPC ~ Goofy Plang Compiler
+--------------------------
+Options:
+
+<file>  - the input file
+        `);
         process.exit(1);
     }
 
@@ -16,9 +24,9 @@ function main() {
         const fileContents = readFileSync(filePath, "utf-8");
         const lexer = new Lexer(fileContents);
         const tokens = lexer.tokenize();
-        console.log(tokens);
+        console.log(tokens.toString());
     } catch (error: any) {
-        console.error(`An error occurred: ${error.message}`);
+        console.error(`${error.message}`);
         process.exit(1);
     }
 }
