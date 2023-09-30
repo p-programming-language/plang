@@ -1,12 +1,8 @@
 import { TokenizationError } from "./errors";
-
-enum TokenType {
-    INT = "INT",
-    FLOAT = "FLOAT"
-}
+import Syntax from "./syntax";
 
 export type Token = {
-    syntax: TokenType;
+    syntax: Syntax;
     lexeme: string;
     value: any;
 }
@@ -15,80 +11,87 @@ class Lexer {
     private position = 0;
     private line = 1;
     private col = 1;
+    private currentLexemeCharacters: string[] = [];
+    private readonly tokens: Token[] = []
 
     public constructor(
         private readonly source: string
     ) {}
 
-    public peek(offset = 1): string | undefined {
-        const peekPosition = this.position + offset;
-        return peekPosition >= this.source.length ? undefined : this.source[peekPosition];
+    public tokenize(): Token[] {
+        while (!this.isEndOfFile)
+            this.lex();
+
+        return this.tokens;
     }
 
-    public advance(): void {
-        const char = this.getCurrentCharacter();
-        
+    private lex(): void {
+        const char = this.currentCharacter;
+        switch(char) {
+            default: {
+                if (/^[0-9]$/.test(char))
+                    return this.readNumber();
+
+                throw new TokenizationError(`Unexpected character: ${char}`);
+            }
+        }
+    }
+
+    private readNumber(): void {
+        let lexeme = "";
+        let usedDecimal = false;
+
+        while (/^[0-9]$/.test(this.currentCharacter) || this.currentCharacter === ".") {
+            const char = this.advance();
+            lexeme += char;
+            if (char === ".")
+                if (usedDecimal)
+                    throw new TokenizationError(`Malformed number: ${lexeme}`);
+                else
+                    usedDecimal = true;
+        }
+
+        this.addToken(usedDecimal ? Syntax.FLOAT : Syntax.INT, parseFloat(lexeme));
+    }
+
+    private addToken(type: Syntax, value?: unknown): void {
+        const currentLexeme = this.currentLexemeCharacters.join("");
+        this.tokens.push({
+            lexeme: currentLexeme,
+            syntax: type,
+            value
+        })
+        this.currentLexemeCharacters = [];
+    }
+
+    private peek(offset = 1): string | undefined {
+        const peekPosition = this.position + offset;
+        return peekPosition + 1 >= this.source.length ? undefined : this.source[peekPosition];
+    }
+
+    private advance(): string {
+        const char = this.currentCharacter;
         if (char === "\n") {
             this.line++;
             this.col = 0;
         } else {
             this.col++;
         }
-    
-        if (!this.isEndOfFile()) {
-            this.position++;
-        }
-    }
-    
 
-    public isEndOfFile(): boolean {
+        this.position++;
+        return char
+    }
+
+
+    private get isEndOfFile(): boolean {
         return this.position >= this.source.length;
     }
 
-    public getCurrentCharacter(): string {
-        return this.source[this.position];
+    private get currentCharacter(): string {
+        return this.peek(0)!;
     }
 
-    public getCurrentPosition(): { line: number; col: number } {
+    private get currentLocation(): { line: number; col: number } {
         return { line: this.line, col: this.col };
     }
 }
-
-export function tokenize(input: string): Token[] {
-    const tokens: Token[] = [];
-    const lexer = new Lexer(input);
-
-    while (!lexer.isEndOfFile()) {
-        const char = lexer.getCurrentCharacter();
-
-        if (/^[0-9]$/.test(char) || (char === '.' && /^[0-9]$/.test(lexer.peek() || ''))) {
-            let lexeme = char;
-            let isFloat = false;
-
-            while (!lexer.isEndOfFile() && (
-                /^[0-9]$/.test(lexer.peek() || '') || (!isFloat && lexer.peek() === '.')
-            )) {
-                if (lexer.peek() === '.') {
-                    isFloat = true;
-                }
-                lexeme += lexer.peek() || '';
-                lexer.advance();
-            }
-
-            tokens.push({
-                syntax: isFloat ? TokenType.FLOAT : TokenType.INT,
-                lexeme: lexeme,
-                value: isFloat ? parseFloat(lexeme) : parseInt(lexeme)
-            });
-        } else if (char === '\n') {
-            lexer.advance();
-        } else {
-            throw new TokenizationError(`Unexpected character: ${char} at line ${lexer.getCurrentPosition().line}, column ${lexer.getCurrentPosition().col}`);
-        }
-
-        lexer.advance();
-    }
-
-    return tokens;
-}
-
