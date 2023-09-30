@@ -75,8 +75,8 @@ export class Lexer {
     private addToken<T extends ValueType = ValueType>(type: Syntax, value?: T): void {
         const locationSpan = new LocationSpan(this.lastLocation, this.currentLocation);
         this.tokens.push(new Token(type, this.currentLexeme, value, locationSpan));
-        this.lastLocation = this.currentLocation;
         this.currentLexemeCharacters = [];
+        this.lastLocation = this.currentLocation;
     }
 
     private get currentLexeme(): string {
@@ -85,17 +85,24 @@ export class Lexer {
 
     private advance(): string {
         const char = this.currentCharacter;
-        if (!/\s+/.test(char)) // don't add to lexeme if whitespace
+        const isWhiteSpace = /\s+/.test(char);
+        if (!isWhiteSpace) { // don't add to lexeme if whitespace
             this.currentLexemeCharacters.push(char);
+        }
 
         if (char === "\n") {
             this.line++;
-            this.column = 0;
+            this.column = 1;
+            this.lastLocation = this.currentLocation;
         } else {
             this.column++;
         }
 
         this.position++;
+        if (isWhiteSpace) {
+            this.lastLocation = this.currentLocation;
+        }
+
         return char
     }
 
@@ -113,6 +120,6 @@ export class Lexer {
     }
 
     private get currentLocation(): Location {
-        return new Location(this.line, this.column);;
+        return new Location(this.line, this.column);
     }
 }
