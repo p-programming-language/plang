@@ -31,7 +31,10 @@ export class Lexer {
                     this.advance();
                     return;
                 }
-
+                else if (char === '"' || char == "'") {
+                    return this.readString();
+                }
+    
                 throw new TokenizationError(`Unexpected character: ${char}`);
             }
         }
@@ -53,6 +56,34 @@ export class Lexer {
 
         this.addToken(usedDecimal ? Syntax.FLOAT : Syntax.INT, parseFloat(lexeme));
     }
+
+    private readString(): void {
+        let lexeme = "";
+        let escaped = false;
+        const quoteChar = this.currentCharacter;
+    
+        this.advance();
+    
+        while (!this.isEndOfFile) {
+            const char = this.advance();
+    
+            if (char === quoteChar) {
+                if (!escaped) {
+                    this.addToken(Syntax.STRING, lexeme);
+                    return;
+                }
+                escaped = false;
+            } else if (char === '\\') {
+                escaped = !escaped;
+            } else {
+                lexeme += char;
+                escaped = false;
+            }
+        }
+    
+        throw new TokenizationError("Unterminated string literal");
+    }
+     
 
     private addToken<T extends ValueType = ValueType>(type: Syntax, value?: T): void {
         const currentLexeme = this.currentLexemeCharacters.join("");

@@ -16,6 +16,7 @@ yarn install
 
 ## Current features
 - Number handeling (int, float)
+- String handeling. Supports  both signle and double quotes
 
 
 ---

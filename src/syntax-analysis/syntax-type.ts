@@ -1,6 +1,7 @@
 enum Syntax {
   INT,
-  FLOAT
+  FLOAT,
+  STRING,
 }
 
 export default Syntax;
