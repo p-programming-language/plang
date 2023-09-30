@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync } from 'fs';
-import { tokenize, Token } from './syntax-analysis/lexer';
+import { Lexer} from './syntax-analysis/lexer';
 
 function main() {
     const args = process.argv.slice(2);
@@ -10,12 +10,12 @@ function main() {
         process.exit(1);
     }
 
-    const filePath = args[0];
+    const [filePath] = args;
 
     try {
         const fileContents = readFileSync(filePath, 'utf-8');
-
-        const tokens: Token[] = tokenize(fileContents);
+        const lexer = new Lexer(fileContents);
+        const tokens = lexer.tokenize();
         console.log(tokens);
     } catch (error: any) {
         console.error(`An error occurred: ${error.message}`);

@@ -41,7 +41,7 @@ export class Lexer {
             lexeme += char;
             if (char === ".")
                 if (usedDecimal)
-                    throw new TokenizationError(`Malformed number: ${lexeme}`);
+                    throw new TokenizationError("Malformed number");
                 else
                     usedDecimal = true;
         }
@@ -61,11 +61,12 @@ export class Lexer {
 
     private peek(offset = 1): string | undefined {
         const peekPosition = this.position + offset;
-        return peekPosition + 1 >= this.source.length ? undefined : this.source[peekPosition];
+        return peekPosition + 1 > this.source.length ? undefined : this.source[peekPosition];
     }
 
     private advance(): string {
         const char = this.currentCharacter;
+        this.currentLexemeCharacters.push(char);
         if (char === "\n") {
             this.line++;
             this.col = 0;
@@ -79,7 +80,7 @@ export class Lexer {
 
 
     private get isEndOfFile(): boolean {
-        return this.position >= this.source.length;
+        return this.position + 1 > this.source.length;
     }
 
     private get currentCharacter(): string {

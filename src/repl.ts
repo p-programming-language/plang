@@ -1,18 +1,17 @@
 #!/usr/bin/env node
-import { tokenize, Token} from "./syntax-analysis/lexer";
+import { Lexer } from "./syntax-analysis/lexer";
 import { readln } from "./lib/utilities";
 
 async function main() {
     console.log("Welcome to the PLANG repl!");
 
     while (true) {
-            const code = await readln("> ");
-            if (!code.trim()) {
-                continue;
-            }
+        const code = await readln("> ");
+        if (!code.trim()) continue;
 
-            let tokens: Token[] = tokenize(code)
-            console.log(tokens)
+        const lexer = new Lexer(code);
+        const tokens = lexer.tokenize();
+        console.log(tokens);
     }
 }
 
