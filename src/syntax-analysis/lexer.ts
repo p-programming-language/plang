@@ -26,6 +26,10 @@ export class Lexer {
             default: {
                 if (/^[0-9]$/.test(char))
                     return this.readNumber();
+                else if (/\s+/.test(char)) {
+                    this.advance();
+                    return;
+                }
 
                 throw new TokenizationError(`Unexpected character: ${char}`);
             }
@@ -66,7 +70,9 @@ export class Lexer {
 
     private advance(): string {
         const char = this.currentCharacter;
-        this.currentLexemeCharacters.push(char);
+        if (!/\s+/.test(char)) // don't add to lexeme if whitespace
+            this.currentLexemeCharacters.push(char);
+
         if (char === "\n") {
             this.line++;
             this.col = 0;
