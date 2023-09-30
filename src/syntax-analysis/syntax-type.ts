@@ -1,4 +1,5 @@
 enum Syntax {
+  IDENTIFIER,
   INT,
   FLOAT,
   STRING,

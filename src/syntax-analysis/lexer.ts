@@ -1,6 +1,11 @@
 import { TokenizationError } from "../errors";
 import { Token, Location, ValueType, LocationSpan } from "./token";
+import { KEYWORDS, TYPE_KEYWORDS } from "./keywords";
 import Syntax from "./syntax-type";
+
+const ALPHABETICAL = /[a-zA-Z]/;
+const NUMERIC = /^[0-9]$/;
+const WHITESPACE = /\s+/;
 
 export class Lexer {
     private position = 0;
@@ -29,16 +34,40 @@ export class Lexer {
                 return this.readString();
 
             default: {
-                if (/^[0-9]$/.test(char))
+                if (NUMERIC.test(char))
                     return this.readNumber();
-                else if (/\s+/.test(char)) {
+                else if (WHITESPACE.test(char)) {
                     this.advance();
+                    return;
+                } else if (ALPHABETICAL.test(char)) {
+                    const identifierLexeme = this.readIdentifier();
+                    const keywordSyntax = KEYWORDS[identifierLexeme];
+                    const typeKeywordSyntax = TYPE_KEYWORDS[identifierLexeme];
+                    if (keywordSyntax)
+                        this.addToken(keywordSyntax);
+                    else if (typeKeywordSyntax)
+                        this.addToken(typeKeywordSyntax);
+                    else if (identifierLexeme === "true")
+                        this.addToken(Syntax.BOOLEAN, true);
+                    else if (identifierLexeme === "false")
+                        this.addToken(Syntax.BOOLEAN, false);
+                    else
+                        this.addToken(Syntax.IDENTIFIER);
+
                     return;
                 }
 
                 throw new TokenizationError(`Unexpected character: ${char}`);
             }
         }
+    }
+
+    private readIdentifier(): string {
+        let lexeme = "";
+        while (!this.isEndOfFile && (ALPHABETICAL.test(this.currentCharacter) || NUMERIC.test(this.currentCharacter)))
+            lexeme += this.advance();
+
+        return lexeme;
     }
 
     private readString(): void {
@@ -53,22 +82,17 @@ export class Lexer {
         this.addToken(Syntax.STRING, stringContents);
     }
 
-
     private readNumber(): void {
-        let lexeme = "";
         let usedDecimal = false;
-
         while (/^[0-9]$/.test(this.currentCharacter) || this.currentCharacter === ".") {
-            const char = this.advance();
-            lexeme += char;
-            if (char === ".")
+            if (this.advance() === ".")
                 if (usedDecimal)
                     throw new TokenizationError("Malformed number");
                 else
                     usedDecimal = true;
         }
 
-        this.addToken(usedDecimal ? Syntax.FLOAT : Syntax.INT, parseFloat(lexeme));
+        this.addToken(usedDecimal ? Syntax.FLOAT : Syntax.INT, parseFloat(this.currentLexeme));
     }
 
 
@@ -82,22 +106,19 @@ export class Lexer {
     private advance(): string {
         const char = this.currentCharacter;
         const isWhiteSpace = /\s+/.test(char);
-        if (!isWhiteSpace) { // don't add to lexeme if whitespace
+        if (!isWhiteSpace) // don't add to lexeme if whitespace
             this.currentLexemeCharacters.push(char);
-        }
 
         if (char === "\n") {
             this.line++;
             this.column = 1;
             this.lastLocation = this.currentLocation;
-        } else {
+        } else
             this.column++;
-        }
 
         this.position++;
-        if (isWhiteSpace) {
+        if (isWhiteSpace)
             this.lastLocation = this.currentLocation;
-        }
 
         return char
     }

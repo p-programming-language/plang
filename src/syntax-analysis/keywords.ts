@@ -1,8 +1,7 @@
 import Syntax from "./syntax-type";
 
 export const KEYWORDS: Record<string, Syntax> = {
-  true: Syntax.BOOLEAN,
-  false: Syntax.BOOLEAN,
+
 }
 
 
