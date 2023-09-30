@@ -1,4 +1,4 @@
-import * as readline from 'readline';
+import * as readline from "readline";
 
 export function readln(prompt: string): Promise<string> {
   const rl = readline.createInterface({

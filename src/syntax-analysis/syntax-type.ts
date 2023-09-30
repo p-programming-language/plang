@@ -1,6 +1,6 @@
-const enum Syntax {
-  INT = "INT",
-  FLOAT = "FLOAT"
+enum Syntax {
+  INT,
+  FLOAT
 }
 
 export default Syntax;

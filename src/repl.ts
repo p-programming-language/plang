@@ -11,10 +11,11 @@ async function main() {
 
         const lexer = new Lexer(code);
         const tokens = lexer.tokenize();
-        console.log(tokens);
+        for (const token of tokens)
+            console.log(token.toString())
     }
 }
 
 main().catch((error) => {
-    console.error('An error occurred:', error);
+    console.error("An error occurred:", error);
 });

@@ -1,11 +1,12 @@
 import { TokenizationError } from "../errors";
+import { Token, Location, ValueType, LocationSpan } from "./token";
 import Syntax from "./syntax-type";
-import Token from "./token";
 
 export class Lexer {
     private position = 0;
     private line = 1;
-    private col = 1;
+    private column = 1;
+    private lastLocation = new Location(this.line, this.column);
     private currentLexemeCharacters: string[] = [];
     private readonly tokens: Token[] = []
 
@@ -53,19 +54,12 @@ export class Lexer {
         this.addToken(usedDecimal ? Syntax.FLOAT : Syntax.INT, parseFloat(lexeme));
     }
 
-    private addToken(type: Syntax, value?: unknown): void {
+    private addToken<T extends ValueType = ValueType>(type: Syntax, value?: T): void {
         const currentLexeme = this.currentLexemeCharacters.join("");
-        this.tokens.push({
-            lexeme: currentLexeme,
-            syntax: type,
-            value
-        })
+        const locationSpan = new LocationSpan(this.lastLocation, this.currentLocation);
+        this.tokens.push(new Token(type, currentLexeme, value, locationSpan));
         this.currentLexemeCharacters = [];
-    }
-
-    private peek(offset = 1): string | undefined {
-        const peekPosition = this.position + offset;
-        return peekPosition + 1 > this.source.length ? undefined : this.source[peekPosition];
+        this.lastLocation = this.currentLocation;
     }
 
     private advance(): string {
@@ -75,15 +69,19 @@ export class Lexer {
 
         if (char === "\n") {
             this.line++;
-            this.col = 0;
+            this.column = 0;
         } else {
-            this.col++;
+            this.column++;
         }
 
         this.position++;
         return char
     }
 
+    private peek(offset = 1): string | undefined {
+        const peekPosition = this.position + offset;
+        return peekPosition + 1 > this.source.length ? undefined : this.source[peekPosition];
+    }
 
     private get isEndOfFile(): boolean {
         return this.position + 1 > this.source.length;
@@ -93,7 +91,7 @@ export class Lexer {
         return this.peek(0)!;
     }
 
-    private get currentLocation(): { line: number; col: number } {
-        return { line: this.line, col: this.col };
+    private get currentLocation(): Location {
+        return new Location(this.line, this.column);;
     }
 }
