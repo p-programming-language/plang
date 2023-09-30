@@ -79,10 +79,6 @@ export class Lexer {
         this.lastLocation = this.currentLocation;
     }
 
-    private get currentLexeme(): string {
-        return this.currentLexemeCharacters.join("");
-    }
-
     private advance(): string {
         const char = this.currentCharacter;
         const isWhiteSpace = /\s+/.test(char);
@@ -113,6 +109,10 @@ export class Lexer {
 
     private get isEndOfFile(): boolean {
         return this.position + 1 > this.source.length;
+    }
+
+    private get currentLexeme(): string {
+        return this.currentLexemeCharacters.join("");
     }
 
     private get currentCharacter(): string {
