@@ -24,6 +24,10 @@ export class Lexer {
     private lex(): void {
         const char = this.currentCharacter;
         switch(char) {
+            case '"':
+            case "'":
+                return this.readString();
+
             default: {
                 if (/^[0-9]$/.test(char))
                     return this.readNumber();
@@ -31,14 +35,24 @@ export class Lexer {
                     this.advance();
                     return;
                 }
-                else if (char === '"' || char == "'") {
-                    return this.readString();
-                }
-    
+
                 throw new TokenizationError(`Unexpected character: ${char}`);
             }
         }
     }
+
+    private readString(): void {
+        const delimiter = this.advance();
+        while (this.currentCharacter !== delimiter) {
+            if (this.advance() === "\n")
+                throw new TokenizationError("Unterminated string literal");
+        }
+
+        this.advance(); // advance final delimiter
+        const stringContents = this.currentLexeme.slice(1, -1);
+        this.addToken(Syntax.STRING, stringContents);
+    }
+
 
     private readNumber(): void {
         let lexeme = "";
@@ -57,40 +71,16 @@ export class Lexer {
         this.addToken(usedDecimal ? Syntax.FLOAT : Syntax.INT, parseFloat(lexeme));
     }
 
-    private readString(): void {
-        let lexeme = "";
-        let escaped = false;
-        const quoteChar = this.currentCharacter;
-    
-        this.advance();
-    
-        while (!this.isEndOfFile) {
-            const char = this.advance();
-    
-            if (char === quoteChar) {
-                if (!escaped) {
-                    this.addToken(Syntax.STRING, lexeme);
-                    return;
-                }
-                escaped = false;
-            } else if (char === '\\') {
-                escaped = !escaped;
-            } else {
-                lexeme += char;
-                escaped = false;
-            }
-        }
-    
-        throw new TokenizationError("Unterminated string literal");
-    }
-     
 
     private addToken<T extends ValueType = ValueType>(type: Syntax, value?: T): void {
-        const currentLexeme = this.currentLexemeCharacters.join("");
         const locationSpan = new LocationSpan(this.lastLocation, this.currentLocation);
-        this.tokens.push(new Token(type, currentLexeme, value, locationSpan));
-        this.currentLexemeCharacters = [];
+        this.tokens.push(new Token(type, this.currentLexeme, value, locationSpan));
         this.lastLocation = this.currentLocation;
+        this.currentLexemeCharacters = [];
+    }
+
+    private get currentLexeme(): string {
+        return this.currentLexemeCharacters.join("");
     }
 
     private advance(): string {
