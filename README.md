@@ -8,6 +8,10 @@ becuz im bored
 - prepl
     - A interactive repl to run plang in your terminal
 
+### Developer only tools
+- test
+    - Runs a simple test on plang
+
 ## installing
 ### On unix/linux:
 ```bash
@@ -21,6 +25,23 @@ Powershell:
 Command prompt:
 ```bash
     powershell -command "& { Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/KevinAlavik/plang/main/install.bat' -OutFile 'install.bat'; .\install.bat; Remove-Item -Path 'install.bat' }"
+```
+### Building from source:
+Simply run:
+```bash
+    npm run build
+```
+or:
+```bash
+    yarn run build
+```
+**Then you can access are [tools](https://github.com/kevinalavik/plang?tab=readme-ov-file#tools) using:**
+```bash
+    npm run <tool>
+```
+or:
+```bash
+    yarn run <tool>
 ```
 ## Current features
 - Tokenizing:
