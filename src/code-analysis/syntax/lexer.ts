@@ -1,5 +1,6 @@
 import { TokenizationError } from "../../errors";
-import { Token, Location, ValueType, LocationSpan } from "./token";
+import { Token, Location, LocationSpan } from "./token";
+import { ValueType } from "../type-checker";
 import { KEYWORDS, TYPE_KEYWORDS } from "./keywords";
 import ArrayStepper from "../array-stepper";
 import Syntax from "./syntax-type";
@@ -204,7 +205,7 @@ export class Lexer extends ArrayStepper<string> {
     if (isWhiteSpace)
       this.lastLocation = this.currentLocation;
 
-    return char
+    return char;
   }
 
   private get currentLexeme(): string {

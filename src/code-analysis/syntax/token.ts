@@ -1,4 +1,6 @@
 import util from "util";
+
+import { ValueType } from "../type-checker";
 import Syntax from "./syntax-type";
 
 const TAB = " ".repeat(2);
@@ -6,8 +8,6 @@ const INSPECT_OPTIONS: util.InspectOptions = {
   colors: true,
   compact: false
 };
-
-export type ValueType = string | number | boolean | undefined;
 
 export class Location {
   public constructor(

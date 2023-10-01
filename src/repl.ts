@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import Parser from "./code-analysis/parser";
 import { Lexer } from "./code-analysis/syntax/lexer";
 import { readln } from "./lib/utilities";
 
@@ -9,10 +10,9 @@ async function main() {
         const code = await readln("> ");
         if (!code.trim()) continue;
 
-        const lexer = new Lexer(code);
-        const tokens = lexer.tokenize();
-        for (const token of tokens)
-            console.log(token.toString());
+        const parser = new Parser(code);
+        const ast = parser.parse();
+        console.log(ast)
     }
 }
 
