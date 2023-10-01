@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync } from "fs";
-import { Lexer } from "../src/code-analysis/syntax/lexer";
+import Parser from "../src/code-analysis/parser";
 
 function main() {
     const args = process.argv.slice(2);
@@ -14,17 +14,16 @@ GPC ~ Goofy Plang Compiler
 Options:
 
 <file>  - the input file
-        `);
+`);
         process.exit(1);
     }
 
     const [filePath] = args;
     try {
         const fileContents = readFileSync(filePath, "utf-8");
-        const lexer = new Lexer(fileContents);
-        const tokens = lexer.tokenize();
-        for (const token of tokens)
-            console.log(token.toString());;
+        const parser = new Parser(fileContents);
+        const ast = parser.parse();
+        console.log(ast.toString());
     } catch (error: any) {
         console.error(`${error.message}`);
         process.exit(1);

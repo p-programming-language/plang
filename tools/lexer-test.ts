@@ -1,11 +1,10 @@
 import { describe, it } from "mocha";
-import "should";
 import fs from "fs";
 import path from "path";
-import { execSync } from "child_process";
+import "should";
 
 import { Token } from "../src/code-analysis/syntax/token";
-import { Lexer } from "../src/code-analysis/syntax/lexer";
+import Lexer from "../src/code-analysis/syntax/lexer";
 import Syntax from "../src/code-analysis/syntax/syntax-type";
 
 function tokenize(source: string): Token[] {

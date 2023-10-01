@@ -1,8 +1,8 @@
-import { Lexer } from "./code-analysis/syntax/lexer";
+import Lexer from "./code-analysis/syntax/lexer";
 
 async function main() {
     const code = `
-test = "test string"  
+test = "test string"
   `;
 
   const lexer = new Lexer(code);

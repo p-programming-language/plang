@@ -9,7 +9,7 @@ const ALPHABETICAL = /[a-zA-Z]/;
 const NUMERIC = /^[0-9]$/;
 const WHITESPACE = /\s+/;
 
-export class Lexer extends ArrayStepper<string> {
+export default class Lexer extends ArrayStepper<string> {
   private line = 1;
   private column = 1;
   private lastLocation = new Location(this.line, this.column);

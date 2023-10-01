@@ -2,11 +2,11 @@ import assert from "assert";
 
 import { Token } from "../syntax/token";
 import { ParsingError } from "../../errors";
-import { Lexer } from "../syntax/lexer";
 import { LiteralExpression } from "./ast/expressions/literal";
 import { ParenthesizedExpression } from "./ast/expressions/parenthesized";
 
 import ArrayStepper from "../array-stepper";
+import Lexer from "../syntax/lexer";
 import Syntax from "../syntax/syntax-type";
 import AST from "./ast";
 import { BinaryExpression } from "./ast/expressions/binary";
