@@ -18,11 +18,14 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies with Yarn
+        run: yarn install
 
       - name: Build
-        run: npm run build
+        run: yarn build
 
       - name: Test
-        run: npm test
+        run: yarn test

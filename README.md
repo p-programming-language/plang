@@ -4,8 +4,7 @@ The P programming language
 ![Last Commit](https://img.shields.io/github/last-commit/kevinalavik/plang
 )
 
-![Testing Status](https://img.shields.io/github/actions/workflow/status/kevinalavik/plang/test.yml
-)
+[![testing](https://github.com/KevinAlavik/plang/actions/workflows/test.yml/badge.svg)](https://github.com/KevinAlavik/plang/actions/workflows/test.yml)
 ## Why?
 becuz im bored
 ## Tools
