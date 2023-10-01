@@ -61,7 +61,7 @@ describe("Lexer", () => {
   });
 });
 
-describe("P Tests (tests/p)", () => {
+describe("General Tests (tests/)", () => {
   testFiles.forEach((file) => {
     const filePath = path.join(testDirectory, file);
     runTestsForFile(filePath);
