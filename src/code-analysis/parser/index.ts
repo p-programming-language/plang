@@ -123,7 +123,7 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private consume(syntax: Syntax, expectedOverride?: string): void {
-    const gotSyntax = this.peek() ? Syntax[this.peek()!.syntax] : "undefined";
+    const gotSyntax = this.peek() ? Syntax[this.peek()!.syntax] : "EOF";
     const error = new ParsingError(`Expected '${expectedOverride ?? Syntax[syntax]}', got ${gotSyntax}`);
     assert(this.match(syntax), error);
   }

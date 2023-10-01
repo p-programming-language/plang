@@ -9,7 +9,9 @@ import Syntax from "../src/code-analysis/syntax/syntax-type";
 
 function tokenize(source: string): Token[] {
   const lexer = new Lexer(source);
-  return lexer.tokenize();
+  (() => new Lexer(source).tokenize()).should.not.throw();
+  const tokens = lexer.tokenize();
+  return tokens
 }
 
 const testDirectory = "./tests/";
@@ -18,14 +20,13 @@ const testFiles = fs
   .filter((file) => file.endsWith(".p"));
 
 function runTestsForFile(filePath: string) {
-  try {
-    it(filePath, () => {
-      const sourceCode = fs.readFileSync(filePath, "utf-8");
-      const tokens = tokenize(sourceCode);
-    });
-  } catch (error) {
-    console.error(`Tests for ${filePath} failed:`, error);
-  }
+  it(filePath, () => {
+    const sourceCode = fs.readFileSync(filePath, "utf-8");
+
+    tokenize
+    const tokens = tokenize(sourceCode);
+    tokens.length.should.be.greaterThan(0);
+  });
 }
 
 describe("Lexer", () => {
