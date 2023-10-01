@@ -12,9 +12,9 @@ export class ParsingError extends Error {
     }
 }
 
-export class VariableTypeError extends Error {
+export class TypeError extends Error {
     constructor(message: string) {
         super(message);
-        this.name = 'VariableTypeError';
+        this.name = "TypeError";
     }
 }

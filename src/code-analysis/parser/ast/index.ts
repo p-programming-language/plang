@@ -2,16 +2,30 @@ import util from "util";
 import { Token } from "../../syntax/token";
 
 namespace AST {
-  export abstract class Node {
-    public abstract get token(): Token;
+    export abstract class Node {
+        public abstract get token(): Token;
 
-    public toString(): string {
-      return util.inspect(this, { colors: true, compact: false });
+        public toString(): string {
+            return util.inspect(this, { colors: true, compact: false });
+        }
     }
-  }
 
-  export abstract class Expression extends Node {}
-  export abstract class Statement extends Node {}
+    export abstract class Expression extends Node {
+        abstract accept<R>(visitor: Visitor.Expression<R>): R
+    }
+    export abstract class Statement extends Node {
+        abstract accept<R>(visitor: Visitor.Statement<R>): R
+    }
+
+    export namespace Visitor {
+        export abstract class Expression<R> {
+
+        }
+
+        export abstract class Statement<R> {
+
+        }
+    }
 }
 
 export default AST;
