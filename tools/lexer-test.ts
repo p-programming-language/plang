@@ -13,7 +13,7 @@ function tokenize(source: string): Token[] {
   return lexer.tokenize();
 }
 
-const testDirectory = "./tests/p";
+const testDirectory = "./tests/";
 const testFiles = fs
   .readdirSync(testDirectory)
   .filter((file) => file.endsWith(".p"));

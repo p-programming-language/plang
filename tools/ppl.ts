@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
-const { readln } = require('../lib/utilities');
+const { readln } = require('../src/lib/utilities');
 
 function main() {
     const args = process.argv.slice(2);
