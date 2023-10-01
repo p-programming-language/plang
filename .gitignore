@@ -130,5 +130,5 @@ dist
 .pnp.*
 yarn.lock
 # PLang Files
-tests/
-package-lock.json
+/package-lock.json
+*.js

@@ -15,9 +15,13 @@ yarn install
 ```
 
 ## Current features
-- Number handeling (int, float)
-- String handeling. Supports  both signle and double quotes
-
+- Tokenizing:
+    - Number literals (int, float)
+    - String literals, supports both single and double quotes
+    - Boolean literals
+    - Identifiers
+    - Keywords
+    - Most symbols (`.`, `:`, `<`, `<=`, `>`, `>=`, all brackets, arithmetic operators, etc.)
 
 ---
 **atm its only a tokenizer soon support for variables and functions**

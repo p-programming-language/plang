@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { Lexer } from "./syntax-analysis/lexer";
+import { Lexer } from "./code-analysis/syntax/lexer";
 import { readln } from "./lib/utilities";
 
 async function main() {

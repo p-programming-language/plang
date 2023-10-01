@@ -1,23 +1,32 @@
 {
   "name": "plang",
   "version": "1.0.0",
-  "description": "",
-  "main": "dist/main.js",
+  "description": "A general purpose, statically-typed, compiled language.",
+  "main": "dist/src/main.js",
   "bin": {
-    "gpc": "dist/comp.js",
-    "prepl": "dist/repl.js"
+    "gpc": "dist/src/comp.js",
+    "prepl": "dist/src/repl.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha dist/tests -j 4",
     "build": "tsc",
-    "repl": "yarn dist/repl.js",
-    "gpc": "yarn dist/comp.js",
+    "repl": "yarn dist/src/repl.js",
+    "gpc": "yarn dist/src/comp.js",
     "install": "tsc && yarn link"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "p",
+    "plang",
+    "language"
+  ],
+  "author": "Kevin \"Puffer\" Alavik",
   "license": "ISC",
+  "dependencies": {
+    "mocha": "^10.2.0",
+    "should": "^13.2.3"
+  },
   "devDependencies": {
+    "@types/mocha": "^10.0.2",
     "@types/node": "^20.8.0"
   }
 }

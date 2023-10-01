@@ -5,9 +5,16 @@ export class TokenizationError extends Error {
     }
 }
 
-export class VariableTypeError extends Error {
+export class ParsingError extends Error {
     constructor(message: string) {
         super(message);
-        this.name = 'VariableTypeError';
+        this.name = "ParsingError";
+    }
+}
+
+export class TypeError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "TypeError";
     }
 }
