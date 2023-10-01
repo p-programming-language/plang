@@ -30,78 +30,78 @@ export class Lexer {
         const char = this.currentCharacter;
         switch(char) {
             case "(":
-                return this.addToken(Syntax.LPAREN);
+                return this.addToken(Syntax.LPAREN, undefined, true);
             case ")":
-                return this.addToken(Syntax.LPAREN);
+                return this.addToken(Syntax.RPAREN, undefined, true);
             case "[":
-                return this.addToken(Syntax.LBRACKET);
+                return this.addToken(Syntax.LBRACKET, undefined, true);
             case "]":
-                return this.addToken(Syntax.RBRACKET);
+                return this.addToken(Syntax.RBRACKET, undefined, true);
             case "{":
-                return this.addToken(Syntax.LBRACE);
+                return this.addToken(Syntax.LBRACE, undefined, true);
             case "}":
-                return this.addToken(Syntax.RBRACE);
+                return this.addToken(Syntax.RBRACE, undefined, true);
             case ".":
-                return this.addToken(Syntax.DOT);
+                return this.addToken(Syntax.DOT, undefined, true);
             case ":":
-                return this.addToken(Syntax.COLON);
+                return this.addToken(Syntax.COLON, undefined, true);
             case ">": {
                 if (this.match("="))
-                    return this.addToken(Syntax.GTE);
+                    return this.addToken(Syntax.GTE, undefined, true);
                 else
-                    return this.addToken(Syntax.GT);
+                    return this.addToken(Syntax.GT, undefined, true);
             }
             case "<": {
                 if (this.match("="))
-                    return this.addToken(Syntax.LTE);
+                    return this.addToken(Syntax.LTE, undefined, true);
                 else
-                    return this.addToken(Syntax.LT);
+                    return this.addToken(Syntax.LT, undefined, true);
             }
             case "+": {
                 if (this.match("="))
-                    return this.addToken(Syntax.PLUS_EQUAL);
+                    return this.addToken(Syntax.PLUS_EQUAL, undefined, true);
                 else if (this.match("+"))
-                    return this.addToken(Syntax.PLUS_PLUS);
+                    return this.addToken(Syntax.PLUS_PLUS, undefined, true);
                 else
-                    return this.addToken(Syntax.PLUS);
+                    return this.addToken(Syntax.PLUS, undefined, true);
             }
             case "-": {
                 if (this.match("="))
-                    return this.addToken(Syntax.MINUS_EQUAL);
+                    return this.addToken(Syntax.MINUS_EQUAL, undefined, true);
                 else if (this.match("-"))
-                    return this.addToken(Syntax.MINUS_MINUS);
+                    return this.addToken(Syntax.MINUS_MINUS, undefined, true);
                 else
-                    return this.addToken(Syntax.MINUS);
+                    return this.addToken(Syntax.MINUS, undefined, true);
             }
             case "*": {
                 if (this.match("="))
-                    return this.addToken(Syntax.STAR_EQUAL);
+                    return this.addToken(Syntax.STAR_EQUAL, undefined, true);
                 else
-                    return this.addToken(Syntax.STAR);
+                    return this.addToken(Syntax.STAR, undefined, true);
             }
             case "/": {
                 if (this.match("="))
-                    return this.addToken(Syntax.SLASH_EQUAL);
+                    return this.addToken(Syntax.SLASH_EQUAL, undefined, true);
                 else
-                    return this.addToken(Syntax.SLASH);
+                    return this.addToken(Syntax.SLASH, undefined, true);
             }
             case "^": {
                 if (this.match("="))
-                    return this.addToken(Syntax.CARAT_EQUAL);
+                    return this.addToken(Syntax.CARAT_EQUAL, undefined, true);
                 else
-                    return this.addToken(Syntax.CARAT);
+                    return this.addToken(Syntax.CARAT, undefined, true);
             }
             case "%": {
                 if (this.match("="))
-                    return this.addToken(Syntax.PERCENT_EQUAL);
+                    return this.addToken(Syntax.PERCENT_EQUAL, undefined, true);
                 else
-                    return this.addToken(Syntax.PERCENT);
+                    return this.addToken(Syntax.PERCENT, undefined, true);
             }
             case "=": {
                 if (this.match("="))
-                    return this.addToken(Syntax.EQUAL_EQUAL);
+                    return this.addToken(Syntax.EQUAL_EQUAL, undefined, true);
                 else
-                    return this.addToken(Syntax.EQUAL);
+                    return this.addToken(Syntax.EQUAL, undefined, true);
             }
 
             case '"':
@@ -171,7 +171,10 @@ export class Lexer {
     }
 
 
-    private addToken<T extends ValueType = ValueType>(type: Syntax, value?: T): void {
+    private addToken<T extends ValueType = ValueType>(type: Syntax, value?: T, advance = false): void {
+        if (advance)
+            this.advance();
+
         const locationSpan = new LocationSpan(this.lastLocation, this.currentLocation);
         this.tokens.push(new Token(type, this.currentLexeme, value, locationSpan));
         this.currentLexemeCharacters = [];
