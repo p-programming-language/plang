@@ -35,19 +35,19 @@ powershell -command "& { Invoke-WebRequest -Uri 'https://raw.githubusercontent.c
 ### Building from source:
 Simply run:
 ```bash
-    npm run build
+npm run build
 ```
 or:
 ```bash
-    yarn run build
+yarn run build
 ```
 **Then you can access are [tools](https://github.com/kevinalavik/plang?tab=readme-ov-file#tools) using:**
 ```bash
-    npm run <tool>
+npm run <tool>
 ```
 or:
 ```bash
-    yarn run <tool>
+yarn run <tool>
 ```
 ## Current features
 - Tokenizing:
