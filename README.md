@@ -1,5 +1,10 @@
 # PLang
 The P programming language
+
+![Last Commit](https://img.shields.io/github/last-commit/kevinalavik/plang
+)
+
+[![testing](https://github.com/KevinAlavik/plang/actions/workflows/test.yml/badge.svg)](https://github.com/KevinAlavik/plang/actions/workflows/test.yml)
 ## Why?
 becuz im bored
 ## Tools
@@ -7,13 +12,43 @@ becuz im bored
     - The general Plang compiler
 - prepl
     - A interactive repl to run plang in your terminal
+- ppl
+    - A P Package library / project handler
+### Developer only tools
+- test
+    - Runs a simple test on plang
 
 ## installing
-To install plang run:
+### On unix/linux:
 ```bash
-yarn install
+curl -sSL https://raw.githubusercontent.com/KevinAlavik/plang/main/install.sh | bash
 ```
-
+### On Windows
+Powershell:
+```powershell
+Invoke-Expression (Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/KevinAlavik/plang/main/install.ps1').Content
+```
+Command prompt:
+```bash
+powershell -command "& { Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/KevinAlavik/plang/main/install.bat' -OutFile 'install.bat'; .\install.bat; Remove-Item -Path 'install.bat' }"
+```
+### Building from source:
+Simply run:
+```bash
+npm run build
+```
+or:
+```bash
+yarn run build
+```
+**Then you can access are [tools](https://github.com/kevinalavik/plang?tab=readme-ov-file#tools) using:**
+```bash
+npm run <tool>
+```
+or:
+```bash
+yarn run <tool>
+```
 ## Current features
 - Tokenizing:
     - Number literals (int, float)

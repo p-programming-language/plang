@@ -4,15 +4,17 @@
   "description": "A general purpose, statically-typed, compiled language.",
   "main": "dist/src/main.js",
   "bin": {
-    "gpc": "dist/src/comp.js",
-    "prepl": "dist/src/repl.js"
+    "gpc": "dist/tools/comp.js",
+    "prepl": "dist/tools/repl.js",
+    "ppl": "dist/tools/ppl.js"
   },
   "scripts": {
-    "test": "mocha dist/tests -j 4",
+    "test": "mocha dist/tools/lexer-test.js -j 4",
     "build": "tsc",
-    "repl": "yarn dist/src/repl.js",
-    "gpc": "yarn dist/src/comp.js",
-    "install": "tsc && yarn link"
+    "repl": "node dist/tools/repl.js",
+    "gpc": "node dist/tools/comp.js",
+    "ppl": "node dist/tools/ppl.js",
+    "path": "tsc && npm link"
   },
   "keywords": [
     "p",

@@ -129,6 +129,5 @@ dist
 .yarn/install-state.gz
 .pnp.*
 yarn.lock
-# PLang Files
-/package-lock.json
-*.js
+
+package-lock.json
