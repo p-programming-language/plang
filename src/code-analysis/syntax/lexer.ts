@@ -132,6 +132,10 @@ export default class Lexer extends ArrayStepper<string> {
             this.addToken(Syntax.BOOLEAN, true);
           else if (identifierLexeme === "false")
             this.addToken(Syntax.BOOLEAN, false);
+          else if (identifierLexeme === "null")
+            this.addToken(Syntax.NULL, null);
+          else if (identifierLexeme === "undefined")
+            this.addToken(Syntax.UNDEFINED);
           else
             this.addToken(Syntax.IDENTIFIER);
 
