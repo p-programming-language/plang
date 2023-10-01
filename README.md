@@ -7,7 +7,8 @@ becuz im bored
     - The general Plang compiler
 - prepl
     - A interactive repl to run plang in your terminal
-
+- ppl
+    - A P Package library / project handler
 ### Developer only tools
 - test
     - Runs a simple test on plang

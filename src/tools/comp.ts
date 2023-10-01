@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync } from "fs";
-import { Lexer } from "./code-analysis/syntax/lexer";
+import { Lexer } from "../code-analysis/syntax/lexer";
 
 function main() {
     const args = process.argv.slice(2);

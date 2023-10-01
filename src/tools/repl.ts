@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { Lexer } from "./code-analysis/syntax/lexer";
-import { readln } from "./lib/utilities";
+import { Lexer } from "./../code-analysis/syntax/lexer";
+import { readln } from "./../lib/utilities";
 
 async function main() {
     console.log("Welcome to the PLANG repl!");
