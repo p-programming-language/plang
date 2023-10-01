@@ -131,3 +131,4 @@ dist
 yarn.lock
 # PLang Files
 /package-lock.json
+*.js
