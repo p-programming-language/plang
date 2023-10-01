@@ -15,16 +15,16 @@ becuz im bored
 ## installing
 ### On unix/linux:
 ```bash
-    curl -sSL https://raw.githubusercontent.com/KevinAlavik/plang/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/KevinAlavik/plang/main/install.sh | bash
 ```
 ### On Windows
 Powershell:
 ```powershell
-    Invoke-Expression (Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/KevinAlavik/plang/main/install.ps1').Content
+Invoke-Expression (Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/KevinAlavik/plang/main/install.ps1').Content
 ```
 Command prompt:
 ```bash
-    powershell -command "& { Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/KevinAlavik/plang/main/install.bat' -OutFile 'install.bat'; .\install.bat; Remove-Item -Path 'install.bat' }"
+powershell -command "& { Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/KevinAlavik/plang/main/install.bat' -OutFile 'install.bat'; .\install.bat; Remove-Item -Path 'install.bat' }"
 ```
 ### Building from source:
 Simply run:
