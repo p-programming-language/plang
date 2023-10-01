@@ -4,16 +4,17 @@ import { Token } from "../syntax/token";
 import { ParsingError } from "../../errors";
 import { LiteralExpression } from "./ast/expressions/literal";
 import { ParenthesizedExpression } from "./ast/expressions/parenthesized";
+import { BinaryExpression } from "./ast/expressions/binary";
+import { UnaryExpression } from "./ast/expressions/unary";
 
 import ArrayStepper from "../array-stepper";
 import Lexer from "../syntax/lexer";
 import Syntax from "../syntax/syntax-type";
 import AST from "./ast";
-import { BinaryExpression } from "./ast/expressions/binary";
-import { UnaryExpression } from "./ast/expressions/unary";
 
-const LITERAL_SYNTAXES = [Syntax.BOOLEAN, Syntax.STRING, Syntax.FLOAT, Syntax.INT, Syntax.NULL, Syntax.UNDEFINED];
-const UNARY_SYNTAXES = [Syntax.PLUS_PLUS, Syntax.MINUS_MINUS, Syntax.PLUS, Syntax.MINUS, Syntax.BANG, Syntax.HASHTAG];
+import * as SyntaxSets from "../syntax/syntax-sets";
+const { UNARY_SYNTAXES, LITERAL_SYNTAXES } = SyntaxSets;
+
 
 export default class Parser extends ArrayStepper<Token> {
   public constructor(source: string) {
@@ -31,8 +32,8 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseUnary(): AST.Expression {
-    if (UNARY_SYNTAXES.includes(this.current.syntax)) {
-      const operator = this.advance();
+    if (this.matchSet(UNARY_SYNTAXES)) {
+      const operator = this.previous();
       const operand = this.parseExpression();
       return new UnaryExpression(operator, operand);
     } else
@@ -76,8 +77,8 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parsePrimary(): AST.Expression {
-    if (LITERAL_SYNTAXES.includes(this.current.syntax))
-      return new LiteralExpression(this.advance());
+    if (this.matchSet(LITERAL_SYNTAXES))
+      return new LiteralExpression(this.previous());
     if (this.match(Syntax.LPAREN)) {
       const expr = this.parseExpression();
       this.consume(Syntax.RPAREN, ")");
@@ -97,6 +98,14 @@ export default class Parser extends ArrayStepper<Token> {
 
   private previous(): Token {
     return this.peek(-1)!;
+  }
+
+  private matchSet(syntaxSet: (typeof SyntaxSets)[keyof typeof SyntaxSets]): boolean {
+    const matches = syntaxSet.includes(this.current.syntax);
+    if (matches)
+      this.advance();
+
+    return matches;
   }
 
   private match(...syntaxes: Syntax[]): boolean {

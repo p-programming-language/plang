@@ -1,13 +1,13 @@
-import Lexer from "./code-analysis/syntax/lexer";
+import Parser from "./code-analysis/parser";
 
 async function main() {
     const code = `
-test = "test string"
+"hello" + "world"
   `;
 
-  const lexer = new Lexer(code);
-  const tokens = lexer.tokenize();
-  console.log(tokens)
+  const parser = new Parser(code);
+  const ast = parser.parse();
+  console.log(ast)
 }
 
 main().catch((error) => {
