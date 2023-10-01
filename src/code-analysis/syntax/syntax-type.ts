@@ -22,6 +22,8 @@ enum Syntax {
   CARAT_EQUAL, PERCENT_EQUAL,
   PLUS_PLUS, MINUS_MINUS,
   EQUAL, EQUAL_EQUAL,
+
+  EOF
 }
 
 export default Syntax;

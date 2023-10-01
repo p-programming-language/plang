@@ -1,33 +1,30 @@
-import { TokenizationError } from "../errors";
+import { TokenizationError } from "../../errors";
 import { Token, Location, ValueType, LocationSpan } from "./token";
 import { KEYWORDS, TYPE_KEYWORDS } from "./keywords";
+import ArrayStepper from "../array-stepper";
 import Syntax from "./syntax-type";
 
 const ALPHABETICAL = /[a-zA-Z]/;
 const NUMERIC = /^[0-9]$/;
 const WHITESPACE = /\s+/;
 
-export class Lexer {
-    private position = 0;
+export class Lexer extends ArrayStepper<string> {
     private line = 1;
     private column = 1;
     private lastLocation = new Location(this.line, this.column);
     private currentLexemeCharacters: string[] = [];
     private readonly tokens: Token[] = []
 
-    public constructor(
-        private readonly source: string
-    ) {}
-
     public tokenize(): Token[] {
-        while (!this.isEndOfFile)
+        while (!this.isFinished)
             this.lex();
 
+        this.addToken(Syntax.EOF);
         return this.tokens;
     }
 
     private lex(): void {
-        const char = this.currentCharacter;
+        const char = this.current;
         switch(char) {
             case "(":
                 return this.addToken(Syntax.LPAREN, undefined, true);
@@ -139,7 +136,7 @@ export class Lexer {
 
     private readIdentifier(): string {
         let lexeme = "";
-        while (!this.isEndOfFile && (ALPHABETICAL.test(this.currentCharacter) || NUMERIC.test(this.currentCharacter)))
+        while (!this.isFinished && (ALPHABETICAL.test(this.current) || NUMERIC.test(this.current)))
             lexeme += this.advance();
 
         return lexeme;
@@ -147,7 +144,7 @@ export class Lexer {
 
     private readString(): void {
         const delimiter = this.advance();
-        while (this.currentCharacter !== delimiter) {
+        while (this.current !== delimiter) {
             if (this.advance() === "\n")
                 throw new TokenizationError("Unterminated string literal");
         }
@@ -159,7 +156,7 @@ export class Lexer {
 
     private readNumber(): void {
         let usedDecimal = false;
-        while (/^[0-9]$/.test(this.currentCharacter) || this.currentCharacter === ".") {
+        while (/^[0-9]$/.test(this.current) || this.current === ".") {
             if (this.advance() === ".")
                 if (usedDecimal)
                     throw new TokenizationError("Malformed number");
@@ -191,7 +188,7 @@ export class Lexer {
     }
 
     private advance(): string {
-        const char = this.currentCharacter;
+        const char = this.current;
         const isWhiteSpace = /\s+/.test(char);
         if (!isWhiteSpace) // don't add to lexeme if whitespace
             this.currentLexemeCharacters.push(char);
@@ -210,21 +207,8 @@ export class Lexer {
         return char
     }
 
-    private peek(offset = 1): string | undefined {
-        const peekPosition = this.position + offset;
-        return peekPosition + 1 > this.source.length ? undefined : this.source[peekPosition];
-    }
-
-    private get isEndOfFile(): boolean {
-        return this.position + 1 > this.source.length;
-    }
-
     private get currentLexeme(): string {
         return this.currentLexemeCharacters.join("");
-    }
-
-    private get currentCharacter(): string {
-        return this.peek(0)!;
     }
 
     private get currentLocation(): Location {
