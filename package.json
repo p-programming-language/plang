@@ -14,7 +14,7 @@
     "repl": "node dist/tools/repl.js",
     "gpc": "node dist/tools/comp.js",
     "ppl": "node dist/tools/ppl.js",
-    "install": "tsc && npm link"
+    "path": "tsc && npm link"
   },
   "keywords": [
     "p",

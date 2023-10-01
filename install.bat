@@ -3,7 +3,8 @@ git clone https://github.com/KevinAlavik/plang
 
 cd plang
 
-yarn install > nul
+npm install > nul
+yarn run path > nul
 
 cd ..
 
