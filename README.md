@@ -11,8 +11,10 @@ becuz im bored
 ## installing
 To install plang run:
 ```bash
-yarn install
+
 ```
+To install from source:
+
 
 ## Current features
 - Tokenizing:

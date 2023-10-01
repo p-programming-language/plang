@@ -10,9 +10,9 @@
   "scripts": {
     "test": "mocha dist/tests -j 4",
     "build": "tsc",
-    "repl": "yarn dist/src/repl.js",
-    "gpc": "yarn dist/src/comp.js",
-    "install": "tsc && yarn link"
+    "repl": "node dist/src/repl.js",
+    "gpc": "node dist/src/comp.js",
+    "install": "tsc && npm link"
   },
   "keywords": [
     "p",
