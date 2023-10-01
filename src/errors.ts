@@ -1,20 +1,27 @@
 export class TokenizationError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "TokenizationError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = "TokenizationError";
+  }
 }
 
 export class ParsingError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "ParsingError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = "ParsingError";
+  }
 }
 
 export class TypeError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "TypeError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = "TypeError";
+  }
+}
+
+export class BindingError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "BindingError";
+  }
 }

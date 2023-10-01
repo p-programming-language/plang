@@ -1,15 +1,17 @@
 import Syntax from "./syntax-type";
 
-export const KEYWORDS: Record<string, Syntax> = {
-  undefined: Syntax.UNDEFINED,
-  null: Syntax.NULL
+export const KEYWORDS = {
+  undefined: Syntax.Undefined,
+  null: Syntax.Null
 }
 
-
-export const TYPE_KEYWORDS: Record<string, Syntax> = {
-  string: Syntax.STRING_TYPE,
-  int: Syntax.INT_TYPE,
-  float: Syntax.FLOAT_TYPE,
-  bool: Syntax.BOOLEAN_TYPE,
-  void: Syntax.VOID_TYPE
+export const TYPE_KEYWORDS = {
+  any: Syntax.AnyType,
+  string: Syntax.StringType,
+  int: Syntax.IntType,
+  float: Syntax.FloatType,
+  bool: Syntax.BoolType,
+  void: Syntax.VoidType,
+  undefined: Syntax.Undefined,
+  null: Syntax.Null
 }

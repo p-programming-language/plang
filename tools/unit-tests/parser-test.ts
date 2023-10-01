@@ -33,35 +33,35 @@ describe("Parser", () => {
     {
       const node = parse('"hello"');
       node.should.be.an.instanceof(LiteralExpression);
-      node.token.syntax.should.equal(Syntax.STRING)
+      node.token.syntax.should.equal(Syntax.String)
       node.token.lexeme.should.equal('"hello"');
       node.token.value?.should.equal("hello");
     }
     {
       const node = parse("123");
       node.should.be.an.instanceof(LiteralExpression);
-      node.token.syntax.should.equal(Syntax.INT)
+      node.token.syntax.should.equal(Syntax.Int)
       node.token.lexeme.should.equal("123");
       node.token.value?.should.equal(123);
     }
     {
       const node = parse("true");
       node.should.be.an.instanceof(LiteralExpression);
-      node.token.syntax.should.equal(Syntax.BOOLEAN)
+      node.token.syntax.should.equal(Syntax.Boolean)
       node.token.lexeme.should.equal("true");
       node.token.value?.should.equal(true);
     }
     {
       const node = parse("null");
       node.should.be.an.instanceof(LiteralExpression);
-      node.token.syntax.should.equal(Syntax.NULL)
+      node.token.syntax.should.equal(Syntax.Null)
       node.token.lexeme.should.equal("null");
       node.token.value?.should.equal(null);
     }
     {
       const node = parse("undefined");
       node.should.be.an.instanceof(LiteralExpression);
-      node.token.syntax.should.equal(Syntax.UNDEFINED)
+      node.token.syntax.should.equal(Syntax.Undefined)
       node.token.lexeme.should.equal("undefined");
       node.token.value?.should.equal(undefined);
     }
@@ -71,9 +71,9 @@ describe("Parser", () => {
       const node = parse("!false");
       node.should.be.an.instanceof(UnaryExpression);
       const expr = <UnaryExpression>node;
-      expr.operator.syntax.should.equal(Syntax.BANG);
+      expr.operator.syntax.should.equal(Syntax.Bang);
       expr.operator.lexeme.should.equal("!");
-      expr.operand.token.syntax.should.equal(Syntax.BOOLEAN)
+      expr.operand.token.syntax.should.equal(Syntax.Boolean)
       expr.operand.token.lexeme.should.equal("false");
       expr.operand.token.value?.should.equal(false);
     }
@@ -81,9 +81,9 @@ describe("Parser", () => {
       const node = parse("++6");
       node.should.be.an.instanceof(UnaryExpression);
       const expr = <UnaryExpression>node;
-      expr.operator.syntax.should.equal(Syntax.PLUS_PLUS);
+      expr.operator.syntax.should.equal(Syntax.PlusPlus);
       expr.operator.lexeme.should.equal("++");
-      expr.operand.token.syntax.should.equal(Syntax.INT)
+      expr.operand.token.syntax.should.equal(Syntax.Int)
       expr.operand.token.lexeme.should.equal("6");
       expr.operand.token.value?.should.equal(6);
     }
@@ -93,20 +93,20 @@ describe("Parser", () => {
       const node = parse("5 + 3 * 2");
       node.should.be.an.instanceof(BinaryExpression);
       const expr = <BinaryExpression>node;
-      expr.operator.syntax.should.equal(Syntax.PLUS);
+      expr.operator.syntax.should.equal(Syntax.Plus);
       expr.operator.lexeme.should.equal("+");
       expr.left.should.be.an.instanceof(LiteralExpression);
-      expr.left.token.syntax.should.equal(Syntax.INT)
+      expr.left.token.syntax.should.equal(Syntax.Int)
       expr.left.token.lexeme.should.equal("5");
       expr.left.token.value?.should.equal(5);
       expr.right.should.be.an.instanceof(BinaryExpression);
       const right = <BinaryExpression>expr.right;
-      right.operator.syntax.should.equal(Syntax.STAR);
+      right.operator.syntax.should.equal(Syntax.Star);
       right.operator.lexeme.should.equal("*");
-      right.left.token.syntax.should.equal(Syntax.INT)
+      right.left.token.syntax.should.equal(Syntax.Int)
       right.left.token.lexeme.should.equal("3");
       right.left.token.value?.should.equal(3);
-      right.right.token.syntax.should.equal(Syntax.INT)
+      right.right.token.syntax.should.equal(Syntax.Int)
       right.right.token.lexeme.should.equal("2");
       right.right.token.value?.should.equal(2);
     }

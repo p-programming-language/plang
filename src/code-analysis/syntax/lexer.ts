@@ -28,28 +28,28 @@ export default class Lexer extends ArrayStepper<string> {
     const char = this.current;
     switch (char) {
       case "(":
-        return this.addToken(Syntax.LPAREN, undefined, true);
+        return this.addToken(Syntax.LParen, undefined, true);
       case ")":
-        return this.addToken(Syntax.RPAREN, undefined, true);
+        return this.addToken(Syntax.RParen, undefined, true);
       case "[":
-        return this.addToken(Syntax.LBRACKET, undefined, true);
+        return this.addToken(Syntax.LBracket, undefined, true);
       case "]":
-        return this.addToken(Syntax.RBRACKET, undefined, true);
+        return this.addToken(Syntax.RBracket, undefined, true);
       case "{":
-        return this.addToken(Syntax.LBRACE, undefined, true);
+        return this.addToken(Syntax.LBrace, undefined, true);
       case "}":
-        return this.addToken(Syntax.RBRACE, undefined, true);
+        return this.addToken(Syntax.RBrace, undefined, true);
       case ".":
-        return this.addToken(Syntax.DOT, undefined, true);
+        return this.addToken(Syntax.Dot, undefined, true);
       case ":":
-        return this.addToken(Syntax.COLON, undefined, true);
+        return this.addToken(Syntax.Colon, undefined, true);
       case "#":
-        return this.addToken(Syntax.HASHTAG, undefined, true);
+        return this.addToken(Syntax.Hashtag, undefined, true);
       case "!": {
         if (this.match("="))
-          return this.addToken(Syntax.BANG_EQUAL, undefined, true);
+          return this.addToken(Syntax.BangEqual, undefined, true);
         else
-          return this.addToken(Syntax.BANG, undefined, true);
+          return this.addToken(Syntax.Bang, undefined, true);
       }
       case ">": {
         if (this.match("="))
@@ -65,49 +65,54 @@ export default class Lexer extends ArrayStepper<string> {
       }
       case "+": {
         if (this.match("="))
-          return this.addToken(Syntax.PLUS_EQUAL, undefined, true);
+          return this.addToken(Syntax.PlusEqual, undefined, true);
         else if (this.match("+"))
-          return this.addToken(Syntax.PLUS_PLUS, undefined, true);
+          return this.addToken(Syntax.PlusPlus, undefined, true);
         else
-          return this.addToken(Syntax.PLUS, undefined, true);
+          return this.addToken(Syntax.Plus, undefined, true);
       }
       case "-": {
         if (this.match("="))
-          return this.addToken(Syntax.MINUS_EQUAL, undefined, true);
+          return this.addToken(Syntax.MinusEqual, undefined, true);
         else if (this.match("-"))
-          return this.addToken(Syntax.MINUS_MINUS, undefined, true);
+          return this.addToken(Syntax.MinusMinus, undefined, true);
         else
-          return this.addToken(Syntax.MINUS, undefined, true);
+          return this.addToken(Syntax.Minus, undefined, true);
       }
       case "*": {
         if (this.match("="))
-          return this.addToken(Syntax.STAR_EQUAL, undefined, true);
+          return this.addToken(Syntax.StarEqual, undefined, true);
         else
-          return this.addToken(Syntax.STAR, undefined, true);
+          return this.addToken(Syntax.Star, undefined, true);
       }
       case "/": {
         if (this.match("="))
-          return this.addToken(Syntax.SLASH_EQUAL, undefined, true);
+          return this.addToken(Syntax.SlashEqual, undefined, true);
+        else if (this.match("/"))
+          if (this.match("="))
+            return this.addToken(Syntax.SlashSlashEqual, undefined, true);
+          else
+            return this.addToken(Syntax.SlashSlash, undefined, true);
         else
-          return this.addToken(Syntax.SLASH, undefined, true);
+          return this.addToken(Syntax.Slash, undefined, true);
       }
       case "^": {
         if (this.match("="))
-          return this.addToken(Syntax.CARAT_EQUAL, undefined, true);
+          return this.addToken(Syntax.CaratEqual, undefined, true);
         else
-          return this.addToken(Syntax.CARAT, undefined, true);
+          return this.addToken(Syntax.Carat, undefined, true);
       }
       case "%": {
         if (this.match("="))
-          return this.addToken(Syntax.PERCENT_EQUAL, undefined, true);
+          return this.addToken(Syntax.PercentEqual, undefined, true);
         else
-          return this.addToken(Syntax.PERCENT, undefined, true);
+          return this.addToken(Syntax.Percent, undefined, true);
       }
       case "=": {
         if (this.match("="))
-          return this.addToken(Syntax.EQUAL_EQUAL, undefined, true);
+          return this.addToken(Syntax.EqualEqual, undefined, true);
         else
-          return this.addToken(Syntax.EQUAL, undefined, true);
+          return this.addToken(Syntax.Equal, undefined, true);
       }
 
       case '"':
@@ -122,22 +127,22 @@ export default class Lexer extends ArrayStepper<string> {
           return;
         } else if (ALPHABETICAL.test(char)) {
           const identifierLexeme = this.readIdentifier();
-          const keywordSyntax = KEYWORDS[identifierLexeme];
-          const typeKeywordSyntax = TYPE_KEYWORDS[identifierLexeme];
+          const keywordSyntax = Object.keys(KEYWORDS).includes(identifierLexeme) ? KEYWORDS[<keyof typeof KEYWORDS>identifierLexeme] : false;
+          const typeKeywordSyntax = Object.keys(TYPE_KEYWORDS).includes(identifierLexeme) ? TYPE_KEYWORDS[<keyof typeof TYPE_KEYWORDS>identifierLexeme] : false;
           if (keywordSyntax)
             this.addToken(keywordSyntax);
           else if (typeKeywordSyntax)
             this.addToken(typeKeywordSyntax);
           else if (identifierLexeme === "true")
-            this.addToken(Syntax.BOOLEAN, true);
+            this.addToken(Syntax.Boolean, true);
           else if (identifierLexeme === "false")
-            this.addToken(Syntax.BOOLEAN, false);
+            this.addToken(Syntax.Boolean, false);
           else if (identifierLexeme === "null")
-            this.addToken(Syntax.NULL, null);
+            this.addToken(Syntax.Null, null);
           else if (identifierLexeme === "undefined")
-            this.addToken(Syntax.UNDEFINED);
+            this.addToken(Syntax.Undefined);
           else
-            this.addToken(Syntax.IDENTIFIER);
+            this.addToken(Syntax.Identifier);
 
           return;
         }
@@ -164,7 +169,7 @@ export default class Lexer extends ArrayStepper<string> {
 
     this.advance(); // advance final delimiter
     const stringContents = this.currentLexeme.slice(1, -1);
-    this.addToken(Syntax.STRING, stringContents);
+    this.addToken(Syntax.String, stringContents);
   }
 
   private readNumber(): void {
@@ -177,7 +182,7 @@ export default class Lexer extends ArrayStepper<string> {
           usedDecimal = true;
     }
 
-    this.addToken(usedDecimal ? Syntax.FLOAT : Syntax.INT, parseFloat(this.currentLexeme));
+    this.addToken(usedDecimal ? Syntax.Float : Syntax.Int, parseFloat(this.currentLexeme));
   }
 
 

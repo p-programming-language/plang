@@ -34,31 +34,31 @@ describe("Lexer", () => {
       const [token] = tokenize('"hello, world!"');
       token.lexeme.should.equal('"hello, world!"');
       token.value?.should.equal("hello, world!");
-      token.syntax.should.equal(Syntax.STRING);
+      token.syntax.should.equal(Syntax.String);
     }
     {
       const [token] = tokenize("123");
       token.lexeme.should.equal("123");
       token.value?.should.equal(123);
-      token.syntax.should.equal(Syntax.INT);
+      token.syntax.should.equal(Syntax.Int);
     }
     {
       const [token] = tokenize("69.420");
       token.lexeme.should.equal("69.420");
       token.value?.should.equal(69.42);
-      token.syntax.should.equal(Syntax.FLOAT);
+      token.syntax.should.equal(Syntax.Float);
     }
     {
       const [token] = tokenize("null");
       token.lexeme.should.equal("null");
       token.value?.should.equal(null);
-      token.syntax.should.equal(Syntax.NULL);
+      token.syntax.should.equal(Syntax.Null);
     }
     {
       const [token] = tokenize("undefined");
       token.lexeme.should.equal("undefined");
       token.value?.should.equal(undefined);
-      token.syntax.should.equal(Syntax.UNDEFINED);
+      token.syntax.should.equal(Syntax.Undefined);
     }
   });
   it("tokenizes identifiers", () => {
@@ -66,13 +66,13 @@ describe("Lexer", () => {
       const [token] = tokenize("hello");
       token.lexeme.should.equal("hello");
       token.value?.should.equal(undefined);
-      token.syntax.should.equal(Syntax.IDENTIFIER);
+      token.syntax.should.equal(Syntax.Identifier);
     }
     {
       const [token] = tokenize("abc123");
       token.lexeme.should.equal("abc123");
       token.value?.should.equal(undefined);
-      token.syntax.should.equal(Syntax.IDENTIFIER);
+      token.syntax.should.equal(Syntax.Identifier);
     }
   });
   it("tokenizes type keywords", () => {
@@ -80,19 +80,19 @@ describe("Lexer", () => {
       const [token] = tokenize("string");
       token.lexeme.should.equal("string");
       token.value?.should.equal(undefined);
-      token.syntax.should.equal(Syntax.STRING_TYPE);
+      token.syntax.should.equal(Syntax.StringType);
     }
     {
       const [token] = tokenize("int");
       token.lexeme.should.equal("int");
       token.value?.should.equal(undefined);
-      token.syntax.should.equal(Syntax.INT_TYPE);
+      token.syntax.should.equal(Syntax.IntType);
     }
     {
       const [token] = tokenize("void");
       token.lexeme.should.equal("void");
       token.value?.should.equal(undefined);
-      token.syntax.should.equal(Syntax.VOID_TYPE);
+      token.syntax.should.equal(Syntax.VoidType);
     }
   });
   describe("tokenizes general tests (tests/)", () => {

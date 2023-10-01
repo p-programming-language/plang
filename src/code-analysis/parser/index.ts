@@ -43,7 +43,7 @@ export default class Parser extends ArrayStepper<Token> {
   private parseExponential(): AST.Expression {
     let left = this.parseUnary();
 
-    while (this.match(Syntax.CARAT)) { // this is also where i parsed ".." in cosmo, AKA a range literal expression
+    while (this.match(Syntax.Carat)) { // this is also where i parsed ".." in cosmo, AKA a range literal expression
       const operator = this.previous();
       const right = this.parseUnary();
       left = new BinaryExpression(left, right, operator);
@@ -55,7 +55,7 @@ export default class Parser extends ArrayStepper<Token> {
   private parseMultiplicative(): AST.Expression {
     let left = this.parseExponential();
 
-    while (this.match(Syntax.STAR) || this.match(Syntax.SLASH) || this.match(Syntax.SLASH_SLASH) || this.match(Syntax.PERCENT)) {
+    while (this.match(Syntax.Star) || this.match(Syntax.Slash) || this.match(Syntax.SlashSlash) || this.match(Syntax.Percent)) {
       const operator = this.previous();
       const right = this.parseExponential();
       left = new BinaryExpression(left, right, operator);
@@ -67,7 +67,7 @@ export default class Parser extends ArrayStepper<Token> {
   private parseAdditive(): AST.Expression {
     let left = this.parseMultiplicative();
 
-    while (this.match(Syntax.PLUS) || this.match(Syntax.MINUS)) {
+    while (this.match(Syntax.Plus) || this.match(Syntax.Minus)) {
       const operator = this.previous();
       const right = this.parseMultiplicative();
       left = new BinaryExpression(left, right, operator);
@@ -79,9 +79,9 @@ export default class Parser extends ArrayStepper<Token> {
   private parsePrimary(): AST.Expression {
     if (this.matchSet(LITERAL_SYNTAXES))
       return new LiteralExpression(this.previous());
-    if (this.match(Syntax.LPAREN)) {
+    if (this.match(Syntax.LParen)) {
       const expr = this.parseExpression();
-      this.consume(Syntax.RPAREN, ")");
+      this.consume(Syntax.RParen, ")");
       return new ParenthesizedExpression(expr);
     }
 
