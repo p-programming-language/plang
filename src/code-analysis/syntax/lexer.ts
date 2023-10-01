@@ -43,6 +43,14 @@ export class Lexer extends ArrayStepper<string> {
         return this.addToken(Syntax.DOT, undefined, true);
       case ":":
         return this.addToken(Syntax.COLON, undefined, true);
+      case "#":
+        return this.addToken(Syntax.HASHTAG, undefined, true);
+      case "!": {
+        if (this.match("="))
+          return this.addToken(Syntax.BANG_EQUAL, undefined, true);
+        else
+          return this.addToken(Syntax.BANG, undefined, true);
+      }
       case ">": {
         if (this.match("="))
           return this.addToken(Syntax.GTE, undefined, true);

@@ -1,16 +1,17 @@
 import { Token } from "../../../syntax/token";
 import AST from "..";
 
-export class ParenthesizedExpression extends AST.Expression {
+export class UnaryExpression extends AST.Expression {
   public constructor(
-    public readonly expression: AST.Expression
+    public readonly operator: Token,
+    public readonly operand: AST.Expression
   ) { super(); }
 
   public accept<R>(visitor: AST.Visitor.Expression<R>): R {
-    return visitor.visitParenthesizedExpression(this);
+    return visitor.visitUnaryExpression(this);
   }
 
   public get token(): Token {
-    return this.expression.token;
+    return this.operator;
   }
 }

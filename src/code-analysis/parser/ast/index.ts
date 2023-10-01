@@ -1,7 +1,10 @@
 import util from "util";
+
 import { Token } from "../../syntax/token";
 import { LiteralExpression } from "./expressions/literal";
 import { ParenthesizedExpression } from "./expressions/parenthesized";
+import { BinaryExpression } from "./expressions/binary";
+import { UnaryExpression } from "./expressions/unary";
 
 namespace AST {
   export abstract class Node {
@@ -23,6 +26,8 @@ namespace AST {
     export abstract class Expression<R> {
       public abstract visitParenthesizedExpression(expr: ParenthesizedExpression): R
       public abstract visitLiteralExpression(expr: LiteralExpression): R
+      public abstract visitBinaryExpression(expr: BinaryExpression): R
+      public abstract visitUnaryExpression(expr: UnaryExpression): R
     }
 
     export abstract class Statement<R> {

@@ -9,8 +9,11 @@ import { ParenthesizedExpression } from "./ast/expressions/parenthesized";
 import ArrayStepper from "../array-stepper";
 import Syntax from "../syntax/syntax-type";
 import AST from "./ast";
+import { BinaryExpression } from "./ast/expressions/binary";
+import { UnaryExpression } from "./ast/expressions/unary";
 
 const LITERAL_SYNTAXES = [Syntax.BOOLEAN, Syntax.STRING, Syntax.FLOAT, Syntax.INT, Syntax.NULL, Syntax.UNDEFINED];
+const UNARY_SYNTAXES = [Syntax.PLUS_PLUS, Syntax.MINUS_MINUS, Syntax.PLUS, Syntax.MINUS, Syntax.BANG, Syntax.HASHTAG];
 
 export default class Parser extends ArrayStepper<Token> {
   public constructor(source: string) {
@@ -24,7 +27,52 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseExpression(): AST.Expression {
-    return this.parsePrimary();
+    return this.parseAdditive();
+  }
+
+  private parseUnary(): AST.Expression {
+    if (UNARY_SYNTAXES.includes(this.current.syntax)) {
+      const operator = this.advance();
+      const operand = this.parseExpression();
+      return new UnaryExpression(operator, operand);
+    } else
+      return this.parsePrimary();
+  }
+
+  private parseExponential(): AST.Expression {
+    let left = this.parseUnary();
+
+    while (this.match(Syntax.CARAT)) { // this is also where i parsed ".." in cosmo, AKA a range literal expression
+      const operator = this.previous();
+      const right = this.parseUnary();
+      left = new BinaryExpression(left, right, operator);
+    }
+
+    return left;
+  }
+
+  private parseMultiplicative(): AST.Expression {
+    let left = this.parseExponential();
+
+    while (this.match(Syntax.STAR) || this.match(Syntax.SLASH) || this.match(Syntax.SLASH_SLASH) || this.match(Syntax.PERCENT)) {
+      const operator = this.previous();
+      const right = this.parseExponential();
+      left = new BinaryExpression(left, right, operator);
+    }
+
+    return left;
+  }
+
+  private parseAdditive(): AST.Expression {
+    let left = this.parseMultiplicative();
+
+    while (this.match(Syntax.PLUS) || this.match(Syntax.MINUS)) {
+      const operator = this.previous();
+      const right = this.parseMultiplicative();
+      left = new BinaryExpression(left, right, operator);
+    }
+
+    return left;
   }
 
   private parsePrimary(): AST.Expression {
@@ -45,6 +93,10 @@ export default class Parser extends ArrayStepper<Token> {
       this.position++;
 
     return token;
+  }
+
+  private previous(): Token {
+    return this.peek(-1)!;
   }
 
   private match(...syntaxes: Syntax[]): boolean {
