@@ -1,6 +1,12 @@
+import util from "util";
 import Syntax from "./syntax-type";
 
 const TAB = " ".repeat(2);
+const INSPECT_OPTIONS: util.InspectOptions = {
+    colors: true,
+    compact: false
+};
+
 export type ValueType = string | number | boolean | undefined;
 
 export class Location {
@@ -9,8 +15,12 @@ export class Location {
         public readonly column: number
     ) {}
 
+    public inspect(): string {
+        return this.toString();
+    }
+
     public toString(): string {
-        return `(${this.line}:${this.column})`;
+        return `(${util.inspect(this.line, INSPECT_OPTIONS)}:${util.inspect(this.column, INSPECT_OPTIONS)})`;
     }
 }
 
@@ -19,6 +29,10 @@ export class LocationSpan {
         public readonly start: Location,
         public readonly finish: Location
     ) {}
+
+    public inspect(): string {
+        return this.toString();
+    }
 
     public toString(): string {
         return `${this.start.toString()} - ${this.finish.toString()}`;
@@ -33,12 +47,16 @@ export class Token<T extends ValueType = ValueType> {
         public readonly locationSpan: LocationSpan
     ) {}
 
+    public inspect(): string {
+        return this.toString();
+    }
+
     public toString(): string {
         return [
             "Token {",
             `${TAB}syntax: ${Syntax[this.syntax]}`,
-            `${TAB}lexeme: "${this.lexeme}"`,
-            `${TAB}value: ${this.value}`,
+            `${TAB}lexeme: ${util.inspect(this.lexeme, INSPECT_OPTIONS)}`,
+            `${TAB}value: ${util.inspect(this.value, INSPECT_OPTIONS)}`,
             `${TAB}locationSpan: ${this.locationSpan.toString()}`,
             "}"
         ].join("\n");

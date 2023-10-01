@@ -12,7 +12,7 @@ async function main() {
         const lexer = new Lexer(code);
         const tokens = lexer.tokenize();
         for (const token of tokens)
-            console.log(token.toString())
+            console.log(token.toString());
     }
 }
 
