@@ -1,12 +1,13 @@
+import assert from "assert";
+
 import { Token } from "../syntax/token";
 import { ParsingError } from "../../errors";
 import ArrayStepper from "../array-stepper";
 import Syntax from "../syntax/syntax-type";
 import AST from "./ast";
-import assert from "assert";
 
 export default class Parser extends ArrayStepper<Token> {
-    public parse(): AST.Node {
+    public parse() { // AST.Node
 
     }
 

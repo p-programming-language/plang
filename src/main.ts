@@ -1,4 +1,4 @@
-import { Lexer } from "./code-analysis/lexer";
+import { Lexer } from "./code-analysis/syntax/lexer";
 
 
 async function main() {
