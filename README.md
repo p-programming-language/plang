@@ -9,13 +9,19 @@ becuz im bored
     - A interactive repl to run plang in your terminal
 
 ## installing
-To install plang run:
+### On unix/linux:
 ```bash
-
+    curl -sSL https://raw.githubusercontent.com/KevinAlavik/plang/main/install.sh | bash
 ```
-To install from source:
-
-
+### On Windows
+Powershell:
+```powershell
+    Invoke-Expression (Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/KevinAlavik/plang/main/install.ps1').Content
+```
+Command prompt:
+```bash
+    powershell -command "& { Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/KevinAlavik/plang/main/install.bat' -OutFile 'install.bat'; .\install.bat; Remove-Item -Path 'install.bat' }"
+```
 ## Current features
 - Tokenizing:
     - Number literals (int, float)
