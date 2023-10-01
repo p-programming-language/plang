@@ -3,9 +3,9 @@ import fs from "fs";
 import path from "path";
 import "should";
 
-import { Token } from "../src/code-analysis/syntax/token";
-import Lexer from "../src/code-analysis/syntax/lexer";
-import Syntax from "../src/code-analysis/syntax/syntax-type";
+import { Token } from "../../src/code-analysis/syntax/token";
+import Lexer from "../../src/code-analysis/syntax/lexer";
+import Syntax from "../../src/code-analysis/syntax/syntax-type";
 
 function tokenize(source: string): Token[] {
   const lexer = new Lexer(source);
@@ -58,7 +58,7 @@ describe("Lexer", () => {
       const [token] = tokenize("undefined");
       token.lexeme.should.equal("undefined");
       token.value?.should.equal(undefined);
-      token.syntax.should.equal(Syntax.NULL);
+      token.syntax.should.equal(Syntax.UNDEFINED);
     }
   });
   it("tokenizes identifiers", () => {
