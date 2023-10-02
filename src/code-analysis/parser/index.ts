@@ -6,6 +6,8 @@ import { LiteralExpression } from "./ast/expressions/literal";
 import { ParenthesizedExpression } from "./ast/expressions/parenthesized";
 import { BinaryExpression } from "./ast/expressions/binary";
 import { UnaryExpression } from "./ast/expressions/unary";
+import { BoundNode } from "../type-checker/binder/bound-node";
+import { Binder } from "../type-checker/binder";
 
 import ArrayStepper from "../array-stepper";
 import Lexer from "../syntax/lexer";
@@ -15,7 +17,6 @@ import AST from "./ast";
 import * as SyntaxSets from "../syntax/syntax-sets";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES } = SyntaxSets;
 
-
 export default class Parser extends ArrayStepper<Token> {
   public constructor(source: string) {
     const lexer = new Lexer(source);
@@ -23,7 +24,13 @@ export default class Parser extends ArrayStepper<Token> {
     super(tokens);
   }
 
-  public parse(): AST.Node {
+  public parseAndBind(): BoundNode {
+    const ast = this.parse();
+    const binder = new Binder();
+    return binder.bind(ast);
+  }
+
+  public parse(): AST.Expression | AST.Statement {
     return this.parseExpression();
   }
 

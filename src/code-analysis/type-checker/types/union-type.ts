@@ -1,8 +1,10 @@
+import { Type, TypeKind } from "./type";
 import SingularType from "./singular-type";
-import Type from "./type";
 
-export default class UnionType implements Type {
+export default class UnionType extends Type {
+  public override readonly kind = TypeKind.Union;
+
   public constructor(
     public readonly types: SingularType[]
-  ) {}
+  ) { super(); }
 }

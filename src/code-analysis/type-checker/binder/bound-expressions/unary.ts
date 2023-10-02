@@ -1,7 +1,7 @@
-import { BoundExpression } from "..";
+import { BoundExpression } from "../bound-node";
 import { BoundUnaryOperator } from "../bound-operators/unary";
 
-export class BoundUnaryExpression extends BoundExpression {
+export default class BoundUnaryExpression extends BoundExpression {
   public override type = this.operator.resultType;
 
   public constructor(

@@ -1,4 +1,4 @@
-import Type from "./types/type";
+import type { Type } from "./types/type";
 
 export default class VariableSymbol {
   public constructor(

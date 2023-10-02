@@ -1,3 +1,4 @@
+import P from "../tools/p";
 import Parser from "./code-analysis/parser";
 
 async function main() {
@@ -5,9 +6,7 @@ async function main() {
 "hello" + "world"
   `;
 
-  const parser = new Parser(code);
-  const ast = parser.parse();
-  console.log(ast)
+  P.doString(code);
 }
 
 main().catch((error) => {

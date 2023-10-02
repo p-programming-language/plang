@@ -5,9 +5,8 @@
     "outDir": "./dist",
     "rootDir": "./",
     "strict": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "incremental": true,
+    "esModuleInterop": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": [

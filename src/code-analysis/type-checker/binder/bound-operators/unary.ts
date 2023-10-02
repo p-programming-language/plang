@@ -1,7 +1,8 @@
 import { BindingError } from "../../../../errors";
-import BOUND_UNARY_OPERATORS from "./all-unary-operators";
+import type { Type } from "../../types/type";
 import Syntax from "../../../syntax/syntax-type";
-import Type from "../../types/type";
+import SingularType from "../../types/singular-type";
+import UnionType from "../../types/union-type";
 
 export const enum BoundUnaryOperatorType {
   Identity,
@@ -43,7 +44,7 @@ export class BoundUnaryOperator {
 
   public static bind(syntax: Syntax, operandType: Type): BoundUnaryOperator {
     const operator = BOUND_UNARY_OPERATORS
-      .find(op => op.syntax == syntax && op.operandType == operandType);
+      .find(op => op.syntax === syntax && op.operandType.isAssignableTo(operandType));
 
     if (!operator)
       throw new BindingError(`Invalid bound unary operator syntax: ${Syntax[syntax]}`);
@@ -51,3 +52,50 @@ export class BoundUnaryOperator {
     return operator;
   }
 }
+
+const BOUND_UNARY_OPERATORS = [
+  new BoundUnaryOperator(
+    Syntax.Plus,
+    BoundUnaryOperatorType.Identity,
+    new UnionType([
+      new SingularType("int"),
+      new SingularType("float")
+    ])
+  ),
+  new BoundUnaryOperator(
+    Syntax.Minus,
+    BoundUnaryOperatorType.Negate,
+    new UnionType([
+      new SingularType("int"),
+      new SingularType("float")
+    ])
+  ),
+  new BoundUnaryOperator(
+    Syntax.PlusPlus,
+    BoundUnaryOperatorType.Increment,
+    new UnionType([
+      new SingularType("int"),
+      new SingularType("float")
+    ])
+  ),
+  new BoundUnaryOperator(
+    Syntax.MinusMinus,
+    BoundUnaryOperatorType.Decrement,
+    new UnionType([
+      new SingularType("int"),
+      new SingularType("float")
+    ])
+  ),
+  // new BoundUnaryOperator(
+  //   Syntax.Hashtag,
+  //   BoundUnaryOperatorType.Length,
+  //   new SingularType("Array"),
+  //   new SingularType("int")
+  // ),
+  new BoundUnaryOperator(
+    Syntax.Bang,
+    BoundUnaryOperatorType.Not,
+    new SingularType("any"),
+    new SingularType("bool")
+  )
+];

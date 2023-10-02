@@ -1,8 +1,8 @@
-import { ValueType } from "../../../type-checker";
-import { BoundExpression } from "..";
-import Type from "../../types/type";
+import { BoundExpression } from "../bound-node";
+import type { ValueType } from "../../../type-checker";
+import type { Type } from "../../types/type";
 
-export class BoundLiteralExpression<T extends ValueType = ValueType> extends BoundExpression {
+export default class BoundLiteralExpression<T extends ValueType = ValueType> extends BoundExpression {
   public constructor(
     public readonly value: T,
     public readonly type: Type

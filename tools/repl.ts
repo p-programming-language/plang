@@ -1,20 +1,17 @@
 #!/usr/bin/env node
 import { readln } from "../src/lib/utilities";
-import Parser from "../src/code-analysis/parser";
+import P from "./p";
 
 async function main() {
-    console.log("Welcome to the PLANG repl!");
+  console.log("Welcome to the PLANG repl!");
 
-    while (true) {
-        const code = await readln("> ");
-        if (!code.trim()) continue;
-
-        const parser = new Parser(code);
-        const ast = parser.parse();
-        console.log(ast)
-    }
+  while (true) {
+    const code = await readln("> ");
+    if (!code.trim()) continue;
+    P.doString(code);
+  }
 }
 
 main().catch((error) => {
-    console.error("An error occurred:", error);
+  console.error("An error occurred:", error);
 });

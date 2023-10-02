@@ -1,33 +1,21 @@
-import util from "util";
 
 import { LiteralExpression } from "../../parser/ast/expressions/literal";
 import { ParenthesizedExpression } from "../../parser/ast/expressions/parenthesized";
 import { BinaryExpression } from "../../parser/ast/expressions/binary";
 import { UnaryExpression } from "../../parser/ast/expressions/unary";
-import { ValueType } from "..";
-
-import { BoundLiteralExpression } from "./bound-expressions/literal";
-import { BoundParenthesizedExpression } from "./bound-expressions/parenthesized";
-import { BoundBinaryExpression } from "./bound-expressions/binary";
 import { BoundBinaryOperator } from "./bound-operators/binary";
-import { BoundUnaryExpression } from "./bound-expressions/unary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
+import { BoundExpression, BoundStatement } from "./bound-node";
+import type { Type } from "../types/type";
+import type { ValueType } from "..";
 
+import SingularType from "../types/singular-type";
 import Syntax from "../../syntax/syntax-type";
 import AST from "../../parser/ast";
-import Type from "../types/type";
-import SingularType from "../types/singular-type";
-
-export abstract class BoundNode {
-  public toString(): string {
-    return util.inspect(this, { colors: true, compact: false });
-  }
-}
-
-export abstract class BoundExpression extends BoundNode {
-  public abstract type: Type;
-}
-export abstract class BoundStatement extends BoundNode {}
+import BoundLiteralExpression from "./bound-expressions/literal";
+import BoundParenthesizedExpression from "./bound-expressions/parenthesized";
+import BoundBinaryExpression from "./bound-expressions/binary";
+import BoundUnaryExpression from "./bound-expressions/unary";
 
 export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   public visitUnaryExpression(expr: UnaryExpression): BoundExpression {
@@ -52,7 +40,7 @@ export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visi
     return new BoundLiteralExpression(expr.token.value, type);
   }
 
-  private bind<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement>(node: T): T extends AST.Expression ? BoundExpression : BoundStatement {
+  public bind<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement>(node: T): T extends AST.Expression ? BoundExpression : BoundStatement {
     if (node instanceof AST.Expression)
       return node.accept<BoundExpression>(this);
     else

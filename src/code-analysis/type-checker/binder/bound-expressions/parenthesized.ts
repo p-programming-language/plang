@@ -1,6 +1,6 @@
-import { BoundExpression } from "..";
+import { BoundExpression } from "../bound-node";
 
-export class BoundParenthesizedExpression extends BoundExpression {
+export default class BoundParenthesizedExpression extends BoundExpression {
   public override type = this.expression.type;
 
   public constructor(
