@@ -42,9 +42,9 @@ export class BoundUnaryOperator {
       this.resultType = <Type>resultType;
   }
 
-  public static bind(syntax: Syntax, operandType: Type): BoundUnaryOperator {
+  public static get(syntax: Syntax): BoundUnaryOperator {
     const operator = BOUND_UNARY_OPERATORS
-      .find(op => op.syntax === syntax && op.operandType.isAssignableTo(operandType));
+      .find(op => op.syntax === syntax);
 
     if (!operator)
       throw new BindingError(`Invalid bound unary operator syntax: ${Syntax[syntax]}`);

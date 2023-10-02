@@ -5,6 +5,7 @@ export default class SingularType extends Type {
   public override readonly kind = TypeKind.Singular;
 
   public constructor(
-    public readonly name: keyof typeof TYPE_KEYWORDS
+    public readonly name: keyof typeof TYPE_KEYWORDS,
+    public readonly typeArguments?: Type[]
   ) { super(); }
 }

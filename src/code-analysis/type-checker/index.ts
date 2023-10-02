@@ -3,10 +3,15 @@ import { LiteralExpression } from "../parser/ast/expressions/literal";
 import { ParenthesizedExpression } from "../parser/ast/expressions/parenthesized";
 import { BinaryExpression } from "../parser/ast/expressions/binary";
 import { UnaryExpression } from "../parser/ast/expressions/unary";
+import { IdentifierExpression } from "../parser/ast/expressions/identifier";
 
 export type ValueType = string | number | boolean | null | undefined;
 
 export class TypeChecker implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
+  public visitIdentifierExpression(expr: IdentifierExpression): void {
+    throw new Error("Method not implemented.");
+  }
+
   public visitUnaryExpression(expr: UnaryExpression): void {
     throw new Error("Method not implemented.");
   }

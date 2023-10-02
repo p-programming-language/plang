@@ -6,8 +6,13 @@ import { LiteralExpression } from "../code-analysis/parser/ast/expressions/liter
 import { ParenthesizedExpression } from "../code-analysis/parser/ast/expressions/parenthesized";
 import { UnaryExpression } from "../code-analysis/parser/ast/expressions/unary";
 import { BinaryExpression } from "../code-analysis/parser/ast/expressions/binary";
+import { IdentifierExpression } from "../code-analysis/parser/ast/expressions/identifier";
 
 export default class CodeGenerator extends StringBuilder implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
+  public visitIdentifierExpression(expr: IdentifierExpression): void {
+    throw new Error("Method not implemented.");
+  }
+
   public visitUnaryExpression(expr: UnaryExpression): void {
     throw new Error("Method not implemented.");
   }

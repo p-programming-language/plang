@@ -63,9 +63,9 @@ export class BoundBinaryOperator {
     }
   }
 
-  public static bind(syntax: Syntax, leftType: Type, rightType: Type): BoundBinaryOperator {
+  public static get(syntax: Syntax): BoundBinaryOperator {
     const operator = BOUND_BINARY_OPERATORS
-      .find(op => op.syntax === syntax && op.leftType.isAssignableTo(leftType) && op.rightType.isAssignableTo(rightType));
+      .find(op => op.syntax === syntax);
 
     if (!operator)
       throw new BindingError(`Invalid bound binary operator syntax: ${Syntax[syntax]}`);

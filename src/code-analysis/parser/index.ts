@@ -6,6 +6,7 @@ import { LiteralExpression } from "./ast/expressions/literal";
 import { ParenthesizedExpression } from "./ast/expressions/parenthesized";
 import { BinaryExpression } from "./ast/expressions/binary";
 import { UnaryExpression } from "./ast/expressions/unary";
+import { IdentifierExpression } from "./ast/expressions/identifier";
 import { BoundNode } from "../type-checker/binder/bound-node";
 import { Binder } from "../type-checker/binder";
 
@@ -22,12 +23,6 @@ export default class Parser extends ArrayStepper<Token> {
     const lexer = new Lexer(source);
     const tokens = lexer.tokenize();
     super(tokens);
-  }
-
-  public parseAndBind(): BoundNode {
-    const ast = this.parse();
-    const binder = new Binder();
-    return binder.bind(ast);
   }
 
   public parse(): AST.Expression | AST.Statement {
@@ -86,6 +81,8 @@ export default class Parser extends ArrayStepper<Token> {
   private parsePrimary(): AST.Expression {
     if (this.matchSet(LITERAL_SYNTAXES))
       return new LiteralExpression(this.previous());
+    if (this.match(Syntax.Identifier))
+      return new IdentifierExpression(this.previous());
     if (this.match(Syntax.LParen)) {
       const expr = this.parseExpression();
       this.consume(Syntax.RParen, ")");

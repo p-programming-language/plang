@@ -5,6 +5,7 @@ import { LiteralExpression } from "./expressions/literal";
 import { ParenthesizedExpression } from "./expressions/parenthesized";
 import { BinaryExpression } from "./expressions/binary";
 import { UnaryExpression } from "./expressions/unary";
+import { IdentifierExpression } from "./expressions/identifier";
 
 namespace AST {
   export abstract class Node {
@@ -24,6 +25,7 @@ namespace AST {
 
   export namespace Visitor {
     export abstract class Expression<R> {
+      public abstract visitIdentifierExpression(expr: IdentifierExpression): R
       public abstract visitParenthesizedExpression(expr: ParenthesizedExpression): R
       public abstract visitLiteralExpression(expr: LiteralExpression): R
       public abstract visitBinaryExpression(expr: BinaryExpression): R
