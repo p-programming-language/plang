@@ -10,7 +10,10 @@ namespace P {
 
   export function doFile(filePath: string): void {
     const fileContents = readFileSync(filePath, "utf-8");
-    doString(fileContents);
+    const lines = fileContents.split('\n');
+    for (const line of lines) {
+      doString(line);
+    }
   }
 }
 
