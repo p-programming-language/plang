@@ -1,30 +1,30 @@
 import AST from "../parser/ast";
-import { LiteralExpression } from "../parser/ast/expressions/literal";
-import { ParenthesizedExpression } from "../parser/ast/expressions/parenthesized";
-import { BinaryExpression } from "../parser/ast/expressions/binary";
-import { UnaryExpression } from "../parser/ast/expressions/unary";
-import { IdentifierExpression } from "../parser/ast/expressions/identifier";
+import BoundLiteralExpression from "./binder/bound-expressions/literal";
+import BoundParenthesizedExpression from "./binder/bound-expressions/parenthesized";
+import BoundBinaryExpression from "./binder/bound-expressions/binary";
+import BoundUnaryExpression from "./binder/bound-expressions/unary";
+import BoundIdentifierExpression from "./binder/bound-expressions/identifier";
 
 export type ValueType = string | number | boolean | null | undefined;
 
-export class TypeChecker implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
-  public visitIdentifierExpression(expr: IdentifierExpression): void {
+export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
+  public visitIdentifierExpression(expr: BoundIdentifierExpression): void {
     throw new Error("Method not implemented.");
   }
 
-  public visitUnaryExpression(expr: UnaryExpression): void {
+  public visitUnaryExpression(expr: BoundUnaryExpression): void {
     throw new Error("Method not implemented.");
   }
 
-  public visitBinaryExpression(expr: BinaryExpression): void {
+  public visitBinaryExpression(expr: BoundBinaryExpression): void {
     throw new Error("Method not implemented.");
   }
 
-  public visitParenthesizedExpression(expr: ParenthesizedExpression): void {
+  public visitParenthesizedExpression(expr: BoundParenthesizedExpression): void {
     throw new Error("Method not implemented.");
   }
 
-  public visitLiteralExpression(expr: LiteralExpression<ValueType>): void {
+  public visitLiteralExpression<T extends ValueType = ValueType>(expr: BoundLiteralExpression<T>): void {
     throw new Error("Method not implemented.");
   }
 }

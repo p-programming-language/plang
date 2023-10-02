@@ -1,11 +1,16 @@
 import util from "util";
 
-import { Token } from "../../syntax/token";
-import { LiteralExpression } from "./expressions/literal";
-import { ParenthesizedExpression } from "./expressions/parenthesized";
-import { BinaryExpression } from "./expressions/binary";
-import { UnaryExpression } from "./expressions/unary";
-import { IdentifierExpression } from "./expressions/identifier";
+import type { Token } from "../../syntax/token";
+import type { LiteralExpression } from "./expressions/literal";
+import type { ParenthesizedExpression } from "./expressions/parenthesized";
+import type { BinaryExpression } from "./expressions/binary";
+import type { UnaryExpression } from "./expressions/unary";
+import type { IdentifierExpression } from "./expressions/identifier";
+import type BoundLiteralExpression from "../../type-checker/binder/bound-expressions/literal";
+import type BoundParenthesizedExpression from "../../type-checker/binder/bound-expressions/parenthesized";
+import type BoundBinaryExpression from "../../type-checker/binder/bound-expressions/binary";
+import type BoundUnaryExpression from "../../type-checker/binder/bound-expressions/unary";
+import type BoundIdentifierExpression from "../../type-checker/binder/bound-expressions/identifier";
 
 namespace AST {
   export abstract class Node {
@@ -33,6 +38,18 @@ namespace AST {
     }
 
     export abstract class Statement<R> {
+
+    }
+
+    export abstract class BoundExpression<R> {
+      public abstract visitIdentifierExpression(expr: BoundIdentifierExpression): R
+      public abstract visitParenthesizedExpression(expr: BoundParenthesizedExpression): R
+      public abstract visitLiteralExpression(expr: BoundLiteralExpression): R
+      public abstract visitBinaryExpression(expr: BoundBinaryExpression): R
+      public abstract visitUnaryExpression(expr: BoundUnaryExpression): R
+    }
+
+    export abstract class BoundStatement<R> {
 
     }
   }
