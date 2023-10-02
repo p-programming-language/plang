@@ -18,7 +18,7 @@ becuz im bored
 - test
     - Runs a simple test on plang
 
-## installing
+## Installation
 ### On unix/linux:
 ```bash
 curl -sSL https://raw.githubusercontent.com/KevinAlavik/plang/main/install.sh | bash
@@ -57,6 +57,10 @@ yarn run <tool>
     - Identifiers
     - Keywords
     - Most symbols (`.`, `:`, `<`, `<=`, `>`, `>=`, all brackets, arithmetic operators, etc.)
+- Parsing/Binding:
+    - Literals
+    - Binary expressions
+    - Unary expressions
 
 ---
-**atm its only a tokenizer soon support for variables and functions**
+**ATM it's only a tokenizer, parser, and binder. Support for variables, functions, etc. soon.**
