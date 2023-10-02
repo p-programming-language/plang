@@ -1,0 +1,41 @@
+name: Daily Release
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build and Test
+        run: |
+          npm run build
+          npm test
+
+      - name: Generate Release Notes
+        run: |
+          # Script to generate release notes
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: path/to/release/files/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: Daily Release $(date +\%Y\%m\%d)
+          release_name: Daily Release $(date +\%Y\%m\%d)
+          body: |
+            Release notes for the daily release.
