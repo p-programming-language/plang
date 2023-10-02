@@ -22,9 +22,12 @@ export abstract class Type {
     if (this.isUnion())
       return this.types.some(type => type.isAssignableTo(other));
     else if (this.isSingular())
-      if (other.isSingular())
+      if (other.isSingular()) {
+        if (this.name === "any" || other.name === "any")
+          return true;
+
         return this.name === other.name;
-      else
+      } else
         return other.isAssignableTo(this);
 
     return false;
