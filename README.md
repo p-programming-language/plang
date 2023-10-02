@@ -7,7 +7,7 @@ The P programming language
 
 ![GitHub](https://img.shields.io/github/license/p-programming-language/plang)
 
-[![testing](https://github.com/KevinAlavik/plang/actions/workflows/test.yml/badge.svg)](https://github.com/KevinAlavik/plang/actions/workflows/test.yml) [![njsscan sarif](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml/badge.svg)](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml)
+[![testing](https://github.com/KevinAlavik/plang/actions/workflows/test.yml/badge.svg)](https://github.com/KevinAlavik/plang/actions/workflows/test.yml) [![njsscan sarif](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml/badge.svg)](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml) [![Daily Release](https://github.com/p-programming-language/plang/actions/workflows/daily-release.yml/badge.svg)](https://github.com/p-programming-language/plang/actions/workflows/daily-release.yml)
 ## Why?
 becuz im bored
 ## Tools
