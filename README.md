@@ -1,12 +1,12 @@
 # PLang
 The P programming language
 
-![Last Commit](https://img.shields.io/github/last-commit/kevinalavik/plang
-)
+![Last Commit](https://img.shields.io/github/last-commit/p-programming-language/plang
+) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/p-programming-language/plang) ![GitHub top language](https://img.shields.io/github/languages/top/p-programming-language/plang)
 
-[![testing](https://github.com/KevinAlavik/plang/actions/workflows/test.yml/badge.svg)](https://github.com/KevinAlavik/plang/actions/workflows/test.yml)
+![GitHub](https://img.shields.io/github/license/p-programming-language/plang)
 
-[![njsscan sarif](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml/badge.svg)](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml)
+[![testing](https://github.com/KevinAlavik/plang/actions/workflows/test.yml/badge.svg)](https://github.com/KevinAlavik/plang/actions/workflows/test.yml) [![njsscan sarif](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml/badge.svg)](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml)
 ## Why?
 becuz im bored
 ## Tools
