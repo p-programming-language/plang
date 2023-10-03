@@ -7,6 +7,7 @@ import { ParenthesizedExpression } from "./ast/expressions/parenthesized";
 import { BinaryExpression } from "./ast/expressions/binary";
 import { UnaryExpression } from "./ast/expressions/unary";
 import { IdentifierExpression } from "./ast/expressions/identifier";
+import { CompoundAssignmentExpression } from "./ast/expressions/compound-assignment";
 
 import ArrayStepper from "../array-stepper";
 import Lexer from "../syntax/lexer";
@@ -14,7 +15,7 @@ import Syntax from "../syntax/syntax-type";
 import AST from "./ast";
 
 import * as SyntaxSets from "../syntax/syntax-sets";
-const { UNARY_SYNTAXES, LITERAL_SYNTAXES, TYPE_SYNTAXES } = SyntaxSets;
+const { UNARY_SYNTAXES, LITERAL_SYNTAXES, TYPE_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 export default class Parser extends ArrayStepper<Token> {
   public constructor(source: string) {
@@ -28,7 +29,22 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseExpression(): AST.Expression {
-    return this.parseLogicalOr();
+    return this.parseCompoundAssignment();
+  }
+
+  private parseCompoundAssignment(): AST.Expression {
+    let left = this.parseLogicalOr();
+
+    if (this.matchSet(COMPOUND_ASSIGNMENT_SYNTAXES)) {
+      const operator = this.previous();
+      const right = this.parseLogicalOr();
+      if (!(left instanceof IdentifierExpression)) // || left instanceof AccessExpression
+        throw new ParsingError("Invalid compound assignment target");
+
+      left = new CompoundAssignmentExpression(left, right, operator);
+    }
+
+    return left;
   }
 
   private parseLogicalOr(): AST.Expression {

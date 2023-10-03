@@ -1,8 +1,8 @@
 import { BoundExpression } from "../bound-node";
-import { BoundBinaryOperator } from "../bound-operators/binary";
+import type { BoundBinaryOperator } from "../bound-operators/binary";
 
 export default class BoundBinaryExpression extends BoundExpression {
-  public override type = this.operator.resultType;
+  public override readonly type = this.operator.resultType;
 
   public constructor(
     public readonly left: BoundExpression,

@@ -4,6 +4,7 @@ import { ParenthesizedExpression } from "../../parser/ast/expressions/parenthesi
 import { BinaryExpression } from "../../parser/ast/expressions/binary";
 import { UnaryExpression } from "../../parser/ast/expressions/unary";
 import { IdentifierExpression } from "../../parser/ast/expressions/identifier";
+import { CompoundAssignmentExpression } from "../../parser/ast/expressions/compound-assignment";
 import { VariableDeclarationStatement } from "../../parser/ast/statements/variable-declaration";
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
@@ -14,13 +15,14 @@ import type { ValueType } from "..";
 import SingularType from "../types/singular-type";
 import Syntax from "../../syntax/syntax-type";
 import AST from "../../parser/ast";
+import VariableSymbol from "../variable-symbol";
 import BoundLiteralExpression from "./bound-expressions/literal";
 import BoundParenthesizedExpression from "./bound-expressions/parenthesized";
 import BoundBinaryExpression from "./bound-expressions/binary";
 import BoundUnaryExpression from "./bound-expressions/unary";
 import BoundIdentifierExpression from "./bound-expressions/identifier";
+import BoundCompoundAssignmentExpression from "./bound-expressions/compound-assignment";
 import BoundVariableDeclarationStatement from "./bound-statements/variable-declaration";
-import VariableSymbol from "../variable-symbol";
 
 export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   public visitVariableDeclarationStatement(expr: VariableDeclarationStatement): BoundVariableDeclarationStatement {
@@ -29,6 +31,13 @@ export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visi
     const initializer = expr.initializer ? this.bind(expr.initializer) : undefined;
     const variableSymbol = new VariableSymbol(name, initializer?.type ?? new SingularType("undefined"));
     return new BoundVariableDeclarationStatement(variableSymbol, initializer);
+  }
+
+  public visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): BoundCompoundAssignmentExpression {
+    const left = <BoundIdentifierExpression>this.bind(expr.left);
+    const right = this.bind(expr.right);
+    const boundOperator = BoundBinaryOperator.get(expr.operator.syntax);
+    return new BoundCompoundAssignmentExpression(left, right, boundOperator);
   }
 
   public visitIdentifierExpression(expr: IdentifierExpression): BoundIdentifierExpression {

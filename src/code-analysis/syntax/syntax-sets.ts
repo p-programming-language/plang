@@ -1,5 +1,13 @@
 import Syntax from "./syntax-type";
 
+export const COMPOUND_ASSIGNMENT_SYNTAXES = [
+  Syntax.PlusEqual, Syntax.MinusEqual,
+  Syntax.StarEqual, Syntax.SlashEqual, Syntax.SlashSlashEqual,
+  Syntax.CaratEqual, Syntax.PercentEqual,
+  Syntax.AmpersandEqual, Syntax.PipeEqual,
+  Syntax.AmpersandAmpersandEqual, Syntax.PipePipeEqual,
+]
+
 export const TYPE_SYNTAXES = [
   Syntax.Int,
   Syntax.Float,

@@ -5,11 +5,16 @@ import BoundBinaryExpression from "./binder/bound-expressions/binary";
 import BoundUnaryExpression from "./binder/bound-expressions/unary";
 import BoundIdentifierExpression from "./binder/bound-expressions/identifier";
 import BoundVariableDeclarationStatement from "./binder/bound-statements/variable-declaration";
+import BoundCompoundAssignmentExpression from "./binder/bound-expressions/compound-assignment";
 
 export type ValueType = string | number | boolean | null | undefined;
 
 export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
   public visitVariableDeclarationStatement(stmt: BoundVariableDeclarationStatement): void {
+    throw new Error("Method not implemented.");
+  }
+
+  public visitCompoundAssignmentExpression(expr: BoundCompoundAssignmentExpression): void {
     throw new Error("Method not implemented.");
   }
 

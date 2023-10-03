@@ -9,6 +9,7 @@ import { IdentifierExpression } from "../code-analysis/parser/ast/expressions/id
 import { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
 import { Token } from "./syntax/token";
 import { ResolutionError } from "../errors";
+import { CompoundAssignmentExpression } from "./parser/ast/expressions/compound-assignment";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   // the boolean represents whether the variable is defined or not
@@ -21,6 +22,11 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
       this.resolve(stmt.initializer);
 
     this.define(stmt.identifier.name);
+  }
+
+  public visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): void {
+    this.resolve(expr.left);
+    this.resolve(expr.right);
   }
 
   public visitIdentifierExpression(expr: IdentifierExpression): void {

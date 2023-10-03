@@ -4,13 +4,15 @@ import Syntax from "../../../syntax/syntax-type";
 import SingularType from "../../types/singular-type";
 import UnionType from "../../types/union-type";
 
+
 export const enum BoundUnaryOperatorType {
   Identity,
   Negate,
   Increment,
   Decrement,
   Length,
-  Not
+  Not,
+  BitwiseNot
 }
 
 export class BoundUnaryOperator {
@@ -97,5 +99,10 @@ const BOUND_UNARY_OPERATORS = [
     BoundUnaryOperatorType.Not,
     new SingularType("any"),
     new SingularType("bool")
+  ),
+  new BoundUnaryOperator(
+    Syntax.Tilde,
+    BoundUnaryOperatorType.BitwiseNot,
+    new SingularType("int")
   )
 ];

@@ -6,12 +6,14 @@ import type { ParenthesizedExpression } from "./expressions/parenthesized";
 import type { BinaryExpression } from "./expressions/binary";
 import type { UnaryExpression } from "./expressions/unary";
 import type { IdentifierExpression } from "./expressions/identifier";
+import type { CompoundAssignmentExpression } from "./expressions/compound-assignment";
 import type { VariableDeclarationStatement } from "./statements/variable-declaration";
 import type BoundLiteralExpression from "../../type-checker/binder/bound-expressions/literal";
 import type BoundParenthesizedExpression from "../../type-checker/binder/bound-expressions/parenthesized";
 import type BoundBinaryExpression from "../../type-checker/binder/bound-expressions/binary";
 import type BoundUnaryExpression from "../../type-checker/binder/bound-expressions/unary";
 import type BoundIdentifierExpression from "../../type-checker/binder/bound-expressions/identifier";
+import type BoundCompoundAssignmentExpression from "../../type-checker/binder/bound-expressions/compound-assignment";
 import type BoundVariableDeclarationStatement from "../../type-checker/binder/bound-statements/variable-declaration";
 
 namespace AST {
@@ -32,6 +34,7 @@ namespace AST {
 
   export namespace Visitor {
     export abstract class Expression<R> {
+      public abstract visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): R
       public abstract visitIdentifierExpression(expr: IdentifierExpression): R
       public abstract visitParenthesizedExpression(expr: ParenthesizedExpression): R
       public abstract visitLiteralExpression(expr: LiteralExpression): R
@@ -44,6 +47,7 @@ namespace AST {
     }
 
     export abstract class BoundExpression<R> {
+      public abstract visitCompoundAssignmentExpression(expr: BoundCompoundAssignmentExpression): R
       public abstract visitIdentifierExpression(expr: BoundIdentifierExpression): R
       public abstract visitParenthesizedExpression(expr: BoundParenthesizedExpression): R
       public abstract visitLiteralExpression(expr: BoundLiteralExpression): R
