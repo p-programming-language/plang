@@ -1,11 +1,14 @@
 
-import { LiteralExpression } from "../../parser/ast/expressions/literal";
-import { ParenthesizedExpression } from "../../parser/ast/expressions/parenthesized";
-import { BinaryExpression } from "../../parser/ast/expressions/binary";
-import { UnaryExpression } from "../../parser/ast/expressions/unary";
-import { IdentifierExpression } from "../../parser/ast/expressions/identifier";
-import { CompoundAssignmentExpression } from "../../parser/ast/expressions/compound-assignment";
-import { VariableDeclarationStatement } from "../../parser/ast/statements/variable-declaration";
+import type { LiteralExpression } from "../../parser/ast/expressions/literal";
+import type { ParenthesizedExpression } from "../../parser/ast/expressions/parenthesized";
+import type { BinaryExpression } from "../../parser/ast/expressions/binary";
+import type { UnaryExpression } from "../../parser/ast/expressions/unary";
+import type { IdentifierExpression } from "../../parser/ast/expressions/identifier";
+import type { CompoundAssignmentExpression } from "../../parser/ast/expressions/compound-assignment";
+import type { VariableAssignmentExpression } from "../../parser/ast/expressions/variable-assignment";
+import type { ExpressionStatement } from "../../parser/ast/statements/expression";
+import type { VariableAssignmentStatement } from "../../parser/ast/statements/variable-assignment";
+import type { VariableDeclarationStatement } from "../../parser/ast/statements/variable-declaration";
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
 import type { BoundExpression, BoundStatement } from "./bound-node";
@@ -22,6 +25,9 @@ import BoundBinaryExpression from "./bound-expressions/binary";
 import BoundUnaryExpression from "./bound-expressions/unary";
 import BoundIdentifierExpression from "./bound-expressions/identifier";
 import BoundCompoundAssignmentExpression from "./bound-expressions/compound-assignment";
+import BoundVariableAssignmentExpression from "./bound-expressions/variable-assignment";
+import BoundExpressionStatement from "./bound-statements/expression";
+import BoundVariableAssignmentStatement from "./bound-statements/variable-assignment";
 import BoundVariableDeclarationStatement from "./bound-statements/variable-declaration";
 
 export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
@@ -33,8 +39,24 @@ export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visi
     return new BoundVariableDeclarationStatement(variableSymbol, initializer);
   }
 
+  public visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): BoundVariableAssignmentStatement {
+    const identifier = <BoundIdentifierExpression>this.bind(stmt.identifier);
+    const value = this.bind(stmt.value);
+    return new BoundVariableAssignmentStatement(identifier, value);
+  }
+
+  public visitExpressionStatement(stmt: ExpressionStatement): BoundExpressionStatement {
+    return new BoundExpressionStatement(this.bind(stmt.expression));
+  }
+
+  public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): BoundVariableAssignmentExpression {
+    const identifier = <BoundIdentifierExpression>this.bind(expr.identifier);
+    const value = this.bind(expr.value);
+    return new BoundVariableAssignmentExpression(identifier, value);
+  }
+
   public visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): BoundCompoundAssignmentExpression {
-    const left = <BoundIdentifierExpression>this.bind(expr.left);
+    const left = <BoundIdentifierExpression>this.bind(expr.left); // | BoundAccessExpression
     const right = this.bind(expr.right);
     const boundOperator = BoundBinaryOperator.get(expr.operator.syntax);
     return new BoundCompoundAssignmentExpression(left, right, boundOperator);

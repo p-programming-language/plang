@@ -15,6 +15,9 @@ import Syntax from "../syntax/syntax-type";
 import AST from "./ast";
 
 import * as SyntaxSets from "../syntax/syntax-sets";
+import { ExpressionStatement } from "./ast/statements/expression";
+import { VariableAssignmentExpression } from "./ast/expressions/variable-assignment";
+import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, TYPE_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 export default class Parser extends ArrayStepper<Token> {
@@ -24,12 +27,59 @@ export default class Parser extends ArrayStepper<Token> {
     super(tokens);
   }
 
-  public parse(): AST.Expression | AST.Statement {
-    return this.parseExpression();
+  public parse(): AST.Statement[] {
+    const statements = [];
+    while (!this.isFinished) {
+      const stmt = this.declaration();
+      if (!stmt) continue;
+      statements.push(stmt);
+    }
+    return statements;
+  }
+
+  private declaration(): AST.Statement | undefined {
+    try {
+      // if (this.currentType)
+      //   return this.parseVariableDeclaration();
+
+      return this.parseStatement();
+    } catch(e) {
+      this.synchronize();
+    }
+  }
+
+  private parseStatement(): AST.Statement {
+    // match other statements like if, return, while, etc
+    return this.parseExpressionStatement();
+  }
+
+  private parseExpressionStatement(): AST.Statement {
+    const expr = this.parseExpression();
+    return expr instanceof AST.Expression ?
+      new ExpressionStatement(expr)
+      : expr;
   }
 
   private parseExpression(): AST.Expression {
-    return this.parseCompoundAssignment();
+    return <AST.Expression>this.parseVariableAssignment();
+  }
+
+  private parseVariableAssignment(): AST.Expression | AST.Statement {
+    let left = this.parseCompoundAssignment();
+
+    if (this.match(Syntax.Equal) || this.match(Syntax.ColonEqual)) {
+      const operator = this.previous();
+      const value = <AST.Expression>this.parseVariableAssignment();
+      if (left instanceof IdentifierExpression)
+        if (operator.syntax === Syntax.Equal)
+          return new VariableAssignmentStatement(left, value);
+        else
+          return new VariableAssignmentExpression(left, value);
+
+      throw new ParsingError("Invalid assignment target");
+    }
+
+    return left;
   }
 
   private parseCompoundAssignment(): AST.Expression {
@@ -198,6 +248,24 @@ export default class Parser extends ArrayStepper<Token> {
   private get currentType(): Token | undefined {
     if (!this.matchSet(TYPE_SYNTAXES)) return;
     return this.previous();
+  }
+
+  private synchronize(): void {
+    this.advance();
+
+    while (!this.isFinished) {
+      // if (this.previous().syntax === Syntax.Semicolon)
+      //   return;
+
+      if (TYPE_SYNTAXES.includes(this.current.syntax))
+        return;
+
+      switch (this.current.syntax) {
+
+      }
+
+      this.advance();
+    }
   }
 
   private advance(): Token {
