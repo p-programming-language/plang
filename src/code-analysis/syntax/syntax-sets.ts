@@ -9,11 +9,6 @@ export const COMPOUND_ASSIGNMENT_SYNTAXES = [
 ]
 
 export const TYPE_SYNTAXES = [
-  Syntax.Int,
-  Syntax.Float,
-  Syntax.String,
-  Syntax.Boolean,
-  Syntax.Function,
   Syntax.IntType,
   Syntax.FloatType,
   Syntax.StringType,

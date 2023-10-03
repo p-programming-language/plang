@@ -3,7 +3,7 @@ import AST from "..";
 
 export class IdentifierExpression extends AST.Expression {
   public constructor(
-    public readonly name: Token
+    public readonly name: Token<undefined>
   ) { super(); }
 
   public accept<R>(visitor: AST.Visitor.Expression<R>): R {

@@ -18,7 +18,11 @@ import * as SyntaxSets from "../syntax/syntax-sets";
 import { ExpressionStatement } from "./ast/statements/expression";
 import { VariableAssignmentExpression } from "./ast/expressions/variable-assignment";
 import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
+import { ValueType } from "../type-checker";
+import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, TYPE_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
+
+type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
 
 export default class Parser extends ArrayStepper<Token> {
   public constructor(source: string) {
@@ -38,14 +42,21 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private declaration(): AST.Statement | undefined {
-    try {
-      // if (this.currentType)
-      //   return this.parseVariableDeclaration();
+    if (this.currentType && this.peek()?.syntax === Syntax.Identifier)
+      return this.parseVariableDeclaration();
 
-      return this.parseStatement();
-    } catch(e) {
-      this.synchronize();
-    }
+    return this.parseStatement();
+  }
+
+  private parseVariableDeclaration(): AST.Statement {
+    const typeKeyword = this.parseType();
+    const identifierToken = this.consume<undefined>(Syntax.Identifier, "identifier");
+    const initializer = this.match(Syntax.Equal) ?
+      this.parseExpression()
+      : undefined;
+
+    const identifier = new IdentifierExpression(identifierToken);
+    return new VariableDeclarationStatement(typeKeyword, identifier, initializer);
   }
 
   private parseStatement(): AST.Statement {
@@ -220,7 +231,7 @@ export default class Parser extends ArrayStepper<Token> {
   private parseUnary(): AST.Expression {
     if (this.matchSet(UNARY_SYNTAXES)) {
       const operator = this.previous();
-      const operand = this.parseExpression();
+      const operand = this.parseUnary();
       return new UnaryExpression(operator, operand);
     } else
       return this.parsePrimary();
@@ -233,39 +244,24 @@ export default class Parser extends ArrayStepper<Token> {
       return new IdentifierExpression(this.previous());
     if (this.match(Syntax.LParen)) {
       const expr = this.parseExpression();
-      this.consume(Syntax.RParen, ")");
+      this.consume(Syntax.RParen, "')'");
       return new ParenthesizedExpression(expr);
     }
 
     throw new ParsingError("Expected expression");
   }
 
-  private parseType(): void {
-    if (this.currentType) return;
+  private get currentType(): Token<undefined> | undefined {
+    return this.checkSet(TYPE_SYNTAXES) ?
+      <Token<undefined>>this.current
+      : undefined;
+  }
+
+  private parseType(): Token<undefined> {
+    if (this.matchSet(TYPE_SYNTAXES))
+     return this.previous();
+
     throw new ParsingError(`Expected type, got '${this.current.lexeme}'`);
-  }
-
-  private get currentType(): Token | undefined {
-    if (!this.matchSet(TYPE_SYNTAXES)) return;
-    return this.previous();
-  }
-
-  private synchronize(): void {
-    this.advance();
-
-    while (!this.isFinished) {
-      // if (this.previous().syntax === Syntax.Semicolon)
-      //   return;
-
-      if (TYPE_SYNTAXES.includes(this.current.syntax))
-        return;
-
-      switch (this.current.syntax) {
-
-      }
-
-      this.advance();
-    }
   }
 
   private advance(): Token {
@@ -276,12 +272,16 @@ export default class Parser extends ArrayStepper<Token> {
     return token;
   }
 
-  private previous(): Token {
-    return this.peek(-1)!;
+  private previous<V extends ValueType = ValueType>(): Token<V> {
+    return <Token<V>>this.peek(-1)!;
   }
 
-  private matchSet(syntaxSet: (typeof SyntaxSets)[keyof typeof SyntaxSets]): boolean {
-    const matches = syntaxSet.includes(this.current.syntax);
+  private checkSet(syntaxSet: SyntaxSet): boolean {
+    return syntaxSet.includes(this.current.syntax);
+  }
+
+  private matchSet(syntaxSet: SyntaxSet): boolean {
+    const matches = this.checkSet(syntaxSet);
     if (matches)
       this.advance();
 
@@ -302,10 +302,11 @@ export default class Parser extends ArrayStepper<Token> {
     return this.current.syntax === syntax;
   }
 
-  private consume(syntax: Syntax, expectedOverride?: string): void {
+  private consume<V extends ValueType = ValueType>(syntax: Syntax, expectedOverride?: string): Token<V> {
     const gotSyntax = this.peek() ? Syntax[this.peek()!.syntax] : "EOF";
-    const error = new ParsingError(`Expected '${expectedOverride ?? Syntax[syntax]}', got ${gotSyntax}`);
+    const error = new ParsingError(`Expected ${expectedOverride ?? `'${Syntax[syntax]}'`}, got ${gotSyntax}`);
     assert(this.match(syntax), error);
+    return this.previous();
   }
 
   protected override get isFinished(): boolean {
