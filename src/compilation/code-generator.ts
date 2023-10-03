@@ -7,8 +7,12 @@ import { ParenthesizedExpression } from "../code-analysis/parser/ast/expressions
 import { UnaryExpression } from "../code-analysis/parser/ast/expressions/unary";
 import { BinaryExpression } from "../code-analysis/parser/ast/expressions/binary";
 import { IdentifierExpression } from "../code-analysis/parser/ast/expressions/identifier";
+import { VariableDeclarationExpression } from "../code-analysis/parser/ast/expressions/variable-declaration";
 
 export default class CodeGenerator extends StringBuilder implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
+  public visitVariableDeclarationExpression(expr: VariableDeclarationExpression): void {
+    throw new Error("Method not implemented.");
+  }
   public visitIdentifierExpression(expr: IdentifierExpression): void {
     throw new Error("Method not implemented.");
   }
