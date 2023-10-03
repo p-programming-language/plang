@@ -1,15 +1,9 @@
 import { BindingError } from "../../../../errors";
+import type { Token } from "../../../syntax/token";
 import type { Type } from "../../types/type";
 import Syntax from "../../../syntax/syntax-type";
 import UnionType from "../../types/union-type";
 import SingularType from "../../types/singular-type";
-
-
-
-
-
-
-
 
 export const enum BoundBinaryOperatorType {
   Addition,
@@ -81,12 +75,12 @@ export class BoundBinaryOperator {
     }
   }
 
-  public static get(syntax: Syntax): BoundBinaryOperator {
+  public static get(operatorToken: Token<undefined>): BoundBinaryOperator {
     const operator = BOUND_BINARY_OPERATORS
-      .find(op => op.syntaxes.includes(syntax));
+      .find(op => op.syntaxes.includes(operatorToken.syntax));
 
     if (!operator)
-      throw new BindingError(`Invalid bound binary operator syntax: ${Syntax[syntax]}`);
+      throw new BindingError(`Invalid bound binary operator syntax: ${Syntax[operatorToken.syntax]}`, operatorToken);
 
     return operator;
   }

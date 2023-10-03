@@ -179,7 +179,7 @@ export default class Lexer extends ArrayStepper<string> {
           return;
         }
 
-        throw new TokenizationError(`Unexpected character: ${char}`);
+        throw new TokenizationError(`Unexpected character: ${char}`, this.line, this.column);
       }
     }
   }
@@ -196,7 +196,7 @@ export default class Lexer extends ArrayStepper<string> {
     const delimiter = this.advance();
     while (this.current !== delimiter) {
       if (this.advance(true) === "\n")
-        throw new TokenizationError("Unterminated string literal");
+        throw new TokenizationError("Unterminated string literal", this.line, this.column);
     }
 
     this.advance(); // advance final delimiter
@@ -209,7 +209,7 @@ export default class Lexer extends ArrayStepper<string> {
     while (/^[0-9]$/.test(this.current) || this.current === ".") {
       if (this.advance() === ".")
         if (usedDecimal)
-          throw new TokenizationError("Malformed number");
+          throw new TokenizationError("Malformed number", this.line, this.column);
         else
           usedDecimal = true;
     }

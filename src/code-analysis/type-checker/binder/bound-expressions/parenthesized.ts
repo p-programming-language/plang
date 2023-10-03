@@ -1,4 +1,5 @@
 import { BoundExpression } from "../bound-node";
+import type { Token } from "../../../syntax/token";
 import AST from "../../../parser/ast";
 
 export default class BoundParenthesizedExpression extends BoundExpression {
@@ -10,5 +11,9 @@ export default class BoundParenthesizedExpression extends BoundExpression {
 
   public accept<R>(visitor: AST.Visitor.BoundExpression<R>): R {
     return visitor.visitParenthesizedExpression(this);
+  }
+
+  public get token(): Token {
+    return this.expression.token;
   }
 }

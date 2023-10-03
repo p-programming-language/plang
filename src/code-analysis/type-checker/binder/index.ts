@@ -13,7 +13,7 @@ import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
 import type { BoundExpression, BoundStatement } from "./bound-node";
 import type { Token } from "../../syntax/token";
-import type { Type } from "../types/type";
+import { Type, TypeName } from "../types/type";
 import type { ValueType } from "..";
 
 import SingularType from "../types/singular-type";
@@ -34,10 +34,9 @@ import BoundVariableDeclarationStatement from "./bound-statements/variable-decla
 export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variables: VariableSymbol[] = [];
 
-  public visitVariableDeclarationStatement(expr: VariableDeclarationStatement): BoundVariableDeclarationStatement {
-    const name = expr.identifier.name.lexeme;
-    const initializer = expr.initializer ? this.bind(expr.initializer) : undefined;
-    const variableSymbol = new VariableSymbol(name, initializer?.type ?? new SingularType("undefined"));
+  public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): BoundVariableDeclarationStatement {
+    const initializer = stmt.initializer ? this.bind(stmt.initializer) : undefined;
+    const variableSymbol = new VariableSymbol(stmt.identifier.name, new SingularType(<TypeName>stmt.typeKeyword.lexeme));
     this.variables.push(variableSymbol);
     return new BoundVariableDeclarationStatement(variableSymbol, initializer);
   }
@@ -63,25 +62,25 @@ export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visi
   public visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): BoundCompoundAssignmentExpression {
     const left = <BoundIdentifierExpression>this.bind(expr.left); // | BoundAccessExpression
     const right = this.bind(expr.right);
-    const boundOperator = BoundBinaryOperator.get(expr.operator.syntax);
+    const boundOperator = BoundBinaryOperator.get(expr.operator);
     return new BoundCompoundAssignmentExpression(left, right, boundOperator);
   }
 
   public visitIdentifierExpression(expr: IdentifierExpression): BoundIdentifierExpression {
     const variableSymbol = this.findSymbol(expr.name);
-    return new BoundIdentifierExpression(expr.name.lexeme, variableSymbol.type);
+    return new BoundIdentifierExpression(expr.name, variableSymbol.type);
   }
 
   public visitUnaryExpression(expr: UnaryExpression): BoundUnaryExpression {
     const operand = this.bind(expr.operand);
-    const boundOperator = BoundUnaryOperator.get(expr.operator.syntax);
+    const boundOperator = BoundUnaryOperator.get(expr.operator);
     return new BoundUnaryExpression(operand, boundOperator);
   }
 
   public visitBinaryExpression(expr: BinaryExpression): BoundBinaryExpression {
     const left = this.bind(expr.left);
     const right = this.bind(expr.right);
-    const boundOperator = BoundBinaryOperator.get(expr.operator.syntax);
+    const boundOperator = BoundBinaryOperator.get(expr.operator);
     return new BoundBinaryExpression(left, right, boundOperator);
   }
 
@@ -91,7 +90,7 @@ export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visi
 
   public visitLiteralExpression<T extends ValueType = ValueType>(expr: LiteralExpression<T>): BoundLiteralExpression<T> {
     const type = this.getTypeFromSyntax(expr.token.syntax)!;
-    return new BoundLiteralExpression(expr.token.value, type);
+    return new BoundLiteralExpression(expr.token, type);
   }
 
   public bindStatements(statements: AST.Statement[]): BoundStatement[] {
@@ -106,7 +105,7 @@ export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visi
 
   private findSymbol(name: Token): VariableSymbol {
     return this.variables
-      .find(symbol => symbol.name === name.lexeme)!;
+      .find(symbol => symbol.name.lexeme === name.lexeme)!;
   }
 
   private getTypeFromSyntax(syntax: Syntax): Type | undefined {

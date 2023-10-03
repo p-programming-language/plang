@@ -1,6 +1,7 @@
 import util from "util";
 import type SingularType from "./singular-type";
 import type UnionType from "./union-type";
+import { TYPE_KEYWORDS } from "../../syntax/keywords";
 
 export const enum TypeKind {
   Singular,
@@ -37,3 +38,5 @@ export abstract class Type {
     return util.inspect(this, { colors: true, compact: false })
   }
 }
+
+export type TypeName = keyof typeof TYPE_KEYWORDS;

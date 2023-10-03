@@ -1,4 +1,5 @@
 import { BindingError } from "../../../../errors";
+import type { Token } from "../../../syntax/token";
 import type { Type } from "../../types/type";
 import Syntax from "../../../syntax/syntax-type";
 import SingularType from "../../types/singular-type";
@@ -44,12 +45,12 @@ export class BoundUnaryOperator {
       this.resultType = <Type>resultType;
   }
 
-  public static get(syntax: Syntax): BoundUnaryOperator {
+  public static get(operatorToken: Token<undefined>): BoundUnaryOperator {
     const operator = BOUND_UNARY_OPERATORS
-      .find(op => op.syntax === syntax);
+      .find(op => op.syntax === operatorToken.syntax);
 
     if (!operator)
-      throw new BindingError(`Invalid bound unary operator syntax: ${Syntax[syntax]}`);
+      throw new BindingError(`Invalid bound unary operator syntax: ${Syntax[operatorToken.syntax]}`, operatorToken);
 
     return operator;
   }

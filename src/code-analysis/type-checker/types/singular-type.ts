@@ -1,11 +1,10 @@
-import { TYPE_KEYWORDS } from "../../syntax/keywords";
-import { Type, TypeKind } from "./type";
+import { Type, TypeKind, TypeName } from "./type";
 
 export default class SingularType extends Type {
   public override readonly kind = TypeKind.Singular;
 
   public constructor(
-    public readonly name: keyof typeof TYPE_KEYWORDS,
+    public readonly name: TypeName,
     public readonly typeArguments?: Type[]
   ) { super(); }
 

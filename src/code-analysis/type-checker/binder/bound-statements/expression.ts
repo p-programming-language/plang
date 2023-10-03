@@ -1,4 +1,5 @@
 import { BoundExpression, BoundStatement } from "../bound-node";
+import type { Token } from "../../../syntax/token";
 import AST from "../../../parser/ast";
 
 export default class BoundExpressionStatement extends BoundStatement {
@@ -10,5 +11,9 @@ export default class BoundExpressionStatement extends BoundStatement {
 
   public accept<R>(visitor: AST.Visitor.BoundStatement<R>): R {
     return visitor.visitExpressionStatement(this);
+  }
+
+  public get token(): Token {
+    return this.expression.token;
   }
 }

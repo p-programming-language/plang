@@ -1,4 +1,5 @@
 import { BoundExpression } from "../bound-node";
+import type { Token } from "../../../syntax/token";
 import type { BoundUnaryOperator } from "../bound-operators/unary";
 import AST from "../../../parser/ast";
 
@@ -12,5 +13,9 @@ export default class BoundUnaryExpression extends BoundExpression {
 
   public accept<R>(visitor: AST.Visitor.BoundExpression<R>): R {
     return visitor.visitUnaryExpression(this);
+  }
+
+  public get token(): Token {
+    return this.operand.token;
   }
 }

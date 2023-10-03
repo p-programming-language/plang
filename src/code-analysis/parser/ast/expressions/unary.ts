@@ -3,7 +3,7 @@ import AST from "..";
 
 export class UnaryExpression extends AST.Expression {
   public constructor(
-    public readonly operator: Token,
+    public readonly operator: Token<undefined>,
     public readonly operand: AST.Expression
   ) { super(); }
 

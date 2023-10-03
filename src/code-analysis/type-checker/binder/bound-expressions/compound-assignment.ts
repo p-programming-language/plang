@@ -1,5 +1,6 @@
 import { BoundExpression } from "../bound-node";
 import type { BoundBinaryOperator } from "../bound-operators/binary";
+import type { Token } from "../../../syntax/token";
 import type BoundIdentifierExpression from "./identifier";
 import AST from "../../../parser/ast";
 
@@ -14,5 +15,9 @@ export default class BoundCompoundAssignmentExpression extends BoundExpression {
 
   public accept<R>(visitor: AST.Visitor.BoundExpression<R>): R {
     return visitor.visitCompoundAssignmentExpression(this);
+  }
+
+  public get token(): Token {
+    return this.left.token;
   }
 }

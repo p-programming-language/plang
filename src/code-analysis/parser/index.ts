@@ -87,7 +87,7 @@ export default class Parser extends ArrayStepper<Token> {
         else
           return new VariableAssignmentExpression(left, value);
 
-      throw new ParsingError("Invalid assignment target");
+      throw new ParsingError("Invalid assignment target", this.current);
     }
 
     return left;
@@ -97,10 +97,10 @@ export default class Parser extends ArrayStepper<Token> {
     let left = this.parseLogicalOr();
 
     if (this.matchSet(COMPOUND_ASSIGNMENT_SYNTAXES)) {
-      const operator = this.previous();
+      const operator = this.previous<undefined>();
       const right = this.parseLogicalOr();
       if (!(left instanceof IdentifierExpression)) // || left instanceof AccessExpression
-        throw new ParsingError("Invalid compound assignment target");
+        throw new ParsingError("Invalid compound assignment target", this.current);
 
       left = new CompoundAssignmentExpression(left, right, operator);
     }
@@ -112,7 +112,7 @@ export default class Parser extends ArrayStepper<Token> {
     let left = this.parseLogicalAnd();
 
     while (this.match(Syntax.PipePipe)) {
-      const operator = this.previous();
+      const operator = this.previous<undefined>();
       const right = this.parseLogicalAnd();
       left = new BinaryExpression(left, right, operator);
     }
@@ -124,7 +124,7 @@ export default class Parser extends ArrayStepper<Token> {
     let left = this.parseComparison();
 
     while (this.match(Syntax.AmpersandAmpersand)) {
-      const operator = this.previous();
+      const operator = this.previous<undefined>();
       const right = this.parseComparison();
       left = new BinaryExpression(left, right, operator);
     }
@@ -136,7 +136,7 @@ export default class Parser extends ArrayStepper<Token> {
     let left = this.parseEquality();
 
     while (this.matchSet([Syntax.LT, Syntax.LTE, Syntax.GT, Syntax.GTE])) {
-      const operator = this.previous();
+      const operator = this.previous<undefined>();
       const right = this.parseEquality();
       left = new BinaryExpression(left, right, operator);
     }
@@ -148,7 +148,7 @@ export default class Parser extends ArrayStepper<Token> {
     let left = this.parseBitwiseOr();
 
     while (this.matchSet([Syntax.EqualEqual, Syntax.BangEqual])) {
-      const operator = this.previous();
+      const operator = this.previous<undefined>();
       const right = this.parseBitwiseOr();
       left = new BinaryExpression(left, right, operator);
     }
@@ -160,7 +160,7 @@ export default class Parser extends ArrayStepper<Token> {
     let left = this.parseBitwiseAnd();
 
     while (this.match(Syntax.Pipe)) {
-      const operator = this.previous();
+      const operator = this.previous<undefined>();
       const right = this.parseBitwiseAnd();
       left = new BinaryExpression(left, right, operator);
     }
@@ -172,7 +172,7 @@ export default class Parser extends ArrayStepper<Token> {
     let left = this.parseShift();
 
     while (this.match(Syntax.Ampersand)) {
-      const operator = this.previous();
+      const operator = this.previous<undefined>();
       const right = this.parseShift();
       left = new BinaryExpression(left, right, operator);
     }
@@ -184,7 +184,7 @@ export default class Parser extends ArrayStepper<Token> {
     let left = this.parseAdditive();
 
     while (this.match(Syntax.LDoubleArrow) || this.match(Syntax.RDoubleArrow)) {
-      const operator = this.previous();
+      const operator = this.previous<undefined>();
       const right = this.parseAdditive();
       left = new BinaryExpression(left, right, operator);
     }
@@ -196,7 +196,7 @@ export default class Parser extends ArrayStepper<Token> {
     let left = this.parseMultiplicative();
 
     while (this.match(Syntax.Plus) || this.match(Syntax.Minus)) {
-      const operator = this.previous();
+      const operator = this.previous<undefined>();
       const right = this.parseMultiplicative();
       left = new BinaryExpression(left, right, operator);
     }
@@ -208,7 +208,7 @@ export default class Parser extends ArrayStepper<Token> {
     let left = this.parseExponential();
 
     while (this.match(Syntax.Star) || this.match(Syntax.Slash) || this.match(Syntax.SlashSlash) || this.match(Syntax.Percent)) {
-      const operator = this.previous();
+      const operator = this.previous<undefined>();
       const right = this.parseExponential();
       left = new BinaryExpression(left, right, operator);
     }
@@ -220,7 +220,7 @@ export default class Parser extends ArrayStepper<Token> {
     let left = this.parseUnary();
 
     while (this.match(Syntax.Carat)) { // this is also where i parsed ".." in cosmo, AKA a range literal expression
-      const operator = this.previous();
+      const operator = this.previous<undefined>();
       const right = this.parseUnary();
       left = new BinaryExpression(left, right, operator);
     }
@@ -230,7 +230,7 @@ export default class Parser extends ArrayStepper<Token> {
 
   private parseUnary(): AST.Expression {
     if (this.matchSet(UNARY_SYNTAXES)) {
-      const operator = this.previous();
+      const operator = this.previous<undefined>();
       const operand = this.parseUnary();
       return new UnaryExpression(operator, operand);
     } else
@@ -248,7 +248,7 @@ export default class Parser extends ArrayStepper<Token> {
       return new ParenthesizedExpression(expr);
     }
 
-    throw new ParsingError("Expected expression");
+    throw new ParsingError("Expected expression", this.current);
   }
 
   private get currentType(): Token<undefined> | undefined {
@@ -259,9 +259,9 @@ export default class Parser extends ArrayStepper<Token> {
 
   private parseType(): Token<undefined> {
     if (this.matchSet(TYPE_SYNTAXES))
-     return this.previous();
+      return this.previous();
 
-    throw new ParsingError(`Expected type, got '${this.current.lexeme}'`);
+    throw new ParsingError(`Expected type, got '${this.current.lexeme}'`, this.current);
   }
 
   private advance(): Token {
@@ -274,10 +274,6 @@ export default class Parser extends ArrayStepper<Token> {
 
   private previous<V extends ValueType = ValueType>(): Token<V> {
     return <Token<V>>this.peek(-1)!;
-  }
-
-  private checkSet(syntaxSet: SyntaxSet): boolean {
-    return syntaxSet.includes(this.current.syntax);
   }
 
   private matchSet(syntaxSet: SyntaxSet): boolean {
@@ -298,14 +294,19 @@ export default class Parser extends ArrayStepper<Token> {
     return false;
   }
 
+  private checkSet(syntaxSet: SyntaxSet): boolean {
+    return syntaxSet.includes(this.current.syntax);
+  }
+
   private check(syntax: Syntax) {
     return this.current.syntax === syntax;
   }
 
   private consume<V extends ValueType = ValueType>(syntax: Syntax, expectedOverride?: string): Token<V> {
-    const gotSyntax = this.peek() ? Syntax[this.peek()!.syntax] : "EOF";
-    const error = new ParsingError(`Expected ${expectedOverride ?? `'${Syntax[syntax]}'`}, got ${gotSyntax}`);
-    assert(this.match(syntax), error);
+    const gotSyntax = this.current ? Syntax[this.current.syntax] : "EOF";
+    if (!this.match(syntax))
+      throw new ParsingError(`Expected ${expectedOverride ?? `'${Syntax[syntax]}'`}, got ${gotSyntax}`, this.current);
+
     return this.previous();
   }
 

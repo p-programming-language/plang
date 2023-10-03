@@ -1,9 +1,10 @@
 import { BoundExpression, BoundStatement } from "../bound-node";
+import type { Token } from "../../../syntax/token";
 import type VariableSymbol from "../../variable-symbol";
 import AST from "../../../parser/ast";
 
 export default class BoundVariableDeclarationStatement extends BoundStatement {
-  public override type = this.symbol.type;
+  public override readonly type = this.symbol.type;
 
   public constructor(
     public readonly symbol: VariableSymbol,
@@ -12,5 +13,9 @@ export default class BoundVariableDeclarationStatement extends BoundStatement {
 
   public accept<R>(visitor: AST.Visitor.BoundStatement<R>): R {
     return visitor.visitVariableDeclarationStatement(this);
+  }
+
+  public get token(): Token {
+    return this.symbol.name;
   }
 }

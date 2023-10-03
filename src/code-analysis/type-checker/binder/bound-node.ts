@@ -1,13 +1,7 @@
-import util from "util";
-
 import type { Type } from "../types/type";
 import AST from "../../parser/ast";
 
-export abstract class BoundNode {
-  public toString(): string {
-    return util.inspect(this, { colors: true, compact: false });
-  }
-}
+export abstract class BoundNode extends AST.Node {}
 
 export abstract class BoundExpression extends BoundNode {
   public abstract type: Type;

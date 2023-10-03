@@ -1,11 +1,12 @@
 import { BoundExpression } from "../bound-node";
+import type { Token } from "../../../syntax/token";
 import type { ValueType } from "../../../type-checker";
 import type { Type } from "../../types/type";
 import AST from "../../../parser/ast";
 
-export default class BoundLiteralExpression<T extends ValueType = ValueType> extends BoundExpression {
+export default class BoundLiteralExpression<V extends ValueType = ValueType> extends BoundExpression {
   public constructor(
-    public readonly value: T,
+    public readonly token: Token<V>,
     public readonly type: Type
   ) { super(); }
 
