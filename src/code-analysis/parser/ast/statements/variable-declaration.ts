@@ -9,8 +9,8 @@ export class VariableDeclarationStatement extends AST.Statement {
     public readonly initializer?: AST.Expression
   ) { super(); }
 
-  public accept<R>(visitor: AST.Visitor.Expression<R>): R {
-    return visitor.visitVariableDeclarationExpression(this);
+  public accept<R>(visitor: AST.Visitor.Statement<R>): R {
+    return visitor.visitVariableDeclarationStatement(this);
   }
 
   public get token(): Token {

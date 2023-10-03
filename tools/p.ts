@@ -1,10 +1,13 @@
 import { readFileSync } from "fs";
 import Parser from "../src/code-analysis/parser";
+import Resolver from "../src/code-analysis/resolver";
 
 namespace P {
   export function doString(source: string): void {
     const parser = new Parser(source);
+    const resolver = new Resolver;
     const ast = parser.parse();
+    resolver.resolve(ast);
     console.log(ast.toString());
   }
 
