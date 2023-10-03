@@ -4,7 +4,7 @@ import { ParenthesizedExpression } from "../../parser/ast/expressions/parenthesi
 import { BinaryExpression } from "../../parser/ast/expressions/binary";
 import { UnaryExpression } from "../../parser/ast/expressions/unary";
 import { IdentifierExpression } from "../../parser/ast/expressions/identifier";
-import { VariableDeclarationExpression } from "../../parser/ast/expressions/variable-declaration";
+import { VariableDeclarationStatement } from "../../parser/ast/statements/variable-declaration";
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
 import type { BoundExpression, BoundStatement } from "./bound-node";
@@ -19,16 +19,16 @@ import BoundParenthesizedExpression from "./bound-expressions/parenthesized";
 import BoundBinaryExpression from "./bound-expressions/binary";
 import BoundUnaryExpression from "./bound-expressions/unary";
 import BoundIdentifierExpression from "./bound-expressions/identifier";
-import BoundVariableDeclarationExpression from "./bound-expressions/variable-declaration";
+import BoundVariableDeclarationStatement from "./bound-statements/variable-declaration";
 import VariableSymbol from "../variable-symbol";
 
 export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
-  public visitVariableDeclarationExpression(expr: VariableDeclarationExpression): BoundVariableDeclarationExpression {
+  public visitVariableDeclarationStatement(expr: VariableDeclarationStatement): BoundVariableDeclarationStatement {
     // TODO: add to scope
     const name = expr.identifier.name.lexeme;
     const initializer = expr.initializer ? this.bind(expr.initializer) : undefined;
     const variableSymbol = new VariableSymbol(name, initializer?.type ?? new SingularType("undefined"));
-    return new BoundVariableDeclarationExpression(variableSymbol, initializer);
+    return new BoundVariableDeclarationStatement(variableSymbol, initializer);
   }
 
   public visitIdentifierExpression(expr: IdentifierExpression): BoundIdentifierExpression {

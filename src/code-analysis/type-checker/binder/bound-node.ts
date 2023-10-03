@@ -11,4 +11,6 @@ export abstract class BoundNode {
 export abstract class BoundExpression extends BoundNode {
   public abstract type: Type;
 }
-export abstract class BoundStatement extends BoundNode { }
+export abstract class BoundStatement extends BoundNode {
+  public abstract type?: Type;
+}

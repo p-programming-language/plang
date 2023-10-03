@@ -1,8 +1,8 @@
 import { Token } from "../../../syntax/token";
-import { IdentifierExpression } from "./identifier";
+import { IdentifierExpression } from "../expressions/identifier";
 import AST from "..";
 
-export class VariableDeclarationExpression extends AST.Expression {
+export class VariableDeclarationStatement extends AST.Statement {
   public constructor(
     public readonly typeKeyword: Token,
     public readonly identifier: IdentifierExpression,
