@@ -2,7 +2,7 @@ name: Daily Release
 
 on:
   schedule:
-    - cron: '0 0 * * *'  
+    - cron: '30 7 * * *'  # 8:30 AM CET
 
 jobs:
   release:
