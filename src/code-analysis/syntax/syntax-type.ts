@@ -20,6 +20,8 @@ enum Syntax {
   LBrace, RBrace,
   Dot, Colon,
   LT, GT, LTE, GTE,// <, >, <=, >=
+  LDoubleArrow, RDoubleArrow,
+  Tilde,
   Plus, Minus,
   Star, Slash, SlashSlash,
   Carat, Percent,
@@ -28,8 +30,12 @@ enum Syntax {
   CaratEqual, PercentEqual,
   PlusPlus, MinusMinus,
   Bang,
+  AmpersandAmpersand, AmpersandAmpersandEqual,
+  Ampersand, AmpersandEqual,
+  PipePipe, PipePipeEqual,
+  Pipe, PipeEqual,
   Hashtag,
-  Equal, EqualEqual, BangEqual,
+  Equal, EqualEqual, BangEqual, ColonEqual,
 
   EOF
 }

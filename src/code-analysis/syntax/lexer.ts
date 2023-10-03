@@ -41,10 +41,38 @@ export default class Lexer extends ArrayStepper<string> {
         return this.addToken(Syntax.RBrace, undefined, true);
       case ".":
         return this.addToken(Syntax.Dot, undefined, true);
-      case ":":
-        return this.addToken(Syntax.Colon, undefined, true);
       case "#":
         return this.addToken(Syntax.Hashtag, undefined, true);
+      case "~":
+        return this.addToken(Syntax.Tilde, undefined, true);
+      case ":": {
+        if (this.match("="))
+          return this.addToken(Syntax.ColonEqual, undefined, true);
+        else
+          return this.addToken(Syntax.Colon, undefined, true);
+      }
+      case "&": {
+        if (this.match("="))
+          return this.addToken(Syntax.AmpersandEqual, undefined, true);
+        else if (this.match("&"))
+          if (this.match("="))
+            return this.addToken(Syntax.AmpersandAmpersandEqual, undefined, true);
+          else
+            return this.addToken(Syntax.AmpersandAmpersand, undefined, true);
+        else
+          return this.addToken(Syntax.Ampersand, undefined, true);
+      }
+      case "|": {
+        if (this.match("="))
+          return this.addToken(Syntax.PipeEqual, undefined, true);
+        else if (this.match("|"))
+          if (this.match("="))
+            return this.addToken(Syntax.PipePipeEqual, undefined, true);
+          else
+            return this.addToken(Syntax.PipePipe, undefined, true);
+        else
+          return this.addToken(Syntax.Pipe, undefined, true);
+      }
       case "!": {
         if (this.match("="))
           return this.addToken(Syntax.BangEqual, undefined, true);
@@ -54,12 +82,16 @@ export default class Lexer extends ArrayStepper<string> {
       case ">": {
         if (this.match("="))
           return this.addToken(Syntax.GTE, undefined, true);
+        else if (this.match(">"))
+          return this.addToken(Syntax.RDoubleArrow, undefined, true);
         else
           return this.addToken(Syntax.GT, undefined, true);
       }
       case "<": {
         if (this.match("="))
           return this.addToken(Syntax.LTE, undefined, true);
+        else if (this.match("<"))
+          return this.addToken(Syntax.LDoubleArrow, undefined, true);
         else
           return this.addToken(Syntax.LT, undefined, true);
       }
