@@ -36,6 +36,7 @@ jobs:
           files: ./*
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: Daily Release $(date +\%Y\%m\%d)
-          release_name: Daily Release $(date +\%Y\%m\%d)
+          name: Daily Release $(date +\%Y\%m\%d)
+          
           body: |
             Release notes for the daily release.
