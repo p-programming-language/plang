@@ -7,8 +7,6 @@ import { ParenthesizedExpression } from "./ast/expressions/parenthesized";
 import { BinaryExpression } from "./ast/expressions/binary";
 import { UnaryExpression } from "./ast/expressions/unary";
 import { IdentifierExpression } from "./ast/expressions/identifier";
-import { BoundNode } from "../type-checker/binder/bound-node";
-import { Binder } from "../type-checker/binder";
 
 import ArrayStepper from "../array-stepper";
 import Lexer from "../syntax/lexer";
@@ -16,7 +14,7 @@ import Syntax from "../syntax/syntax-type";
 import AST from "./ast";
 
 import * as SyntaxSets from "../syntax/syntax-sets";
-const { UNARY_SYNTAXES, LITERAL_SYNTAXES } = SyntaxSets;
+const { UNARY_SYNTAXES, LITERAL_SYNTAXES, TYPE_SYNTAXES } = SyntaxSets;
 
 export default class Parser extends ArrayStepper<Token> {
   public constructor(source: string) {
@@ -90,6 +88,16 @@ export default class Parser extends ArrayStepper<Token> {
     }
 
     throw new ParsingError("Expected expression");
+  }
+
+  private parseType(): void {
+    if (this.currentType) return;
+    throw new ParsingError(`Expected type, got '${this.current.lexeme}'`);
+  }
+
+  private get currentType(): Token | undefined {
+    if (!this.matchSet(TYPE_SYNTAXES)) return;
+    return this.previous();
   }
 
   private advance(): Token {
