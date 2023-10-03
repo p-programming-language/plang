@@ -44,8 +44,9 @@ export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visi
 
   public visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): BoundVariableAssignmentStatement {
     const identifier = <BoundIdentifierExpression>this.bind(stmt.identifier);
+    const variableSymbol = new VariableSymbol(identifier.name, identifier.type);
     const value = this.bind(stmt.value);
-    return new BoundVariableAssignmentStatement(identifier, value);
+    return new BoundVariableAssignmentStatement(variableSymbol, value);
   }
 
   public visitExpressionStatement(stmt: ExpressionStatement): BoundExpressionStatement {
@@ -54,8 +55,9 @@ export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visi
 
   public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): BoundVariableAssignmentExpression {
     const identifier = <BoundIdentifierExpression>this.bind(expr.identifier);
+    const variableSymbol = new VariableSymbol(identifier.name, identifier.type);
     const value = this.bind(expr.value);
-    return new BoundVariableAssignmentExpression(identifier, value);
+    return new BoundVariableAssignmentExpression(variableSymbol, value);
   }
 
   public visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): BoundCompoundAssignmentExpression {
@@ -97,10 +99,9 @@ export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visi
   }
 
   private bind<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement>(node: T): T extends AST.Expression ? BoundExpression : BoundStatement {
-    if (node instanceof AST.Expression)
-      return node.accept<BoundExpression>(this);
-    else
-      return <T extends AST.Expression ? BoundExpression : BoundStatement>node.accept<BoundStatement>(this);
+    return <T extends AST.Expression ? BoundExpression : BoundStatement>(node instanceof AST.Expression ?
+      node.accept<BoundExpression>(this)
+      : node.accept<BoundStatement>(this));
   }
 
   private findSymbol(name: Token): VariableSymbol {

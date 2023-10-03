@@ -1,11 +1,16 @@
 import { BoundExpression } from "../bound-node";
-import type BoundIdentifierExpression from "./identifier";
+import type VariableSymbol from "../../variable-symbol";
+import AST from "../../../parser/ast";
 
 export default class BoundVariableAssignmentExpression extends BoundExpression {
   public override readonly type = this.value.type;
 
   public constructor(
-    public readonly name: BoundIdentifierExpression,
+    public readonly symbol: VariableSymbol,
     public readonly value: BoundExpression
   ) { super(); }
+
+  public accept<R>(visitor: AST.Visitor.BoundExpression<R>): R {
+    return visitor.visitVariableAssignmentExpression(this);
+  }
 }

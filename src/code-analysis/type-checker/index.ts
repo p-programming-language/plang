@@ -1,5 +1,6 @@
+import assert from "assert";
+
 import AST from "../parser/ast";
-import BoundLiteralExpression from "./binder/bound-expressions/literal";
 import BoundParenthesizedExpression from "./binder/bound-expressions/parenthesized";
 import BoundBinaryExpression from "./binder/bound-expressions/binary";
 import BoundUnaryExpression from "./binder/bound-expressions/unary";
@@ -9,53 +10,66 @@ import BoundCompoundAssignmentExpression from "./binder/bound-expressions/compou
 import BoundVariableAssignmentExpression from "./binder/bound-expressions/variable-assignment";
 import BoundVariableAssignmentStatement from "./binder/bound-statements/variable-assignment";
 import BoundExpressionStatement from "./binder/bound-statements/expression";
+import { TypeError } from "../../errors";
 import { BoundExpression, BoundStatement } from "./binder/bound-node";
+import { Type } from "./types/type";
 
 export type ValueType = string | number | boolean | null | undefined;
 
 export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
   public visitVariableDeclarationStatement(stmt: BoundVariableDeclarationStatement): void {
-    throw new Error("Method not implemented.");
+    if (!stmt.initializer) return;
+    this.assert(stmt.initializer.type, stmt.symbol.type);
   }
 
   public visitVariableAssignmentStatement(stmt: BoundVariableAssignmentStatement): void {
-    throw new Error("Method not implemented.");
+    this.assert(stmt.value.type, stmt.symbol.type);
   }
 
   public visitExpressionStatement(stmt: BoundExpressionStatement): void {
-    throw new Error("Method not implemented.");
+    this.check(stmt.expression);
   }
 
   public visitVariableAssignmentExpression(expr: BoundVariableAssignmentExpression): void {
-    throw new Error("Method not implemented.");
+    this.assert(expr.value.type, expr.symbol.type);
   }
 
   public visitCompoundAssignmentExpression(expr: BoundCompoundAssignmentExpression): void {
-    throw new Error("Method not implemented.");
+    this.assert(expr.left.type, expr.operator.leftType);
+    this.assert(expr.right.type, expr.operator.rightType);
   }
 
   public visitIdentifierExpression(expr: BoundIdentifierExpression): void {
-    throw new Error("Method not implemented.");
+    // do nothing
   }
 
   public visitUnaryExpression(expr: BoundUnaryExpression): void {
-    throw new Error("Method not implemented.");
+    this.assert(expr.operand.type, expr.operator.operandType);
   }
 
   public visitBinaryExpression(expr: BoundBinaryExpression): void {
-    throw new Error("Method not implemented.");
+    this.assert(expr.left.type, expr.operator.leftType);
+    this.assert(expr.right.type, expr.operator.rightType);
   }
 
   public visitParenthesizedExpression(expr: BoundParenthesizedExpression): void {
-    throw new Error("Method not implemented.");
+    this.check(expr);
   }
 
-  public visitLiteralExpression<T extends ValueType = ValueType>(expr: BoundLiteralExpression<T>): void {
-    throw new Error("Method not implemented.");
+  public visitLiteralExpression(): void {
+    // do nothing
   }
 
-  // public check<T extends BoundExpression | BoundStatement = BoundExpression | BoundStatement>(node: T): void {
-  //   node.accept(this);
-  // }
+  public check<T extends BoundExpression | BoundStatement = BoundExpression | BoundStatement>(statements: T | BoundStatement[]): void {
+    if (statements instanceof Array)
+      for (const statement of statements)
+        this.check(statement);
+    else
+      statements.accept(this)
+  }
+
+  private assert(a: Type, b: Type): void {
+    assert(a.isAssignableTo(b), new TypeError(`Type '${a.toString()}' is not assignable to '${b.toString()}'`));
+  }
 }
 

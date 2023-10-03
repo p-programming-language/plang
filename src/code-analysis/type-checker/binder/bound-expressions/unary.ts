@@ -1,5 +1,6 @@
 import { BoundExpression } from "../bound-node";
 import type { BoundUnaryOperator } from "../bound-operators/unary";
+import AST from "../../../parser/ast";
 
 export default class BoundUnaryExpression extends BoundExpression {
   public override readonly type = this.operator.resultType;
@@ -8,4 +9,8 @@ export default class BoundUnaryExpression extends BoundExpression {
     public readonly operand: BoundExpression,
     public readonly operator: BoundUnaryOperator
   ) { super(); }
+
+  public accept<R>(visitor: AST.Visitor.BoundExpression<R>): R {
+    return visitor.visitUnaryExpression(this);
+  }
 }

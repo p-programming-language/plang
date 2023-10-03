@@ -7,4 +7,8 @@ export default class UnionType extends Type {
   public constructor(
     public readonly types: SingularType[]
   ) { super(); }
+
+  public toString(): string {
+    return this.types.map(t => t.toString()).join(" | ");
+  }
 }

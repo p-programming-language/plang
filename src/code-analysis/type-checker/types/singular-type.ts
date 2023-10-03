@@ -8,4 +8,8 @@ export default class SingularType extends Type {
     public readonly name: keyof typeof TYPE_KEYWORDS,
     public readonly typeArguments?: Type[]
   ) { super(); }
+
+  public toString(): string {
+    return this.name + (this.typeArguments ? `<${this.typeArguments.map(t => t.toString()).join(", ")}>` : "");
+  }
 }
