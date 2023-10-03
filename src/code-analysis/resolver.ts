@@ -18,6 +18,10 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   public readonly locals = new Map<AST.Node, number>;
   private readonly scopes: Map<string, boolean>[] = [];
 
+  public constructor() {
+    this.beginScope();
+  }
+
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): void {
     this.declare(stmt.identifier.name);
     if (stmt.initializer)
@@ -52,7 +56,7 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
   public visitIdentifierExpression(expr: IdentifierExpression): void {
     if (this.scopes.length > 0 && this.scopes.at(-1)?.get(expr.name.lexeme) === false)
-      throw new ResolutionError(`Cannot read local variable (${expr.name}) in it's own initializer`);
+      throw new ResolutionError(`Cannot read local variable ('${expr.name.lexeme}') in it's own initializer`);
 
     this.resolveLocal(expr, expr.name);
   }
@@ -70,17 +74,18 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
     this.resolve(expr.expression);
   }
 
-  public visitLiteralExpression(expr: LiteralExpression): void {
+  public visitLiteralExpression(): void {
     // do nothing
   }
 
-  public resolveStatements(statements: AST.Statement[]): void {
-    for (const stmt of statements)
-      this.resolve(stmt);
-  }
-
-  private resolve<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement>(node: T): void {
-    node.accept(this);
+  public resolve<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement>(statements: T | AST.Statement[]): void {
+    if (statements instanceof Array)
+      for (const statement of <AST.Statement[]>statements)
+        this.resolve(statement);
+    else if (statements instanceof AST.Statement)
+      (<AST.Statement>statements).accept(this);
+    else if (statements instanceof AST.Expression)
+      (<AST.Expression>statements).accept(this);
   }
 
   private resolveLocal(expr: AST.Node, identifier: Token): void {

@@ -7,7 +7,7 @@ namespace P {
     const parser = new Parser(source);
     const resolver = new Resolver;
     const ast = parser.parse();
-    resolver.resolveStatements(ast);
+    resolver.resolve(ast);
     console.log(ast.toString());
   }
 
