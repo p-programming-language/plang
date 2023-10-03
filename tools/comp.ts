@@ -18,8 +18,9 @@ Options:
   }
 
   const [filePath] = args;
+  const p = new P;
   try {
-    P.doFile(filePath);
+    p.doFile(filePath);
   } catch (error: any) {
     console.error(`${error.message}`);
     process.exit(1);

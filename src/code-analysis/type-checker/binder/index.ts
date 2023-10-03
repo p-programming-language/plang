@@ -12,6 +12,7 @@ import type { VariableDeclarationStatement } from "../../parser/ast/statements/v
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
 import type { BoundExpression, BoundStatement } from "./bound-node";
+import type { Token } from "../../syntax/token";
 import type { Type } from "../types/type";
 import type { ValueType } from "..";
 
@@ -31,11 +32,13 @@ import BoundVariableAssignmentStatement from "./bound-statements/variable-assign
 import BoundVariableDeclarationStatement from "./bound-statements/variable-declaration";
 
 export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
+  private readonly variables: VariableSymbol[] = [];
+
   public visitVariableDeclarationStatement(expr: VariableDeclarationStatement): BoundVariableDeclarationStatement {
-    // TODO: add to scope
     const name = expr.identifier.name.lexeme;
     const initializer = expr.initializer ? this.bind(expr.initializer) : undefined;
     const variableSymbol = new VariableSymbol(name, initializer?.type ?? new SingularType("undefined"));
+    this.variables.push(variableSymbol);
     return new BoundVariableDeclarationStatement(variableSymbol, initializer);
   }
 
@@ -63,8 +66,8 @@ export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visi
   }
 
   public visitIdentifierExpression(expr: IdentifierExpression): BoundIdentifierExpression {
-    // TODO: add an actual type to this, grabbing from the scope
-    return new BoundIdentifierExpression(expr.name.lexeme, new SingularType("any"));
+    const variableSymbol = this.findSymbol(expr.name);
+    return new BoundIdentifierExpression(expr.name.lexeme, variableSymbol.type);
   }
 
   public visitUnaryExpression(expr: UnaryExpression): BoundUnaryExpression {
@@ -89,11 +92,20 @@ export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visi
     return new BoundLiteralExpression(expr.token.value, type);
   }
 
-  public bind<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement>(node: T): T extends AST.Expression ? BoundExpression : BoundStatement {
+  public bindStatements(statements: AST.Statement[]): BoundStatement[] {
+    return statements.map(statement => this.bind(statement));
+  }
+
+  private bind<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement>(node: T): T extends AST.Expression ? BoundExpression : BoundStatement {
     if (node instanceof AST.Expression)
       return node.accept<BoundExpression>(this);
     else
-      return <T extends AST.Expression ? BoundExpression : BoundStatement>((<AST.Statement>node).accept<BoundStatement>(this));
+      return <T extends AST.Expression ? BoundExpression : BoundStatement>node.accept<BoundStatement>(this);
+  }
+
+  private findSymbol(name: Token): VariableSymbol {
+    return this.variables
+      .find(symbol => symbol.name === name.lexeme)!;
   }
 
   private getTypeFromSyntax(syntax: Syntax): Type | undefined {

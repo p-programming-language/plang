@@ -16,7 +16,7 @@ import { ExpressionStatement } from "./parser/ast/statements/expression";
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   // the boolean represents whether the variable is defined or not
   public readonly locals = new Map<AST.Node, number>;
-  private readonly scopes: Map<string, boolean>[] = [];
+  private scopes: Map<string, boolean>[] = [];
 
   public constructor() {
     this.beginScope();
@@ -55,8 +55,12 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   }
 
   public visitIdentifierExpression(expr: IdentifierExpression): void {
-    if (this.scopes.length > 0 && this.scopes.at(-1)?.get(expr.name.lexeme) === false)
-      throw new ResolutionError(`Cannot read local variable ('${expr.name.lexeme}') in it's own initializer`);
+    const scope = this.scopes.at(-1);
+    if (this.scopes.length > 0 && scope!.get(expr.name.lexeme) === false)
+      throw new ResolutionError(`Cannot read variable '${expr.name.lexeme}' in it's own initializer`);
+
+    if (this.isDefined(expr.name) === undefined)
+      throw new ResolutionError(`'${expr.name.lexeme}' is not defined in this scope`);
 
     this.resolveLocal(expr, expr.name);
   }
@@ -88,9 +92,17 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
       (<AST.Expression>statements).accept(this);
   }
 
+  private isDefined(identifier: Token): boolean | undefined {
+    for (let i = this.scopes.length - 1; i >= 0; i--) {
+      const scope = this.scopes[i];
+      if (scope?.has(identifier.lexeme))
+        return scope.get(identifier.lexeme);
+    }
+  }
+
   private resolveLocal(expr: AST.Node, identifier: Token): void {
-    for (let i = this.scopes.length; i >= 0; i--)
-      if (this.scopes.at(i)?.has(identifier.lexeme)) {
+    for (let i = this.scopes.length - 1; i >= 0; i--)
+      if (this.scopes[i]?.has(identifier.lexeme)) {
         this.locals.set(expr, this.scopes.length - i);
         return;
       }
@@ -116,6 +128,8 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
   private define(identifier: Token): void {
     if (this.scopes.length === 0) return;
-    this.scopes.at(-1)?.set(identifier.lexeme, true);
+
+    const scope = this.scopes.at(-1);
+    scope?.set(identifier.lexeme, true);
   }
 }

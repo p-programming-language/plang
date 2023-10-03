@@ -5,10 +5,11 @@ import P from "./p";
 async function main() {
   console.log("Welcome to the PLANG repl!");
 
+  const p = new P;
   while (true) {
     const code = await readln("> ");
     if (!code.trim()) continue;
-    P.doString(code);
+    p.doString(code);
   }
 }
 
