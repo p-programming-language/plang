@@ -4,22 +4,25 @@ import path from "path";
 import "should";
 
 import { PError } from "../../src/errors";
-import { TypeChecker } from "../../src/code-analysis/type-checker";
+import { TypeChecker, ValueType } from "../../src/code-analysis/type-checker";
 import Parser from "../../src/code-analysis/parser";
 import Resolver from "../../src/code-analysis/resolver";
 import Binder from "../../src/code-analysis/type-checker/binder";
+import Interpreter from "../../src/runtime/interpreter";
 
 PError.testing = true;
 
-function getCheckFunction(source: string): () => void {
+function evaluate(source: string): ValueType {
   const parser = new Parser(source);
   const resolver = new Resolver;
   const binder = new Binder;
   const typeChecker = new TypeChecker;
+  const interpreter = new Interpreter;
   const ast = parser.parse();
   resolver.resolve(ast);
   const boundAST = binder.bindStatements(ast);
-  return () => typeChecker.check(boundAST);
+  typeChecker.check(boundAST);
+  return interpreter.evaluate(ast);
 }
 
 const testDirectory = "./tests/";
@@ -29,25 +32,29 @@ const testFiles = readdirSync(testDirectory)
 function runTestsForFile(filePath: string) {
   it(filePath, () => {
     const source = readFileSync(filePath, "utf-8");
-    const check = getCheckFunction(source);
-    check.should.not.throw();
+    (() => evaluate(source)).should.not.throw();
   });
 }
 
-describe(TypeChecker.name, () => {
-  it("throws when declaring a variable with a mismatched type", () => {
-    try {
-      const check = getCheckFunction("string a = 2");
-      check.should.throw("TypeError: Type 'int' is not assignable to 'string'");
-    } catch (e) {}
+describe(Interpreter.name, () => {
+  it("evaluates literals", () => {
+    it("strings", () => {
+      evaluate("'abc'")?.should.equal("abc");
+    });
+    it("integers", () => {
+      evaluate("420")?.should.equal(420);
+    });
+    it("floats", () => {
+      evaluate("69.420")?.should.equal(69.42);
+    });
+    it("booleans", () => {
+      evaluate("true")?.should.equal(true);
+    });
+    it("arrays", () => {
+      evaluate("[1,'a',true]")?.should.equal([1, "a", true]);
+    });
   });
-  it("throws when assigning to a variable with a mismatched type", () => {
-    try {
-      const check = getCheckFunction("int x = 1; x = 'abc'");
-      check.should.throw("TypeError: Type 'string' is not assignable to 'int'");
-    } catch (e) {}
-  });
-  describe("typechecks general tests (tests/)", () => {
+  describe("evaluates general tests (tests/)", () => {
     testFiles.forEach((file) => {
       const filePath = path.join(testDirectory, file);
       runTestsForFile(filePath);
