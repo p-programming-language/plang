@@ -1,7 +1,7 @@
 import { Token } from "./code-analysis/syntax/token";
 
 export class PError {
-  public static testing = true;
+  public static testing = false;
 
   public constructor(
     public readonly name: string,

@@ -5,6 +5,9 @@ import "should";
 
 import Parser from "../../src/code-analysis/parser";
 import Resolver from "../../src/code-analysis/resolver";
+import { PError } from "../../src/errors";
+
+PError.testing = true;
 
 function getResolveFunction(source: string): () => void {
   const parser = new Parser(source);
