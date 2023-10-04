@@ -31,6 +31,7 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   }
 
   public visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): void {
+    this.resolve(stmt.identifier);
     this.resolve(stmt.value);
     this.resolveLocal(stmt, stmt.identifier.name);
   }
@@ -40,6 +41,7 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   }
 
   public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): void {
+    this.resolve(expr.identifier);
     this.resolve(expr.value);
     this.resolveLocal(expr, expr.identifier.name);
   }

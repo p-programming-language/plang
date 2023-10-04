@@ -1,5 +1,5 @@
 import { describe, it } from "mocha";
-import fs from "fs";
+import { readFileSync, readdirSync } from "fs";
 import path from "path";
 import "should";
 
@@ -14,21 +14,20 @@ function tokenize(source: string): Token[] {
 }
 
 const testDirectory = "./tests/";
-const testFiles = fs
-  .readdirSync(testDirectory)
-  .filter((file) => file.endsWith(".p"));
+const testFiles = readdirSync(testDirectory)
+  .filter(file => file.endsWith(".p"));
 
 function runTestsForFile(filePath: string) {
   it(filePath, () => {
-    const sourceCode = fs.readFileSync(filePath, "utf-8");
-
-    tokenize
-    const tokens = tokenize(sourceCode);
+    const source = readFileSync(filePath, "utf-8");
+    const tokenizeSource = () => tokenize(source);
+    tokenizeSource.should.not.throw();
+    const tokens = tokenizeSource();
     tokens.length.should.be.greaterThan(0);
   });
 }
 
-describe("Lexer", () => {
+describe(Lexer.name, () => {
   it("tokenizes literals", () => {
     {
       const [token] = tokenize('"hello, world!"');

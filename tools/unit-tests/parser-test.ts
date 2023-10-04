@@ -1,18 +1,18 @@
 import { describe, it } from "mocha";
-import fs from "fs";
+import { readFileSync, readdirSync } from "fs";
 import path from "path";
 import "should";
 
 import { LiteralExpression } from "../../src/code-analysis/parser/ast/expressions/literal";
 import { UnaryExpression } from "../../src/code-analysis/parser/ast/expressions/unary";
 import { BinaryExpression } from "../../src/code-analysis/parser/ast/expressions/binary";
+import { VariableAssignmentExpression } from "../../src/code-analysis/parser/ast/expressions/variable-assignment";
 import { ExpressionStatement } from "../../src/code-analysis/parser/ast/statements/expression";
+import { VariableAssignmentStatement } from "../../src/code-analysis/parser/ast/statements/variable-assignment";
+import { VariableDeclarationStatement } from "../../src/code-analysis/parser/ast/statements/variable-declaration";
 import Syntax from "../../src/code-analysis/syntax/syntax-type";
 import Parser from "../../src/code-analysis/parser";
 import AST from "../../src/code-analysis/parser/ast";
-import { VariableAssignmentStatement } from "../../src/code-analysis/parser/ast/statements/variable-assignment";
-import { VariableAssignmentExpression } from "../../src/code-analysis/parser/ast/expressions/variable-assignment";
-import { VariableDeclarationStatement } from "../../src/code-analysis/parser/ast/statements/variable-declaration";
 
 function parse(source: string): AST.Statement[] {
   const parser = new Parser(source);
@@ -20,20 +20,18 @@ function parse(source: string): AST.Statement[] {
 }
 
 const testDirectory = "./tests/";
-const testFiles = fs
-  .readdirSync(testDirectory)
-  .filter((file) => file.endsWith(".p"));
+const testFiles = readdirSync(testDirectory)
+  .filter(file => file.endsWith(".p"));
 
 function runTestsForFile(filePath: string) {
   it(filePath, () => {
-    const sourceCode = fs.readFileSync(filePath, "utf-8");
-    const parseFile = () => parse(sourceCode);
+    const source = readFileSync(filePath, "utf-8");
+    const parseFile = () => parse(source);
     parseFile.should.not.throw();
-    parseFile();
   });
 }
 
-describe("Parser", () => {
+describe(Parser.name, () => {
   it("parses literals", () => {
     {
       const [node] = parse('"hello"');

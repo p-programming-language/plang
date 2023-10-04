@@ -1,8 +1,8 @@
 import { Token } from "./code-analysis/syntax/token";
 
-const TESTING = false;
-
 export class PError {
+  public static testing = true;
+
   public constructor(
     public readonly name: string,
     public readonly message: string,
@@ -10,8 +10,9 @@ export class PError {
     public readonly column: number
   ) {
 
+    if (PError.testing) return;
     const output = `${name}: ${message}\n  at ${line}:${column}`;
-    TESTING ? new Error(output) : console.log(output);
+    console.log(output);
     process.exit(1);
   }
 }
