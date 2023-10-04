@@ -53,7 +53,7 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
   }
 
   public visitParenthesizedExpression(expr: BoundParenthesizedExpression): void {
-    this.check(expr);
+    this.check(expr.expression);
   }
 
   public visitLiteralExpression(): void {
