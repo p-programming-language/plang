@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readln } from "../src/lib/utilities";
+import { readln } from "../src/lib/utility";
 import P from "./p";
 
 async function main() {
