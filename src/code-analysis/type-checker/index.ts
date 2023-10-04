@@ -1,16 +1,17 @@
+import { TypeError } from "../../errors";
+import { BoundExpression, BoundNode, BoundStatement } from "./binder/bound-node";
+import { Type } from "./types/type";
 import AST from "../parser/ast";
+
 import BoundParenthesizedExpression from "./binder/bound-expressions/parenthesized";
 import BoundBinaryExpression from "./binder/bound-expressions/binary";
 import BoundUnaryExpression from "./binder/bound-expressions/unary";
 import BoundIdentifierExpression from "./binder/bound-expressions/identifier";
-import BoundVariableDeclarationStatement from "./binder/bound-statements/variable-declaration";
 import BoundCompoundAssignmentExpression from "./binder/bound-expressions/compound-assignment";
 import BoundVariableAssignmentExpression from "./binder/bound-expressions/variable-assignment";
-import BoundVariableAssignmentStatement from "./binder/bound-statements/variable-assignment";
 import BoundExpressionStatement from "./binder/bound-statements/expression";
-import { TypeError } from "../../errors";
-import { BoundExpression, BoundNode, BoundStatement } from "./binder/bound-node";
-import { Type } from "./types/type";
+import BoundVariableAssignmentStatement from "./binder/bound-statements/variable-assignment";
+import BoundVariableDeclarationStatement from "./binder/bound-statements/variable-declaration";
 
 export type ValueType = string | number | boolean | null | undefined | void;
 

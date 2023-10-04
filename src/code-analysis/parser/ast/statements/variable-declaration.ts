@@ -4,7 +4,7 @@ import AST from "..";
 
 export class VariableDeclarationStatement extends AST.Statement {
   public constructor(
-    public readonly typeKeyword: Token,
+    public readonly type: AST.TypeNode,
     public readonly identifier: IdentifierExpression,
     public readonly initializer?: AST.Expression
   ) { super(); }
@@ -14,6 +14,6 @@ export class VariableDeclarationStatement extends AST.Statement {
   }
 
   public get token(): Token {
-    return this.typeKeyword;
+    return this.type.token;
   }
 }

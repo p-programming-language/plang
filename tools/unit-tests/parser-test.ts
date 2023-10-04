@@ -184,8 +184,8 @@ describe(Parser.name, () => {
       const [node] = parse("int y = 123");
       node.should.be.an.instanceof(VariableDeclarationStatement);
       const declaration = <VariableDeclarationStatement>node;
-      declaration.typeKeyword.syntax.should.equal(Syntax.IntType);
-      declaration.typeKeyword.lexeme.should.equal("int");
+      declaration.type.token.syntax.should.equal(Syntax.IntType);
+      declaration.type.token.lexeme.should.equal("int");
       declaration.identifier.name.lexeme.should.equal("y");
       declaration.initializer?.should.be.an.instanceof(LiteralExpression);
       const value = <LiteralExpression>declaration.initializer;
@@ -196,8 +196,8 @@ describe(Parser.name, () => {
       const [node] = parse("string abc");
       node.should.be.an.instanceof(VariableDeclarationStatement);
       const declaration = <VariableDeclarationStatement>node;
-      declaration.typeKeyword.syntax.should.equal(Syntax.StringType);
-      declaration.typeKeyword.lexeme.should.equal("string");
+      declaration.type.token.syntax.should.equal(Syntax.StringType);
+      declaration.type.token.lexeme.should.equal("string");
       declaration.identifier.name.lexeme.should.equal("abc");
       declaration.initializer?.should.be.undefined();
     }

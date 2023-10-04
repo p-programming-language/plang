@@ -16,11 +16,11 @@ import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/s
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): void {
-    throw new Error("Method not implemented.");
+
   }
 
   public visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): void {
-    throw new Error("Method not implemented.");
+
   }
 
   public visitExpressionStatement(stmt: ExpressionStatement): ValueType {
@@ -28,11 +28,11 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   }
 
   public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): void {
-    throw new Error("Method not implemented.");
+
   }
 
   public visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): void {
-    throw new Error("Method not implemented.");
+
   }
 
   public visitIdentifierExpression(expr: IdentifierExpression): ValueType {

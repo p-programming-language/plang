@@ -20,6 +20,8 @@ import { VariableAssignmentExpression } from "./ast/expressions/variable-assignm
 import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
 import { ValueType } from "../type-checker";
 import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
+import { SingularTypeExpression } from "./ast/type-nodes/singular-type";
+import { UnionTypeExpression } from "./ast/type-nodes/union-type";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, TYPE_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -48,21 +50,22 @@ export default class Parser extends ArrayStepper<Token> {
 
   // parse declarations like classes, variables, functions, etc.
   private declaration(): AST.Statement | undefined {
-    if (this.currentType && this.peek()?.syntax === Syntax.Identifier)
+    const nextSyntax = this.peek()?.syntax;
+    if (this.atType && (nextSyntax === Syntax.Identifier || nextSyntax === Syntax.Pipe))
       return this.parseVariableDeclaration();
 
     return this.parseStatement();
   }
 
   private parseVariableDeclaration(): AST.Statement {
-    const typeKeyword = this.parseType();
+    const type = this.parseType();
     const identifierToken = this.consume<undefined>(Syntax.Identifier, "identifier");
     const initializer = this.match(Syntax.Equal) ?
       this.parseExpression()
       : undefined;
 
     const identifier = new IdentifierExpression(identifierToken);
-    return new VariableDeclarationStatement(typeKeyword, identifier, initializer);
+    return new VariableDeclarationStatement(type, identifier, initializer);
   }
 
   private parseExpressionStatement(): AST.Statement {
@@ -257,15 +260,34 @@ export default class Parser extends ArrayStepper<Token> {
     throw new ParsingError("Expected expression", this.current);
   }
 
-  private get currentType(): Token<undefined> | undefined {
-    return this.checkSet(TYPE_SYNTAXES) ?
-      <Token<undefined>>this.current
-      : undefined;
+  private get atType(): boolean {
+    return this.checkSet(TYPE_SYNTAXES)
   }
 
-  private parseType(): Token<undefined> {
+  private parseType(): AST.TypeNode {
+    return this.parseUnionType();
+  }
+
+  private parseUnionType(): SingularTypeExpression | UnionTypeExpression {
+    let left: SingularTypeExpression | UnionTypeExpression = this.parseSingularType();
+
+    while (this.match(Syntax.Pipe)) {
+      const singularTypes: SingularTypeExpression[] = [];
+      if (left instanceof UnionTypeExpression)
+        singularTypes.push(...left.types);
+      else
+        singularTypes.push(left);
+
+      singularTypes.push(this.parseSingularType());
+      left = new UnionTypeExpression(singularTypes);
+    }
+
+    return left;
+  }
+
+  private parseSingularType(): SingularTypeExpression {
     if (this.matchSet(TYPE_SYNTAXES))
-      return this.previous();
+      return new SingularTypeExpression(this.previous());
 
     throw new ParsingError(`Expected type, got '${this.current.lexeme}'`, this.current);
   }

@@ -1,3 +1,15 @@
+import { BindingError } from "../../../errors";
+import type { BoundExpression, BoundStatement } from "./bound-node";
+import type { Token } from "../../syntax/token";
+import type { Type, TypeName } from "../types/type";
+import type { ValueType } from "..";
+import { BoundBinaryOperator } from "./bound-operators/binary";
+import { BoundUnaryOperator } from "./bound-operators/unary";
+import VariableSymbol from "../variable-symbol";
+import SingularType from "../types/singular-type";
+import UnionType from "../types/union-type";
+import Syntax from "../../syntax/syntax-type";
+import AST from "../../parser/ast";
 
 import type { LiteralExpression } from "../../parser/ast/expressions/literal";
 import type { ParenthesizedExpression } from "../../parser/ast/expressions/parenthesized";
@@ -6,20 +18,12 @@ import type { UnaryExpression } from "../../parser/ast/expressions/unary";
 import type { IdentifierExpression } from "../../parser/ast/expressions/identifier";
 import type { CompoundAssignmentExpression } from "../../parser/ast/expressions/compound-assignment";
 import type { VariableAssignmentExpression } from "../../parser/ast/expressions/variable-assignment";
+import { SingularTypeExpression } from "../../parser/ast/type-nodes/singular-type";
+import { UnionTypeExpression } from "../../parser/ast/type-nodes/union-type";
 import type { ExpressionStatement } from "../../parser/ast/statements/expression";
 import type { VariableAssignmentStatement } from "../../parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../../parser/ast/statements/variable-declaration";
-import { BoundBinaryOperator } from "./bound-operators/binary";
-import { BoundUnaryOperator } from "./bound-operators/unary";
-import type { BoundExpression, BoundStatement } from "./bound-node";
-import type { Token } from "../../syntax/token";
-import { Type, TypeName } from "../types/type";
-import type { ValueType } from "..";
 
-import SingularType from "../types/singular-type";
-import Syntax from "../../syntax/syntax-type";
-import AST from "../../parser/ast";
-import VariableSymbol from "../variable-symbol";
 import BoundLiteralExpression from "./bound-expressions/literal";
 import BoundParenthesizedExpression from "./bound-expressions/parenthesized";
 import BoundBinaryExpression from "./bound-expressions/binary";
@@ -36,7 +40,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): BoundVariableDeclarationStatement {
     const initializer = stmt.initializer ? this.bind(stmt.initializer) : undefined;
-    const variableSymbol = new VariableSymbol(stmt.identifier.name, new SingularType(<TypeName>stmt.typeKeyword.lexeme));
+    const variableSymbol = new VariableSymbol(stmt.identifier.name, this.getTypeFromTypeNode(stmt.type));
     this.variables.push(variableSymbol);
     return new BoundVariableDeclarationStatement(variableSymbol, initializer);
   }
@@ -89,7 +93,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   }
 
   public visitLiteralExpression<T extends ValueType = ValueType>(expr: LiteralExpression<T>): BoundLiteralExpression<T> {
-    const type = this.getTypeFromSyntax(expr.token.syntax)!;
+    const type = this.getTypeFromLiteralSyntax(expr.token.syntax)!;
     return new BoundLiteralExpression(expr.token, type);
   }
 
@@ -108,7 +112,16 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       .find(symbol => symbol.name.lexeme === name.lexeme)!;
   }
 
-  private getTypeFromSyntax(syntax: Syntax): Type | undefined {
+  private getTypeFromTypeNode(node: AST.TypeNode): Type {
+    if (node instanceof SingularTypeExpression)
+      return new SingularType(<TypeName>node.token.lexeme);
+    else if (node instanceof UnionTypeExpression)
+      return new UnionType(node.types.map(singular => <SingularType>this.getTypeFromTypeNode(singular)));
+
+    throw new BindingError(`Unhandled type expression: ${node}`, node.token)
+  }
+
+  private getTypeFromLiteralSyntax(syntax: Syntax): Type | undefined {
     switch(syntax) {
       case Syntax.String:
         return new SingularType("string");
