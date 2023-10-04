@@ -1,14 +1,15 @@
 # PLang
 The P programming language
 
-![Last Commit](https://img.shields.io/github/last-commit/p-programming-language/plang
-) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/p-programming-language/plang) ![GitHub top language](https://img.shields.io/github/languages/top/p-programming-language/plang) ![Lines of Code](https://img.shields.io/tokei/lines/github/p-programming-language/plang)
+![Last Commit](https://img.shields.io/github/last-commit/p-programming-language/plang)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/p-programming-language/plang)
+![GitHub top language](https://img.shields.io/github/languages/top/p-programming-language/plang)
+![Lines of Code](https://img.shields.io/tokei/lines/github/p-programming-language/plang)
 
+![license](https://img.shields.io/github/license/p-programming-language/plang)
+[![testing](https://github.com/KevinAlavik/plang/actions/workflows/test.yml/badge.svg)](https://github.com/KevinAlavik/plang/actions/workflows/test.yml)
+[![njsscan sarif](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml/badge.svg)](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml)
 
-![GitHub](https://img.shields.io/github/license/p-programming-language/plang)
-
-[![testing](https://github.com/KevinAlavik/plang/actions/workflows/test.yml/badge.svg)](https://github.com/KevinAlavik/plang/actions/workflows/test.yml) [![njsscan sarif](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml/badge.svg)](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml) [![Daily Release](https://github.com/p-programming-language/plang/actions/workflows/daily-release.yml/badge.svg)](https://github.com/p-programming-language/plang/actions/workflows/daily-release.yml)
-## Why?
 becuz im bored
 ## Tools
 - gpc
@@ -22,16 +23,16 @@ becuz im bored
     - Runs a simple test on plang
 
 ## Installation
-### On unix/linux:
+### Unix:
 ```bash
 curl -sSL https://raw.githubusercontent.com/KevinAlavik/plang/main/install.sh | bash
 ```
-### On Windows
-Powershell:
+### Windows:
+PowerShell:
 ```powershell
 Invoke-Expression (Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/KevinAlavik/plang/main/install.ps1').Content
 ```
-Command prompt:
+Command Prompt:
 ```bash
 powershell -command "& { Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/KevinAlavik/plang/main/install.bat' -OutFile 'install.bat'; .\install.bat; Remove-Item -Path 'install.bat' }"
 ```
@@ -44,7 +45,7 @@ or:
 ```bash
 yarn run build
 ```
-**Then you can access are [tools](https://github.com/kevinalavik/plang?tab=readme-ov-file#tools) using:**
+**Then you can access our [tools](https://github.com/kevinalavik/plang?tab=readme-ov-file#tools) using:**
 ```bash
 npm run <tool>
 ```
@@ -68,4 +69,4 @@ yarn run <tool>
     - Variable assignment (`:=` and `=` operators)
 
 ---
-**ATM it's only a tokenizer, parser, binder, and type checker. Support for functions, classes, etc. soon.**
+**This project is currently only a tokenizer, parser, binder, and type checker. Support for functions, classes, etc. soon.**
