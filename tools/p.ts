@@ -21,17 +21,11 @@ export default class P {
 
   public doFile(filePath: string): void {
     const fileContents = readFileSync(filePath, "utf-8");
-    const lines = fileContents.split("\n");
-
-    // parsing, resolving, etc. for each line
-    // is gonna annhilate performance kev
-    for (const line of lines)
-      this.doString(line);
-
-    this.createResources();
+    this.doString(fileContents);
+    this.refreshResources();
   }
 
-  private createResources(): void {
+  private refreshResources(): void {
     this.resolver = new Resolver;
     this.binder = new Binder;
     this.typeChecker = new TypeChecker;
