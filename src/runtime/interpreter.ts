@@ -111,6 +111,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
         //   return (<string>left).split(<string>right);
       case Syntax.SlashSlash:
         return Math.floor(<number>left / <number>right);
+      case Syntax.StarStar:
       case Syntax.Carat:
         return (<number>left) ** <number>right;
       case Syntax.Percent:

@@ -235,7 +235,7 @@ export default class Parser extends ArrayStepper<Token> {
   private parseExponential(): AST.Expression {
     let left = this.parseUnary();
 
-    while (this.match(Syntax.Carat)) { // this is also where i parsed ".." in cosmo, AKA a range literal expression
+    while (this.match(Syntax.Carat, Syntax.StarStar)) { // this is also where i parsed ".." in cosmo, AKA a range literal expression
       const operator = this.previous<undefined>();
       const right = this.parseUnary();
       left = new BinaryExpression(left, right, operator);

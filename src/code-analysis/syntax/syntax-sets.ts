@@ -4,7 +4,7 @@ import Syntax from "./syntax-type";
 export const COMPOUND_ASSIGNMENT_SYNTAXES = [
   Syntax.PlusEqual, Syntax.MinusEqual,
   Syntax.StarEqual, Syntax.SlashEqual, Syntax.SlashSlashEqual,
-  Syntax.CaratEqual, Syntax.PercentEqual,
+  Syntax.CaratEqual, Syntax.StarStarEqual, Syntax.PercentEqual,
   Syntax.AmpersandEqual, Syntax.PipeEqual,
   Syntax.AmpersandAmpersandEqual, Syntax.PipePipeEqual,
   Syntax.QuestionQuestionEqual

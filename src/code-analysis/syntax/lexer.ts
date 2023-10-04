@@ -123,7 +123,12 @@ export default class Lexer extends ArrayStepper<string> {
           return this.addToken(Syntax.Minus, undefined, true);
       }
       case "*": {
-        if (this.match("="))
+        if (this.match("*"))
+          if (this.match("="))
+            return this.addToken(Syntax.StarStarEqual, undefined, true);
+          else
+            return this.addToken(Syntax.StarStar, undefined, true);
+        else if (this.match("="))
           return this.addToken(Syntax.StarEqual, undefined, true);
         else
           return this.addToken(Syntax.Star, undefined, true);

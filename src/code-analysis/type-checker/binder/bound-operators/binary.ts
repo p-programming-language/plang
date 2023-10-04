@@ -137,7 +137,7 @@ const BOUND_BINARY_OPERATORS = [
     new SingularType("int")
   ),
   new BoundBinaryOperator(
-    [Syntax.Carat, Syntax.CaratEqual],
+    [Syntax.Carat, Syntax.CaratEqual, Syntax.StarStar, Syntax.StarStarEqual],
     BoundBinaryOperatorType.Exponentation,
     intOrFloat
   ),
