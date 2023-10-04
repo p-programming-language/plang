@@ -98,7 +98,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
       case Syntax.Plus:
         return <string & number>left + <string & number>right;
       case Syntax.Minus:
-        return <number>left + <number>right;
+        return <number>left - <number>right;
       case Syntax.Star:
         if (typeof left === "number")
           return <number>left * <number>right;
