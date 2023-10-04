@@ -69,7 +69,7 @@ describe(Interpreter.name, () => {
     evaluate("!1")?.should.be.false();
     evaluate("!''")?.should.be.false();
     evaluate("~5")?.should.equal(-6);
-    // evaluate("#['a','b','c']")?.should.equal(3);
+    evaluate("#['a','b','c']")?.should.equal(3);
   });
   it("evaluates variable declarations & compound assignments", () => {
     evaluate("mut int x = 2; ++x")?.should.equal(3);

@@ -12,6 +12,7 @@ import Syntax from "../../syntax/syntax-type";
 import AST from "../../parser/ast";
 
 import type { LiteralExpression } from "../../parser/ast/expressions/literal";
+import type { ArrayLiteralExpression } from "../../parser/ast/expressions/array-literal";
 import type { ParenthesizedExpression } from "../../parser/ast/expressions/parenthesized";
 import type { BinaryExpression } from "../../parser/ast/expressions/binary";
 import type { UnaryExpression } from "../../parser/ast/expressions/unary";
@@ -20,6 +21,7 @@ import type { CompoundAssignmentExpression } from "../../parser/ast/expressions/
 import type { VariableAssignmentExpression } from "../../parser/ast/expressions/variable-assignment";
 import { SingularTypeExpression } from "../../parser/ast/type-nodes/singular-type";
 import { UnionTypeExpression } from "../../parser/ast/type-nodes/union-type";
+import { ArrayTypeExpression } from "../../parser/ast/type-nodes/array-type";
 import type { ExpressionStatement } from "../../parser/ast/statements/expression";
 import type { VariableAssignmentStatement } from "../../parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../../parser/ast/statements/variable-declaration";
@@ -34,10 +36,8 @@ import BoundVariableAssignmentExpression from "./bound-expressions/variable-assi
 import BoundExpressionStatement from "./bound-statements/expression";
 import BoundVariableAssignmentStatement from "./bound-statements/variable-assignment";
 import BoundVariableDeclarationStatement from "./bound-statements/variable-declaration";
-import { ArrayLiteralExpression } from "../../parser/ast/expressions/array-literal";
 import BoundArrayLiteralExpression from "./bound-expressions/array-literal";
 import ArrayType from "../types/array-type";
-import { ArrayTypeExpression } from "../../parser/ast/type-nodes/array-type";
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variables: VariableSymbol[] = [];

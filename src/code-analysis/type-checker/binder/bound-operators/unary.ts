@@ -4,6 +4,7 @@ import type { Type } from "../../types/type";
 import Syntax from "../../../syntax/syntax-type";
 import SingularType from "../../types/singular-type";
 import UnionType from "../../types/union-type";
+import ArrayType from "../../types/array-type";
 
 
 export const enum BoundUnaryOperatorType {
@@ -89,12 +90,12 @@ const BOUND_UNARY_OPERATORS = [
       new SingularType("float")
     ])
   ),
-  // new BoundUnaryOperator(
-  //   Syntax.Hashtag,
-  //   BoundUnaryOperatorType.Length,
-  //   new SingularType("Array"),
-  //   new SingularType("int")
-  // ),
+  new BoundUnaryOperator(
+    Syntax.Hashtag,
+    BoundUnaryOperatorType.Length,
+    new ArrayType(new SingularType("any")),
+    new SingularType("int")
+  ),
   new BoundUnaryOperator(
     Syntax.Bang,
     BoundUnaryOperatorType.Not,

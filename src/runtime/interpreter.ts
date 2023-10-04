@@ -76,6 +76,8 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
         return +<number>operand;
       case Syntax.Minus:
         return -<number>operand;
+      case Syntax.Hashtag:
+        return (<Array<any>>operand).length;
       case Syntax.PlusPlus: {
         const compoundOperator = new Token(Syntax.PlusEqual, "+=", undefined, pseudoLocation);
         const compoundAssignment = new CompoundAssignmentExpression(<IdentifierExpression>expr.operand, one, compoundOperator);
