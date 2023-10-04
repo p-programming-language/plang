@@ -4,25 +4,44 @@ import Parser from "../src/code-analysis/parser";
 import Resolver from "../src/code-analysis/resolver";
 import Binder from "../src/code-analysis/type-checker/binder";
 
+interface PExecutionOptions {
+  outputAST: boolean;
+  outputBoundAST: boolean;
+  // outputResult: boolean;
+}
+
 export default class P {
   private resolver = new Resolver;
   private binder = new Binder;
   private typeChecker = new TypeChecker;
 
-  public doString(source: string): void {
+  public executionOptions: PExecutionOptions = {
+    outputAST: false,
+    outputBoundAST: false
+  };
+
+  public doString(source: string): any {
     const parser = new Parser(source);
     const ast = parser.parse();
     this.resolver.resolve(ast);
     const boundAST = this.binder.bindStatements(ast);
     this.typeChecker.check(boundAST);
-    // console.log(boundAST.toString());
-    console.log(ast.toString());
+
+    if (this.executionOptions.outputAST)
+      console.log(ast.toString());
+
+    if (this.executionOptions.outputBoundAST)
+      console.log(boundAST.toString());
+
+    return ast;
   }
 
-  public doFile(filePath: string): void {
+  public doFile(filePath: string): any {
     const fileContents = readFileSync(filePath, "utf-8");
-    this.doString(fileContents);
+    const result = this.doString(fileContents);
     this.refreshResources();
+
+    return result
   }
 
   private refreshResources(): void {

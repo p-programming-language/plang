@@ -1,15 +1,42 @@
 #!/usr/bin/env node
-import { readln } from "../src/lib/utility";
+import { platform } from "os";
+import { readln, clearTerminal } from "../src/lib/utility";
 import P from "./p";
 
-async function main() {
-  console.log("Welcome to the PLANG repl!");
+const os = platform();
+const outputTitle = () =>
+  console.log(`prepl v0.1.5 on ${os}`);
 
+async function main() {
   const p = new P;
+  p.executionOptions.outputAST = true;
+
+  outputTitle();
   while (true) {
-    const code = await readln("> ");
+    const code = await readln(">>> ");
     if (!code.trim()) continue;
-    p.doString(code);
+
+    switch(code) {
+      case "@clear": {
+        clearTerminal();
+        outputTitle();
+        break;
+      }
+      case "@ast": {
+        p.executionOptions.outputAST = !p.executionOptions.outputAST;
+        console.log(`AST output has been turned ${p.executionOptions.outputAST ? "on" : "off"}`);
+        break;
+      }
+      case "@bound_ast": {
+        p.executionOptions.outputBoundAST = !p.executionOptions.outputBoundAST;
+        console.log(`Bound AST output has been turned ${p.executionOptions.outputBoundAST ? "on" : "off"}`);
+        break;
+      }
+      default: {
+        p.doString(code);
+        break;
+      }
+    }
   }
 }
 

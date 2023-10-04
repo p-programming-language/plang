@@ -7,6 +7,7 @@ The P programming language
 ![Lines of Code](https://img.shields.io/tokei/lines/github/p-programming-language/plang)
 
 ![license](https://img.shields.io/github/license/p-programming-language/plang)
+
 [![testing](https://github.com/KevinAlavik/plang/actions/workflows/test.yml/badge.svg)](https://github.com/KevinAlavik/plang/actions/workflows/test.yml)
 [![njsscan sarif](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml/badge.svg)](https://github.com/p-programming-language/plang/actions/workflows/njsscan.yml)
 
@@ -24,16 +25,16 @@ becuz im bored
 ## Installation
 ### Unix:
 ```bash
-curl -sSL https://raw.githubusercontent.com/KevinAlavik/plang/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/p-programming-language/plang/main/install.sh | bash
 ```
 ### Windows:
 PowerShell:
 ```powershell
-Invoke-Expression (Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/KevinAlavik/plang/main/install.ps1').Content
+Invoke-Expression (Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/p-programming-language/plang/main/install.ps1').Content
 ```
 Command Prompt:
 ```bash
-powershell -command "& { Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/KevinAlavik/plang/main/install.bat' -OutFile 'install.bat'; .\install.bat; Remove-Item -Path 'install.bat' }"
+powershell -command "& { Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/p-programming-language/plang/main/install.bat' -OutFile 'install.bat'; .\install.bat; Remove-Item -Path 'install.bat' }"
 ```
 ### Building from source:
 Simply run:
@@ -44,7 +45,7 @@ or:
 ```bash
 yarn run build
 ```
-**Then you can access our [tools](https://github.com/kevinalavik/plang?tab=readme-ov-file#tools) using:**
+**Then you can access our [tools](https://github.com/p-programming-language/plang?tab=readme-ov-file#tools) using:**
 ```bash
 npm run <tool>
 ```

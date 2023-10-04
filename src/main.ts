@@ -1,5 +1,4 @@
 import P from "../tools/p";
-import Parser from "./code-analysis/parser";
 
 async function main() {
   const code = `
@@ -7,6 +6,7 @@ async function main() {
   `;
 
   const p = new P;
+  p.executionOptions.outputAST = true;
   p.doString(code);
 }
 
