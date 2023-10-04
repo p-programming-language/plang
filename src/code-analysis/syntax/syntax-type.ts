@@ -16,7 +16,7 @@ enum Syntax {
   VoidType,
   Null, Undefined,
 
-  Semicolon,
+  Semicolon, Comma,
   LParen, RParen,
   LBracket, RBracket,
   LBrace, RBrace,

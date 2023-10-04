@@ -11,6 +11,7 @@ import type { VariableAssignmentExpression } from "./parser/ast/expressions/vari
 import type { ExpressionStatement } from "./parser/ast/statements/expression";
 import type { VariableAssignmentStatement } from "./parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
+import { ArrayLiteralExpression } from "./parser/ast/expressions/array-literal";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   // the boolean represents whether the variable is defined or not
@@ -77,6 +78,11 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
   public visitParenthesizedExpression(expr: ParenthesizedExpression): void {
     this.resolve(expr.expression);
+  }
+
+  public visitArrayLiteralExpression(expr: ArrayLiteralExpression): void {
+    for (const element of expr.elements)
+      this.resolve(element);
   }
 
   public visitLiteralExpression(): void {

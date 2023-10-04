@@ -15,6 +15,7 @@ import type { ExpressionStatement } from "../code-analysis/parser/ast/statements
 import type { VariableAssignmentStatement } from "../code-analysis/parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
 import { Location, LocationSpan, Token } from "../code-analysis/syntax/token";
+import { ArrayLiteralExpression } from "../code-analysis/parser/ast/expressions/array-literal";
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   private scope = new Scope;
@@ -152,6 +153,14 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitParenthesizedExpression(expr: ParenthesizedExpression): ValueType {
     return this.evaluate(expr.expression);
+  }
+
+  public visitArrayLiteralExpression(expr: ArrayLiteralExpression): ValueType {
+    const array = [];
+    for (const element of expr.elements)
+      array.push(this.evaluate(element));
+
+    return array;
   }
 
   public visitLiteralExpression<V extends ValueType = ValueType>(expr: LiteralExpression<V>): V {

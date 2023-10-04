@@ -29,6 +29,8 @@ export default class Lexer extends ArrayStepper<string> {
     switch (char) {
       case ";":
         return this.addToken(Syntax.Semicolon, undefined, true);
+      case ",":
+        return this.addToken(Syntax.Comma, undefined, true);
       case "(":
         return this.addToken(Syntax.LParen, undefined, true);
       case ")":

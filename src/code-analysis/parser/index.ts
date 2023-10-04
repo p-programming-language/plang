@@ -20,6 +20,7 @@ import { ExpressionStatement } from "./ast/statements/expression";
 import { UnionTypeExpression } from "./ast/type-nodes/union-type";
 import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
+import { ArrayLiteralExpression } from "./ast/expressions/array-literal";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, TYPE_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -259,6 +260,16 @@ export default class Parser extends ArrayStepper<Token> {
   private parsePrimary(): AST.Expression {
     if (this.matchSet(LITERAL_SYNTAXES))
       return new LiteralExpression(this.previous());
+    if (this.match(Syntax.LBracket)) {
+      const bracket = this.previous<undefined>();
+      const elements = [this.parseExpression()];
+      while (this.match(Syntax.Comma))
+        elements.push(this.parseExpression());
+
+      this.consume(Syntax.RBracket);
+      return new ArrayLiteralExpression(bracket, elements);
+    }
+
     if (this.match(Syntax.Identifier))
       return new IdentifierExpression(this.previous());
     if (this.match(Syntax.LParen)) {

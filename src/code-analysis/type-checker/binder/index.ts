@@ -34,6 +34,9 @@ import BoundVariableAssignmentExpression from "./bound-expressions/variable-assi
 import BoundExpressionStatement from "./bound-statements/expression";
 import BoundVariableAssignmentStatement from "./bound-statements/variable-assignment";
 import BoundVariableDeclarationStatement from "./bound-statements/variable-declaration";
+import { ArrayLiteralExpression } from "../../parser/ast/expressions/array-literal";
+import BoundArrayLiteralExpression from "./bound-expressions/array-literal";
+import ArrayType from "../types/array-type";
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variables: VariableSymbol[] = [];
@@ -90,6 +93,15 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitParenthesizedExpression(expr: ParenthesizedExpression): BoundParenthesizedExpression {
     return new BoundParenthesizedExpression(this.bind(expr.expression));
+  }
+
+  public visitArrayLiteralExpression(expr: ArrayLiteralExpression): BoundExpression {
+    const elements: BoundExpression[] = [];
+    for (const element of expr.elements)
+      elements.push(this.bind(element));
+
+    const type = new ArrayType(elements.at(0)?.type ?? new SingularType("undefined"));
+    return new BoundArrayLiteralExpression(elements, type);
   }
 
   public visitLiteralExpression<T extends ValueType = ValueType>(expr: LiteralExpression<T>): BoundLiteralExpression<T> {

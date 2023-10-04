@@ -6,14 +6,14 @@ import AST from "../parser/ast";
 import BoundParenthesizedExpression from "./binder/bound-expressions/parenthesized";
 import BoundBinaryExpression from "./binder/bound-expressions/binary";
 import BoundUnaryExpression from "./binder/bound-expressions/unary";
-import BoundIdentifierExpression from "./binder/bound-expressions/identifier";
 import BoundCompoundAssignmentExpression from "./binder/bound-expressions/compound-assignment";
 import BoundVariableAssignmentExpression from "./binder/bound-expressions/variable-assignment";
 import BoundExpressionStatement from "./binder/bound-statements/expression";
 import BoundVariableAssignmentStatement from "./binder/bound-statements/variable-assignment";
 import BoundVariableDeclarationStatement from "./binder/bound-statements/variable-declaration";
+import BoundArrayLiteralExpression from "./binder/bound-expressions/array-literal";
 
-export type ValueType = string | number | boolean | null | undefined | void;
+export type ValueType = string | number | boolean | null | undefined | void | ValueType[];
 
 export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
   public visitVariableDeclarationStatement(stmt: BoundVariableDeclarationStatement): void {
@@ -54,6 +54,11 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
 
   public visitParenthesizedExpression(expr: BoundParenthesizedExpression): void {
     this.check(expr.expression);
+  }
+
+  public visitArrayLiteralExpression(expr: BoundArrayLiteralExpression): void {
+    for (const element of expr.elements)
+      this.assert(element, element.type, expr.type.elementType);
   }
 
   public visitLiteralExpression(): void {

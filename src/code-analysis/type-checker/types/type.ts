@@ -1,11 +1,15 @@
 import util from "util";
+
+import { TYPE_KEYWORDS } from "../../syntax/keywords";
 import type SingularType from "./singular-type";
 import type UnionType from "./union-type";
-import { TYPE_KEYWORDS } from "../../syntax/keywords";
+import type ArrayType from "./array-type";
+
 
 export const enum TypeKind {
   Singular,
-  Union
+  Union,
+  Array
 }
 
 export abstract class Type {
@@ -19,6 +23,10 @@ export abstract class Type {
     return this.kind === TypeKind.Union;
   }
 
+  public isArray(): this is ArrayType {
+    return this.kind === TypeKind.Array;
+  }
+
   public isAssignableTo(other: Type): boolean {
     if (this.isUnion())
       return this.types.some(type => type.isAssignableTo(other));
@@ -30,6 +38,7 @@ export abstract class Type {
         return this.name === other.name;
       } else
         return other.isAssignableTo(this);
+
 
     return false;
   }

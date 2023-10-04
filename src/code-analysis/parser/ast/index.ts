@@ -2,6 +2,7 @@ import util from "util";
 
 import type { Token } from "../../syntax/token";
 import type { LiteralExpression } from "./expressions/literal";
+import type { ArrayLiteralExpression } from "./expressions/array-literal";
 import type { ParenthesizedExpression } from "./expressions/parenthesized";
 import type { BinaryExpression } from "./expressions/binary";
 import type { UnaryExpression } from "./expressions/unary";
@@ -12,6 +13,7 @@ import type { ExpressionStatement } from "./statements/expression";
 import type { VariableAssignmentStatement } from "./statements/variable-assignment";
 import type { VariableDeclarationStatement } from "./statements/variable-declaration";
 import type BoundLiteralExpression from "../../type-checker/binder/bound-expressions/literal";
+import type BoundArrayLiteralExpression from "../../type-checker/binder/bound-expressions/array-literal";
 import type BoundParenthesizedExpression from "../../type-checker/binder/bound-expressions/parenthesized";
 import type BoundBinaryExpression from "../../type-checker/binder/bound-expressions/binary";
 import type BoundUnaryExpression from "../../type-checker/binder/bound-expressions/unary";
@@ -45,6 +47,7 @@ namespace AST {
       public abstract visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): R
       public abstract visitIdentifierExpression(expr: IdentifierExpression): R
       public abstract visitParenthesizedExpression(expr: ParenthesizedExpression): R
+      public abstract visitArrayLiteralExpression(expr: ArrayLiteralExpression): R
       public abstract visitLiteralExpression(expr: LiteralExpression): R
       public abstract visitBinaryExpression(expr: BinaryExpression): R
       public abstract visitUnaryExpression(expr: UnaryExpression): R
@@ -61,6 +64,7 @@ namespace AST {
       public abstract visitCompoundAssignmentExpression(expr: BoundCompoundAssignmentExpression): R
       public abstract visitIdentifierExpression(expr: BoundIdentifierExpression): R
       public abstract visitParenthesizedExpression(expr: BoundParenthesizedExpression): R
+      public abstract visitArrayLiteralExpression(expr: BoundArrayLiteralExpression): R
       public abstract visitLiteralExpression(expr: BoundLiteralExpression): R
       public abstract visitBinaryExpression(expr: BoundBinaryExpression): R
       public abstract visitUnaryExpression(expr: BoundUnaryExpression): R
