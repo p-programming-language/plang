@@ -17,7 +17,7 @@ export default class P {
   private binder = new Binder;
   private resolver = new Resolver;
   private typeChecker = new TypeChecker;
-  private interpreter = new Interpreter;
+  private interpreter = new Interpreter(this.resolver, this.binder);
 
   public executionOptions: PExecutionOptions = {
     outputAST: false,
@@ -56,6 +56,6 @@ export default class P {
     this.binder = new Binder;
     this.resolver = new Resolver;
     this.typeChecker = new TypeChecker;
-    this.interpreter = new Interpreter;
+    this.interpreter = new Interpreter(this.resolver, this.binder);
   }
 }

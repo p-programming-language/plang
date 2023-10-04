@@ -5,7 +5,7 @@ import { KEYWORDS } from "./keywords";
 import ArrayStepper from "../array-stepper";
 import Syntax from "./syntax-type";
 
-const ALPHABETICAL = /[a-zA-Z]/;
+const ALPHABETICAL = /[a-zA-Z_]/;
 const NUMERIC = /^[0-9]$/;
 const WHITESPACE = /\s+/;
 

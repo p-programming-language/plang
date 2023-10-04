@@ -33,7 +33,6 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   public visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): void {
     this.resolve(stmt.identifier);
     this.resolve(stmt.value);
-    this.resolveLocal(stmt, stmt.identifier.token);
   }
 
   public visitExpressionStatement(stmt: ExpressionStatement): void {
@@ -43,17 +42,11 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): void {
     this.resolve(expr.identifier);
     this.resolve(expr.value);
-    this.resolveLocal(expr, expr.identifier.token);
   }
 
   public visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): void {
-    const leftIsIdentifier = expr.left instanceof IdentifierExpression;
-    if (!leftIsIdentifier)
-      this.resolve(expr.left);
-
+    this.resolve(expr.left);
     this.resolve(expr.right);
-    if (leftIsIdentifier)
-      this.resolveLocal(expr, expr.left.token);
   }
 
   public visitIdentifierExpression(expr: IdentifierExpression): void {
@@ -61,10 +54,8 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
     if (this.scopes.length > 0 && scope!.get(expr.token.lexeme) === false)
       throw new ReferenceError(`Cannot read variable '${expr.token.lexeme}' in it's own initializer`, expr.token);
 
-    if (this.isDefined(expr.token) === undefined)
+    if (!this.isDefined(expr.token))
       throw new ReferenceError(`'${expr.token.lexeme}' is not defined in this scope`, expr.token);
-
-    this.resolveLocal(expr, expr.token);
   }
 
   public visitUnaryExpression(expr: UnaryExpression): void {
@@ -99,28 +90,11 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
       (<AST.Expression>statements).accept(this);
   }
 
-  private isDefined(identifier: Token): boolean | undefined {
-    for (let i = this.scopes.length - 1; i >= 0; i--) {
-      const scope = this.scopes[i];
-      if (scope?.has(identifier.lexeme))
-        return scope.get(identifier.lexeme);
-    }
-  }
+  public define(identifier: Token): void {
+    if (this.scopes.length === 0) return;
 
-  private resolveLocal(expr: AST.Node, identifier: Token): void {
-    for (let i = this.scopes.length - 1; i >= 0; i--)
-      if (this.scopes[i]?.has(identifier.lexeme)) {
-        this.locals.set(expr, this.scopes.length - i);
-        return;
-      }
-  }
-
-  private beginScope(): void {
-    this.scopes.push(new Map<string, boolean>);
-  }
-
-  private endScope(): void {
-    this.scopes.pop();
+    const scope = this.scopes.at(-1);
+    scope?.set(identifier.lexeme, true);
   }
 
   private declare(identifier: Token): void {
@@ -133,10 +107,20 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
     scope?.set(identifier.lexeme, false);
   }
 
-  private define(identifier: Token): void {
-    if (this.scopes.length === 0) return;
+  private isDefined(identifier: Token): boolean {
+    for (let i = this.scopes.length - 1; i >= 0; i--) {
+      const scope = this.scopes[i];
+      if (scope?.has(identifier.lexeme))
+        return scope.get(identifier.lexeme)!;
+    }
+    return false;
+  }
 
-    const scope = this.scopes.at(-1);
-    scope?.set(identifier.lexeme, true);
+  private beginScope(): void {
+    this.scopes.push(new Map<string, boolean>);
+  }
+
+  private endScope(): void {
+    this.scopes.pop();
   }
 }

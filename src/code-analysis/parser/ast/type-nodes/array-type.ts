@@ -1,5 +1,6 @@
-import { Location, LocationSpan, Token } from "../../../syntax/token";
+import { Token } from "../../../syntax/token";
 import { SingularTypeExpression } from "./singular-type";
+import { fakeToken } from "../../../../lib/utility";
 import Syntax from "../../../syntax/syntax-type";
 import AST from "..";
 
@@ -8,8 +9,7 @@ export class ArrayTypeExpression extends SingularTypeExpression {
     public readonly elementType: AST.TypeNode
   ) {
 
-    const pseudoLocation = new LocationSpan(new Location(1, 1), new Location(1, 1));
-    const typeKeyword = new Token(Syntax.Identifier, "Array", undefined, pseudoLocation);
+    const typeKeyword = fakeToken<undefined>(Syntax.Identifier, "Array");
     super(typeKeyword, [elementType]);
   }
 

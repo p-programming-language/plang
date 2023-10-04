@@ -44,8 +44,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): BoundVariableDeclarationStatement {
     const initializer = stmt.initializer ? this.bind(stmt.initializer) : undefined;
-    const variableSymbol = new VariableSymbol(stmt.identifier.token, this.getTypeFromTypeNode(stmt.type));
-    this.variables.push(variableSymbol);
+    const variableSymbol = this.defineSymbol(stmt.identifier.token, this.getTypeFromTypeNode(stmt.type));
     return new BoundVariableDeclarationStatement(variableSymbol, stmt.mutable, initializer);
   }
 
@@ -76,6 +75,9 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitIdentifierExpression(expr: IdentifierExpression): BoundIdentifierExpression {
     const variableSymbol = this.findSymbol(expr.token);
+    if (!variableSymbol)
+      throw new BindingError(`Failed to find variable symbol for '${expr.token.lexeme}'`, expr.token)
+
     return new BoundIdentifierExpression(expr.token, variableSymbol.type);
   }
 
@@ -137,6 +139,12 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public bindStatements(statements: AST.Statement[]): BoundStatement[] {
     return statements.map(statement => this.bind(statement));
+  }
+
+  public defineSymbol(name: Token, type: Type): VariableSymbol {
+    const variableSymbol = new VariableSymbol(name, type);
+    this.variables.push(variableSymbol);
+    return variableSymbol;
   }
 
   private bind<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement>(node: T): T extends AST.Expression ? BoundExpression : BoundStatement {

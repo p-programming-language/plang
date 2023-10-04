@@ -7,9 +7,9 @@ interface VariableOptions {
 }
 
 export default class Scope {
-  public readonly variablesDefined = new Map<string, boolean>
-  public readonly variableValues = new Map<string, ValueType>;
-  public readonly variableOptions = new Map<string, VariableOptions>;
+  private readonly variablesDefined = new Map<string, boolean>
+  private readonly variableValues = new Map<string, ValueType>;
+  private readonly variableOptions = new Map<string, VariableOptions>;
 
   public constructor(
     public readonly enclosing?: Scope
@@ -49,8 +49,8 @@ export default class Scope {
       return this.enclosing.get(name);
   }
 
-  public getAt<V extends ValueType = ValueType>(distance: number, name: string): V | undefined {
-    return <V>this.ancestor(distance)?.variableValues.get(name);
+  public getAt<V extends ValueType = ValueType>(name: Token<undefined>, distance: number): V | undefined {
+    return <V>this.ancestor(distance)?.variableValues.get(name.lexeme);
   }
 
   public define<V extends ValueType = ValueType>(name: Token<undefined>, value: V, options: VariableOptions): void {

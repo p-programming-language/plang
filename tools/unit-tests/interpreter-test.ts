@@ -9,6 +9,7 @@ import Parser from "../../src/code-analysis/parser";
 import Resolver from "../../src/code-analysis/resolver";
 import Binder from "../../src/code-analysis/type-checker/binder";
 import Interpreter from "../../src/runtime/interpreter";
+import pkg = require("../../package.json");
 
 PError.testing = true;
 
@@ -17,7 +18,7 @@ function evaluate(source: string): ValueType {
   const resolver = new Resolver;
   const binder = new Binder;
   const typeChecker = new TypeChecker;
-  const interpreter = new Interpreter;
+  const interpreter = new Interpreter(resolver, binder);
   const ast = parser.parse();
   resolver.resolve(ast);
   const boundAST = binder.bindStatements(ast);
@@ -75,6 +76,9 @@ describe(Interpreter.name, () => {
     evaluate("mut int x = 2; ++x")?.should.equal(3);
     evaluate("mut int x = 2; x += 7")?.should.equal(9);
     evaluate("mut int x = 2; x := 1")?.should.equal(1);
+  });
+  it("evaluates intrinsics", () => {
+    evaluate("__version")?.should.equal("v" + pkg.version);
   });
   describe("evaluates general tests (tests/)", () => {
     testFiles.forEach((file) => {

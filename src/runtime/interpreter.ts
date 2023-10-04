@@ -1,10 +1,16 @@
 import { RuntimeError } from "../errors";
 import type { ValueType } from "../code-analysis/type-checker";
+import { Token } from "../code-analysis/syntax/token";
+import { fakeToken } from "../lib/utility";
+import type Binder from "../code-analysis/type-checker/binder";
+import type Resolver from "../code-analysis/resolver";
 import Scope from "./scope";
+import Intrinsics from "./intrinsics";
 import Syntax from "../code-analysis/syntax/syntax-type";
 import AST from "../code-analysis/parser/ast";
 
 import { LiteralExpression } from "../code-analysis/parser/ast/expressions/literal";
+import type { ArrayLiteralExpression } from "../code-analysis/parser/ast/expressions/array-literal";
 import type { ParenthesizedExpression } from "../code-analysis/parser/ast/expressions/parenthesized";
 import type { UnaryExpression } from "../code-analysis/parser/ast/expressions/unary";
 import { BinaryExpression } from "../code-analysis/parser/ast/expressions/binary";
@@ -14,11 +20,15 @@ import { VariableAssignmentExpression } from "../code-analysis/parser/ast/expres
 import type { ExpressionStatement } from "../code-analysis/parser/ast/statements/expression";
 import type { VariableAssignmentStatement } from "../code-analysis/parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
-import { Location, LocationSpan, Token } from "../code-analysis/syntax/token";
-import { ArrayLiteralExpression } from "../code-analysis/parser/ast/expressions/array-literal";
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
-  private scope = new Scope;
+  public readonly globals = new Scope;
+  private scope = this.globals;
+
+  public constructor(resolver: Resolver, binder: Binder) {
+    const intrinsics = new Intrinsics(this, resolver, binder);
+    intrinsics.inject();
+  }
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): void {
     const value = stmt.initializer ? this.evaluate(stmt.initializer) : undefined;
@@ -62,8 +72,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitUnaryExpression(expr: UnaryExpression): ValueType {
     const operand = this.evaluate(expr.operand);
-    const pseudoLocation = new LocationSpan(new Location(1, 1), new Location(1, 1));
-    const one = new LiteralExpression(new Token(Syntax.Int, "1", 1, pseudoLocation));
+    const one = new LiteralExpression(fakeToken(Syntax.Int, "1", 1));
     switch(expr.operator.syntax) {
       case Syntax.Bang:
         if (typeof operand !== "boolean")
@@ -79,12 +88,12 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
       case Syntax.Hashtag:
         return (<Array<any>>operand).length;
       case Syntax.PlusPlus: {
-        const compoundOperator = new Token(Syntax.PlusEqual, "+=", undefined, pseudoLocation);
+        const compoundOperator = fakeToken<undefined>(Syntax.PlusEqual, "+=");
         const compoundAssignment = new CompoundAssignmentExpression(<IdentifierExpression>expr.operand, one, compoundOperator);
         return this.evaluate(compoundAssignment);
       }
       case Syntax.MinusMinus: {
-        const compoundOperator = new Token(Syntax.MinusEqual, "-=", undefined, pseudoLocation);
+        const compoundOperator = fakeToken<undefined>(Syntax.MinusEqual, "-=");
         const compoundAssignment = new CompoundAssignmentExpression(<IdentifierExpression>expr.operand, one, compoundOperator);
         return this.evaluate(compoundAssignment);
       }
