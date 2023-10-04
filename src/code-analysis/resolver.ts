@@ -12,6 +12,8 @@ import type { ExpressionStatement } from "./parser/ast/statements/expression";
 import type { VariableAssignmentStatement } from "./parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
 import { ArrayLiteralExpression } from "./parser/ast/expressions/array-literal";
+import { BlockStatement } from "./parser/ast/statements/block";
+import { IfStatement } from "./parser/ast/statements/if";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   // the boolean represents whether the variable is defined or not
@@ -20,6 +22,17 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
   public constructor() {
     this.beginScope();
+  }
+
+  public visitIfStatement(stmt: IfStatement): void {
+    this.resolve(stmt.condition);
+    this.resolve(stmt.body);
+    if (!stmt.elseBranch) return;
+    this.resolve(stmt.elseBranch);
+  }
+
+  public visitBlockStatement(stmt: BlockStatement): void {
+    this.resolve(stmt.statements);
   }
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): void {

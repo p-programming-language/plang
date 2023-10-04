@@ -8,6 +8,7 @@ import { BoundUnaryOperator } from "./bound-operators/unary";
 import VariableSymbol from "../variable-symbol";
 import SingularType from "../types/singular-type";
 import UnionType from "../types/union-type";
+import ArrayType from "../types/array-type";
 import Syntax from "../../syntax/syntax-type";
 import AST from "../../parser/ast";
 
@@ -25,6 +26,8 @@ import { ArrayTypeExpression } from "../../parser/ast/type-nodes/array-type";
 import type { ExpressionStatement } from "../../parser/ast/statements/expression";
 import type { VariableAssignmentStatement } from "../../parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../../parser/ast/statements/variable-declaration";
+import type { BlockStatement } from "../../parser/ast/statements/block";
+import type { IfStatement } from "../../parser/ast/statements/if";
 
 import BoundLiteralExpression from "./bound-expressions/literal";
 import BoundParenthesizedExpression from "./bound-expressions/parenthesized";
@@ -37,10 +40,23 @@ import BoundExpressionStatement from "./bound-statements/expression";
 import BoundVariableAssignmentStatement from "./bound-statements/variable-assignment";
 import BoundVariableDeclarationStatement from "./bound-statements/variable-declaration";
 import BoundArrayLiteralExpression from "./bound-expressions/array-literal";
-import ArrayType from "../types/array-type";
+import BoundBlockStatement from "./bound-statements/block";
+import BoundIfStatement from "./bound-statements/if";
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variables: VariableSymbol[] = [];
+
+  public visitIfStatement(stmt: IfStatement): BoundIfStatement {
+    const condition = this.bind(stmt.condition);
+    const body = this.bind(stmt.body);
+    const elseBranch = stmt.elseBranch ? this.bind(stmt.elseBranch) : undefined;
+    return new BoundIfStatement(stmt.token, condition, body, elseBranch);
+  }
+
+  public visitBlockStatement(stmt: BlockStatement): BoundBlockStatement {
+    const boundStatements = this.bindStatements(stmt.statements);
+    return new BoundBlockStatement(stmt.token, boundStatements);
+  }
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): BoundVariableDeclarationStatement {
     const initializer = stmt.initializer ? this.bind(stmt.initializer) : undefined;

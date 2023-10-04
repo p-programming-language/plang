@@ -12,10 +12,23 @@ import BoundExpressionStatement from "./binder/bound-statements/expression";
 import BoundVariableAssignmentStatement from "./binder/bound-statements/variable-assignment";
 import BoundVariableDeclarationStatement from "./binder/bound-statements/variable-declaration";
 import BoundArrayLiteralExpression from "./binder/bound-expressions/array-literal";
+import BoundBlockStatement from "./binder/bound-statements/block";
+import BoundIfStatement from "./binder/bound-statements/if";
 
 export type ValueType = string | number | boolean | null | undefined | void | ValueType[];
 
 export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
+  public visitIfStatement(stmt: BoundIfStatement): void {
+    this.check(stmt.condition);
+    this.check(stmt.body);
+    if (!stmt.elseBranch) return;
+    this.check(stmt.elseBranch);
+  }
+
+  public visitBlockStatement(stmt: BoundBlockStatement): void {
+    this.check(stmt.statements);
+  }
+
   public visitVariableDeclarationStatement(stmt: BoundVariableDeclarationStatement): void {
     if (!stmt.initializer) return;
     this.assert(stmt.initializer, stmt.initializer.type, stmt.symbol.type);
@@ -70,7 +83,7 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
       for (const statement of statements)
         this.check(statement);
     else
-      statements.accept(this)
+      statements.accept(this);
   }
 
   private assert(node: BoundNode, a: Type, b: Type): void {

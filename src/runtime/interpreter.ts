@@ -20,6 +20,8 @@ import { VariableAssignmentExpression } from "../code-analysis/parser/ast/expres
 import type { ExpressionStatement } from "../code-analysis/parser/ast/statements/expression";
 import type { VariableAssignmentStatement } from "../code-analysis/parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
+import type { BlockStatement } from "../code-analysis/parser/ast/statements/block";
+import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public readonly globals = new Scope;
@@ -28,6 +30,19 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public constructor(resolver: Resolver, binder: Binder) {
     const intrinsics = new Intrinsics(this, resolver, binder);
     intrinsics.inject();
+  }
+
+  public visitIfStatement(stmt: IfStatement): void {
+    const condition = this.evaluate(stmt.condition);
+    const inverted = stmt.token.syntax === Syntax.Unless;
+    if (inverted ? !condition : condition)
+      this.evaluate(stmt.body)
+    else if (stmt.elseBranch)
+      this.evaluate(stmt.elseBranch);
+  }
+
+  public visitBlockStatement(stmt: BlockStatement): void {
+    this.evaluate(stmt.statements);
   }
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): void {

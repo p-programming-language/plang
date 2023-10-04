@@ -12,6 +12,8 @@ import type { VariableAssignmentExpression } from "./expressions/variable-assign
 import type { ExpressionStatement } from "./statements/expression";
 import type { VariableAssignmentStatement } from "./statements/variable-assignment";
 import type { VariableDeclarationStatement } from "./statements/variable-declaration";
+import type { BlockStatement } from "./statements/block";
+import type { IfStatement } from "./statements/if";
 import type BoundLiteralExpression from "../../type-checker/binder/bound-expressions/literal";
 import type BoundArrayLiteralExpression from "../../type-checker/binder/bound-expressions/array-literal";
 import type BoundParenthesizedExpression from "../../type-checker/binder/bound-expressions/parenthesized";
@@ -23,6 +25,8 @@ import type BoundVariableAssignmentExpression from "../../type-checker/binder/bo
 import type BoundExpressionStatement from "../../type-checker/binder/bound-statements/expression";
 import type BoundVariableAssignmentStatement from "../../type-checker/binder/bound-statements/variable-assignment";
 import type BoundVariableDeclarationStatement from "../../type-checker/binder/bound-statements/variable-declaration";
+import type BoundBlockStatement from "../../type-checker/binder/bound-statements/block";
+import type BoundIfStatement from "../../type-checker/binder/bound-statements/if";
 
 namespace AST {
   export abstract class Node {
@@ -54,6 +58,8 @@ namespace AST {
     }
 
     export abstract class Statement<R> {
+      public abstract visitIfStatement(stmt: IfStatement): R
+      public abstract visitBlockStatement(stmt: BlockStatement): R
       public abstract visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): R
       public abstract visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): R
       public abstract visitExpressionStatement(stmt: ExpressionStatement): R
@@ -71,6 +77,8 @@ namespace AST {
     }
 
     export abstract class BoundStatement<R> {
+      public abstract visitIfStatement(stmt: BoundIfStatement): R
+      public abstract visitBlockStatement(stmt: BoundBlockStatement): R
       public abstract visitVariableDeclarationStatement(stmt: BoundVariableDeclarationStatement): R
       public abstract visitVariableAssignmentStatement(stmt: BoundVariableAssignmentStatement): R
       public abstract visitExpressionStatement(stmt: BoundExpressionStatement): R

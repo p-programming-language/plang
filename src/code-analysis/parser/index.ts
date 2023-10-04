@@ -22,6 +22,8 @@ import { VariableAssignmentStatement } from "./ast/statements/variable-assignmen
 import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
 import { ArrayLiteralExpression } from "./ast/expressions/array-literal";
 import { ArrayTypeExpression } from "./ast/type-nodes/array-type";
+import { IfStatement } from "./ast/statements/if";
+import { BlockStatement } from "./ast/statements/block";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -48,8 +50,27 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseStatement(): AST.Statement {
-    // match other statements like if, return, while, etc
+    if (this.match(Syntax.If, Syntax.Unless)) {
+      const keyword = this.previous<undefined>();
+      const condition = this.parseExpression();
+      const body = this.parseStatement();
+      const elseBranch = this.match(Syntax.Else) ? this.parseStatement() : undefined;
+      return new IfStatement(keyword, condition, body, elseBranch);
+    }
+
+    if (this.match(Syntax.LBrace))
+      return this.parseBlock();
+
     return this.parseExpressionStatement();
+  }
+
+  private parseBlock(): BlockStatement {
+    const brace = this.previous<undefined>();
+    this.typeScopes.push([]);
+    const statements = this.parse();
+    this.consume(Syntax.RBrace);
+    this.typeScopes.pop();
+    return new BlockStatement(brace, statements);
   }
 
   // parse declarations like classes, variables, functions, etc.

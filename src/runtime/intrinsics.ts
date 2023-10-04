@@ -16,10 +16,10 @@ export default class Intrinsics {
   ) {}
 
   public inject(): void {
-    this.defineIntrinsic("__version", "v" + pkg.version, new SingularType("string"));
+    this.define("__version", "v" + pkg.version, new SingularType("string"));
   }
 
-  private defineIntrinsic<V extends ValueType = ValueType>(name: string, value: V, type: Type): void {
+  private define<V extends ValueType = ValueType>(name: string, value: V, type: Type): void {
     const identifier = fakeToken<undefined>(Syntax.Identifier, name);
     this.resolver.define(identifier);
     this.binder.defineSymbol(identifier, type);
