@@ -37,6 +37,7 @@ import BoundVariableDeclarationStatement from "./bound-statements/variable-decla
 import { ArrayLiteralExpression } from "../../parser/ast/expressions/array-literal";
 import BoundArrayLiteralExpression from "./bound-expressions/array-literal";
 import ArrayType from "../types/array-type";
+import { ArrayTypeExpression } from "../../parser/ast/type-nodes/array-type";
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variables: VariableSymbol[] = [];
@@ -129,6 +130,8 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       return new SingularType(<TypeName>node.token.lexeme);
     else if (node instanceof UnionTypeExpression)
       return new UnionType(node.types.map(singular => <SingularType>this.getTypeFromTypeNode(singular)));
+    else if (node instanceof ArrayTypeExpression)
+      return new ArrayType(this.getTypeFromTypeNode(node.elementType));
 
     throw new BindingError(`Unhandled type expression: ${node}`, node.token);
   }

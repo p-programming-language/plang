@@ -21,6 +21,7 @@ import { UnionTypeExpression } from "./ast/type-nodes/union-type";
 import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
 import { ArrayLiteralExpression } from "./ast/expressions/array-literal";
+import { ArrayTypeExpression } from "./ast/type-nodes/array-type";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, TYPE_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -51,9 +52,13 @@ export default class Parser extends ArrayStepper<Token> {
   private declaration(): AST.Statement | undefined {
     const nextSyntax = this.peek()?.syntax;
     const nextNextSyntax = this.peek(2)?.syntax;
-    const nextIsIdentOrTypeOperator = nextSyntax === Syntax.Identifier || nextSyntax === Syntax.Pipe;
-    const nextNextIsIdentOrTypeOperator = nextNextSyntax === Syntax.Identifier || nextNextSyntax === Syntax.Pipe;
-    if (this.atType && (nextIsIdentOrTypeOperator || nextNextIsIdentOrTypeOperator)) {
+    const isTypePostfix = (syntax?: Syntax) =>
+      syntax === Syntax.Identifier
+      || syntax === Syntax.Pipe
+      || syntax === Syntax.LBracket;
+
+
+    if (this.atType && (isTypePostfix(nextSyntax) || isTypePostfix(nextNextSyntax))) {
       const declaration = this.parseVariableDeclaration();
       this.consumeSemicolons();
       return declaration;
@@ -289,18 +294,29 @@ export default class Parser extends ArrayStepper<Token> {
     return this.parseUnionType();
   }
 
-  private parseUnionType(): SingularTypeExpression | UnionTypeExpression {
-    let left: SingularTypeExpression | UnionTypeExpression = this.parseSingularType();
+  private parseUnionType(): AST.TypeNode {
+    let left = this.parseArrayType();
 
     while (this.match(Syntax.Pipe)) {
-      const singularTypes: SingularTypeExpression[] = [];
+      const singularTypes: (SingularTypeExpression | ArrayTypeExpression)[] = [];
       if (left instanceof UnionTypeExpression)
         singularTypes.push(...left.types);
-      else
+      else if (left instanceof SingularTypeExpression || left instanceof ArrayTypeExpression)
         singularTypes.push(left);
 
       singularTypes.push(this.parseSingularType());
       left = new UnionTypeExpression(singularTypes);
+    }
+
+    return left;
+  }
+
+  private parseArrayType(): AST.TypeNode {
+    let left: AST.Node = this.parseSingularType();
+
+    while (this.match(Syntax.LBracket)) {
+      this.consume(Syntax.RBracket);
+      left = new ArrayTypeExpression(left);
     }
 
     return left;

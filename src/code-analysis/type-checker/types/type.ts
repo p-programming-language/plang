@@ -38,7 +38,10 @@ export abstract class Type {
         return this.name === other.name;
       } else
         return other.isAssignableTo(this);
-
+    else if (this.isArray()) {
+      if (!other.isArray()) return false;
+      return this.elementType.isAssignableTo(other.elementType);
+    }
 
     return false;
   }
