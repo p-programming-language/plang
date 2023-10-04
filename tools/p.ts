@@ -9,20 +9,21 @@ export default class P {
   private binder = new Binder;
   private typeChecker = new TypeChecker;
 
-  public doString(source: string): void {
+  public doString(source: string): any {
     const parser = new Parser(source);
     const ast = parser.parse();
     this.resolver.resolve(ast);
     const boundAST = this.binder.bindStatements(ast);
     this.typeChecker.check(boundAST);
-    // console.log(boundAST.toString());
-    console.log(ast.toString());
+    return ast
   }
 
-  public doFile(filePath: string): void {
+  public doFile(filePath: string): any {
     const fileContents = readFileSync(filePath, "utf-8");
-    this.doString(fileContents);
+    const result = this.doString(fileContents);
     this.refreshResources();
+
+    return result
   }
 
   private refreshResources(): void {

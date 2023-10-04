@@ -1,4 +1,6 @@
 import * as readline from "readline";
+import { spawnSync } from 'child_process';
+import * as os from 'os';
 
 export function readln(prompt: string): Promise<string> {
   const rl = readline.createInterface({
@@ -13,6 +15,18 @@ export function readln(prompt: string): Promise<string> {
     });
   });
 }
+
+export function clearScreen(): void {
+  const platform = os.platform();
+
+  if (platform === 'win32') {
+    spawnSync('cmd', ['/c', 'cls'], { stdio: 'inherit' });
+  } else {
+    spawnSync('clear', [], { stdio: 'inherit' });
+  }
+}
+
+
 
 export class StringBuilder {
   protected indentation = 0;

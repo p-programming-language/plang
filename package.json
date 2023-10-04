@@ -30,6 +30,7 @@
   "license": "LGPL-2.1-or-later",
   "dependencies": {
     "mocha": "^10.2.0",
+    "os": "^0.1.2",
     "should": "^13.2.3"
   },
   "devDependencies": {
