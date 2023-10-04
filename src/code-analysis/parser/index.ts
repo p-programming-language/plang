@@ -375,7 +375,7 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private check(syntax: Syntax, offset = 0): boolean {
-    return this.peek(offset)!.syntax === syntax;
+    return this.peek(offset)?.syntax === syntax;
   }
 
   private consume<V extends ValueType = ValueType>(syntax: Syntax, expectedOverride?: string): Token<V> {
