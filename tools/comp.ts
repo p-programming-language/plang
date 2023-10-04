@@ -8,7 +8,7 @@ function main() {
     console.error(`
 Usage: gpc <file>
 
-GPC ~ Goofy Plang Compiler
+GPC ~ General P Compiler
 --------------------------
 Options:
 

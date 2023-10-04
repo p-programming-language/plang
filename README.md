@@ -13,14 +13,13 @@ The P programming language
 becuz im bored
 ## Tools
 - gpc
-    - The general Plang compiler
+    - The general P compiler
 - prepl
-    - A interactive repl to run plang in your terminal
-- ppl
-    - A P Package library / project handler
+    - A interactive repl to run P in your terminal
+
 ### Developer only tools
 - test
-    - Runs a simple test on plang
+    - Runs unit tests
 
 ## Installation
 ### Unix:
