@@ -9,6 +9,7 @@ const outputTitle = () =>
 
 async function main() {
   const p = new P;
+  p.executionOptions.outputResult = true;
 
   outputTitle();
   while (true) {
@@ -29,6 +30,11 @@ async function main() {
       case "@bound_ast": {
         p.executionOptions.outputBoundAST = !p.executionOptions.outputBoundAST;
         console.log(`Bound AST output has been turned ${p.executionOptions.outputBoundAST ? "on" : "off"}`);
+        break;
+      }
+      case "@results": {
+        p.executionOptions.outputResult = !p.executionOptions.outputResult;
+        console.log(`Interpreter result output has been turned ${p.executionOptions.outputResult ? "on" : "off"}`);
         break;
       }
       default: {

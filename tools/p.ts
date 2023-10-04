@@ -1,4 +1,6 @@
 import { readFileSync } from "fs";
+import util from "util";
+
 import { TypeChecker, ValueType } from "../src/code-analysis/type-checker";
 import Parser from "../src/code-analysis/parser";
 import Binder from "../src/code-analysis/type-checker/binder";
@@ -20,7 +22,7 @@ export default class P {
   public executionOptions: PExecutionOptions = {
     outputAST: false,
     outputBoundAST: false,
-    outputResult: true
+    outputResult: false
   };
 
   public doString(source: string): ValueType {
@@ -38,7 +40,7 @@ export default class P {
       console.log(boundAST.toString());
 
     if (this.executionOptions.outputResult)
-      console.log(result);
+      console.log(util.inspect(result, { colors: true, compact: false }));
 
     return result;
   }

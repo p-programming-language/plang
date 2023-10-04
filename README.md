@@ -53,14 +53,14 @@ or:
 ```bash
 yarn run <tool>
 ```
-## Current features
+## Current Features
 - Tokenizing:
     - Number literals (int, float)
     - String literals, supports both single and double quotes
     - Boolean literals
     - Identifiers
     - Keywords
-    - Most symbols (`.`, `:`, `<`, `<=`, `>`, `>=`, all brackets, arithmetic operators, etc.)
+    - Symbols
 - Parsing + Binding + Type checking + Interpreting:
     - Literals
     - Binary expressions (including compound assignment)
@@ -68,5 +68,6 @@ yarn run <tool>
     - Variable declarations (mutability optional)
     - Variable assignment (`:=` and `=` operators)
 
----
-**This project is currently only a tokenizer, parser, binder, and type checker. Support for functions, classes, etc. soon.**
+## Planned Features
+- Array literals/types
+- Object literals/types
