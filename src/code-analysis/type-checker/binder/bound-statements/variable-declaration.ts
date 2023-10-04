@@ -8,7 +8,8 @@ export default class BoundVariableDeclarationStatement extends BoundStatement {
 
   public constructor(
     public readonly symbol: VariableSymbol,
-    public readonly initializer?: BoundExpression
+    public readonly mutable: boolean,
+    public readonly initializer?: BoundExpression,
   ) { super(); }
 
   public accept<R>(visitor: AST.Visitor.BoundStatement<R>): R {

@@ -1,27 +1,25 @@
-import assert from "assert";
 
 import { Token } from "../syntax/token";
 import { ParsingError } from "../../errors";
+import { ValueType } from "../type-checker";
+import ArrayStepper from "../array-stepper";
+import Lexer from "../syntax/lexer";
+import Syntax from "../syntax/syntax-type";
+import * as SyntaxSets from "../syntax/syntax-sets";
+import AST from "./ast";
+
 import { LiteralExpression } from "./ast/expressions/literal";
 import { ParenthesizedExpression } from "./ast/expressions/parenthesized";
 import { BinaryExpression } from "./ast/expressions/binary";
 import { UnaryExpression } from "./ast/expressions/unary";
 import { IdentifierExpression } from "./ast/expressions/identifier";
-import { CompoundAssignmentExpression } from "./ast/expressions/compound-assignment";
-
-import ArrayStepper from "../array-stepper";
-import Lexer from "../syntax/lexer";
-import Syntax from "../syntax/syntax-type";
-import AST from "./ast";
-
-import * as SyntaxSets from "../syntax/syntax-sets";
-import { ExpressionStatement } from "./ast/statements/expression";
 import { VariableAssignmentExpression } from "./ast/expressions/variable-assignment";
-import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
-import { ValueType } from "../type-checker";
-import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
+import { CompoundAssignmentExpression } from "./ast/expressions/compound-assignment";
 import { SingularTypeExpression } from "./ast/type-nodes/singular-type";
+import { ExpressionStatement } from "./ast/statements/expression";
 import { UnionTypeExpression } from "./ast/type-nodes/union-type";
+import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
+import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, TYPE_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -51,13 +49,22 @@ export default class Parser extends ArrayStepper<Token> {
   // parse declarations like classes, variables, functions, etc.
   private declaration(): AST.Statement | undefined {
     const nextSyntax = this.peek()?.syntax;
-    if (this.atType && (nextSyntax === Syntax.Identifier || nextSyntax === Syntax.Pipe))
-      return this.parseVariableDeclaration();
+    const nextNextSyntax = this.peek(2)?.syntax;
+    const nextIsIdentOrTypeOperator = nextSyntax === Syntax.Identifier || nextSyntax === Syntax.Pipe;
+    const nextNextIsIdentOrTypeOperator = nextNextSyntax === Syntax.Identifier || nextNextSyntax === Syntax.Pipe;
+    if (this.atType && (nextIsIdentOrTypeOperator || nextNextIsIdentOrTypeOperator)) {
+      const declaration = this.parseVariableDeclaration();
+      this.consumeSemicolons();
+      return declaration;
+    }
 
-    return this.parseStatement();
+    const stmt = this.parseStatement();
+    this.consumeSemicolons();
+    return stmt;
   }
 
   private parseVariableDeclaration(): AST.Statement {
+    const isMutable = this.match(Syntax.Mut);
     const type = this.parseType();
     const identifierToken = this.consume<undefined>(Syntax.Identifier, "identifier");
     const initializer = this.match(Syntax.Equal) ?
@@ -65,7 +72,7 @@ export default class Parser extends ArrayStepper<Token> {
       : undefined;
 
     const identifier = new IdentifierExpression(identifierToken);
-    return new VariableDeclarationStatement(type, identifier, initializer);
+    return new VariableDeclarationStatement(type, identifier, isMutable, initializer);
   }
 
   private parseExpressionStatement(): AST.Statement {
@@ -88,13 +95,13 @@ export default class Parser extends ArrayStepper<Token> {
     let left = this.parseCompoundAssignment();
 
     if (this.match(Syntax.Equal, Syntax.ColonEqual)) {
-      const operator = this.previous();
+      const isStatement = this.check(Syntax.Equal, -1);
       const value = <AST.Expression>this.parseVariableAssignment();
+
       if (left instanceof IdentifierExpression)
-        if (operator.syntax === Syntax.Equal)
-          return new VariableAssignmentStatement(left, value);
-        else
-          return new VariableAssignmentExpression(left, value);
+        return isStatement ?
+          new VariableAssignmentStatement(left, value)
+          : new VariableAssignmentExpression(left, value);
 
       throw new ParsingError("Invalid assignment target", this.current);
     }
@@ -264,7 +271,7 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private get atType(): boolean {
-    return this.checkSet(TYPE_SYNTAXES)
+    return this.checkSet(TYPE_SYNTAXES) || (this.check(Syntax.Mut) && this.checkSet(TYPE_SYNTAXES, 1))
   }
 
   private parseType(): AST.TypeNode {
@@ -321,12 +328,12 @@ export default class Parser extends ArrayStepper<Token> {
     return false;
   }
 
-  private checkSet(syntaxSet: SyntaxSet): boolean {
-    return syntaxSet.includes(this.current.syntax);
+  private checkSet(syntaxSet: SyntaxSet, offset = 0): boolean {
+    return syntaxSet.includes(this.peek(offset)!.syntax);
   }
 
-  private check(syntax: Syntax) {
-    return this.current.syntax === syntax;
+  private check(syntax: Syntax, offset = 0): boolean {
+    return this.peek(offset)!.syntax === syntax;
   }
 
   private consume<V extends ValueType = ValueType>(syntax: Syntax, expectedOverride?: string): Token<V> {
@@ -338,6 +345,6 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   protected override get isFinished(): boolean {
-    return this.current.syntax === Syntax.EOF;
+    return this.check(Syntax.EOF);
   }
 }

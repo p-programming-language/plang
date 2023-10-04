@@ -21,7 +21,9 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): void {
     const value = stmt.initializer ? this.evaluate(stmt.initializer) : undefined;
-    this.scope.define(stmt.identifier.name, value);
+    this.scope.define(stmt.identifier.name, value, {
+      mutable: stmt.mutable
+    });
   }
 
   public visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): void {

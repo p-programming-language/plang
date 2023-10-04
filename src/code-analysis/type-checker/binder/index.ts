@@ -1,9 +1,9 @@
 import { BindingError } from "../../../errors";
 import type { BoundExpression, BoundStatement } from "./bound-node";
-import { Location, LocationSpan, Token } from "../../syntax/token";
+import type { Token } from "../../syntax/token";
 import type { Type, TypeName } from "../types/type";
 import type { ValueType } from "..";
-import { BoundBinaryOperator, BoundBinaryOperatorType } from "./bound-operators/binary";
+import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
 import VariableSymbol from "../variable-symbol";
 import SingularType from "../types/singular-type";
@@ -11,9 +11,9 @@ import UnionType from "../types/union-type";
 import Syntax from "../../syntax/syntax-type";
 import AST from "../../parser/ast";
 
-import { LiteralExpression } from "../../parser/ast/expressions/literal";
+import type { LiteralExpression } from "../../parser/ast/expressions/literal";
 import type { ParenthesizedExpression } from "../../parser/ast/expressions/parenthesized";
-import { BinaryExpression } from "../../parser/ast/expressions/binary";
+import type { BinaryExpression } from "../../parser/ast/expressions/binary";
 import type { UnaryExpression } from "../../parser/ast/expressions/unary";
 import type { IdentifierExpression } from "../../parser/ast/expressions/identifier";
 import type { CompoundAssignmentExpression } from "../../parser/ast/expressions/compound-assignment";
@@ -42,7 +42,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     const initializer = stmt.initializer ? this.bind(stmt.initializer) : undefined;
     const variableSymbol = new VariableSymbol(stmt.identifier.name, this.getTypeFromTypeNode(stmt.type));
     this.variables.push(variableSymbol);
-    return new BoundVariableDeclarationStatement(variableSymbol, initializer);
+    return new BoundVariableDeclarationStatement(variableSymbol, stmt.mutable, initializer);
   }
 
   public visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): BoundVariableAssignmentStatement {
@@ -118,7 +118,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     else if (node instanceof UnionTypeExpression)
       return new UnionType(node.types.map(singular => <SingularType>this.getTypeFromTypeNode(singular)));
 
-    throw new BindingError(`Unhandled type expression: ${node}`, node.token)
+    throw new BindingError(`Unhandled type expression: ${node}`, node.token);
   }
 
   private getTypeFromLiteralSyntax(syntax: Syntax): Type | undefined {

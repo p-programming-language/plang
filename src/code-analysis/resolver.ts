@@ -1,4 +1,4 @@
-import { ResolutionError } from "../errors";
+import { ReferenceError } from "../errors";
 import type { Token } from "./syntax/token";
 import AST from "../code-analysis/parser/ast";
 
@@ -58,10 +58,10 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   public visitIdentifierExpression(expr: IdentifierExpression): void {
     const scope = this.scopes.at(-1);
     if (this.scopes.length > 0 && scope!.get(expr.name.lexeme) === false)
-      throw new ResolutionError(`Cannot read variable '${expr.name.lexeme}' in it's own initializer`, expr.name);
+      throw new ReferenceError(`Cannot read variable '${expr.name.lexeme}' in it's own initializer`, expr.name);
 
     if (this.isDefined(expr.name) === undefined)
-      throw new ResolutionError(`'${expr.name.lexeme}' is not defined in this scope`, expr.name);
+      throw new ReferenceError(`'${expr.name.lexeme}' is not defined in this scope`, expr.name);
 
     this.resolveLocal(expr, expr.name);
   }
@@ -122,7 +122,7 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
     const scope = this.scopes.at(-1);
     if (scope?.has(identifier.lexeme))
-      throw new ResolutionError(`Variable '${identifier.lexeme}' is already declared is this scope`, identifier);
+      throw new ReferenceError(`Variable '${identifier.lexeme}' is already declared is this scope`, identifier);
 
     scope?.set(identifier.lexeme, false);
   }

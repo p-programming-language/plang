@@ -61,11 +61,11 @@ yarn run <tool>
     - Identifiers
     - Keywords
     - Most symbols (`.`, `:`, `<`, `<=`, `>`, `>=`, all brackets, arithmetic operators, etc.)
-- Parsing + Binding + Type checking:
+- Parsing + Binding + Type checking + Interpreting:
     - Literals
-    - Binary expressions
-    - Unary expressions
-    - Variable declarations
+    - Binary expressions (including compound assignment)
+    - Unary expressions (including `++` and `--`)
+    - Variable declarations (mutability optional)
     - Variable assignment (`:=` and `=` operators)
 
 ---

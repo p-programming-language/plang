@@ -6,7 +6,8 @@ export class VariableDeclarationStatement extends AST.Statement {
   public constructor(
     public readonly type: AST.TypeNode,
     public readonly identifier: IdentifierExpression,
-    public readonly initializer?: AST.Expression
+    public readonly mutable: boolean,
+    public readonly initializer?: AST.Expression,
   ) { super(); }
 
   public accept<R>(visitor: AST.Visitor.Statement<R>): R {

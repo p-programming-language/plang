@@ -6,6 +6,7 @@ enum Syntax {
 
   Identifier,
   Function,
+  Mut,
 
   AnyType,
   IntType,

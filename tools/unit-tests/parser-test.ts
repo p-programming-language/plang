@@ -93,16 +93,16 @@ describe(Parser.name, () => {
       unary.operand.token.value?.should.equal(false);
     }
     {
-      const [node] = parse("++6");
+      const [node] = parse("++a");
       node.should.be.an.instanceof(ExpressionStatement);
       const expr = (<ExpressionStatement>node).expression;
       expr.should.be.an.instanceof(UnaryExpression);
       const unary = <UnaryExpression>expr;
       unary.operator.syntax.should.equal(Syntax.PlusPlus);
       unary.operator.lexeme.should.equal("++");
-      unary.operand.token.syntax.should.equal(Syntax.Int);
-      unary.operand.token.lexeme.should.equal("6");
-      unary.operand.token.value?.should.equal(6);
+      unary.operand.token.syntax.should.equal(Syntax.Identifier);
+      unary.operand.token.lexeme.should.equal("a");
+      unary.operand.token.value?.should.be.undefined();
     }
   });
   it("parses binary expressions", () => {

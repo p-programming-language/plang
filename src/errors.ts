@@ -41,9 +41,9 @@ export class BindingError extends PError {
   }
 }
 
-export class ResolutionError extends PError {
+export class ReferenceError extends PError {
   public constructor(message: string, token: Token) {
-    super(ResolutionError.name, message, token.locationSpan.start.line, token.locationSpan.start.column);
+    super(ReferenceError.name, message, token.locationSpan.start.line, token.locationSpan.start.column);
   }
 }
 
