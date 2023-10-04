@@ -22,6 +22,7 @@ enum Syntax {
   LT, GT, LTE, GTE,// <, >, <=, >=
   LDoubleArrow, RDoubleArrow,
   Tilde,
+  Question, QuestionQuestion, QuestionQuestionEqual,
   Plus, Minus,
   Star, Slash, SlashSlash,
   Carat, Percent,

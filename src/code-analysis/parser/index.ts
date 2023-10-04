@@ -78,7 +78,7 @@ export default class Parser extends ArrayStepper<Token> {
   private parseVariableAssignment(): AST.Expression | AST.Statement {
     let left = this.parseCompoundAssignment();
 
-    if (this.match(Syntax.Equal) || this.match(Syntax.ColonEqual)) {
+    if (this.match(Syntax.Equal, Syntax.ColonEqual)) {
       const operator = this.previous();
       const value = <AST.Expression>this.parseVariableAssignment();
       if (left instanceof IdentifierExpression)
@@ -111,7 +111,7 @@ export default class Parser extends ArrayStepper<Token> {
   private parseLogicalOr(): AST.Expression {
     let left = this.parseLogicalAnd();
 
-    while (this.match(Syntax.PipePipe)) {
+    while (this.match(Syntax.PipePipe, Syntax.QuestionQuestion)) {
       const operator = this.previous<undefined>();
       const right = this.parseLogicalAnd();
       left = new BinaryExpression(left, right, operator);
@@ -135,7 +135,7 @@ export default class Parser extends ArrayStepper<Token> {
   private parseComparison(): AST.Expression {
     let left = this.parseEquality();
 
-    while (this.matchSet([Syntax.LT, Syntax.LTE, Syntax.GT, Syntax.GTE])) {
+    while (this.match(Syntax.LT, Syntax.LTE, Syntax.GT, Syntax.GTE)) {
       const operator = this.previous<undefined>();
       const right = this.parseEquality();
       left = new BinaryExpression(left, right, operator);
@@ -147,7 +147,7 @@ export default class Parser extends ArrayStepper<Token> {
   private parseEquality(): AST.Expression {
     let left = this.parseBitwiseOr();
 
-    while (this.matchSet([Syntax.EqualEqual, Syntax.BangEqual])) {
+    while (this.match(Syntax.EqualEqual, Syntax.BangEqual)) {
       const operator = this.previous<undefined>();
       const right = this.parseBitwiseOr();
       left = new BinaryExpression(left, right, operator);
@@ -183,7 +183,7 @@ export default class Parser extends ArrayStepper<Token> {
   private parseShift(): AST.Expression {
     let left = this.parseAdditive();
 
-    while (this.match(Syntax.LDoubleArrow) || this.match(Syntax.RDoubleArrow)) {
+    while (this.match(Syntax.LDoubleArrow, Syntax.RDoubleArrow)) {
       const operator = this.previous<undefined>();
       const right = this.parseAdditive();
       left = new BinaryExpression(left, right, operator);
@@ -195,7 +195,7 @@ export default class Parser extends ArrayStepper<Token> {
   private parseAdditive(): AST.Expression {
     let left = this.parseMultiplicative();
 
-    while (this.match(Syntax.Plus) || this.match(Syntax.Minus)) {
+    while (this.match(Syntax.Plus, Syntax.Minus)) {
       const operator = this.previous<undefined>();
       const right = this.parseMultiplicative();
       left = new BinaryExpression(left, right, operator);
@@ -207,7 +207,7 @@ export default class Parser extends ArrayStepper<Token> {
   private parseMultiplicative(): AST.Expression {
     let left = this.parseExponential();
 
-    while (this.match(Syntax.Star) || this.match(Syntax.Slash) || this.match(Syntax.SlashSlash) || this.match(Syntax.Percent)) {
+    while (this.match(Syntax.Star, Syntax.Slash, Syntax.SlashSlash, Syntax.Percent)) {
       const operator = this.previous<undefined>();
       const right = this.parseExponential();
       left = new BinaryExpression(left, right, operator);
@@ -277,11 +277,7 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private matchSet(syntaxSet: SyntaxSet): boolean {
-    const matches = this.checkSet(syntaxSet);
-    if (matches)
-      this.advance();
-
-    return matches;
+    return this.match(...syntaxSet);
   }
 
   private match(...syntaxes: Syntax[]): boolean {

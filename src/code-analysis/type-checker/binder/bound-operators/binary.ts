@@ -5,6 +5,7 @@ import Syntax from "../../../syntax/syntax-type";
 import UnionType from "../../types/union-type";
 import SingularType from "../../types/singular-type";
 
+
 export const enum BoundBinaryOperatorType {
   Addition,
   Subtraction,
@@ -27,7 +28,8 @@ export const enum BoundBinaryOperatorType {
   BitwiseOr,
   BitwiseXor,
   ShiftLeft,
-  ShiftRight
+  ShiftRight,
+  NullishCoalescing
 }
 
 export class BoundBinaryOperator {
@@ -218,5 +220,12 @@ const BOUND_BINARY_OPERATORS = [
     [Syntax.Tilde],
     BoundBinaryOperatorType.BitwiseXor,
     new SingularType("int")
-  )
+  ),
+  new BoundBinaryOperator(
+    [Syntax.QuestionQuestion, Syntax.QuestionQuestionEqual],
+    BoundBinaryOperatorType.NullishCoalescing,
+    new SingularType("any"),
+    new SingularType("any"),
+    new SingularType("any")
+  ),
 ];

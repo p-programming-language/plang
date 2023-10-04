@@ -6,6 +6,7 @@ export const COMPOUND_ASSIGNMENT_SYNTAXES = [
   Syntax.CaratEqual, Syntax.PercentEqual,
   Syntax.AmpersandEqual, Syntax.PipeEqual,
   Syntax.AmpersandAmpersandEqual, Syntax.PipePipeEqual,
+  Syntax.QuestionQuestionEqual
 ]
 
 export const TYPE_SYNTAXES = [

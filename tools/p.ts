@@ -15,7 +15,8 @@ class P {
     this.resolver.resolve(ast);
     const boundAST = this.binder.bindStatements(ast);
     this.typeChecker.check(boundAST);
-    console.log(boundAST.toString());
+    // console.log(boundAST.toString());
+    console.log(ast.toString());
   }
 
   public doFile(filePath: string): void {

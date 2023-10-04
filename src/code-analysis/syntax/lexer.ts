@@ -51,6 +51,15 @@ export default class Lexer extends ArrayStepper<string> {
         else
           return this.addToken(Syntax.Colon, undefined, true);
       }
+      case "?": {
+        if (this.match("?"))
+          if (this.match("="))
+            return this.addToken(Syntax.QuestionQuestionEqual, undefined, true);
+          else
+            return this.addToken(Syntax.QuestionQuestion, undefined, true);
+        else
+          return this.addToken(Syntax.Question, undefined, true);
+      }
       case "&": {
         if (this.match("="))
           return this.addToken(Syntax.AmpersandEqual, undefined, true);
