@@ -41,6 +41,12 @@ export default class Parser extends ArrayStepper<Token> {
     return statements;
   }
 
+  private parseStatement(): AST.Statement {
+    // match other statements like if, return, while, etc
+    return this.parseExpressionStatement();
+  }
+
+  // parse declarations like classes, variables, functions, etc.
   private declaration(): AST.Statement | undefined {
     if (this.currentType && this.peek()?.syntax === Syntax.Identifier)
       return this.parseVariableDeclaration();
@@ -59,16 +65,16 @@ export default class Parser extends ArrayStepper<Token> {
     return new VariableDeclarationStatement(typeKeyword, identifier, initializer);
   }
 
-  private parseStatement(): AST.Statement {
-    // match other statements like if, return, while, etc
-    return this.parseExpressionStatement();
-  }
-
   private parseExpressionStatement(): AST.Statement {
     const expr = this.parseExpression();
+    this.consumeSemicolons();
     return expr instanceof AST.Expression ?
       new ExpressionStatement(expr)
       : expr;
+  }
+
+  private consumeSemicolons(): void {
+    while (this.match(Syntax.Semicolon));
   }
 
   private parseExpression(): AST.Expression {

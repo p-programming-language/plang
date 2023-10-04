@@ -31,7 +31,7 @@ import BoundExpressionStatement from "./bound-statements/expression";
 import BoundVariableAssignmentStatement from "./bound-statements/variable-assignment";
 import BoundVariableDeclarationStatement from "./bound-statements/variable-declaration";
 
-export class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
+export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variables: VariableSymbol[] = [];
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): BoundVariableDeclarationStatement {

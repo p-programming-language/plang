@@ -60,10 +60,12 @@ yarn run <tool>
     - Identifiers
     - Keywords
     - Most symbols (`.`, `:`, `<`, `<=`, `>`, `>=`, all brackets, arithmetic operators, etc.)
-- Parsing/Binding:
+- Parsing + Binding + Type checking:
     - Literals
     - Binary expressions
     - Unary expressions
+    - Variable declarations
+    - Variable assignment (`:=` and `=` operators)
 
 ---
-**ATM it's only a tokenizer, parser, and binder. Support for variables, functions, etc. soon.**
+**ATM it's only a tokenizer, parser, binder, and type checker. Support for functions, classes, etc. soon.**

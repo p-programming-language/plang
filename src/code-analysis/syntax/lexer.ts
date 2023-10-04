@@ -27,6 +27,8 @@ export default class Lexer extends ArrayStepper<string> {
   private lex(): void {
     const char = this.current;
     switch (char) {
+      case ";":
+        return this.addToken(Syntax.Semicolon, undefined, true);
       case "(":
         return this.addToken(Syntax.LParen, undefined, true);
       case ")":

@@ -1,10 +1,10 @@
 import { readFileSync } from "fs";
+import { TypeChecker } from "../src/code-analysis/type-checker";
 import Parser from "../src/code-analysis/parser";
 import Resolver from "../src/code-analysis/resolver";
-import { Binder } from "../src/code-analysis/type-checker/binder";
-import { TypeChecker } from "../src/code-analysis/type-checker";
+import Binder from "../src/code-analysis/type-checker/binder";
 
-class P {
+export default class P {
   private resolver = new Resolver;
   private binder = new Binder;
   private typeChecker = new TypeChecker;
@@ -37,5 +37,3 @@ class P {
     this.typeChecker = new TypeChecker;
   }
 }
-
-export default P;
