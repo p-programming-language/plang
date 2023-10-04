@@ -73,7 +73,7 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseVariableDeclaration(): AST.Statement {
-    const isMutable = this.match(Syntax.Mut);
+    const isMutable = this.check(Syntax.Mut, -1);
     const type = this.parseType();
     const identifierToken = this.consume<undefined>(Syntax.Identifier, "identifier");
     const initializer = this.match(Syntax.Equal) ?
