@@ -11,7 +11,7 @@
     "ppl": "dist/tools/ppl.js"
   },
   "scripts": {
-    "test": "mocha dist/tools/unit-tests -j 4",
+    "test": "mocha dist/tools/unit-tests -j 4 --extension js",
     "build": "tsc",
     "repl": "node dist/tools/repl.js",
     "gpc": "node dist/tools/comp.js",

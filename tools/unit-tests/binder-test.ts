@@ -33,7 +33,7 @@ function runTestsForFile(filePath: string) {
   });
 }
 
-describe(Parser.name, () => {
+describe(Binder.name, () => {
   it("binds literals", () => {
     {
       const [node] = bind('"hello"');
