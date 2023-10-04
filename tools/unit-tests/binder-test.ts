@@ -7,11 +7,12 @@ import { BoundStatement } from "../../src/code-analysis/type-checker/binder/boun
 import Syntax from "../../src/code-analysis/syntax/syntax-type";
 import Parser from "../../src/code-analysis/parser";
 import Binder from "../../src/code-analysis/type-checker/binder";
-import BoundExpressionStatement from "../../src/code-analysis/type-checker/binder/bound-statements/expression";
-import BoundLiteralExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/literal";
 import SingularType from "../../src/code-analysis/type-checker/types/singular-type";
+import BoundLiteralExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/literal";
 import BoundUnaryExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/unary";
 import BoundBinaryExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/binary";
+import BoundArrayLiteralExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/array-literal";
+import BoundExpressionStatement from "../../src/code-analysis/type-checker/binder/bound-statements/expression";
 import BoundVariableDeclarationStatement from "../../src/code-analysis/type-checker/binder/bound-statements/variable-declaration";
 
 function bind(source: string): BoundStatement[] {
@@ -35,7 +36,7 @@ function runTestsForFile(filePath: string) {
 
 describe(Binder.name, () => {
   it("binds literals", () => {
-    {
+    it("strings", () => {
       const [node] = bind('"hello"');
       node.should.be.an.instanceof(BoundExpressionStatement);
       const expr = (<BoundExpressionStatement>node).expression;
@@ -47,8 +48,8 @@ describe(Binder.name, () => {
       expr.token.syntax.should.equal(Syntax.String);
       expr.token.lexeme.should.equal('"hello"');
       expr.token.value?.should.equal("hello");
-    }
-    {
+    });
+    it("integers", () => {
       const [node] = bind("123");
       node.should.be.an.instanceof(BoundExpressionStatement);
       const expr = (<BoundExpressionStatement>node).expression;
@@ -60,7 +61,32 @@ describe(Binder.name, () => {
       expr.token.syntax.should.equal(Syntax.Int);
       expr.token.lexeme.should.equal("123");
       expr.token.value?.should.equal(123);
-    }
+    });
+    it("arrays", () => {
+      const [node] = bind("[1,'a',true]");
+      node.should.be.an.instanceof(BoundExpressionStatement);
+      const expr = (<BoundExpressionStatement>node).expression;
+      expr.should.be.an.instanceof(BoundArrayLiteralExpression);
+      const literal = <BoundArrayLiteralExpression>expr;
+      literal.type.isUnion().should.be.true();
+      literal.type.toString().should.equal("int | string | bool");
+      const [one, two, three] = literal.elements;
+      one.type.isSingular().should.be.true();
+      one.type.toString().should.equal("int");
+      one.token.syntax.should.equal(Syntax.Int);
+      one.token.lexeme.should.equal("1");
+      one.token.value?.should.equal(1);
+      two.type.isSingular().should.be.true();
+      two.type.toString().should.equal("string");
+      two.token.syntax.should.equal(Syntax.String);
+      two.token.lexeme.should.equal("'a'");
+      two.token.value?.should.equal("a");
+      three.type.isSingular().should.be.true();
+      three.type.toString().should.equal("bool");
+      three.token.syntax.should.equal(Syntax.Boolean);
+      three.token.lexeme.should.equal("true");
+      three.token.value?.should.equal(true);
+    });
   });
   it("binds unary expressions", () => {
     {
