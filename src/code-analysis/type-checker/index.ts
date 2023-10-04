@@ -39,7 +39,7 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
     this.assert(expr.left, expr.left.type, expr.right.type);
   }
 
-  public visitIdentifierExpression(expr: BoundIdentifierExpression): void {
+  public visitIdentifierExpression(): void {
     // do nothing
   }
 
@@ -50,7 +50,6 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
   public visitBinaryExpression(expr: BoundBinaryExpression): void {
     this.assert(expr.left, expr.left.type, expr.operator.leftType);
     this.assert(expr.right, expr.right.type, expr.operator.rightType);
-    this.assert(expr.right, expr.right.type, expr.left.type);
   }
 
   public visitParenthesizedExpression(expr: BoundParenthesizedExpression): void {

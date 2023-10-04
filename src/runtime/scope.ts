@@ -8,9 +8,9 @@ export default class Scope {
     public readonly enclosing?: Scope
   ) {}
 
-  public assign<V extends ValueType = ValueType>(name: Token, value: V): void {
+  public assign<V extends ValueType = ValueType>(name: Token<undefined>, value: V): void {
     if (this.values.has(name.lexeme))
-      return this.define(name.lexeme, value);
+      return this.define(name, value);
 
     if (this.enclosing !== undefined)
       return this.enclosing.assign(name, value);
@@ -20,7 +20,7 @@ export default class Scope {
     this.ancestor(distance)?.values.set(name.lexeme, value);
   }
 
-  public get<V extends ValueType = ValueType>(name: Token): V | undefined {
+  public get<V extends ValueType = ValueType>(name: Token<undefined>): V | undefined {
     if (this.values.has(name.lexeme))
       return <V>this.values.get(name.lexeme);
 
@@ -32,8 +32,8 @@ export default class Scope {
     return <V>this.ancestor(distance)?.values.get(name);
   }
 
-  public define<V extends ValueType = ValueType>(name: string, value: V): void {
-    this.values.set(name, value);
+  public define<V extends ValueType = ValueType>(token: Token<undefined>, value: V): void {
+    this.values.set(token.lexeme, value);
   }
 
   public ancestor(distance: number): Scope | undefined {

@@ -1,9 +1,9 @@
 import { BindingError } from "../../../errors";
 import type { BoundExpression, BoundStatement } from "./bound-node";
-import type { Token } from "../../syntax/token";
+import { Location, LocationSpan, Token } from "../../syntax/token";
 import type { Type, TypeName } from "../types/type";
 import type { ValueType } from "..";
-import { BoundBinaryOperator } from "./bound-operators/binary";
+import { BoundBinaryOperator, BoundBinaryOperatorType } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
 import VariableSymbol from "../variable-symbol";
 import SingularType from "../types/singular-type";
@@ -11,9 +11,9 @@ import UnionType from "../types/union-type";
 import Syntax from "../../syntax/syntax-type";
 import AST from "../../parser/ast";
 
-import type { LiteralExpression } from "../../parser/ast/expressions/literal";
+import { LiteralExpression } from "../../parser/ast/expressions/literal";
 import type { ParenthesizedExpression } from "../../parser/ast/expressions/parenthesized";
-import type { BinaryExpression } from "../../parser/ast/expressions/binary";
+import { BinaryExpression } from "../../parser/ast/expressions/binary";
 import type { UnaryExpression } from "../../parser/ast/expressions/unary";
 import type { IdentifierExpression } from "../../parser/ast/expressions/identifier";
 import type { CompoundAssignmentExpression } from "../../parser/ast/expressions/compound-assignment";
@@ -66,7 +66,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   public visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): BoundCompoundAssignmentExpression {
     const left = <BoundIdentifierExpression>this.bind(expr.left); // | BoundAccessExpression
     const right = this.bind(expr.right);
-    const boundOperator = BoundBinaryOperator.get(expr.operator);
+    const boundOperator = BoundBinaryOperator.get(expr.operator, left.type, right.type);
     return new BoundCompoundAssignmentExpression(left, right, boundOperator);
   }
 
@@ -76,15 +76,15 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   }
 
   public visitUnaryExpression(expr: UnaryExpression): BoundUnaryExpression {
-    const operand = this.bind(expr.operand);
-    const boundOperator = BoundUnaryOperator.get(expr.operator);
+    let operand = this.bind(expr.operand);
+    const boundOperator = BoundUnaryOperator.get(expr.operator, operand.type);
     return new BoundUnaryExpression(operand, boundOperator);
   }
 
   public visitBinaryExpression(expr: BinaryExpression): BoundBinaryExpression {
     const left = this.bind(expr.left);
     const right = this.bind(expr.right);
-    const boundOperator = BoundBinaryOperator.get(expr.operator);
+    const boundOperator = BoundBinaryOperator.get(expr.operator, left.type, right.type);
     return new BoundBinaryExpression(left, right, boundOperator);
   }
 

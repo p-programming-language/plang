@@ -1,12 +1,11 @@
-import { BindingError } from "../../../../errors";
+import { TypeError } from "../../../../errors";
 import type { Token } from "../../../syntax/token";
 import type { Type } from "../../types/type";
 import Syntax from "../../../syntax/syntax-type";
 import UnionType from "../../types/union-type";
 import SingularType from "../../types/singular-type";
 
-
-export const enum BoundBinaryOperatorType {
+export enum BoundBinaryOperatorType {
   Addition,
   Subtraction,
   Multiplication,
@@ -29,7 +28,9 @@ export const enum BoundBinaryOperatorType {
   BitwiseXor,
   ShiftLeft,
   ShiftRight,
-  NullishCoalescing
+  NullishCoalescing,
+  Concatenation,
+  Repetition
 }
 
 export class BoundBinaryOperator {
@@ -77,12 +78,14 @@ export class BoundBinaryOperator {
     }
   }
 
-  public static get(operatorToken: Token<undefined>): BoundBinaryOperator {
+  public static get(operatorToken: Token<undefined>, leftType: Type, rightType: Type): BoundBinaryOperator {
     const operator = BOUND_BINARY_OPERATORS
-      .find(op => op.syntaxes.includes(operatorToken.syntax));
+      .find(op => op.syntaxes.includes(operatorToken.syntax)
+        && leftType.isAssignableTo(op.leftType)
+        && rightType.isAssignableTo(op.rightType));
 
     if (!operator)
-      throw new BindingError(`Invalid bound binary operator syntax: ${Syntax[operatorToken.syntax]}`, operatorToken);
+      throw new TypeError(`Invalid operand types for '${operatorToken.lexeme}': ${leftType.toString()} ${operatorToken.lexeme} ${rightType.toString()}`, operatorToken);
 
     return operator;
   }
@@ -97,11 +100,12 @@ const BOUND_BINARY_OPERATORS = [
   new BoundBinaryOperator(
     [Syntax.Plus, Syntax.PlusEqual],
     BoundBinaryOperatorType.Addition,
-    new UnionType([
-      new SingularType("int"),
-      new SingularType("float"),
-      new SingularType("string")
-    ])
+    intOrFloat
+  ),
+  new BoundBinaryOperator(
+    [Syntax.Plus, Syntax.PlusEqual],
+    BoundBinaryOperatorType.Concatenation,
+    new SingularType("string")
   ),
   new BoundBinaryOperator(
     [Syntax.Minus, Syntax.MinusEqual],
@@ -111,27 +115,19 @@ const BOUND_BINARY_OPERATORS = [
   new BoundBinaryOperator(
     [Syntax.Star, Syntax.StarEqual],
     BoundBinaryOperatorType.Multiplication,
-    new UnionType([
-      new SingularType("int"),
-      new SingularType("float"),
-      new SingularType("string") // allow string * int/float for string repeating
-    ]),
+    intOrFloat
+  ),
+  new BoundBinaryOperator(
+    [Syntax.Star, Syntax.StarEqual],
+    BoundBinaryOperatorType.Repetition,
+    new SingularType("string"),
     intOrFloat,
-    new UnionType([
-      new SingularType("int"),
-      new SingularType("float"),
-      new SingularType("string")
-    ])
+    new SingularType("string")
   ),
   new BoundBinaryOperator(
     [Syntax.Slash, Syntax.SlashEqual],
     BoundBinaryOperatorType.Division,
     intOrFloat
-    // new UnionType([
-    //   new SingularType("int"),
-    //   new SingularType("float"),
-    //   new SingularType("string")
-    // ])
   ),
   new BoundBinaryOperator(
     [Syntax.SlashSlash, Syntax.SlashSlashEqual],

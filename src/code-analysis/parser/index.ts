@@ -241,6 +241,9 @@ export default class Parser extends ArrayStepper<Token> {
     if (this.matchSet(UNARY_SYNTAXES)) {
       const operator = this.previous<undefined>();
       const operand = this.parseUnary();
+      if (!(operand instanceof IdentifierExpression) && (operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus))
+        throw new ParsingError("Invalid assignment target", operand.token);
+
       return new UnaryExpression(operator, operand);
     } else
       return this.parsePrimary();
