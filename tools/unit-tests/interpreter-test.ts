@@ -54,6 +54,28 @@ describe(Interpreter.name, () => {
       evaluate("[1,'a',true]")?.should.equal([1, "a", true]);
     });
   });
+  it("evaluates binary expressions", () => {
+    evaluate("5 + 2 * 3")?.should.equal(11);
+    evaluate("5 ^ 2 * 2")?.should.equal(50);
+    evaluate("false || true && false")?.should.be.false();
+    evaluate("false || true && false")?.should.be.false();
+    evaluate("1.0 == 1")?.should.be.true();
+  });
+  it("evaluates unary expressions", () => {
+    evaluate("-(5 + 7)")?.should.equal(-12);
+    evaluate("+2")?.should.equal(2);
+    evaluate("!false")?.should.be.true();
+    evaluate("!0")?.should.be.false();
+    evaluate("!1")?.should.be.false();
+    evaluate("!''")?.should.be.false();
+    evaluate("~5")?.should.equal(-6);
+    // evaluate("#['a','b','c']")?.should.equal(3);
+  });
+  it("evaluates variable declarations & compound assignments", () => {
+    evaluate("mut int x = 2; ++x")?.should.equal(3);
+    evaluate("mut int x = 2; x += 7")?.should.equal(9);
+    evaluate("mut int x = 2; x := 1")?.should.equal(1);
+  });
   describe("evaluates general tests (tests/)", () => {
     testFiles.forEach((file) => {
       const filePath = path.join(testDirectory, file);

@@ -24,5 +24,6 @@ export const UNARY_SYNTAXES = [
   Syntax.Plus,
   Syntax.Minus,
   Syntax.Bang,
-  Syntax.Hashtag
+  Syntax.Hashtag,
+  Syntax.Tilde
 ];
