@@ -6,7 +6,6 @@ async function main() {
   `;
 
   const p = new P;
-  p.executionOptions.outputAST = true;
   p.doString(code);
 }
 

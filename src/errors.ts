@@ -46,3 +46,9 @@ export class ResolutionError extends PError {
     super(ResolutionError.name, message, token.locationSpan.start.line, token.locationSpan.start.column);
   }
 }
+
+export class RuntimeError extends PError {
+  public constructor(message: string, token: Token) {
+    super(RuntimeError.name, message, token.locationSpan.start.line, token.locationSpan.start.column);
+  }
+}

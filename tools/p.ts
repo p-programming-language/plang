@@ -1,31 +1,35 @@
 import { readFileSync } from "fs";
-import { TypeChecker } from "../src/code-analysis/type-checker";
+import { TypeChecker, ValueType } from "../src/code-analysis/type-checker";
 import Parser from "../src/code-analysis/parser";
-import Resolver from "../src/code-analysis/resolver";
 import Binder from "../src/code-analysis/type-checker/binder";
+import Resolver from "../src/code-analysis/resolver";
+import Interpreter from "../src/runtime/interpreter";
 
 interface PExecutionOptions {
   outputAST: boolean;
   outputBoundAST: boolean;
-  // outputResult: boolean;
+  outputResult: boolean;
 }
 
 export default class P {
-  private resolver = new Resolver;
   private binder = new Binder;
+  private resolver = new Resolver;
   private typeChecker = new TypeChecker;
+  private interpreter = new Interpreter;
 
   public executionOptions: PExecutionOptions = {
     outputAST: false,
-    outputBoundAST: false
+    outputBoundAST: false,
+    outputResult: true
   };
 
-  public doString(source: string): any {
+  public doString(source: string): ValueType {
     const parser = new Parser(source);
     const ast = parser.parse();
     this.resolver.resolve(ast);
     const boundAST = this.binder.bindStatements(ast);
     this.typeChecker.check(boundAST);
+    const result = this.interpreter.evaluate(ast);
 
     if (this.executionOptions.outputAST)
       console.log(ast.toString());
@@ -33,20 +37,23 @@ export default class P {
     if (this.executionOptions.outputBoundAST)
       console.log(boundAST.toString());
 
-    return ast;
+    if (this.executionOptions.outputResult)
+      console.log(result);
+
+    return result;
   }
 
-  public doFile(filePath: string): any {
+  public doFile(filePath: string): ValueType {
     const fileContents = readFileSync(filePath, "utf-8");
     const result = this.doString(fileContents);
     this.refreshResources();
-
-    return result
+    return result;
   }
 
   private refreshResources(): void {
-    this.resolver = new Resolver;
     this.binder = new Binder;
+    this.resolver = new Resolver;
     this.typeChecker = new TypeChecker;
+    this.interpreter = new Interpreter;
   }
 }

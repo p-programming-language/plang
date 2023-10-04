@@ -116,12 +116,22 @@ const BOUND_BINARY_OPERATORS = [
       new SingularType("float"),
       new SingularType("string") // allow string * int/float for string repeating
     ]),
-    intOrFloat
+    intOrFloat,
+    new UnionType([
+      new SingularType("int"),
+      new SingularType("float"),
+      new SingularType("string")
+    ])
   ),
   new BoundBinaryOperator(
     [Syntax.Slash, Syntax.SlashEqual],
     BoundBinaryOperatorType.Division,
     intOrFloat
+    // new UnionType([
+    //   new SingularType("int"),
+    //   new SingularType("float"),
+    //   new SingularType("string")
+    // ])
   ),
   new BoundBinaryOperator(
     [Syntax.SlashSlash, Syntax.SlashSlashEqual],

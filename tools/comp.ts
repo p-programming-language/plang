@@ -19,7 +19,6 @@ Options:
 
   const [filePath] = args;
   const p = new P;
-  p.executionOptions.outputAST = true;
   try {
     p.doFile(filePath);
   } catch (error: any) {

@@ -9,7 +9,6 @@ const outputTitle = () =>
 
 async function main() {
   const p = new P;
-  p.executionOptions.outputAST = true;
 
   outputTitle();
   while (true) {

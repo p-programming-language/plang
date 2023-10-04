@@ -12,7 +12,7 @@ import { TypeError } from "../../errors";
 import { BoundExpression, BoundNode, BoundStatement } from "./binder/bound-node";
 import { Type } from "./types/type";
 
-export type ValueType = string | number | boolean | null | undefined;
+export type ValueType = string | number | boolean | null | undefined | void;
 
 export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
   public visitVariableDeclarationStatement(stmt: BoundVariableDeclarationStatement): void {
