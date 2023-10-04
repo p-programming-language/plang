@@ -10,6 +10,9 @@ import { ExpressionStatement } from "../../src/code-analysis/parser/ast/statemen
 import Syntax from "../../src/code-analysis/syntax/syntax-type";
 import Parser from "../../src/code-analysis/parser";
 import AST from "../../src/code-analysis/parser/ast";
+import { VariableAssignmentStatement } from "../../src/code-analysis/parser/ast/statements/variable-assignment";
+import { VariableAssignmentExpression } from "../../src/code-analysis/parser/ast/expressions/variable-assignment";
+import { VariableDeclarationStatement } from "../../src/code-analysis/parser/ast/statements/variable-declaration";
 
 function parse(source: string): AST.Statement[] {
   const parser = new Parser(source);
@@ -152,6 +155,53 @@ describe("Parser", () => {
       binary.right.token.syntax.should.equal(Syntax.Boolean)
       binary.right.token.lexeme.should.equal("false");
       binary.right.token.value?.should.equal(false);
+    }
+  });
+  it("parses variable assignment expressions", () => {
+    {
+      const [node] = parse("a = 2");
+      node.should.be.an.instanceof(VariableAssignmentStatement);
+      const assignment = <VariableAssignmentStatement>node;
+      assignment.identifier.name.lexeme.should.equal("a");
+      assignment.value.should.be.an.instanceof(LiteralExpression);
+      const value = <LiteralExpression>assignment.value;
+      value.token.syntax.should.equal(Syntax.Int);
+      value.token.value?.should.equal(2);
+    }
+    {
+      const [node] = parse("abc123 := '69420'");
+      node.should.be.an.instanceof(ExpressionStatement);
+      const expr = (<ExpressionStatement>node).expression;
+      expr.should.be.an.instanceof(VariableAssignmentExpression);
+      const assignment = <VariableAssignmentExpression>expr;
+      assignment.identifier.name.lexeme.should.equal("abc123");
+      assignment.value.should.be.an.instanceof(LiteralExpression);
+      const value = <LiteralExpression>assignment.value;
+      value.token.syntax.should.equal(Syntax.String);
+      value.token.value?.should.equal("69420");
+    }
+  });
+  it("parses variable declaration statements", () => {
+    {
+      const [node] = parse("int y = 123");
+      node.should.be.an.instanceof(VariableDeclarationStatement);
+      const declaration = <VariableDeclarationStatement>node;
+      declaration.typeKeyword.syntax.should.equal(Syntax.IntType);
+      declaration.typeKeyword.lexeme.should.equal("int");
+      declaration.identifier.name.lexeme.should.equal("y");
+      declaration.initializer?.should.be.an.instanceof(LiteralExpression);
+      const value = <LiteralExpression>declaration.initializer;
+      value.token.syntax.should.equal(Syntax.Int);
+      value.token.value?.should.equal(123);
+    }
+    {
+      const [node] = parse("string abc");
+      node.should.be.an.instanceof(VariableDeclarationStatement);
+      const declaration = <VariableDeclarationStatement>node;
+      declaration.typeKeyword.syntax.should.equal(Syntax.StringType);
+      declaration.typeKeyword.lexeme.should.equal("string");
+      declaration.identifier.name.lexeme.should.equal("abc");
+      declaration.initializer?.should.be.undefined();
     }
   });
   describe("parses general tests (tests/)", () => {
