@@ -1,11 +1,12 @@
 import { Type, TypeKind } from "./type";
-import SingularType from "./singular-type";
+import type SingularType from "./singular-type";
+import type ArrayType from "./array-type";
 
 export default class UnionType extends Type {
   public override readonly kind = TypeKind.Union;
 
   public constructor(
-    public readonly types: SingularType[]
+    public readonly types: (SingularType | ArrayType)[]
   ) { super(); }
 
   public toString(): string {

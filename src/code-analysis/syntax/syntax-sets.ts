@@ -1,4 +1,3 @@
-import { TYPE_KEYWORDS } from "./keywords";
 import Syntax from "./syntax-type";
 
 export const COMPOUND_ASSIGNMENT_SYNTAXES = [
@@ -9,8 +8,6 @@ export const COMPOUND_ASSIGNMENT_SYNTAXES = [
   Syntax.AmpersandAmpersandEqual, Syntax.PipePipeEqual,
   Syntax.QuestionQuestionEqual
 ]
-
-export const TYPE_SYNTAXES = Object.values(TYPE_KEYWORDS);
 
 export const LITERAL_SYNTAXES = [
   Syntax.Boolean,

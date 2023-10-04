@@ -28,16 +28,16 @@ export default class P {
   public doString(source: string): ValueType {
     const parser = new Parser(source);
     const ast = parser.parse();
-    this.resolver.resolve(ast);
-    const boundAST = this.binder.bindStatements(ast);
-    this.typeChecker.check(boundAST);
-    const result = this.interpreter.evaluate(ast);
-
     if (this.executionOptions.outputAST)
       console.log(ast.toString());
 
+    this.resolver.resolve(ast);
+    const boundAST = this.binder.bindStatements(ast);
     if (this.executionOptions.outputBoundAST)
       console.log(boundAST.toString());
+
+    this.typeChecker.check(boundAST);
+    const result = this.interpreter.evaluate(ast);
 
     if (this.executionOptions.outputResult)
       console.log(util.inspect(result, { colors: true, compact: false }));

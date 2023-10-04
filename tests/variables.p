@@ -11,7 +11,6 @@ null nothingPart2
 undefined nothingPart3
 
 string name
-
 name = "Kevin"
 
 string greet = hello + name

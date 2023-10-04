@@ -1,14 +1,14 @@
 import SingularType from "./singular-type";
-import { Type, TypeKind, TypeName } from "./type";
+import { Type, TypeKind } from "./type";
 
-export default class ArrayType extends Type {
+export default class ArrayType extends SingularType {
   public override readonly kind = TypeKind.Array;
 
   public constructor(
     public readonly elementType: Type
-  ) { super(); }
+  ) { super("Array"); }
 
   public toString(): string {
-    return this.elementType.toString();
+    return `Array<${this.elementType.toString()}>`;
   }
 }

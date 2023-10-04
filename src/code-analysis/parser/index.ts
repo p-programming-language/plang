@@ -22,11 +22,15 @@ import { VariableAssignmentStatement } from "./ast/statements/variable-assignmen
 import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
 import { ArrayLiteralExpression } from "./ast/expressions/array-literal";
 import { ArrayTypeExpression } from "./ast/type-nodes/array-type";
-const { UNARY_SYNTAXES, LITERAL_SYNTAXES, TYPE_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
+const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
 
 export default class Parser extends ArrayStepper<Token> {
+  private readonly typeScopes: string[][] = [
+    ["int", "float", "string", "bool", "undefined", "null", "void", "any", "Array"]
+  ];
+
   public constructor(source: string) {
     const lexer = new Lexer(source);
     const tokens = lexer.tokenize();
@@ -52,13 +56,12 @@ export default class Parser extends ArrayStepper<Token> {
   private declaration(): AST.Statement | undefined {
     const nextSyntax = this.peek()?.syntax;
     const nextNextSyntax = this.peek(2)?.syntax;
-    const isTypePostfix = (syntax?: Syntax) =>
-      syntax === Syntax.Identifier
+    const isTypePostfix = (syntax?: Syntax) => syntax === Syntax.Identifier
       || syntax === Syntax.Pipe
       || syntax === Syntax.LBracket;
 
 
-    if (this.atType && (isTypePostfix(nextSyntax) || isTypePostfix(nextNextSyntax))) {
+    if ((this.match(Syntax.Mut) ? this.checkType() : this.checkType()) && (isTypePostfix(nextSyntax) || isTypePostfix(nextNextSyntax))) {
       const declaration = this.parseVariableDeclaration();
       this.consumeSemicolons();
       return declaration;
@@ -286,10 +289,6 @@ export default class Parser extends ArrayStepper<Token> {
     throw new ParsingError("Expected expression", this.current);
   }
 
-  private get atType(): boolean {
-    return this.checkSet(TYPE_SYNTAXES) || (this.check(Syntax.Mut) && this.checkSet(TYPE_SYNTAXES, 1))
-  }
-
   private parseType(): AST.TypeNode {
     return this.parseUnionType();
   }
@@ -323,18 +322,18 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseSingularType(): SingularTypeExpression {
-    if (this.matchSet(TYPE_SYNTAXES))
-      return new SingularTypeExpression(this.previous());
+    if (this.checkType())
+      return new SingularTypeExpression(this.advance<undefined>());
 
     throw new ParsingError(`Expected type, got '${this.current.lexeme}'`, this.current);
   }
 
-  private advance(): Token {
+  private advance<V extends ValueType = ValueType>(): Token<V> {
     const token = this.current;
     if (!this.isFinished)
       this.position++;
 
-    return token;
+    return <Token<V>>token;
   }
 
   private previous<V extends ValueType = ValueType>(): Token<V> {
@@ -355,8 +354,24 @@ export default class Parser extends ArrayStepper<Token> {
     return false;
   }
 
-  private checkSet(syntaxSet: SyntaxSet, offset = 0): boolean {
-    return syntaxSet.includes(this.peek(offset)!.syntax);
+  private checkType(): boolean {
+    return this.checkMultiple(Syntax.Identifier, Syntax.Undefined, Syntax.Null) && this.isTypeDefined(this.current.lexeme);
+  }
+
+  private isTypeDefined(name: string): boolean {
+    for (let i = this.typeScopes.length - 1; i >= 0; i--)
+      if (this.typeScopes[i].includes(name))
+        return true;
+
+    return false;
+  }
+
+  private checkMultiple(...syntaxes: Syntax[]): boolean {
+    for (const syntax of syntaxes)
+      if (this.check(syntax))
+        return true;
+
+    return false;
   }
 
   private check(syntax: Syntax, offset = 0): boolean {

@@ -1,10 +1,10 @@
-import { Type, TypeKind, TypeName } from "./type";
+import { Type, TypeKind } from "./type";
 
 export default class SingularType extends Type {
-  public override readonly kind = TypeKind.Singular;
+  public override readonly kind: TypeKind = TypeKind.Singular;
 
   public constructor(
-    public readonly name: TypeName,
+    public readonly name: string,
     public readonly typeArguments?: Type[]
   ) { super(); }
 

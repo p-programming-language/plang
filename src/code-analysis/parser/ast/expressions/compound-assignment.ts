@@ -14,6 +14,6 @@ export class CompoundAssignmentExpression extends AST.Expression {
   }
 
   public get token(): Token {
-    return this.left.name;
+    return this.left.token;
   }
 }

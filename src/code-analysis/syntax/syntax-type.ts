@@ -3,18 +3,11 @@ enum Syntax {
   Float,
   String,
   Boolean,
+  Null, Undefined,
 
   Identifier,
   Function,
   Mut,
-
-  AnyType,
-  IntType,
-  FloatType,
-  StringType,
-  BoolType,
-  VoidType,
-  Null, Undefined,
 
   Semicolon, Comma,
   LParen, RParen,

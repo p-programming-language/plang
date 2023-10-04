@@ -1,7 +1,7 @@
 import { TokenizationError } from "../../errors";
 import { Token, Location, LocationSpan } from "./token";
 import { ValueType } from "../type-checker";
-import { KEYWORDS, TYPE_KEYWORDS } from "./keywords";
+import { KEYWORDS } from "./keywords";
 import ArrayStepper from "../array-stepper";
 import Syntax from "./syntax-type";
 
@@ -178,17 +178,14 @@ export default class Lexer extends ArrayStepper<string> {
         } else if (ALPHABETICAL.test(char)) {
           const identifierLexeme = this.readIdentifier();
           const keywordSyntax = Object.keys(KEYWORDS).includes(identifierLexeme) ? KEYWORDS[<keyof typeof KEYWORDS>identifierLexeme] : false;
-          const typeKeywordSyntax = Object.keys(TYPE_KEYWORDS).includes(identifierLexeme) ? TYPE_KEYWORDS[<keyof typeof TYPE_KEYWORDS>identifierLexeme] : false;
           if (keywordSyntax)
             this.addToken(keywordSyntax);
-          else if (typeKeywordSyntax)
-            this.addToken(typeKeywordSyntax);
           else if (identifierLexeme === "true")
             this.addToken(Syntax.Boolean, true);
           else if (identifierLexeme === "false")
             this.addToken(Syntax.Boolean, false);
           else if (identifierLexeme === "null")
-            this.addToken(Syntax.Null, null);
+            this.addToken(Syntax.Null);
           else if (identifierLexeme === "undefined")
             this.addToken(Syntax.Undefined);
           else
@@ -241,7 +238,7 @@ export default class Lexer extends ArrayStepper<string> {
       this.advance();
 
     const locationSpan = new LocationSpan(this.lastLocation, this.currentLocation);
-    this.tokens.push(new Token(type, this.currentLexeme, value, locationSpan));
+    this.tokens.push(new Token(type, this.currentLexeme, type === Syntax.Null ? null : value, locationSpan));
     this.currentLexemeCharacters = [];
     this.lastLocation = this.currentLocation;
   }

@@ -23,17 +23,17 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   }
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): void {
-    this.declare(stmt.identifier.name);
+    this.declare(stmt.identifier.token);
     if (stmt.initializer)
       this.resolve(stmt.initializer);
 
-    this.define(stmt.identifier.name);
+    this.define(stmt.identifier.token);
   }
 
   public visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): void {
     this.resolve(stmt.identifier);
     this.resolve(stmt.value);
-    this.resolveLocal(stmt, stmt.identifier.name);
+    this.resolveLocal(stmt, stmt.identifier.token);
   }
 
   public visitExpressionStatement(stmt: ExpressionStatement): void {
@@ -43,7 +43,7 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): void {
     this.resolve(expr.identifier);
     this.resolve(expr.value);
-    this.resolveLocal(expr, expr.identifier.name);
+    this.resolveLocal(expr, expr.identifier.token);
   }
 
   public visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): void {
@@ -53,18 +53,18 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
     this.resolve(expr.right);
     if (leftIsIdentifier)
-      this.resolveLocal(expr, expr.left.name);
+      this.resolveLocal(expr, expr.left.token);
   }
 
   public visitIdentifierExpression(expr: IdentifierExpression): void {
     const scope = this.scopes.at(-1);
-    if (this.scopes.length > 0 && scope!.get(expr.name.lexeme) === false)
-      throw new ReferenceError(`Cannot read variable '${expr.name.lexeme}' in it's own initializer`, expr.name);
+    if (this.scopes.length > 0 && scope!.get(expr.token.lexeme) === false)
+      throw new ReferenceError(`Cannot read variable '${expr.token.lexeme}' in it's own initializer`, expr.token);
 
-    if (this.isDefined(expr.name) === undefined)
-      throw new ReferenceError(`'${expr.name.lexeme}' is not defined in this scope`, expr.name);
+    if (this.isDefined(expr.token) === undefined)
+      throw new ReferenceError(`'${expr.token.lexeme}' is not defined in this scope`, expr.token);
 
-    this.resolveLocal(expr, expr.name);
+    this.resolveLocal(expr, expr.token);
   }
 
   public visitUnaryExpression(expr: UnaryExpression): void {

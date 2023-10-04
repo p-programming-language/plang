@@ -13,6 +13,6 @@ export class VariableAssignmentStatement extends AST.Statement {
   }
 
   public get token(): Token {
-    return this.identifier.name;
+    return this.identifier.token;
   }
 }

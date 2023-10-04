@@ -1,7 +1,7 @@
 import { BindingError } from "../../../errors";
 import type { BoundExpression, BoundStatement } from "./bound-node";
 import type { Token } from "../../syntax/token";
-import type { Type, TypeName } from "../types/type";
+import type { Type } from "../types/type";
 import type { ValueType } from "..";
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
@@ -44,14 +44,14 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): BoundVariableDeclarationStatement {
     const initializer = stmt.initializer ? this.bind(stmt.initializer) : undefined;
-    const variableSymbol = new VariableSymbol(stmt.identifier.name, this.getTypeFromTypeNode(stmt.type));
+    const variableSymbol = new VariableSymbol(stmt.identifier.token, this.getTypeFromTypeNode(stmt.type));
     this.variables.push(variableSymbol);
     return new BoundVariableDeclarationStatement(variableSymbol, stmt.mutable, initializer);
   }
 
   public visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): BoundVariableAssignmentStatement {
     const identifier = <BoundIdentifierExpression>this.bind(stmt.identifier);
-    const variableSymbol = new VariableSymbol(identifier.name, identifier.type);
+    const variableSymbol = new VariableSymbol(identifier.token, identifier.type);
     const value = this.bind(stmt.value);
     return new BoundVariableAssignmentStatement(variableSymbol, value);
   }
@@ -62,7 +62,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): BoundVariableAssignmentExpression {
     const identifier = <BoundIdentifierExpression>this.bind(expr.identifier);
-    const variableSymbol = new VariableSymbol(identifier.name, identifier.type);
+    const variableSymbol = new VariableSymbol(identifier.token, identifier.type);
     const value = this.bind(expr.value);
     return new BoundVariableAssignmentExpression(variableSymbol, value);
   }
@@ -75,8 +75,8 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   }
 
   public visitIdentifierExpression(expr: IdentifierExpression): BoundIdentifierExpression {
-    const variableSymbol = this.findSymbol(expr.name);
-    return new BoundIdentifierExpression(expr.name, variableSymbol.type);
+    const variableSymbol = this.findSymbol(expr.token);
+    return new BoundIdentifierExpression(expr.token, variableSymbol.type);
   }
 
   public visitUnaryExpression(expr: UnaryExpression): BoundUnaryExpression {
@@ -101,7 +101,32 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     for (const element of expr.elements)
       elements.push(this.bind(element));
 
-    const type = new ArrayType(elements.at(0)?.type ?? new SingularType("undefined"));
+    // inferring element type
+    let elementType: Type = new SingularType("undefined");
+    for (const element of elements) {
+      if (elementType.isSingular() && elementType.name === "undefined") {
+        elementType = element.type;
+        continue;
+      }
+
+      if (elementType.isSingular() && elementType.name !== "undefined") {
+        if (element.type.isSingular())
+          elementType = new UnionType([elementType, element.type]);
+        else if (element.type.isUnion())
+          elementType = new UnionType([elementType, ...element.type.types]);
+
+        continue;
+      }
+
+      if (elementType.isUnion()) {
+        if (element.type.isSingular())
+          elementType = new UnionType([...elementType.types, element.type]);
+        else if (element.type.isUnion())
+          elementType = new UnionType([...elementType.types, ...element.type.types]);
+      }
+    }
+
+    const type = new ArrayType(elementType);
     return new BoundArrayLiteralExpression(elements, type);
   }
 
@@ -127,7 +152,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   private getTypeFromTypeNode(node: AST.TypeNode): Type {
     if (node instanceof SingularTypeExpression)
-      return new SingularType(<TypeName>node.token.lexeme);
+      return new SingularType(node.token.lexeme);
     else if (node instanceof UnionTypeExpression)
       return new UnionType(node.types.map(singular => <SingularType>this.getTypeFromTypeNode(singular)));
     else if (node instanceof ArrayTypeExpression)

@@ -160,7 +160,7 @@ describe(Parser.name, () => {
       const [node] = parse("a = 2");
       node.should.be.an.instanceof(VariableAssignmentStatement);
       const assignment = <VariableAssignmentStatement>node;
-      assignment.identifier.name.lexeme.should.equal("a");
+      assignment.identifier.token.lexeme.should.equal("a");
       assignment.value.should.be.an.instanceof(LiteralExpression);
       const value = <LiteralExpression>assignment.value;
       value.token.syntax.should.equal(Syntax.Int);
@@ -172,7 +172,7 @@ describe(Parser.name, () => {
       const expr = (<ExpressionStatement>node).expression;
       expr.should.be.an.instanceof(VariableAssignmentExpression);
       const assignment = <VariableAssignmentExpression>expr;
-      assignment.identifier.name.lexeme.should.equal("abc123");
+      assignment.identifier.token.lexeme.should.equal("abc123");
       assignment.value.should.be.an.instanceof(LiteralExpression);
       const value = <LiteralExpression>assignment.value;
       value.token.syntax.should.equal(Syntax.String);
@@ -184,9 +184,9 @@ describe(Parser.name, () => {
       const [node] = parse("int y = 123");
       node.should.be.an.instanceof(VariableDeclarationStatement);
       const declaration = <VariableDeclarationStatement>node;
-      declaration.type.token.syntax.should.equal(Syntax.IntType);
+      declaration.type.token.syntax.should.equal(Syntax.Identifier);
       declaration.type.token.lexeme.should.equal("int");
-      declaration.identifier.name.lexeme.should.equal("y");
+      declaration.identifier.token.lexeme.should.equal("y");
       declaration.initializer?.should.be.an.instanceof(LiteralExpression);
       const value = <LiteralExpression>declaration.initializer;
       value.token.syntax.should.equal(Syntax.Int);
@@ -196,9 +196,9 @@ describe(Parser.name, () => {
       const [node] = parse("string abc");
       node.should.be.an.instanceof(VariableDeclarationStatement);
       const declaration = <VariableDeclarationStatement>node;
-      declaration.type.token.syntax.should.equal(Syntax.StringType);
+      declaration.type.token.syntax.should.equal(Syntax.Identifier);
       declaration.type.token.lexeme.should.equal("string");
-      declaration.identifier.name.lexeme.should.equal("abc");
+      declaration.identifier.token.lexeme.should.equal("abc");
       declaration.initializer?.should.be.undefined();
     }
   });

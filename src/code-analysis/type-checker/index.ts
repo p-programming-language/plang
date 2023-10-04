@@ -75,6 +75,6 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
 
   private assert(node: BoundNode, a: Type, b: Type): void {
     if (a.isAssignableTo(b)) return;
-    throw new TypeError(`Type '${a.toString()}' is not assignable to '${b.toString()}'`, node.token);
+    throw new TypeError(`Type '${a.toString()}' is not assignable to type '${b.toString()}'`, node.token);
   }
 }

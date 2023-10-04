@@ -80,19 +80,19 @@ describe(Lexer.name, () => {
       const [token] = tokenize("string");
       token.lexeme.should.equal("string");
       token.value?.should.equal(undefined);
-      token.syntax.should.equal(Syntax.StringType);
+      token.syntax.should.equal(Syntax.Identifier);
     }
     {
       const [token] = tokenize("int");
       token.lexeme.should.equal("int");
       token.value?.should.equal(undefined);
-      token.syntax.should.equal(Syntax.IntType);
+      token.syntax.should.equal(Syntax.Identifier);
     }
     {
       const [token] = tokenize("void");
       token.lexeme.should.equal("void");
       token.value?.should.equal(undefined);
-      token.syntax.should.equal(Syntax.VoidType);
+      token.syntax.should.equal(Syntax.Identifier);
     }
   });
   describe("tokenizes general tests (tests/)", () => {

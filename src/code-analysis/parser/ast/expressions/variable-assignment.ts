@@ -13,6 +13,6 @@ export class VariableAssignmentExpression extends AST.Expression {
   }
 
   public get token(): Token {
-    return this.identifier.name;
+    return this.identifier.token;
   }
 }

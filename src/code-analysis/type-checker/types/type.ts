@@ -1,10 +1,8 @@
 import util from "util";
 
-import { TYPE_KEYWORDS } from "../../syntax/keywords";
 import type SingularType from "./singular-type";
 import type UnionType from "./union-type";
 import type ArrayType from "./array-type";
-
 
 export const enum TypeKind {
   Singular,
@@ -16,7 +14,8 @@ export abstract class Type {
   protected readonly abstract kind: TypeKind;
 
   public isSingular(): this is SingularType {
-    return this.kind === TypeKind.Singular;
+    return this.kind === TypeKind.Singular
+      || this.kind === TypeKind.Array;
   }
 
   public isUnion(): this is UnionType {
@@ -50,5 +49,3 @@ export abstract class Type {
     return util.inspect(this, { colors: true, compact: false })
   }
 }
-
-export type TypeName = keyof typeof TYPE_KEYWORDS;
