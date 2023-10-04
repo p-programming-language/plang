@@ -9,7 +9,7 @@ export const enum TypeKind {
 }
 
 export abstract class Type {
-  public readonly abstract kind: TypeKind;
+  protected readonly abstract kind: TypeKind;
 
   public isSingular(): this is SingularType {
     return this.kind === TypeKind.Singular;

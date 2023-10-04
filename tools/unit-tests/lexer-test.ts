@@ -20,10 +20,11 @@ const testFiles = readdirSync(testDirectory)
 function runTestsForFile(filePath: string) {
   it(filePath, () => {
     const source = readFileSync(filePath, "utf-8");
-    const tokenizeSource = () => tokenize(source);
+    const tokenizeSource = () => {
+      const tokens = tokenize(source);
+      tokens.length.should.be.greaterThan(0);
+    };
     tokenizeSource.should.not.throw();
-    const tokens = tokenizeSource();
-    tokens.length.should.be.greaterThan(0);
   });
 }
 
