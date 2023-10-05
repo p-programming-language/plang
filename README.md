@@ -71,15 +71,15 @@ yarn run <tool>
     - Literals
         - Basics (numbers, strings, booleans)
         - Array literals/types
+        - String interpolations
     - Array indexing
     - Binary expressions (including compound assignment)
     - Unary expressions (including `++` and `--`)
     - Variable declarations (mutability optional)
     - Variable assignment (`:=` and `=` operators)
     - Property assignment
+    - Function declarations and calls
 
 ## Planned Features
-- String interpolation
-- Functions
 - Classes
 - Object literals/types
