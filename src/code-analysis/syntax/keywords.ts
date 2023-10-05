@@ -1,6 +1,9 @@
 import Syntax from "./syntax-type";
 
 export const KEYWORDS = {
+  and: Syntax.AmpersandAmpersand,
+  or: Syntax.PipePipe,
+  not: Syntax.Bang,
   fn: Syntax.Function,
   if: Syntax.If,
   while: Syntax.While,
