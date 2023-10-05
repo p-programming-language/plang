@@ -1,6 +1,7 @@
 import { TypeError } from "../../errors";
 import { BoundExpression, BoundNode, BoundStatement } from "./binder/bound-node";
 import type { Type } from "./types/type";
+import type { Callable } from "../../runtime/types/callable";
 import type FunctionType from "./types/function-type";
 import AST from "../parser/ast";
 
@@ -20,7 +21,7 @@ import type BoundBlockStatement from "./binder/bound-statements/block";
 import type BoundIfStatement from "./binder/bound-statements/if";
 import type BoundWhileStatement from "./binder/bound-statements/while";
 
-export type ValueType = string | number | boolean | null | undefined | void | ValueType[];
+export type ValueType = Callable | string | number | boolean | null | undefined | void | ValueType[];
 
 // NOTE: always call check() before assert()
 

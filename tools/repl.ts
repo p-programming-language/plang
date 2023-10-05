@@ -1,6 +1,7 @@
 #!/usr/bin/env node
+import reader from "readline-sync";
 import { platform } from "os";
-import { readln, clearTerminal } from "../src/utility";
+import { clearTerminal } from "../src/utility";
 import { PError } from "../src/errors";
 import P from "./p";
 import "colors.ts";
@@ -9,33 +10,30 @@ const os = platform();
 const outputTitle = () =>
   console.log(`prepl v0.1.5 on ${os}`);
 
+const p = new P;
+p.executionOptions.outputResult = true;
+outputTitle();
+
 let indentation = 0;
-async function main(): Promise<void> {
-  const p = new P;
-  p.executionOptions.outputResult = true;
-  outputTitle();
+while (true) {
+  const line = reader.question("» ".green);
+  if (!line.trim()) continue;
+  if (hasDirectives(line, p)) continue;
 
-
-  while (true) {
-    const line = await readln("» ".green);
-    if (!line.trim()) continue;
-    if (hasDirectives(line, p)) continue;
-
-    if (line.endsWith("{"))
-      p.doString(await readBlock(line));
-    else
-      p.doString(line);
-  }
+  if (line.endsWith("{"))
+    p.doString(readBlock(line));
+  else
+    p.doString(line);
 }
 
-async function readBlock(firstLine: string): Promise<string> {
+function readBlock(firstLine: string): string {
   let code = firstLine;
   indentation++;
 
   while (!code.endsWith("}")) {
-    const line = await readln("...".repeat(indentation) + " ");
+    const line = reader.question("...".repeat(indentation) + " ");
     if (line.endsWith("{"))
-      code += await readBlock(line) + " ";
+      code += readBlock(line) + " ";
     else
       code += line;
   }
@@ -43,10 +41,6 @@ async function readBlock(firstLine: string): Promise<string> {
   indentation--;
   return code;
 }
-
-main().catch((error) => {
-  console.error("An error occurred:", error);
-});
 
 function hasDirectives(code: string, p: P): boolean {
   switch (code) {

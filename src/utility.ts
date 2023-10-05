@@ -1,24 +1,9 @@
-import * as readline from "readline";
 import { platform } from "os";
 import { spawnSync } from "child_process";
 
 import { LocationSpan, Location, Token } from "./code-analysis/syntax/token";
 import { ValueType } from "./code-analysis/type-checker";
 import Syntax from "./code-analysis/syntax/syntax-type";
-
-export function readln(prompt: string): Promise<string> {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  return new Promise<string>((resolve) => {
-    rl.question(prompt, (input) => {
-      rl.close();
-      resolve(input);
-    });
-  });
-}
 
 export function clearTerminal(): void {
   const os = platform();
@@ -39,4 +24,12 @@ export class Range {
     public readonly minimum: number,
     public readonly maximum: number
   ) {}
+
+  public isWithin(n: number): boolean {
+    return n >= this.minimum && n <= this.maximum;
+  }
+
+  public toString(): string {
+    return this.minimum + ".." + this.maximum;
+  }
 }

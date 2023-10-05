@@ -10,6 +10,7 @@ import type { TernaryExpression } from "./parser/ast/expressions/ternary";
 import type { IdentifierExpression } from "../code-analysis/parser/ast/expressions/identifier";
 import type { CompoundAssignmentExpression } from "./parser/ast/expressions/compound-assignment";
 import type { VariableAssignmentExpression } from "./parser/ast/expressions/variable-assignment";
+import type { CallExpression } from "./parser/ast/expressions/call";
 import type { ExpressionStatement } from "./parser/ast/statements/expression";
 import type { PrintlnStatement } from "./parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "./parser/ast/statements/variable-assignment";
@@ -17,7 +18,6 @@ import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/s
 import type { BlockStatement } from "./parser/ast/statements/block";
 import type { IfStatement } from "./parser/ast/statements/if";
 import type { WhileStatement } from "./parser/ast/statements/while";
-import { CallExpression } from "./parser/ast/expressions/call";
 
 const enum ScopeContext {
   Global,

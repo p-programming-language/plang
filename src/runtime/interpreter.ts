@@ -2,6 +2,7 @@ import { RuntimeError } from "../errors";
 import type { ValueType } from "../code-analysis/type-checker";
 import { Token } from "../code-analysis/syntax/token";
 import { fakeToken } from "../utility";
+import type { Callable } from "./types/callable";
 import type Binder from "../code-analysis/type-checker/binder";
 import type Resolver from "../code-analysis/resolver";
 import Scope from "./scope";
@@ -76,8 +77,13 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   }
 
   public visitCallExpression(expr: CallExpression): ValueType {
-    const fn = this.evaluate(expr.callee);
+    const fn = <Callable>this.evaluate(expr.callee);
+    const fitsArity = typeof fn.arity === "number" ? expr.args.length === fn.arity : fn.arity.isWithin(expr.args.length);
+    if (!fitsArity)
+      throw new RuntimeError(`Expected '${expr.callee.token.lexeme}' to have ${fn.arity.toString()} arguments, got ${expr.args.length}`, expr.callee.token)
 
+    const args = expr.args.map(arg => this.evaluate(arg));
+    return fn.call(...args);
   }
 
   public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): ValueType {
