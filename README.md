@@ -63,6 +63,7 @@ yarn run <tool>
     - Symbols
 - Parsing + Binding + Type checking + Interpreting:
     - Literals
+        - Basics (numbers, strings, booleans)
         - Array literals/types
     - Binary expressions (including compound assignment)
     - Unary expressions (including `++` and `--`)
@@ -70,4 +71,6 @@ yarn run <tool>
     - Variable assignment (`:=` and `=` operators)
 
 ## Planned Features
+- Functions
+- Classes
 - Object literals/types
