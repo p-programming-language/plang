@@ -423,7 +423,7 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseStringInterpolation(string: Token<string, Syntax.String>): StringInterpolationExpression {
-    const rawParts = this.extractInterpolationParts(string.lexeme);
+    const rawParts = this.extractInterpolationParts(string.value);
     const parts: (LiteralExpression<string> | AST.Expression)[] = [];
 
     for (const part of rawParts) {
@@ -432,7 +432,7 @@ export default class Parser extends ArrayStepper<Token> {
         const expression = interpolationParser.parseExpression();
         parts.push(expression);
       } else
-        parts.push(new LiteralExpression(fakeToken(Syntax.String, part, part)));
+        parts.push(new LiteralExpression(fakeToken(Syntax.String, `"${part}"`, part)));
     }
 
     return new StringInterpolationExpression(parts);
