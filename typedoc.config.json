@@ -3,5 +3,6 @@
   "entryPoints": ["src/code-analysis", "src/runtime", "src/errors.ts", "src/utility.ts"],
   "entryPointStrategy": "expand",
   "out": "docs",
-  "name": "P API Reference"
+  "name": "P API Reference",
+  "tsconfig": "./typedoc_tsconfig.json"
 }
