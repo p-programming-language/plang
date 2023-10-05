@@ -11,10 +11,10 @@
   },
   "scripts": {
     "test": "mocha dist/tools/unit-tests -j 4 --extension js",
-    "build": "tsc",
+    "build": "tsc --skipLibCheck",
     "repl": "node dist/tools/repl.js",
     "pint": "node dist/tools/pint.js",
-    "path": "tsc && npm link",
+    "path": "tsc --skipLibCheck && npm link",
     "docs": "npx typedoc",
     "push": "npm run docs -s && git add . && git commit -m 'docs: (autogenerate)' && git push -u"
   },
