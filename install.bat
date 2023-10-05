@@ -1,5 +1,5 @@
 @echo off
-git clone https://github.com/KevinAlavik/plang
+git clone https://github.com/p-programming-language/plang
 
 cd plang
 

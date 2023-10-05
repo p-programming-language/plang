@@ -1,4 +1,4 @@
-git clone https://github.com/KevinAlavik/plang
+git clone https://github.com/p-programming-language/plang
 
 Set-Location -Path .\plang
 npm install > $null
