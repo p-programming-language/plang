@@ -18,6 +18,7 @@ import type { TernaryExpression } from "../code-analysis/parser/ast/expressions/
 import { IdentifierExpression } from "../code-analysis/parser/ast/expressions/identifier";
 import { CompoundAssignmentExpression } from "../code-analysis/parser/ast/expressions/compound-assignment";
 import { VariableAssignmentExpression } from "../code-analysis/parser/ast/expressions/variable-assignment";
+import type { CallExpression } from "../code-analysis/parser/ast/expressions/call";
 import type { ExpressionStatement } from "../code-analysis/parser/ast/statements/expression";
 import type { PrintlnStatement } from "../code-analysis/parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../code-analysis/parser/ast/statements/variable-assignment";
@@ -72,6 +73,11 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitExpressionStatement(stmt: ExpressionStatement): ValueType {
     return this.evaluate(stmt.expression);
+  }
+
+  public visitCallExpression(expr: CallExpression): ValueType {
+    const fn = this.evaluate(expr.callee);
+
   }
 
   public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): ValueType {

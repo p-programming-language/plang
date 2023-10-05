@@ -10,6 +10,7 @@ import type { TernaryExpression } from "./expressions/ternary";
 import type { IdentifierExpression } from "./expressions/identifier";
 import type { CompoundAssignmentExpression } from "./expressions/compound-assignment";
 import type { VariableAssignmentExpression } from "./expressions/variable-assignment";
+import type { CallExpression } from "./expressions/call";
 import type { ExpressionStatement } from "./statements/expression";
 import type { PrintlnStatement } from "./statements/println";
 import type { VariableAssignmentStatement } from "./statements/variable-assignment";
@@ -33,6 +34,7 @@ import type BoundVariableDeclarationStatement from "../../type-checker/binder/bo
 import type BoundBlockStatement from "../../type-checker/binder/bound-statements/block";
 import type BoundIfStatement from "../../type-checker/binder/bound-statements/if";
 import type BoundWhileStatement from "../../type-checker/binder/bound-statements/if";
+import type BoundCallExpression from "../../type-checker/binder/bound-expressions/call";
 
 namespace AST {
   export abstract class Node {
@@ -53,6 +55,7 @@ namespace AST {
 
   export namespace Visitor {
     export abstract class Expression<R> {
+      public abstract visitCallExpression(expr: CallExpression): R
       public abstract visitVariableAssignmentExpression(expr: VariableAssignmentExpression): R
       public abstract visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): R
       public abstract visitIdentifierExpression(expr: IdentifierExpression): R
@@ -75,6 +78,7 @@ namespace AST {
     }
 
     export abstract class BoundExpression<R> {
+      public abstract visitCallExpression(expr: BoundCallExpression): R
       public abstract visitVariableAssignmentExpression(expr: BoundVariableAssignmentExpression): R
       public abstract visitCompoundAssignmentExpression(expr: BoundCompoundAssignmentExpression): R
       public abstract visitIdentifierExpression(expr: BoundIdentifierExpression): R

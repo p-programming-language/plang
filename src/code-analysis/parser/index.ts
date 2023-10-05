@@ -27,6 +27,7 @@ import { BlockStatement } from "./ast/statements/block";
 import { PrintlnStatement } from "./ast/statements/println";
 import { IfStatement } from "./ast/statements/if";
 import { WhileStatement } from "./ast/statements/while";
+import { CallExpression } from "./ast/expressions/call";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -144,7 +145,7 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseTernary(): AST.Expression | AST.Statement {
-    let left = this.parseVariableAssignment();
+    let left = this.parseCall();
 
     while (this.match(Syntax.Question)) {
       const operator = this.previous<undefined>();
@@ -155,6 +156,21 @@ export default class Parser extends ArrayStepper<Token> {
     }
 
     return left;
+  }
+
+  private parseCall(): AST.Expression | AST.Statement  {
+    let callee = this.parseVariableAssignment();
+
+    while (this.match(Syntax.LParen)) {
+      let args: AST.Expression[] = [];
+      if (!this.check(Syntax.RParen))
+        args = this.parseExpressionList();
+
+      this.consume(Syntax.RParen);
+      callee = new CallExpression(<AST.Expression>callee, args);
+    }
+
+    return callee;
   }
 
   private parseVariableAssignment(): AST.Expression | AST.Statement {

@@ -1,11 +1,11 @@
-import { ValueType } from "../../code-analysis/type-checker";
 import { Range } from "../../utility";
-import { VariableDeclarationStatement } from "../../code-analysis/parser/ast/statements/variable-declaration";
 import { Callable, CallableType } from "./callable";
-import Interpreter from "../interpreter";
+import type { ValueType } from "../../code-analysis/type-checker";
+import type { VariableDeclarationStatement } from "../../code-analysis/parser/ast/statements/variable-declaration";
+import type Interpreter from "../interpreter";
+import type AST from "../../code-analysis/parser/ast";
 import HookedExceptions from "../hooked-exceptions";
 import Scope from "../scope";
-import AST from "../../code-analysis/parser/ast";
 
 const MAX_FN_PARAMS = 255;
 
@@ -16,7 +16,7 @@ export default class PFunction<A extends ValueType[] = ValueType[], R extends Va
   public constructor(
     private readonly interpreter: Interpreter,
     private readonly closure: Scope,
-    private readonly definition: AST.Statement // temporary lol
+    private readonly definition: AST.Statement // temporary lol (VariableDeclarationStatement)
   ) {
 
     // assign default values & initialize param variables

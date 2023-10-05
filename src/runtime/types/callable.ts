@@ -1,5 +1,5 @@
 import { ValueType } from "../../code-analysis/type-checker";
-import { Range } from "../../utility";
+import type { Range } from "../../utility";
 import type Intrinsic from "./intrinsic";
 
 export const enum CallableType {

@@ -18,9 +18,10 @@ import type { ParenthesizedExpression } from "../../parser/ast/expressions/paren
 import type { UnaryExpression } from "../../parser/ast/expressions/unary";
 import type { BinaryExpression } from "../../parser/ast/expressions/binary";
 import type { TernaryExpression } from "../../parser/ast/expressions/ternary";
-import type { IdentifierExpression } from "../../parser/ast/expressions/identifier";
+import { IdentifierExpression } from "../../parser/ast/expressions/identifier";
 import type { CompoundAssignmentExpression } from "../../parser/ast/expressions/compound-assignment";
 import type { VariableAssignmentExpression } from "../../parser/ast/expressions/variable-assignment";
+import type { CallExpression } from "../../parser/ast/expressions/call";
 import { SingularTypeExpression } from "../../parser/ast/type-nodes/singular-type";
 import { UnionTypeExpression } from "../../parser/ast/type-nodes/union-type";
 import { ArrayTypeExpression } from "../../parser/ast/type-nodes/array-type";
@@ -41,6 +42,7 @@ import BoundTernaryExpression from "./bound-expressions/ternary";
 import BoundIdentifierExpression from "./bound-expressions/identifier";
 import BoundCompoundAssignmentExpression from "./bound-expressions/compound-assignment";
 import BoundVariableAssignmentExpression from "./bound-expressions/variable-assignment";
+import BoundCallExpression from "./bound-expressions/call";
 import BoundExpressionStatement from "./bound-statements/expression";
 import BoundPrintlnStatement from "./bound-statements/println";
 import BoundVariableAssignmentStatement from "./bound-statements/variable-assignment";
@@ -91,15 +93,21 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     return new BoundExpressionStatement(this.bind(stmt.expression));
   }
 
+  public visitCallExpression(expr: CallExpression): BoundCallExpression {
+    const callee = this.bind(expr.callee);
+    const args = expr.args.map(arg => this.bind(arg));
+    return new BoundCallExpression(callee, args);
+  }
+
   public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): BoundVariableAssignmentExpression {
-    const identifier = <BoundIdentifierExpression>this.bind(expr.identifier);
+    const identifier = this.bind<IdentifierExpression, BoundIdentifierExpression>(expr.identifier);
     const variableSymbol = new VariableSymbol(identifier.token, identifier.type);
     const value = this.bind(expr.value);
     return new BoundVariableAssignmentExpression(variableSymbol, value);
   }
 
   public visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): BoundCompoundAssignmentExpression {
-    const left = <BoundIdentifierExpression>this.bind(expr.left); // | BoundAccessExpression
+    const left = this.bind<IdentifierExpression, BoundIdentifierExpression>(expr.left); // | BoundAccessExpression
     const right = this.bind(expr.right);
     const boundOperator = BoundBinaryOperator.get(expr.operator, left.type, right.type);
     return new BoundCompoundAssignmentExpression(left, right, boundOperator);
@@ -110,7 +118,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     if (!variableSymbol)
       throw new BindingError(`Failed to find variable symbol for '${expr.token.lexeme}'`, expr.token)
 
-    return new BoundIdentifierExpression(expr.token, variableSymbol.type);
+    return new BoundIdentifierExpression(expr.name, variableSymbol.type);
   }
 
   public visitTernaryExpression(expr: TernaryExpression): BoundTernaryExpression {
@@ -184,8 +192,8 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     return variableSymbol;
   }
 
-  private bind<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement>(node: T): T extends AST.Expression ? BoundExpression : BoundStatement {
-    return <T extends AST.Expression ? BoundExpression : BoundStatement>(node instanceof AST.Expression ?
+  private bind<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement, R extends BoundExpression | BoundStatement = T extends AST.Expression ? BoundExpression : BoundStatement>(node: T): R {
+    return <R>(node instanceof AST.Expression ?
       node.accept<BoundExpression>(this)
       : node.accept<BoundStatement>(this));
   }

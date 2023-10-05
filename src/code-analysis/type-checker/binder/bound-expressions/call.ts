@@ -1,19 +1,20 @@
 import { BoundExpression } from "../bound-node";
-import type { Type } from "../../types/type";
 import type { Token } from "../../../syntax/token";
 import AST from "../../../parser/ast";
 
-export default class BoundIdentifierExpression extends BoundExpression {
+export default class BoundCallExpression extends BoundExpression {
+  public override readonly type = this.callee.type;
+
   public constructor(
-    public readonly name: Token<undefined>,
-    public readonly type: Type
+    public readonly callee: BoundExpression,
+    public readonly args: BoundExpression[]
   ) { super(); }
 
   public accept<R>(visitor: AST.Visitor.BoundExpression<R>): R {
-    return visitor.visitIdentifierExpression(this);
+    return visitor.visitCallExpression(this);
   }
 
   public get token(): Token {
-    return this.name;
+    return this.callee.token;
   }
 }

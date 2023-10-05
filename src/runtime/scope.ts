@@ -1,5 +1,5 @@
-import { Token } from "../code-analysis/syntax/token";
-import { ValueType } from "../code-analysis/type-checker";
+import type { Token } from "../code-analysis/syntax/token";
+import type { ValueType } from "../code-analysis/type-checker";
 import { RuntimeError } from "../errors";
 
 interface VariableOptions {

@@ -7,7 +7,7 @@ import type { ParenthesizedExpression } from "../code-analysis/parser/ast/expres
 import type { UnaryExpression } from "../code-analysis/parser/ast/expressions/unary";
 import type { BinaryExpression } from "../code-analysis/parser/ast/expressions/binary";
 import type { TernaryExpression } from "./parser/ast/expressions/ternary";
-import { IdentifierExpression } from "../code-analysis/parser/ast/expressions/identifier";
+import type { IdentifierExpression } from "../code-analysis/parser/ast/expressions/identifier";
 import type { CompoundAssignmentExpression } from "./parser/ast/expressions/compound-assignment";
 import type { VariableAssignmentExpression } from "./parser/ast/expressions/variable-assignment";
 import type { ExpressionStatement } from "./parser/ast/statements/expression";
@@ -17,11 +17,17 @@ import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/s
 import type { BlockStatement } from "./parser/ast/statements/block";
 import type { IfStatement } from "./parser/ast/statements/if";
 import type { WhileStatement } from "./parser/ast/statements/while";
+import { CallExpression } from "./parser/ast/expressions/call";
+
+const enum ScopeContext {
+  Global,
+  Function
+}
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
-  // the boolean represents whether the variable is defined or not
   public readonly locals = new Map<AST.Node, number>;
-  private scopes: Map<string, boolean>[] = [];
+  private scopes: Map<string, boolean>[] = []; // the boolean represents whether the variable is defined or not. a variable can be declared without being defined
+  private context = ScopeContext.Global;
 
   public constructor() {
     this.beginScope();
@@ -63,6 +69,12 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
   public visitExpressionStatement(stmt: ExpressionStatement): void {
     this.resolve(stmt.expression);
+  }
+
+  public visitCallExpression(expr: CallExpression): void {
+    this.resolve(expr.callee);
+    for (const arg of expr.args)
+      this.resolve(arg);
   }
 
   public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): void {
@@ -138,6 +150,21 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
     scope?.set(identifier.lexeme, false);
   }
+
+  // private resolveFunction(fn: FunctionDeclarationStatement, context: ScopeContext): void {
+  //   const enclosingContext = this.context;
+  //   this.context = context;
+  //   this.beginScope();
+
+  //   for (const param of fn.parameters) {
+  //     this.declare(param.name);
+  //     this.define(param.name);
+  //   }
+
+  //   this.resolve(fn.body);
+  //   this.endScope();
+  //   this.context = enclosingContext;
+  // }
 
   private isDefined(identifier: Token): boolean {
     for (let i = this.scopes.length - 1; i >= 0; i--) {

@@ -1,6 +1,6 @@
 import { PError } from "../errors";
-import { Token } from "../code-analysis/syntax/token";
-import { ValueType } from "../code-analysis/type-checker";
+import type { Token } from "../code-analysis/syntax/token";
+import type { ValueType } from "../code-analysis/type-checker";
 
 namespace HookedException {
   class HookedException extends PError {
