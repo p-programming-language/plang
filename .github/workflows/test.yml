@@ -18,14 +18,14 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install Yarn
-        run: npm install -g yarn
+      - name: Install TypeScript
+        run: npm install -g typescript
 
-      - name: Install dependencies with Yarn
-        run: yarn install
+      - name: Install dependencies
+        run: npm install
 
       - name: Build
-        run: yarn build
+        run: npm run build
 
       - name: Test
-        run: yarn test
+        run: npm test
