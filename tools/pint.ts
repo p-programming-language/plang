@@ -6,9 +6,9 @@ function main() {
 
   if (args.length !== 1) {
     console.error(`
-Usage: gpc <file>
+Usage: p <file>
 
-GPC ~ General P Compiler
+pint ~ The P Interpreter
 --------------------------
 Options:
 

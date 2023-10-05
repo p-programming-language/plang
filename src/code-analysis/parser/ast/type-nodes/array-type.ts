@@ -1,6 +1,6 @@
 import { Token } from "../../../syntax/token";
 import { SingularTypeExpression } from "./singular-type";
-import { fakeToken } from "../../../../lib/utility";
+import { fakeToken } from "../../../../utility";
 import Syntax from "../../../syntax/syntax-type";
 import AST from "..";
 

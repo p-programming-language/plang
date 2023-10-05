@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { platform } from "os";
-import { readln, clearTerminal } from "../src/lib/utility";
+import { readln, clearTerminal } from "../src/utility";
 import { PError } from "../src/errors";
 import P from "./p";
 

@@ -1,7 +1,7 @@
 import { RuntimeError } from "../errors";
 import type { ValueType } from "../code-analysis/type-checker";
 import { Token } from "../code-analysis/syntax/token";
-import { fakeToken } from "../lib/utility";
+import { fakeToken } from "../utility";
 import type Binder from "../code-analysis/type-checker/binder";
 import type Resolver from "../code-analysis/resolver";
 import Scope from "./scope";

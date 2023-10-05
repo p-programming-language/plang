@@ -2,9 +2,9 @@ import * as readline from "readline";
 import { platform } from "os";
 import { spawnSync } from "child_process";
 
-import { LocationSpan, Location, Token } from "../code-analysis/syntax/token";
-import { ValueType } from "../code-analysis/type-checker";
-import Syntax from "../code-analysis/syntax/syntax-type";
+import { LocationSpan, Location, Token } from "./code-analysis/syntax/token";
+import { ValueType } from "./code-analysis/type-checker";
+import Syntax from "./code-analysis/syntax/syntax-type";
 
 export function readln(prompt: string): Promise<string> {
   const rl = readline.createInterface({

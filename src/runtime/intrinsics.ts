@@ -1,6 +1,6 @@
 import { ValueType } from "../code-analysis/type-checker";
 import { Type } from "../code-analysis/type-checker/types/type";
-import { fakeToken } from "../lib/utility";
+import { fakeToken } from "../utility";
 import Syntax from "../code-analysis/syntax/syntax-type";
 import SingularType from "../code-analysis/type-checker/types/singular-type";
 import Interpreter from "./interpreter";

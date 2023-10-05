@@ -1,5 +1,5 @@
 import { ValueType } from "../../code-analysis/type-checker";
-import { Range } from "../../lib/utility";
+import { Range } from "../../utility";
 import { VariableDeclarationStatement } from "../../code-analysis/parser/ast/statements/variable-declaration";
 import { Callable, CallableType } from "./callable";
 import Interpreter from "../interpreter";

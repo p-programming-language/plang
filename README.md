@@ -13,10 +13,10 @@ The P programming language
 
 becuz im bored
 ## Tools
-- gpc
-    - The general P compiler
+- pint
+    - The P interpreter CLI
 - prepl
-    - A interactive repl to run P in your terminal
+    - A read-eval-print loop to run P interactively inside of your terminal
 
 ### Developer only tools
 - test
