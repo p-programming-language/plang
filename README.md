@@ -77,6 +77,7 @@ yarn run <tool>
     - Variable assignment (`:=` and `=` operators)
 
 ## Planned Features
+- String interpolation
 - Functions
 - Classes
 - Object literals/types

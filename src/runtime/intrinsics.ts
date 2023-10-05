@@ -1,11 +1,14 @@
+import { argv } from "process";
+
 import { ValueType } from "../code-analysis/type-checker";
 import { Type } from "../code-analysis/type-checker/types/type";
 import { fakeToken } from "../utility";
 import Syntax from "../code-analysis/syntax/syntax-type";
 import SingularType from "../code-analysis/type-checker/types/singular-type";
-import Interpreter from "./interpreter";
-import Resolver from "../code-analysis/resolver";
-import Binder from "../code-analysis/type-checker/binder";
+import ArrayType from "../code-analysis/type-checker/types/array-type";
+import type Interpreter from "./interpreter";
+import type Resolver from "../code-analysis/resolver";
+import type Binder from "../code-analysis/type-checker/binder";
 import pkg = require("../../package.json");
 
 export default class Intrinsics {
@@ -17,6 +20,7 @@ export default class Intrinsics {
 
   public inject(): void {
     this.define("__version", "v" + pkg.version, new SingularType("string"));
+    this.define("argv", argv.slice(2), new ArrayType(new SingularType("string")));
   }
 
   private define<V extends ValueType = ValueType>(name: string, value: V, type: Type): void {
