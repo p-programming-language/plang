@@ -1,6 +1,7 @@
 import { ValueType } from "../../code-analysis/type-checker";
 import type { Range } from "../../utility";
 import type Intrinsic from "./intrinsic";
+import PValue from "./value";
 
 export const enum CallableType {
   Function,
@@ -8,7 +9,7 @@ export const enum CallableType {
   ClassConstructor
 }
 
-export abstract class Callable<A extends ValueType[] = ValueType[], R extends ValueType = ValueType> {
+export abstract class Callable<A extends ValueType[] = ValueType[], R extends ValueType = ValueType> extends PValue {
   public abstract readonly type: CallableType;
   public abstract get arity(): number | Range;
   public abstract call(...args: A): R | undefined;

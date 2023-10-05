@@ -7,6 +7,7 @@ import Parser from "../src/code-analysis/parser";
 import Binder from "../src/code-analysis/type-checker/binder";
 import Resolver from "../src/code-analysis/resolver";
 import Interpreter from "../src/runtime/interpreter";
+import PValue from "../src/runtime/types/value";
 import pkg = require("../package.json");
 
 interface PExecutionOptions {
@@ -42,8 +43,13 @@ export default class P {
     this.typeChecker.check(boundAST);
     const result = this.interpreter.evaluate(ast);
 
-    if (this.executionOptions.outputResult)
-      console.log("↳".gray(8), util.inspect(result, { colors: true, compact: !(result instanceof Array) || result.length < 5 }));
+    if (this.executionOptions.outputResult) {
+      const stringified = result instanceof PValue ?
+        result.toString()
+        : util.inspect(result, { colors: true, compact: !(result instanceof Array) || result.length < 5 });
+
+      console.log("↳".gray(8), stringified);
+    }
 
     return result;
   }
