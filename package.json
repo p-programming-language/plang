@@ -16,7 +16,7 @@
     "pint": "node dist/tools/pint.js",
     "path": "tsc && npm link",
     "docs": "npx typedoc --options typedoc.config.json",
-    "push": "npm run -s docs && git add . && git commit -m 'docs: (autogenerate)' && git push -u"
+    "push": "tsc --skipLibCheck && git add . && git commit -m 'docs: (autogenerate)' && git push -u"
   },
   "keywords": [
     "p",
