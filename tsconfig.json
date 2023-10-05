@@ -12,6 +12,7 @@
     "preserveConstEnums": true,
     "alwaysStrict": true,
     "importHelpers": true,
+    "forceConsistentCasingInFileNames": true
   },
   "exclude": [ "node_modules" ]
 }
