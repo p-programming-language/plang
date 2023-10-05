@@ -22,6 +22,7 @@ import type { VariableAssignmentStatement } from "../code-analysis/parser/ast/st
 import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
 import type { BlockStatement } from "../code-analysis/parser/ast/statements/block";
 import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
+import { PrintlnStatement } from "../code-analysis/parser/ast/statements/println";
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public readonly globals = new Scope;
@@ -55,6 +56,10 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): void {
     const value = this.evaluate(stmt.value);
     this.scope.assign(stmt.identifier.name, value);
+  }
+
+  public visitPrintlnStatement(stmt: PrintlnStatement): void {
+    console.log(...stmt.expressions.map(expr => this.evaluate(expr)));
   }
 
   public visitExpressionStatement(stmt: ExpressionStatement): ValueType {
@@ -182,11 +187,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   }
 
   public visitArrayLiteralExpression(expr: ArrayLiteralExpression): ValueType {
-    const array = [];
-    for (const element of expr.elements)
-      array.push(this.evaluate(element));
-
-    return array;
+    return expr.elements.map(element => this.evaluate(element));
   }
 
   public visitLiteralExpression<V extends ValueType = ValueType>(expr: LiteralExpression<V>): V {

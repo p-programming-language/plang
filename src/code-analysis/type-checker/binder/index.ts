@@ -42,6 +42,8 @@ import BoundVariableDeclarationStatement from "./bound-statements/variable-decla
 import BoundArrayLiteralExpression from "./bound-expressions/array-literal";
 import BoundBlockStatement from "./bound-statements/block";
 import BoundIfStatement from "./bound-statements/if";
+import BoundPrintlnStatement from "./bound-statements/println";
+import { PrintlnStatement } from "../../parser/ast/statements/println";
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variables: VariableSymbol[] = [];
@@ -69,6 +71,10 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     const variableSymbol = new VariableSymbol(identifier.token, identifier.type);
     const value = this.bind(stmt.value);
     return new BoundVariableAssignmentStatement(variableSymbol, value);
+  }
+
+  public visitPrintlnStatement(stmt: PrintlnStatement): BoundPrintlnStatement {
+    return new BoundPrintlnStatement(stmt.token, stmt.expressions.map(expr => this.bind(expr)));
   }
 
   public visitExpressionStatement(stmt: ExpressionStatement): BoundExpressionStatement {
@@ -115,12 +121,10 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   }
 
   public visitArrayLiteralExpression(expr: ArrayLiteralExpression): BoundExpression {
-    const elements: BoundExpression[] = [];
-    for (const element of expr.elements)
-      elements.push(this.bind(element));
+    const elements = expr.elements.map(element => this.bind(element));
+    let elementType: Type = new SingularType("undefined");
 
     // inferring element type
-    let elementType: Type = new SingularType("undefined");
     for (const element of elements) {
       if (elementType.isSingular() && elementType.name === "undefined") {
         elementType = element.type;

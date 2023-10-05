@@ -8,6 +8,7 @@ export const KEYWORDS = {
   until: Syntax.Until,
   else: Syntax.Else,
   mut: Syntax.Mut,
+  println: Syntax.Println,
   undefined: Syntax.Undefined,
   null: Syntax.Null
 }

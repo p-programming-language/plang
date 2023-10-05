@@ -24,6 +24,7 @@ import { ArrayLiteralExpression } from "./ast/expressions/array-literal";
 import { ArrayTypeExpression } from "./ast/type-nodes/array-type";
 import { IfStatement } from "./ast/statements/if";
 import { BlockStatement } from "./ast/statements/block";
+import { PrintlnStatement } from "./ast/statements/println";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -50,6 +51,11 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseStatement(): AST.Statement {
+    if (this.match(Syntax.Println)) {
+      const keyword = this.previous<undefined>();
+      const expressions = this.parseExpressionList();
+      return new PrintlnStatement(keyword, expressions);
+    }
     if (this.match(Syntax.If, Syntax.Unless)) {
       const keyword = this.previous<undefined>();
       const condition = this.parseExpression();
@@ -62,6 +68,14 @@ export default class Parser extends ArrayStepper<Token> {
       return this.parseBlock();
 
     return this.parseExpressionStatement();
+  }
+
+  private parseExpressionList(): AST.Expression[] {
+    const expressions = [ this.parseExpression() ];
+    while (this.match(Syntax.Comma))
+      expressions.push(this.parseExpression());
+
+    return expressions;
   }
 
   private parseBlock(): BlockStatement {
@@ -291,10 +305,7 @@ export default class Parser extends ArrayStepper<Token> {
       return new LiteralExpression(this.previous());
     if (this.match(Syntax.LBracket)) {
       const bracket = this.previous<undefined>();
-      const elements = [this.parseExpression()];
-      while (this.match(Syntax.Comma))
-        elements.push(this.parseExpression());
-
+      const elements = this.parseExpressionList();
       this.consume(Syntax.RBracket);
       return new ArrayLiteralExpression(bracket, elements);
     }

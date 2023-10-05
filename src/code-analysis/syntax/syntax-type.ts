@@ -6,6 +6,7 @@ enum Syntax {
   Null, Undefined,
 
   Identifier,
+  Println,
   If, Unless, Else,
   While, Until,
   Function,

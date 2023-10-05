@@ -10,6 +10,7 @@ import type { IdentifierExpression } from "./expressions/identifier";
 import type { CompoundAssignmentExpression } from "./expressions/compound-assignment";
 import type { VariableAssignmentExpression } from "./expressions/variable-assignment";
 import type { ExpressionStatement } from "./statements/expression";
+import type { PrintlnStatement } from "./statements/println";
 import type { VariableAssignmentStatement } from "./statements/variable-assignment";
 import type { VariableDeclarationStatement } from "./statements/variable-declaration";
 import type { BlockStatement } from "./statements/block";
@@ -23,6 +24,7 @@ import type BoundIdentifierExpression from "../../type-checker/binder/bound-expr
 import type BoundCompoundAssignmentExpression from "../../type-checker/binder/bound-expressions/compound-assignment";
 import type BoundVariableAssignmentExpression from "../../type-checker/binder/bound-expressions/variable-assignment";
 import type BoundExpressionStatement from "../../type-checker/binder/bound-statements/expression";
+import type BoundPrintlnStatement from "../../type-checker/binder/bound-statements/println";
 import type BoundVariableAssignmentStatement from "../../type-checker/binder/bound-statements/variable-assignment";
 import type BoundVariableDeclarationStatement from "../../type-checker/binder/bound-statements/variable-declaration";
 import type BoundBlockStatement from "../../type-checker/binder/bound-statements/block";
@@ -62,6 +64,7 @@ namespace AST {
       public abstract visitBlockStatement(stmt: BlockStatement): R
       public abstract visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): R
       public abstract visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): R
+      public abstract visitPrintlnStatement(stmt: PrintlnStatement): R
       public abstract visitExpressionStatement(stmt: ExpressionStatement): R
     }
 
@@ -81,6 +84,7 @@ namespace AST {
       public abstract visitBlockStatement(stmt: BoundBlockStatement): R
       public abstract visitVariableDeclarationStatement(stmt: BoundVariableDeclarationStatement): R
       public abstract visitVariableAssignmentStatement(stmt: BoundVariableAssignmentStatement): R
+      public abstract visitPrintlnStatement(stmt: BoundPrintlnStatement): R
       public abstract visitExpressionStatement(stmt: BoundExpressionStatement): R
     }
   }
