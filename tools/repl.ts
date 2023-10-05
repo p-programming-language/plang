@@ -33,7 +33,7 @@ function readBlock(firstLine: string): string {
 
   while (!code.endsWith("}")) {
     const line = reader.question("...".repeat(indentation) + " ");
-    if (line.endsWith("{"))
+    if (line.endsWith("{") && !line.startsWith("}"))
       code += readBlock(line) + " ";
     else
       code += line;

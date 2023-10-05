@@ -314,31 +314,32 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseExponential(): AST.Expression {
-    let left = this.parseUnary();
+    let left = this.parseIndex();
 
     while (this.match(Syntax.Carat, Syntax.StarStar)) { // this is also where i parsed ".." in cosmo, AKA a range literal expression
       const operator = this.previous<undefined>();
-      const right = this.parseUnary();
+      const right = this.parseIndex();
       left = new BinaryExpression(left, right, operator);
     }
 
     return left;
   }
 
-  private parseUnary(): AST.Expression {
-    if (this.matchSet(UNARY_SYNTAXES)) {
-      const operator = this.previous<undefined>();
-      const operand = this.parseCall();
-      if (!this.isAssignmentTarget(operand) && (operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus))
-        throw new ParsingError("Invalid increment/decrement target", operand.token);
+  private parseIndex(): AST.Expression {
+    let object = this.parseCall();
 
-      return new UnaryExpression(operator, operand);
-    } else
-      return this.parsePrimary();
+    while (this.match(Syntax.LBracket)) {
+      const bracket = this.previous<undefined>();
+      const index = this.parseExpression();
+      this.consume(Syntax.RBracket, "']'");
+      object = new IndexExpression(bracket, <AST.Expression>object, index);
+    }
+
+    return object;
   }
 
   private parseCall(): AST.Expression {
-    let callee = this.parseIndex();
+    let callee = this.parseUnary();
 
     while (this.match(Syntax.LParen)) {
       let args: AST.Expression[] = [];
@@ -352,17 +353,16 @@ export default class Parser extends ArrayStepper<Token> {
     return callee;
   }
 
-  private parseIndex(): AST.Expression {
-    let object = this.parseUnary();
+  private parseUnary(): AST.Expression {
+    if (this.matchSet(UNARY_SYNTAXES)) {
+      const operator = this.previous<undefined>();
+      const operand = this.parseUnary();
+      if (!this.isAssignmentTarget(operand) && (operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus))
+        throw new ParsingError("Invalid increment/decrement target", operand.token);
 
-    while (this.match(Syntax.LBracket)) {
-      const bracket = this.previous<undefined>();
-      const index = this.parseExpression();
-      this.consume(Syntax.RBracket, "']'");
-      object = new IndexExpression(bracket, <AST.Expression>object, index);
-    }
-
-    return object;
+      return new UnaryExpression(operator, operand);
+    } else
+      return this.parsePrimary();
   }
 
   private isAssignmentTarget(operand: AST.Expression): boolean {
