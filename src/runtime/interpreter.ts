@@ -1,3 +1,5 @@
+import util from "util";
+
 import { RuntimeError } from "../errors";
 import type { ValueType } from "../code-analysis/type-checker";
 import { Token } from "../code-analysis/syntax/token";
@@ -109,7 +111,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   }
 
   public visitPrintlnStatement(stmt: PrintlnStatement): void {
-    console.log(...stmt.expressions.map(expr => this.evaluate(expr)));
+    console.log(...stmt.expressions.map(expr => this.evaluate(expr)).map(value => value?.toString()));
   }
 
   public visitExpressionStatement(stmt: ExpressionStatement): ValueType {

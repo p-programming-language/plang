@@ -46,7 +46,7 @@ export default class P {
     if (this.executionOptions.outputResult) {
       const stringified = result instanceof PValue ?
         result.toString()
-        : util.inspect(result, { colors: true, compact: !(result instanceof Array) || result.length < 5 });
+        : util.inspect(result, { colors: true });
 
       console.log("↳".gray(8), stringified);
     }
