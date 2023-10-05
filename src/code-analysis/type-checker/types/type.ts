@@ -40,6 +40,11 @@ export abstract class Type {
         if (this.name === "any" || other.name === "any")
           return true;
 
+        if (this.typeArguments) {
+          if (!other.typeArguments) return false;
+          return this.typeArguments.every((arg, i) => arg.isAssignableTo(other.typeArguments![i]));
+        }
+
         return this.name === other.name;
       } else
         return other.isAssignableTo(this);

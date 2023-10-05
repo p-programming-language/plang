@@ -1,10 +1,10 @@
 import { Token } from "../../../syntax/token";
 import AST from "..";
 
-export class SingularTypeExpression extends AST.TypeNode {
+export class SingularTypeExpression extends AST.TypeRef {
   public constructor(
     public readonly name: Token<undefined>,
-    public readonly typeArguments?: AST.TypeNode[]
+    public readonly typeArguments?: AST.TypeRef[]
   ) { super(); }
 
   public get isGeneric(): boolean {

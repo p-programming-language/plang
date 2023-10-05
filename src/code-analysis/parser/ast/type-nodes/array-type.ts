@@ -6,7 +6,7 @@ import AST from "..";
 
 export class ArrayTypeExpression extends SingularTypeExpression {
   public constructor(
-    public readonly elementType: AST.TypeNode
+    public readonly elementType: AST.TypeRef
   ) {
 
     const typeKeyword = fakeToken<undefined>(Syntax.Identifier, "Array");

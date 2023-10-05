@@ -80,6 +80,14 @@ export default class Parser extends ArrayStepper<Token> {
     return this.parseExpressionStatement();
   }
 
+  private parseTypeList(): AST.TypeRef[] {
+    const types = [ this.parseType() ];
+    while (this.match(Syntax.Comma))
+      types.push(this.parseType());
+
+    return types;
+  }
+
   private parseExpressionList(): AST.Expression[] {
     const expressions = [ this.parseExpression() ];
     while (this.match(Syntax.Comma))
@@ -150,7 +158,7 @@ export default class Parser extends ArrayStepper<Token> {
     while (this.match(Syntax.Question)) {
       const operator = this.previous<undefined>();
       const body = this.parseExpression();
-      this.consume(Syntax.Colon);
+      this.consume(Syntax.Colon, "':'");
       const elseBranch = this.parseExpression();
       left = new TernaryExpression(operator, <AST.Expression>left, body, elseBranch);
     }
@@ -166,7 +174,7 @@ export default class Parser extends ArrayStepper<Token> {
       if (!this.check(Syntax.RParen))
         args = this.parseExpressionList();
 
-      this.consume(Syntax.RParen);
+      this.consume(Syntax.RParen, "')'");
       callee = new CallExpression(<AST.Expression>callee, args);
     }
 
@@ -344,7 +352,7 @@ export default class Parser extends ArrayStepper<Token> {
     if (this.match(Syntax.LBracket)) {
       const bracket = this.previous<undefined>();
       const elements = this.parseExpressionList();
-      this.consume(Syntax.RBracket);
+      this.consume(Syntax.RBracket, "']'");
       return new ArrayLiteralExpression(bracket, elements);
     }
 
@@ -359,11 +367,11 @@ export default class Parser extends ArrayStepper<Token> {
     throw new ParsingError("Expected expression", this.current);
   }
 
-  private parseType(): AST.TypeNode {
+  private parseType(): AST.TypeRef {
     return this.parseUnionType();
   }
 
-  private parseUnionType(): AST.TypeNode {
+  private parseUnionType(): AST.TypeRef {
     let left = this.parseArrayType();
 
     while (this.match(Syntax.Pipe)) {
@@ -380,11 +388,11 @@ export default class Parser extends ArrayStepper<Token> {
     return left;
   }
 
-  private parseArrayType(): AST.TypeNode {
+  private parseArrayType(): AST.TypeRef {
     let left: AST.Node = this.parseSingularType();
 
     while (this.match(Syntax.LBracket)) {
-      this.consume(Syntax.RBracket);
+      this.consume(Syntax.RBracket, "']'");
       left = new ArrayTypeExpression(left);
     }
 
@@ -392,10 +400,17 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseSingularType(): SingularTypeExpression {
-    if (this.checkType())
-      return new SingularTypeExpression(this.advance<undefined>());
+    if (!this.checkType())
+      throw new ParsingError(`Expected type, got '${this.current.lexeme}'`, this.current);
 
-    throw new ParsingError(`Expected type, got '${this.current.lexeme}'`, this.current);
+    const typeKeyword = this.advance<undefined>();
+    let typeArgs: AST.TypeRef[] | undefined;
+    if (this.match(Syntax.LT)) {
+      typeArgs = this.parseTypeList();
+      this.consume(Syntax.GT, "'>'");
+    }
+
+    return new SingularTypeExpression(typeKeyword, typeArgs);
   }
 
   private advance<V extends ValueType = ValueType>(): Token<V> {

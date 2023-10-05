@@ -5,7 +5,7 @@ import type { Type } from "../types/type";
 import type { ValueType } from "..";
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
-import VariableSymbol from "../variable-symbol";
+import VariableSymbol from "./variable-symbol";
 import SingularType from "../types/singular-type";
 import UnionType from "../types/union-type";
 import ArrayType from "../types/array-type";
@@ -74,7 +74,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): BoundVariableDeclarationStatement {
     const initializer = stmt.initializer ? this.bind(stmt.initializer) : undefined;
-    const variableSymbol = this.defineSymbol(stmt.identifier.token, this.getTypeFromTypeNode(stmt.type));
+    const variableSymbol = this.defineSymbol(stmt.identifier.token, this.getTypeFromTypeRef(stmt.type));
     return new BoundVariableDeclarationStatement(variableSymbol, stmt.mutable, initializer);
   }
 
@@ -203,13 +203,13 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       .find(symbol => symbol.name.lexeme === name.lexeme)!;
   }
 
-  private getTypeFromTypeNode(node: AST.TypeNode): Type {
+  private getTypeFromTypeRef(node: AST.TypeRef): Type {
     if (node instanceof SingularTypeExpression)
-      return new SingularType(node.token.lexeme);
+      return new SingularType(node.token.lexeme, node.typeArguments?.map(arg => this.getTypeFromTypeRef(arg)));
     else if (node instanceof UnionTypeExpression)
-      return new UnionType(node.types.map(singular => <SingularType>this.getTypeFromTypeNode(singular)));
+      return new UnionType(node.types.map(singular => <SingularType>this.getTypeFromTypeRef(singular)));
     else if (node instanceof ArrayTypeExpression)
-      return new ArrayType(this.getTypeFromTypeNode(node.elementType));
+      return new ArrayType(this.getTypeFromTypeRef(node.elementType));
 
     throw new BindingError(`Unhandled type expression: ${node}`, node.token);
   }

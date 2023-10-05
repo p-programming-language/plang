@@ -41,7 +41,7 @@ export default class P {
     const result = this.interpreter.evaluate(ast);
 
     if (this.executionOptions.outputResult)
-      console.log("↳".gray(8), util.inspect(result, { colors: true, compact: false }));
+      console.log("↳".gray(8), util.inspect(result, { colors: true, compact: !(result instanceof Array) || result.length < 5 }));
 
     return result;
   }

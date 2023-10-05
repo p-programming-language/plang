@@ -3,7 +3,7 @@ import type { SingularTypeExpression } from "./singular-type";
 import type { ArrayTypeExpression } from "./array-type";
 import AST from "..";
 
-export class UnionTypeExpression extends AST.TypeNode {
+export class UnionTypeExpression extends AST.TypeRef {
   public constructor(
     public readonly types: SingularTypeExpression[]
   ) { super(); }

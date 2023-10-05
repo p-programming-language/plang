@@ -1,6 +1,6 @@
 import { BoundExpression } from "../bound-node";
 import type { Token } from "../../../syntax/token";
-import type VariableSymbol from "../../variable-symbol";
+import type VariableSymbol from "../variable-symbol";
 import AST from "../../../parser/ast";
 
 export default class BoundVariableAssignmentExpression extends BoundExpression {

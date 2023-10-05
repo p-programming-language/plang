@@ -45,7 +45,7 @@ namespace AST {
     }
   }
 
-  export abstract class TypeNode extends Node {}
+  export abstract class TypeRef extends Node {}
   export abstract class Expression extends Node {
     abstract accept<R>(visitor: Visitor.Expression<R>): R
   }
