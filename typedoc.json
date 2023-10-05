@@ -1,7 +1,7 @@
 {
   "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["src/code-analysis", "src/runtime", "src/errors.ts", "src/utility.ts"],
-  "entryPointStrategy": "expand",
+  "entryPoints": ["src/code-analysis/**", "src/runtime/**", "src/errors.ts", "src/utility.ts"],
+  "entryPointStrategy": "resolve",
   "out": "docs",
   "name": "P API Reference",
   "tsconfig": "./typedoc_tsconfig.json"

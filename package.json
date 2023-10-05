@@ -15,7 +15,7 @@
     "repl": "node dist/tools/repl.js",
     "pint": "node dist/tools/pint.js",
     "path": "tsc && npm link",
-    "docs": "npx typedoc --options typedoc.config.json",
+    "docs": "npx typedoc",
     "push": "npm run docs -s && git add . && git commit -m 'docs: (autogenerate)' && git push -u"
   },
   "keywords": [
