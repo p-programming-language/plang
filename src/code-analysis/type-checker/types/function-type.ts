@@ -6,8 +6,8 @@ export default class FunctionType extends SingularType {
 
   public constructor(
     public readonly parameterTypes: Map<string, Type>,
-    public readonly returnType: Type
-    // public readonly typeParameters?: Type[]
+    public readonly returnType: Type,
+    // public readonly typeParameters?: TypeParameter[]
   ) { super("Function"); }
 
   public toString(): string {

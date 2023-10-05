@@ -4,12 +4,14 @@ import type SingularType from "./singular-type";
 import type UnionType from "./union-type";
 import type ArrayType from "./array-type";
 import type FunctionType from "./function-type";
+import type InterfaceType from "./interface-type";
 
 export enum TypeKind {
   Singular,
   Union,
   Array,
-  Function
+  Function,
+  Interface
 }
 
 export abstract class Type {
@@ -17,7 +19,8 @@ export abstract class Type {
 
   public isSingular(): this is SingularType {
     return this.kind === TypeKind.Singular
-      || this.kind === TypeKind.Array;
+      || this.kind === TypeKind.Array
+      || this.kind === TypeKind.Interface;
   }
 
   public isUnion(): this is UnionType {
@@ -30,6 +33,10 @@ export abstract class Type {
 
   public isFunction(): this is FunctionType {
     return this.kind === TypeKind.Function;
+  }
+
+  public isInterface(): this is InterfaceType {
+    return this.kind === TypeKind.Interface;
   }
 
   public is(other: Type): boolean {
@@ -73,6 +80,16 @@ export abstract class Type {
         .every(([key, paramType]) => other.parameterTypes.has(key) && paramType.isAssignableTo(other.parameterTypes.get(key)!));
 
       return parametersAreAssignable && this.returnType.isAssignableTo(other.returnType);
+    } else if (this.isInterface()) {
+      if (!other.isInterface()) return false;
+
+      const propertiesAreAssignable = Array.from(this.properties.entries())
+        .every(([key, valueType]) => other.properties.has(key) && valueType.isAssignableTo(other.properties.get(key)!));
+
+      const indexSignaturesAreAssignable = Array.from(this.indexSignatures.entries())
+        .every(([keyType, valueType]) => other.indexSignatures.has(keyType) && valueType.isAssignableTo(other.indexSignatures.get(keyType)!));
+
+      return propertiesAreAssignable && indexSignaturesAreAssignable;
     }
 
     return false;

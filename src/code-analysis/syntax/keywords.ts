@@ -1,6 +1,7 @@
 import Syntax from "./syntax-type";
 
 export const KEYWORDS = {
+  interface: Syntax.Interface,
   return: Syntax.Return,
   break: Syntax.Break,
   next: Syntax.Next,

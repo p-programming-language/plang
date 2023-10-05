@@ -13,6 +13,7 @@ enum Syntax {
   Function,
   Return,
   Break, Next,
+  Interface,
 
   Semicolon, Comma,
   LParen, RParen,
