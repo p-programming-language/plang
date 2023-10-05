@@ -83,6 +83,15 @@ describe(Interpreter.name, () => {
     evaluate("until i == 5\n\t++i", false)?.should.be.undefined();
     evaluate("i")?.should.equal(5);
   });
+  it("evaluates indexing expressions", () => {
+    evaluate("int[] nums = [1,2,3]; nums[1]")?.should.equal(2);
+  });
+  it("evaluates property assignment expressions", () => {
+    evaluate("int[] nums = [1,2,3]; nums[1] = 5; nums[1]")?.should.equal(5);
+  });
+  it("evaluates call expressions", () => {
+    evaluate("eval('1 + 2')")?.should.equal(3);
+  });
   it("evaluates intrinsics", () => {
     evaluate("__version")?.should.equal("v" + pkg.version);
   });

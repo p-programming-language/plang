@@ -14,6 +14,7 @@ import { ArrayTypeExpression } from "../../src/code-analysis/parser/ast/type-nod
 import { ExpressionStatement } from "../../src/code-analysis/parser/ast/statements/expression";
 import { CallExpression } from "../../src/code-analysis/parser/ast/expressions/call";
 import { IndexExpression } from "../../src/code-analysis/parser/ast/expressions/index";
+import { PropertyAssignmentExpression } from "../../src/code-analysis/parser/ast/expressions/property-assignment";
 import { VariableAssignmentStatement } from "../../src/code-analysis/parser/ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "../../src/code-analysis/parser/ast/statements/variable-declaration";
 import Syntax from "../../src/code-analysis/syntax/syntax-type";
@@ -299,6 +300,23 @@ describe(Parser.name, () => {
     (<IdentifierExpression>indexing.object).name.lexeme.should.equal("myStuff");
     indexing.index.should.be.an.instanceof(LiteralExpression);
     const value = <LiteralExpression>indexing.index;
+    value.token.syntax.should.equal(Syntax.Int);
+    value.token.value?.should.equal(69);
+  });
+  it("parses property assignment expressions", () => {
+    const [node] = parse("myStuff[1] = 69");
+    node.should.be.an.instanceof(ExpressionStatement);
+    const expr = (<ExpressionStatement>node).expression;
+    expr.should.be.an.instanceof(PropertyAssignmentExpression);
+    const assignment = <PropertyAssignmentExpression>expr;
+    assignment.access.object.should.be.an.instanceof(IdentifierExpression);
+    (<IdentifierExpression>assignment.access.object).name.lexeme.should.equal("myStuff");
+    assignment.access.index.should.be.an.instanceof(LiteralExpression);
+    const indexValue = <LiteralExpression>assignment.access.index;
+    indexValue.token.syntax.should.equal(Syntax.Int);
+    indexValue.token.value?.should.equal(1);
+    assignment.value.should.be.an.instanceof(LiteralExpression);
+    const value = <LiteralExpression>assignment.value;
     value.token.syntax.should.equal(Syntax.Int);
     value.token.value?.should.equal(69);
   });
