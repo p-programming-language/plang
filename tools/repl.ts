@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { platform } from "os";
 import { readln, clearTerminal } from "../src/lib/utility";
+import { PError } from "../src/errors";
 import P from "./p";
 
 const os = platform();
@@ -35,6 +36,11 @@ async function main() {
       case "@results": {
         p.executionOptions.outputResult = !p.executionOptions.outputResult;
         console.log(`Interpreter result output has been turned ${p.executionOptions.outputResult ? "on" : "off"}`);
+        break;
+      }
+      case "@show_trace": {
+        PError.showTrace = !PError.showTrace;
+        console.log(`Full error traces have been turned ${p.executionOptions.outputResult ? "on" : "off"}`);
         break;
       }
       default: {
