@@ -12,7 +12,7 @@ export default class FunctionType extends SingularType {
 
   public toString(): string {
     const parameterList = Array.from(this.parameterTypes.entries())
-      .map(([name, type]) => `${name}: ${type.toString()}`)
+      .map(([name, type]) => `${type.toString()} ${name}`)
       .join(", ");
 
     return `(${parameterList}) => ${this.returnType.toString()}`;

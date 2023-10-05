@@ -28,6 +28,7 @@ import { PrintlnStatement } from "./ast/statements/println";
 import { IfStatement } from "./ast/statements/if";
 import { WhileStatement } from "./ast/statements/while";
 import { CallExpression } from "./ast/expressions/call";
+import { fakeToken } from "../../utility";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -389,12 +390,18 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseArrayType(): AST.TypeRef {
-    let left: AST.Node = this.parseSingularType();
+    let left: AST.TypeRef = this.parseSingularType();
 
     while (this.match(Syntax.LBracket)) {
       this.consume(Syntax.RBracket, "']'");
       left = new ArrayTypeExpression(left);
     }
+
+    if (this.match(Syntax.Question))
+      left = new UnionTypeExpression([
+        <SingularTypeExpression>left,
+        new SingularTypeExpression(fakeToken(Syntax.Undefined, "undefined"))
+      ]);
 
     return left;
   }
