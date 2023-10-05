@@ -32,6 +32,8 @@ import { IndexExpression } from "../code-analysis/parser/ast/expressions";
 import { PropertyAssignmentExpression } from "../code-analysis/parser/ast/expressions/property-assignment";
 import { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
 import PFunction from "./types/function";
+import { ReturnStatement } from "../code-analysis/parser/ast/statements/return";
+import HookedException from "./hooked-exceptions";
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public readonly globals = new Scope;
@@ -45,6 +47,11 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
     const intrinsics = new Intrinsics(this);
     intrinsics.inject();
+  }
+
+  public visitReturnStatement(stmt: ReturnStatement): void {
+    const value = this.evaluate(stmt.expression);
+    throw new HookedException.Return(stmt.token, value);
   }
 
   public visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): void {

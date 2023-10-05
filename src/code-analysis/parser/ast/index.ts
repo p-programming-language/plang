@@ -21,6 +21,7 @@ import type { BlockStatement } from "./statements/block";
 import type { IfStatement } from "./statements/if";
 import type { WhileStatement } from "./statements/while";
 import type { FunctionDeclarationStatement } from "./statements/function-declaration";
+import type { ReturnStatement } from "./statements/return";
 import type BoundLiteralExpression from "../../type-checker/binder/bound-expressions/literal";
 import type BoundArrayLiteralExpression from "../../type-checker/binder/bound-expressions/array-literal";
 import type BoundParenthesizedExpression from "../../type-checker/binder/bound-expressions/parenthesized";
@@ -41,6 +42,7 @@ import type BoundBlockStatement from "../../type-checker/binder/bound-statements
 import type BoundIfStatement from "../../type-checker/binder/bound-statements/if";
 import type BoundWhileStatement from "../../type-checker/binder/bound-statements/if";
 import type BoundFunctionDeclarationStatement from "../../type-checker/binder/bound-statements/function-declaration";
+import type BoundReturnStatement from "../../type-checker/binder/bound-statements/return";
 
 namespace AST {
   export abstract class Node {
@@ -76,6 +78,7 @@ namespace AST {
     }
 
     export abstract class Statement<R> {
+      public abstract visitReturnStatement(stmt: ReturnStatement): R
       public abstract visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): R
       public abstract visitWhileStatement(stmt: WhileStatement): R
       public abstract visitIfStatement(stmt: IfStatement): R
@@ -102,6 +105,7 @@ namespace AST {
     }
 
     export abstract class BoundStatement<R> {
+      public abstract visitReturnStatement(stmt: BoundReturnStatement): R
       public abstract visitFunctionDeclarationStatement(stmt: BoundFunctionDeclarationStatement): R
       public abstract visitWhileStatement(stmt: BoundWhileStatement): R
       public abstract visitIfStatement(stmt: BoundIfStatement): R

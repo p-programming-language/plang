@@ -2,7 +2,12 @@ import { TypeError } from "../../errors";
 import { BoundExpression, BoundNode, BoundStatement } from "./binder/bound-node";
 import type { Type } from "./types/type";
 import type PValue from "../../runtime/types/value";
+import type Resolver from "../resolver";
 import type FunctionType from "./types/function-type";
+import ArrayType from "./types/array-type";
+import SingularType from "./types/singular-type";
+import UnionType from "./types/union-type";
+import ScopeContext from "../scope-context";
 import AST from "../parser/ast";
 
 import BoundArrayLiteralExpression from "./binder/bound-expressions/array-literal";
@@ -23,15 +28,17 @@ import type BoundBlockStatement from "./binder/bound-statements/block";
 import type BoundIfStatement from "./binder/bound-statements/if";
 import type BoundWhileStatement from "./binder/bound-statements/while";
 import type BoundFunctionDeclarationStatement from "./binder/bound-statements/function-declaration";
-import ArrayType from "./types/array-type";
-import SingularType from "./types/singular-type";
-import UnionType from "./types/union-type";
+import BoundReturnStatement from "./binder/bound-statements/return";
 
 export type ValueType = PValue | string | number | boolean | null | undefined | void | ValueType[];
 
 // NOTE: always call check() before assert()
 
 export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
+  public visitReturnStatement(stmt: BoundReturnStatement): void {
+    this.check(stmt.expression);
+  }
+
   public visitFunctionDeclarationStatement(stmt: BoundFunctionDeclarationStatement): void {
     this.check(stmt.parameters);
     this.check(stmt.body);

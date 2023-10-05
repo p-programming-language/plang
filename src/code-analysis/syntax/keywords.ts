@@ -1,6 +1,9 @@
 import Syntax from "./syntax-type";
 
 export const KEYWORDS = {
+  return: Syntax.Return,
+  break: Syntax.Break,
+  next: Syntax.Next,
   and: Syntax.AmpersandAmpersand,
   or: Syntax.PipePipe,
   not: Syntax.Bang,

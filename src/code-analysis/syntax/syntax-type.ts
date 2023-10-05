@@ -5,12 +5,14 @@ enum Syntax {
   Boolean,
   Null, Undefined,
 
+  Mut,
   Identifier,
   Println,
   If, Unless, Else,
   While, Until,
   Function,
-  Mut,
+  Return,
+  Break, Next,
 
   Semicolon, Comma,
   LParen, RParen,

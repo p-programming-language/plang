@@ -8,10 +8,11 @@ export class PError {
     public readonly name: string,
     public readonly message: string,
     public readonly line: number,
-    public readonly column: number
+    public readonly column: number,
+    hookedException = false
   ) {
 
-    if (PError.testing) return;
+    if (PError.testing || hookedException) return;
     const output = `${name}: ${message}\n  at ${line}:${column}`;
 
     if (PError.showTrace)
@@ -50,6 +51,12 @@ export class BindingError extends PError {
 export class ReferenceError extends PError {
   public constructor(message: string, token: Token) {
     super(ReferenceError.name, message, token.locationSpan.start.line, token.locationSpan.start.column);
+  }
+}
+
+export class ResolutionError extends PError {
+  public constructor(message: string, token: Token) {
+    super(ResolutionError.name, message, token.locationSpan.start.line, token.locationSpan.start.column);
   }
 }
 

@@ -32,6 +32,7 @@ import { IfStatement } from "./ast/statements/if";
 import { WhileStatement } from "./ast/statements/while";
 import { PropertyAssignmentExpression } from "./ast/expressions/property-assignment";
 import { FunctionDeclarationStatement } from "./ast/statements/function-declaration";
+import { ReturnStatement } from "./ast/statements/return";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -76,6 +77,15 @@ export default class Parser extends ArrayStepper<Token> {
       const condition = this.parseExpression();
       const body = this.parseStatement();
       return new WhileStatement(keyword, condition, body);
+    }
+
+    if (this.match(Syntax.Return)) {
+      const keyword = this.previous<undefined>();
+      const expr = this.checkMultiple([Syntax.Semicolon, Syntax.RBrace, Syntax.EOF]) ?
+        new LiteralExpression(fakeToken(Syntax.Undefined, "undefined"))
+        : this.parseExpression();
+
+      return new ReturnStatement(keyword, expr);
     }
 
     if (this.match(Syntax.LBrace))

@@ -35,6 +35,7 @@ import type { BlockStatement } from "../../parser/ast/statements/block";
 import type { IfStatement } from "../../parser/ast/statements/if";
 import type { WhileStatement } from "../../parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "../../parser/ast/statements/function-declaration";
+import type { ReturnStatement } from "../../parser/ast/statements/return";
 
 import BoundLiteralExpression from "./bound-expressions/literal";
 import BoundArrayLiteralExpression from "./bound-expressions/array-literal";
@@ -57,9 +58,15 @@ import BoundIfStatement from "./bound-statements/if";
 import BoundWhileStatement from "./bound-statements/while";
 import BoundFunctionDeclarationStatement from "./bound-statements/function-declaration";
 import FunctionType from "../types/function-type";
+import BoundReturnStatement from "./bound-statements/return";
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variables: VariableSymbol[] = [];
+
+  public visitReturnStatement(stmt: ReturnStatement): BoundReturnStatement {
+    const expr = this.bind(stmt.expression);
+    return new BoundReturnStatement(stmt.token, expr);
+  }
 
   public visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): BoundFunctionDeclarationStatement {
     const returnType = this.getTypeFromTypeRef(stmt.returnType);

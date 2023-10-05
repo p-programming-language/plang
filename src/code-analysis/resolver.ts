@@ -1,5 +1,6 @@
-import { ReferenceError } from "../errors";
+import { ReferenceError, ResolutionError } from "../errors";
 import type { Token } from "./syntax/token";
+import ScopeContext from "./scope-context";
 import AST from "../code-analysis/parser/ast";
 
 import type { ArrayLiteralExpression } from "./parser/ast/expressions/array-literal";
@@ -20,20 +21,23 @@ import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/s
 import type { BlockStatement } from "./parser/ast/statements/block";
 import type { IfStatement } from "./parser/ast/statements/if";
 import type { WhileStatement } from "./parser/ast/statements/while";
-import { FunctionDeclarationStatement } from "./parser/ast/statements/function-declaration";
-
-const enum ScopeContext {
-  Global,
-  Function
-}
+import type { FunctionDeclarationStatement } from "./parser/ast/statements/function-declaration";
+import type { ReturnStatement } from "./parser/ast/statements/return";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   public readonly locals = new Map<AST.Node, number>;
+  public context = ScopeContext.Global;
   private scopes: Map<string, boolean>[] = []; // the boolean represents whether the variable is defined or not. a variable can be declared without being defined
-  private context = ScopeContext.Global;
 
   public constructor() {
     this.beginScope();
+  }
+
+  public visitReturnStatement(stmt: ReturnStatement): void {
+    if (this.context !== ScopeContext.Function)
+      throw new ResolutionError("Invalid return statement: Can only use 'return' within a function body", stmt.token);
+
+    this.resolve(stmt.expression);
   }
 
   public visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): void {
