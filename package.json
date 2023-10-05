@@ -15,8 +15,8 @@
     "repl": "node dist/tools/repl.js",
     "pint": "node dist/tools/pint.js",
     "path": "tsc && npm link",
-    "docs": "typedoc src --entryPointStrategy expand",
-    "push": "npm run docs && git add . && git commit -m 'docs: (autogenerate)' && git push -u"
+    "docs": "npx typedoc src --entryPointStrategy expand",
+    "push": "npm run -s docs && git add . && git commit -m 'docs: (autogenerate)' && git push -u"
   },
   "keywords": [
     "p",
