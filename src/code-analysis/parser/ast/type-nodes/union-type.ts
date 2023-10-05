@@ -5,7 +5,7 @@ import AST from "..";
 
 export class UnionTypeExpression extends AST.TypeNode {
   public constructor(
-    public readonly types: (SingularTypeExpression | ArrayTypeExpression)[]
+    public readonly types: SingularTypeExpression[]
   ) { super(); }
 
   public get token(): Token {

@@ -2,6 +2,7 @@ import { Token } from "./code-analysis/syntax/token";
 
 export class PError {
   public static testing = false;
+  public static showTrace = true;
 
   public constructor(
     public readonly name: string,
@@ -12,8 +13,13 @@ export class PError {
 
     if (PError.testing) return;
     const output = `${name}: ${message}\n  at ${line}:${column}`;
-    console.log(output);
-    process.exit(1);
+
+    if (PError.showTrace)
+      throw new Error(output);
+    else {
+      console.log(output);
+      process.exit(1);
+    }
   }
 }
 

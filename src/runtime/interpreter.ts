@@ -23,6 +23,7 @@ import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/s
 import type { BlockStatement } from "../code-analysis/parser/ast/statements/block";
 import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 import { PrintlnStatement } from "../code-analysis/parser/ast/statements/println";
+import { TernaryExpression } from "../code-analysis/parser/ast/expressions/ternary";
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public readonly globals = new Scope;
@@ -88,6 +89,12 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitIdentifierExpression(expr: IdentifierExpression): ValueType {
     return this.scope.get(expr.name);
+  }
+
+  public visitTernaryExpression(expr: TernaryExpression): ValueType {
+    return this.evaluate(expr.condition) ?
+      this.evaluate(expr.body)
+      : this.evaluate(expr.elseBranch);
   }
 
   public visitUnaryExpression(expr: UnaryExpression): ValueType {

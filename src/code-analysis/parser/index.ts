@@ -25,6 +25,7 @@ import { ArrayTypeExpression } from "./ast/type-nodes/array-type";
 import { IfStatement } from "./ast/statements/if";
 import { BlockStatement } from "./ast/statements/block";
 import { PrintlnStatement } from "./ast/statements/println";
+import { TernaryExpression } from "./ast/expressions/ternary";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -40,11 +41,10 @@ export default class Parser extends ArrayStepper<Token> {
     super(tokens);
   }
 
-  public parse(): AST.Statement[] {
+  public parse(until: () => boolean = () => this.isFinished): AST.Statement[] {
     const statements = [];
-    while (!this.isFinished) {
+    while (!until()) {
       const stmt = this.declaration();
-      if (!stmt) continue;
       statements.push(stmt);
     }
     return statements;
@@ -56,6 +56,7 @@ export default class Parser extends ArrayStepper<Token> {
       const expressions = this.parseExpressionList();
       return new PrintlnStatement(keyword, expressions);
     }
+
     if (this.match(Syntax.If, Syntax.Unless)) {
       const keyword = this.previous<undefined>();
       const condition = this.parseExpression();
@@ -81,22 +82,21 @@ export default class Parser extends ArrayStepper<Token> {
   private parseBlock(): BlockStatement {
     const brace = this.previous<undefined>();
     this.typeScopes.push([]);
-    const statements = this.parse();
-    this.consume(Syntax.RBrace);
+    const statements = this.parse(() => this.match(Syntax.RBrace));
     this.typeScopes.pop();
     return new BlockStatement(brace, statements);
   }
 
   // parse declarations like classes, variables, functions, etc.
-  private declaration(): AST.Statement | undefined {
+  private declaration(): AST.Statement {
     const nextSyntax = this.peek()?.syntax;
     const nextNextSyntax = this.peek(2)?.syntax;
-    const isTypePostfix = (syntax?: Syntax) => syntax === Syntax.Identifier
+    const isVariableDeclarationSyntax = (syntax?: Syntax) => syntax === Syntax.Identifier
       || syntax === Syntax.Pipe
       || syntax === Syntax.LBracket;
 
 
-    if ((this.match(Syntax.Mut) ? this.checkType() : this.checkType()) && (isTypePostfix(nextSyntax) || isTypePostfix(nextNextSyntax))) {
+    if ((this.match(Syntax.Mut) ? this.checkType() : this.checkType()) && (isVariableDeclarationSyntax(nextSyntax) || isVariableDeclarationSyntax(nextNextSyntax))) {
       const declaration = this.parseVariableDeclaration();
       this.consumeSemicolons();
       return declaration;
@@ -132,7 +132,21 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseExpression(): AST.Expression {
-    return <AST.Expression>this.parseVariableAssignment();
+    return <AST.Expression>this.parseTernary();
+  }
+
+  private parseTernary(): AST.Expression | AST.Statement {
+    let left = this.parseVariableAssignment();
+
+    while (this.match(Syntax.Question)) {
+      const operator = this.previous<undefined>();
+      const body = this.parseExpression();
+      this.consume(Syntax.Colon);
+      const elseBranch = this.parseExpression();
+      left = new TernaryExpression(operator, <AST.Expression>left, body, elseBranch);
+    }
+
+    return left;
   }
 
   private parseVariableAssignment(): AST.Expression | AST.Statement {
@@ -140,7 +154,7 @@ export default class Parser extends ArrayStepper<Token> {
 
     if (this.match(Syntax.Equal, Syntax.ColonEqual)) {
       const isStatement = this.check(Syntax.Equal, -1);
-      const value = <AST.Expression>this.parseVariableAssignment();
+      const value = <AST.Expression>this.parseExpression();
 
       if (left instanceof IdentifierExpression)
         return isStatement ?

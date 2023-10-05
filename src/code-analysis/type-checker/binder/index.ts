@@ -44,6 +44,8 @@ import BoundBlockStatement from "./bound-statements/block";
 import BoundIfStatement from "./bound-statements/if";
 import BoundPrintlnStatement from "./bound-statements/println";
 import { PrintlnStatement } from "../../parser/ast/statements/println";
+import { TernaryExpression } from "../../parser/ast/expressions/ternary";
+import BoundTernaryExpression from "./bound-expressions/ternary";
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variables: VariableSymbol[] = [];
@@ -101,6 +103,13 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       throw new BindingError(`Failed to find variable symbol for '${expr.token.lexeme}'`, expr.token)
 
     return new BoundIdentifierExpression(expr.token, variableSymbol.type);
+  }
+
+  public visitTernaryExpression(expr: TernaryExpression): BoundTernaryExpression {
+    const condition = this.bind(expr.condition);
+    const body = this.bind(expr.body);
+    const elseBranch = this.bind(expr.elseBranch);
+    return new BoundTernaryExpression(expr.token, condition, body, elseBranch);
   }
 
   public visitUnaryExpression(expr: UnaryExpression): BoundUnaryExpression {

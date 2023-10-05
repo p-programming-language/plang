@@ -15,6 +15,7 @@ import { ArrayLiteralExpression } from "./parser/ast/expressions/array-literal";
 import { BlockStatement } from "./parser/ast/statements/block";
 import { IfStatement } from "./parser/ast/statements/if";
 import { PrintlnStatement } from "./parser/ast/statements/println";
+import { TernaryExpression } from "./parser/ast/expressions/ternary";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   // the boolean represents whether the variable is defined or not
@@ -75,6 +76,12 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
     if (!this.isDefined(expr.token))
       throw new ReferenceError(`'${expr.token.lexeme}' is not defined in this scope`, expr.token);
+  }
+
+  public visitTernaryExpression(expr: TernaryExpression): void {
+    this.resolve(expr.condition);
+    this.resolve(expr.body);
+    this.resolve(expr.elseBranch);
   }
 
   public visitUnaryExpression(expr: UnaryExpression): void {

@@ -15,6 +15,7 @@ import BoundVariableDeclarationStatement from "./binder/bound-statements/variabl
 import BoundArrayLiteralExpression from "./binder/bound-expressions/array-literal";
 import BoundBlockStatement from "./binder/bound-statements/block";
 import BoundIfStatement from "./binder/bound-statements/if";
+import BoundTernaryExpression from "./binder/bound-expressions/ternary";
 
 export type ValueType = string | number | boolean | null | undefined | void | ValueType[];
 
@@ -64,6 +65,12 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
 
   public visitUnaryExpression(expr: BoundUnaryExpression): void {
     this.assert(expr.operand, expr.operand.type, expr.operator.operandType);
+  }
+
+  public visitTernaryExpression(expr: BoundTernaryExpression): void {
+    this.check(expr.condition);
+    this.check(expr.body);
+    this.check(expr.elseBranch);
   }
 
   public visitBinaryExpression(expr: BoundBinaryExpression): void {
