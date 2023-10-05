@@ -176,6 +176,7 @@ export default class Parser extends ArrayStepper<Token> {
       const isStatement = this.check(Syntax.Equal, -1);
       const value = <AST.Expression>this.parseExpression();
 
+      console.log(left)
       if (!this.isAssignmentTarget(left))
         throw new ParsingError("Invalid assignment target", this.current);
 
@@ -191,11 +192,11 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseCompoundAssignment(): AST.Expression {
-    let left = this.parseLogicalOr();
+    let left = this.parseIndex();
 
     if (this.matchSet(COMPOUND_ASSIGNMENT_SYNTAXES)) {
       const operator = this.previous<undefined>();
-      const right = this.parseLogicalOr();
+      const right = this.parseIndex();
       if (!this.isAssignmentTarget(left))
         throw new ParsingError("Invalid compound assignment target", this.current);
 
@@ -330,7 +331,7 @@ export default class Parser extends ArrayStepper<Token> {
       const operator = this.previous<undefined>();
       const operand = this.parseCall();
       if (!this.isAssignmentTarget(operand) && (operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus))
-        throw new ParsingError("Invalid assignment target", operand.token);
+        throw new ParsingError("Invalid increment/decrement target", operand.token);
 
       return new UnaryExpression(operator, operand);
     } else
@@ -353,7 +354,7 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseIndex(): AST.Expression {
-    let object = this.parseExpression();
+    let object = this.parseLogicalOr();
 
     while (this.match(Syntax.LBracket)) {
       const bracket = this.previous<undefined>();
