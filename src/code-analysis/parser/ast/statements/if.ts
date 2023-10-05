@@ -3,7 +3,7 @@ import AST from "..";
 
 export class IfStatement extends AST.Statement {
   public constructor(
-    public readonly token: Token,
+    public readonly token: Token<undefined>,
     public readonly condition: AST.Expression,
     public readonly body: AST.Statement,
     public readonly elseBranch?: AST.Statement

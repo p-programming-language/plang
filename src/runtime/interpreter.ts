@@ -6,6 +6,8 @@ import type { Callable } from "./types/callable";
 import type Binder from "../code-analysis/type-checker/binder";
 import type Resolver from "../code-analysis/resolver";
 import Scope from "./scope";
+import PFunction from "./types/function";
+import HookedException from "./hooked-exceptions";
 import Intrinsics from "./intrinsics";
 import Syntax from "../code-analysis/syntax/syntax-type";
 import AST from "../code-analysis/parser/ast";
@@ -28,16 +30,19 @@ import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/s
 import type { BlockStatement } from "../code-analysis/parser/ast/statements/block";
 import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 import type { WhileStatement } from "../code-analysis/parser/ast/statements/while";
-import { IndexExpression } from "../code-analysis/parser/ast/expressions";
+import type { IndexExpression } from "../code-analysis/parser/ast/expressions";
 import { PropertyAssignmentExpression } from "../code-analysis/parser/ast/expressions/property-assignment";
-import { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
-import PFunction from "./types/function";
-import { ReturnStatement } from "../code-analysis/parser/ast/statements/return";
-import HookedException from "./hooked-exceptions";
+import type { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
+import type { ReturnStatement } from "../code-analysis/parser/ast/statements/return";
+
+const MAX_RECURSION_DEPTH = 1200;
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public readonly globals = new Scope;
   public scope = this.globals;
+
+  private loopLevel = 0;
+  private recursionDepth = 1;
 
   public constructor(
     public readonly runner: P,
@@ -62,14 +67,24 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   }
 
   public visitWhileStatement(stmt: WhileStatement): void {
+    this.loopLevel++;
     const inverted = stmt.token.syntax === Syntax.Until;
-    while (inverted ? !this.evaluate(stmt.condition) : this.evaluate(stmt.condition))
+    let depth = 0;
+
+    while (inverted ? !this.evaluate(stmt.condition) : this.evaluate(stmt.condition)) {
+      this.startRecursion(stmt.token);
       this.execute(stmt.body);
+      depth++;
+    }
+
+    this.endRecursion(depth);
+    this.loopLevel--;
   }
 
   public visitIfStatement(stmt: IfStatement): void {
     const condition = this.evaluate(stmt.condition);
     const inverted = stmt.token.syntax === Syntax.Unless;
+
     if (inverted ? !condition : condition)
       this.execute(stmt.body)
     else if (stmt.elseBranch)
@@ -274,5 +289,15 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
       return lastResult;
     } else
       return statements.accept(this);
+  }
+
+  private startRecursion(token: Token<undefined>): void {
+    this.recursionDepth++;
+    if (this.recursionDepth < MAX_RECURSION_DEPTH) return;
+    throw new RuntimeError(`Stack overflow: Recursion depth of ${MAX_RECURSION_DEPTH} exceeded`, token);
+  }
+
+  private endRecursion(level = 1): void {
+    this.recursionDepth -= level;
   }
 }
