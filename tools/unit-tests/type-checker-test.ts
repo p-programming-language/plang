@@ -40,6 +40,16 @@ describe(TypeChecker.name, () => {
       const check = getCheckFunction("string a = 2");
       check.should.throw("TypeError: Type 'int' is not assignable to 'string'");
     } catch (e) {}
+    try {
+      const check = getCheckFunction("int[] nums = ['a', 'b', 'c']");
+      check.should.throw("TypeError: Type 'Array<string>' is not assignable to 'Array<int>'");
+    } catch (e) {}
+  });
+  it("does not throw when assigning an empty array", () => {
+    try {
+      const check = getCheckFunction("int[] nums = []");
+      check.should.not.throw();
+    } catch (e) {}
   });
   it("throws when assigning to a variable with a mismatched type", () => {
     try {

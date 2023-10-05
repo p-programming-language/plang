@@ -4,18 +4,21 @@ import path from "path";
 import "should";
 
 import { LiteralExpression } from "../../src/code-analysis/parser/ast/expressions/literal";
+import { ArrayLiteralExpression } from "../../src/code-analysis/parser/ast/expressions/array-literal";
 import { UnaryExpression } from "../../src/code-analysis/parser/ast/expressions/unary";
 import { BinaryExpression } from "../../src/code-analysis/parser/ast/expressions/binary";
+import { IdentifierExpression } from "../../src/code-analysis/parser/ast/expressions/identifier";
 import { VariableAssignmentExpression } from "../../src/code-analysis/parser/ast/expressions/variable-assignment";
+import { UnionTypeExpression } from "../../src/code-analysis/parser/ast/type-nodes/union-type";
+import { ArrayTypeExpression } from "../../src/code-analysis/parser/ast/type-nodes/array-type";
 import { ExpressionStatement } from "../../src/code-analysis/parser/ast/statements/expression";
+import { CallExpression } from "../../src/code-analysis/parser/ast/expressions/call";
+import { IndexExpression } from "../../src/code-analysis/parser/ast/expressions/index";
 import { VariableAssignmentStatement } from "../../src/code-analysis/parser/ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "../../src/code-analysis/parser/ast/statements/variable-declaration";
 import Syntax from "../../src/code-analysis/syntax/syntax-type";
 import Parser from "../../src/code-analysis/parser";
 import AST from "../../src/code-analysis/parser/ast";
-import { UnionTypeExpression } from "../../src/code-analysis/parser/ast/type-nodes/union-type";
-import { ArrayLiteralExpression } from "../../src/code-analysis/parser/ast/expressions/array-literal";
-import { ArrayTypeExpression } from "../../src/code-analysis/parser/ast/type-nodes/array-type";
 
 function parse(source: string): AST.Statement[] {
   const parser = new Parser(source);
@@ -255,8 +258,8 @@ describe(Parser.name, () => {
       value.token.value?.should.equal(null);
     }
   });
-  it("parses union & array types", () => {
-    {
+  it("parses types references", () => {
+    it("unions", () => {
       const [node] = parse("int | float y = 123");
       node.should.be.an.instanceof(VariableDeclarationStatement);
       const declaration = <VariableDeclarationStatement>node;
@@ -273,8 +276,8 @@ describe(Parser.name, () => {
       const value = <LiteralExpression>declaration.initializer;
       value.token.syntax.should.equal(Syntax.Int);
       value.token.value?.should.equal(123);
-    }
-    {
+    });
+    it("arrays", () => {
       const [node] = parse("int[] nums = [1, 2, 3]");
       node.should.be.an.instanceof(VariableDeclarationStatement);
       const declaration = <VariableDeclarationStatement>node;
@@ -284,7 +287,38 @@ describe(Parser.name, () => {
       arrayType.elementType.token.lexeme.should.equal("int");
       declaration.identifier.token.lexeme.should.equal("nums");
       declaration.initializer?.should.be.an.instanceof(ArrayLiteralExpression);
-    }
+    });
+  });
+  it("parses indexing", () => {
+    const [node] = parse("myStuff[69]");
+    node.should.be.an.instanceof(ExpressionStatement);
+    const expr = (<ExpressionStatement>node).expression;
+    expr.should.be.an.instanceof(IndexExpression);
+    const indexing = <IndexExpression>expr;
+    indexing.object.should.be.an.instanceof(IdentifierExpression);
+    (<IdentifierExpression>indexing.object).name.lexeme.should.equal("myStuff");
+    indexing.index.should.be.an.instanceof(LiteralExpression);
+    const value = <LiteralExpression>indexing.index;
+    value.token.syntax.should.equal(Syntax.Int);
+    value.token.value?.should.equal(69);
+  });
+  it("parses calls", () => {
+    const [node] = parse("myFunc('hello', 123)");
+    node.should.be.an.instanceof(ExpressionStatement);
+    const expr = (<ExpressionStatement>node).expression;
+    expr.should.be.an.instanceof(CallExpression);
+    const call = <CallExpression>expr;
+    call.callee.should.be.an.instanceof(IdentifierExpression);
+    (<IdentifierExpression>call.callee).name.lexeme.should.equal("myFunc");
+    const [arg1, arg2] = call.args;
+    arg1.should.be.an.instanceof(LiteralExpression);
+    const value1 = <LiteralExpression>arg1;
+    value1.token.syntax.should.equal(Syntax.String);
+    value1.token.value?.should.equal("hello");
+    arg2.should.be.an.instanceof(LiteralExpression);
+    const value2 = <LiteralExpression>arg2;
+    value2.token.syntax.should.equal(Syntax.Int);
+    value2.token.value?.should.equal(123);
   });
   describe("parses general tests (tests/)", () => {
     testFiles.forEach((file) => {
