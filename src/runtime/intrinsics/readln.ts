@@ -1,6 +1,5 @@
 import reader from "readline-sync";
 
-import { Range } from "../../utility";
 import Intrinsic from "../types/intrinsic";
 import UnionType from "../../code-analysis/type-checker/types/union-type";
 import SingularType from "../../code-analysis/type-checker/types/singular-type";
@@ -17,10 +16,6 @@ export default class Readln extends Intrinsic.Function {
     new SingularType("string"),
     new SingularType("undefined")
   ]);
-
-  public get arity(): Range {
-    return new Range(1, 2);
-  }
 
   public call(prompt: string, hideEchoBack = false): string {
     return reader.question(prompt, { hideEchoBack });

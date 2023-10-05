@@ -4,33 +4,18 @@ import path from "path";
 import "should";
 
 import { PError } from "../../src/errors";
-import { TypeChecker, ValueType } from "../../src/code-analysis/type-checker";
-import Parser from "../../src/code-analysis/parser";
-import Resolver from "../../src/code-analysis/resolver";
-import Binder from "../../src/code-analysis/type-checker/binder";
+import type { ValueType } from "../../src/code-analysis/type-checker";
 import Interpreter from "../../src/runtime/interpreter";
+import P from "../p";
 import pkg = require("../../package.json");
 
 PError.testing = true;
 
-class Environment {
-  public readonly resolver = new Resolver;
-  public readonly binder = new Binder;
-  public readonly typeChecker = new TypeChecker;
-  public readonly interpreter = new Interpreter(this.resolver, this.binder);
-}
-
-let env = new Environment;
+let p = new P;
 function evaluate(source: string, createNewEnvironment = true): ValueType {
-  const parser = new Parser(source);
-  const ast = parser.parse();
-  env.resolver.resolve(ast);
-  const boundAST = env.binder.bindStatements(ast);
-  env.typeChecker.check(boundAST);
-  const result = env.interpreter.evaluate(ast);
-
+  const result = p.doString(source);
   if (createNewEnvironment)
-    env = new Environment;
+    p.refreshResources();
 
   return result;
 }

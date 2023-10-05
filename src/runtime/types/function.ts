@@ -54,11 +54,7 @@ export default class PFunction<A extends ValueType[] = ValueType[], R extends Va
   public get arity(): number | Range {
     const start = this.nonNullableParameters.length;
     const finish = this.parameters.length;
-
-    if (start === finish)
-      return start;
-    else
-      return new Range(start, finish);
+    return start === finish ? start : new Range(start, finish);
   }
 
   public toString(): string {

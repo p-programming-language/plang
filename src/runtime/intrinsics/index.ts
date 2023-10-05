@@ -14,6 +14,7 @@ import type Binder from "../../code-analysis/type-checker/binder";
 import pkg = require("../../../package.json");
 
 import Readln from "./readln";
+import Eval from "./eval";
 
 export default class Intrinsics {
   public constructor(
@@ -26,6 +27,7 @@ export default class Intrinsics {
     this.define("__version", "v" + pkg.version, new SingularType("string"));
     this.define("argv", argv.slice(2), new ArrayType(new SingularType("string")));
     this.defineFunction("readln", Readln);
+    this.defineFunction("eval", Eval);
   }
 
   private defineFunction<F extends Intrinsic.Function>(name: string, IntrinsicFunction: { new(interpreter: Interpreter): F }): void {

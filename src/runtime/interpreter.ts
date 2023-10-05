@@ -9,6 +9,7 @@ import Scope from "./scope";
 import Intrinsics from "./intrinsics";
 import Syntax from "../code-analysis/syntax/syntax-type";
 import AST from "../code-analysis/parser/ast";
+import P from "../../tools/p";
 
 import { LiteralExpression } from "../code-analysis/parser/ast/expressions/literal";
 import type { ArrayLiteralExpression } from "../code-analysis/parser/ast/expressions/array-literal";
@@ -32,7 +33,12 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public readonly globals = new Scope;
   private scope = this.globals;
 
-  public constructor(resolver: Resolver, binder: Binder) {
+  public constructor(
+    public readonly runner: P,
+    resolver: Resolver,
+    binder: Binder
+  ) {
+
     const intrinsics = new Intrinsics(this, resolver, binder);
     intrinsics.inject();
   }
