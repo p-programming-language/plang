@@ -5,7 +5,7 @@ import type { Callable } from "../../runtime/types/callable";
 import type FunctionType from "./types/function-type";
 import AST from "../parser/ast";
 
-import type BoundArrayLiteralExpression from "./binder/bound-expressions/array-literal";
+import BoundArrayLiteralExpression from "./binder/bound-expressions/array-literal";
 import type BoundParenthesizedExpression from "./binder/bound-expressions/parenthesized";
 import type BoundUnaryExpression from "./binder/bound-expressions/unary";
 import type BoundBinaryExpression from "./binder/bound-expressions/binary";
@@ -49,6 +49,10 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
   public visitVariableDeclarationStatement(stmt: BoundVariableDeclarationStatement): void {
     if (!stmt.initializer) return;
     this.check(stmt.initializer);
+
+    if (stmt.initializer instanceof BoundArrayLiteralExpression && stmt.initializer.type.elementType.toString() === "undefined")
+      return; // simply forgo the assertion if the array is empty, because an empty array will always be a Array<undefined>
+
     this.assert(stmt.initializer, stmt.initializer.type, stmt.symbol.type);
   }
 

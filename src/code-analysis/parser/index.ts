@@ -92,6 +92,9 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseExpressionList(): AST.Expression[] {
+    if (this.check(Syntax.RBracket))
+      return [];
+
     const expressions = [ this.parseExpression() ];
     while (this.match(Syntax.Comma))
       expressions.push(this.parseExpression());
@@ -113,7 +116,9 @@ export default class Parser extends ArrayStepper<Token> {
     const nextNextSyntax = this.peek(2)?.syntax;
     const isVariableDeclarationSyntax = (syntax?: Syntax) => syntax === Syntax.Identifier
       || syntax === Syntax.Pipe
-      || syntax === Syntax.LBracket;
+      || syntax === Syntax.LBracket
+      || syntax === Syntax.RBracket
+      || syntax === Syntax.Question;
 
 
     if ((this.match(Syntax.Mut) ? this.checkType() : this.checkType()) && (isVariableDeclarationSyntax(nextSyntax) || isVariableDeclarationSyntax(nextNextSyntax))) {
@@ -327,6 +332,8 @@ export default class Parser extends ArrayStepper<Token> {
 
   private parseIndex(): AST.Expression {
     let object = this.parseCall();
+    if (!this.check(Syntax.RBracket, -1) && !this.check(Syntax.RBrace, -1) && !this.check(Syntax.Identifier, -1))
+      return object;
 
     while (this.match(Syntax.LBracket)) {
       const bracket = this.previous<undefined>();

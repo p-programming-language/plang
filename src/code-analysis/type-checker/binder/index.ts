@@ -189,7 +189,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     }
 
     const type = new ArrayType(elementType);
-    return new BoundArrayLiteralExpression(elements, type);
+    return new BoundArrayLiteralExpression(expr.token, elements, type);
   }
 
   public visitLiteralExpression<T extends ValueType = ValueType>(expr: LiteralExpression<T>): BoundLiteralExpression<T> {
