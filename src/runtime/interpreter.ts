@@ -30,10 +30,12 @@ import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 import type { WhileStatement } from "../code-analysis/parser/ast/statements/while";
 import { IndexExpression } from "../code-analysis/parser/ast/expressions";
 import { PropertyAssignmentExpression } from "../code-analysis/parser/ast/expressions/property-assignment";
+import { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
+import PFunction from "./types/function";
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public readonly globals = new Scope;
-  private scope = this.globals;
+  public scope = this.globals;
 
   public constructor(
     public readonly runner: P,
@@ -43,6 +45,13 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
     const intrinsics = new Intrinsics(this);
     intrinsics.inject();
+  }
+
+  public visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): void {
+    const fn = new PFunction(this, this.scope, stmt);
+    this.scope.define(stmt.name, fn, {
+      mutable: false
+    });
   }
 
   public visitWhileStatement(stmt: WhileStatement): void {

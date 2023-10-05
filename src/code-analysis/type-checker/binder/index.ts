@@ -30,10 +30,11 @@ import { IndexExpression } from "../../parser/ast/expressions";
 import type { ExpressionStatement } from "../../parser/ast/statements/expression";
 import type { PrintlnStatement } from "../../parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../../parser/ast/statements/variable-assignment";
-import type { VariableDeclarationStatement } from "../../parser/ast/statements/variable-declaration";
+import { VariableDeclarationStatement } from "../../parser/ast/statements/variable-declaration";
 import type { BlockStatement } from "../../parser/ast/statements/block";
 import type { IfStatement } from "../../parser/ast/statements/if";
 import type { WhileStatement } from "../../parser/ast/statements/while";
+import type { FunctionDeclarationStatement } from "../../parser/ast/statements/function-declaration";
 
 import BoundLiteralExpression from "./bound-expressions/literal";
 import BoundArrayLiteralExpression from "./bound-expressions/array-literal";
@@ -54,9 +55,24 @@ import BoundVariableDeclarationStatement from "./bound-statements/variable-decla
 import BoundBlockStatement from "./bound-statements/block";
 import BoundIfStatement from "./bound-statements/if";
 import BoundWhileStatement from "./bound-statements/while";
+import BoundFunctionDeclarationStatement from "./bound-statements/function-declaration";
+import FunctionType from "../types/function-type";
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variables: VariableSymbol[] = [];
+
+  public visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): BoundFunctionDeclarationStatement {
+    const returnType = this.getTypeFromTypeRef(stmt.returnType);
+    const type = new FunctionType(
+      new Map<string, Type>(stmt.parameters.map(param => [param.identifier.name.lexeme, this.getTypeFromTypeRef(param.type)])),
+      returnType
+    );
+
+    const variableSymbol = this.defineSymbol(stmt.name, type);
+    const parameters = stmt.parameters.map(param => this.bind<VariableDeclarationStatement, BoundVariableDeclarationStatement>(param));
+    const body = this.bind<BlockStatement, BoundBlockStatement>(stmt.body);
+    return new BoundFunctionDeclarationStatement(variableSymbol, parameters, body);
+  }
 
   public visitWhileStatement(stmt: WhileStatement): BoundWhileStatement {
     const condition = this.bind(stmt.condition);
@@ -201,8 +217,8 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     return statements.map(statement => this.bind(statement));
   }
 
-  public defineSymbol(name: Token, type: Type): VariableSymbol {
-    const variableSymbol = new VariableSymbol(name, type);
+  public defineSymbol<T extends Type = Type>(name: Token, type: T): VariableSymbol<T> {
+    const variableSymbol = new VariableSymbol<T>(name, type);
     this.variables.push(variableSymbol);
     return variableSymbol;
   }

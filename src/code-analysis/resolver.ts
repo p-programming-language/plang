@@ -20,6 +20,7 @@ import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/s
 import type { BlockStatement } from "./parser/ast/statements/block";
 import type { IfStatement } from "./parser/ast/statements/if";
 import type { WhileStatement } from "./parser/ast/statements/while";
+import { FunctionDeclarationStatement } from "./parser/ast/statements/function-declaration";
 
 const enum ScopeContext {
   Global,
@@ -33,6 +34,12 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
   public constructor() {
     this.beginScope();
+  }
+
+  public visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): void {
+    this.declare(stmt.name);
+    this.define(stmt.name);
+    this.resolveFunction(stmt, ScopeContext.Function);
   }
 
   public visitWhileStatement(stmt: WhileStatement): void {
@@ -163,20 +170,20 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
     scope?.set(identifier.lexeme, false);
   }
 
-  // private resolveFunction(fn: FunctionDeclarationStatement, context: ScopeContext): void {
-  //   const enclosingContext = this.context;
-  //   this.context = context;
-  //   this.beginScope();
+  private resolveFunction(fn: FunctionDeclarationStatement, context: ScopeContext): void {
+    const enclosingContext = this.context;
+    this.context = context;
+    this.beginScope();
 
-  //   for (const param of fn.parameters) {
-  //     this.declare(param.name);
-  //     this.define(param.name);
-  //   }
+    for (const param of fn.parameters) {
+      this.declare(param.identifier.name);
+      this.define(param.identifier.name);
+    }
 
-  //   this.resolve(fn.body);
-  //   this.endScope();
-  //   this.context = enclosingContext;
-  // }
+    this.resolve(fn.body);
+    this.endScope();
+    this.context = enclosingContext;
+  }
 
   private isDefined(identifier: Token): boolean {
     for (let i = this.scopes.length - 1; i >= 0; i--) {

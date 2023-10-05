@@ -31,6 +31,7 @@ import { PrintlnStatement } from "./ast/statements/println";
 import { IfStatement } from "./ast/statements/if";
 import { WhileStatement } from "./ast/statements/while";
 import { PropertyAssignmentExpression } from "./ast/expressions/property-assignment";
+import { FunctionDeclarationStatement } from "./ast/statements/function-declaration";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -83,23 +84,70 @@ export default class Parser extends ArrayStepper<Token> {
     return this.parseExpressionStatement();
   }
 
-  private parseTypeList(): AST.TypeRef[] {
-    const types = [ this.parseType() ];
-    while (this.match(Syntax.Comma))
-      types.push(this.parseType());
 
-    return types;
+  // parse declarations like classes, variables, functions, etc.
+  private declaration(): AST.Statement {
+    if (this.atVariableDeclaration) {
+      const declaration = this.parseVariableDeclaration();
+      this.consumeSemicolons();
+      return declaration;
+    } else if (this.checkType() && this.check(Syntax.Function, 1)) {
+      const declaration = this.parseFunctionDeclaration();
+      this.consumeSemicolons();
+      return declaration;
+    }
+
+    const stmt = this.parseStatement();
+    this.consumeSemicolons();
+    return stmt;
   }
 
-  private parseExpressionList(): AST.Expression[] {
-    if (this.check(Syntax.RBracket))
-      return [];
+  private get atVariableDeclaration(): boolean {
+    const nextSyntax = this.peek()?.syntax;
+    const nextNextSyntax = this.peek(2)?.syntax;
+    const isVariableDeclarationSyntax = (syntax?: Syntax) => syntax === Syntax.Identifier
+      || syntax === Syntax.Pipe
+      || syntax === Syntax.LBracket
+      || syntax === Syntax.RBracket
+      || syntax === Syntax.Question;
 
-    const expressions = [ this.parseExpression() ];
-    while (this.match(Syntax.Comma))
-      expressions.push(this.parseExpression());
+    return (this.check(Syntax.Mut) ? this.checkType(1) : this.checkType(1))
+      && (isVariableDeclarationSyntax(nextSyntax) || isVariableDeclarationSyntax(nextNextSyntax));
+  }
 
-    return expressions;
+  private parseFunctionDeclaration(): AST.Statement {
+    const returnType = this.parseType();
+    const keyword = this.consume<undefined>(Syntax.Function);
+
+    const identifierToken = this.consume<undefined>(Syntax.Identifier, "identifier");
+    const parameters: VariableDeclarationStatement[] = [];
+    if (this.match(Syntax.LParen)) {
+      if (this.atVariableDeclaration) {
+        parameters.push(this.parseVariableDeclaration());
+        while (this.match(Syntax.Comma))
+          parameters.push(this.parseVariableDeclaration());
+      }
+      this.consume(Syntax.RParen);
+    }
+
+
+    this.consume(Syntax.LBrace);
+    const body = this.parseBlock();
+    const declaration = new FunctionDeclarationStatement(keyword, identifierToken, returnType, parameters, body);
+    this.consumeSemicolons();
+    return declaration;
+  }
+
+  private parseVariableDeclaration(): VariableDeclarationStatement {
+    const isMutable = this.match(Syntax.Mut);
+    const type = this.parseType();
+    const identifierToken = this.consume<undefined>(Syntax.Identifier, "identifier");
+    const initializer = this.match(Syntax.Equal) ?
+      this.parseExpression()
+        : undefined;
+
+    const identifier = new IdentifierExpression(identifierToken);
+    return new VariableDeclarationStatement(type, identifier, isMutable, initializer);
   }
 
   private parseBlock(): BlockStatement {
@@ -110,50 +158,12 @@ export default class Parser extends ArrayStepper<Token> {
     return new BlockStatement(brace, statements);
   }
 
-  // parse declarations like classes, variables, functions, etc.
-  private declaration(): AST.Statement {
-    const nextSyntax = this.peek()?.syntax;
-    const nextNextSyntax = this.peek(2)?.syntax;
-    const isVariableDeclarationSyntax = (syntax?: Syntax) => syntax === Syntax.Identifier
-      || syntax === Syntax.Pipe
-      || syntax === Syntax.LBracket
-      || syntax === Syntax.RBracket
-      || syntax === Syntax.Question;
-
-
-    if ((this.match(Syntax.Mut) ? this.checkType() : this.checkType()) && (isVariableDeclarationSyntax(nextSyntax) || isVariableDeclarationSyntax(nextNextSyntax))) {
-      const declaration = this.parseVariableDeclaration();
-      this.consumeSemicolons();
-      return declaration;
-    }
-
-    const stmt = this.parseStatement();
-    this.consumeSemicolons();
-    return stmt;
-  }
-
-  private parseVariableDeclaration(): AST.Statement {
-    const isMutable = this.check(Syntax.Mut, -1);
-    const type = this.parseType();
-    const identifierToken = this.consume<undefined>(Syntax.Identifier, "identifier");
-    const initializer = this.match(Syntax.Equal) ?
-      this.parseExpression()
-      : undefined;
-
-    const identifier = new IdentifierExpression(identifierToken);
-    return new VariableDeclarationStatement(type, identifier, isMutable, initializer);
-  }
-
   private parseExpressionStatement(): AST.Statement {
     const expr = this.parseExpression();
     this.consumeSemicolons();
     return expr instanceof AST.Expression ?
       new ExpressionStatement(expr)
       : expr;
-  }
-
-  private consumeSemicolons(): void {
-    while (this.match(Syntax.Semicolon));
   }
 
   private parseExpression(): AST.Expression {
@@ -450,6 +460,29 @@ export default class Parser extends ArrayStepper<Token> {
     return new SingularTypeExpression(typeKeyword, typeArgs);
   }
 
+  private consumeSemicolons(): void {
+    while (this.match(Syntax.Semicolon));
+  }
+
+  private parseTypeList(): AST.TypeRef[] {
+    const types = [ this.parseType() ];
+    while (this.match(Syntax.Comma))
+      types.push(this.parseType());
+
+    return types;
+  }
+
+  private parseExpressionList(): AST.Expression[] {
+    if (this.check(Syntax.RBracket))
+      return [];
+
+    const expressions = [ this.parseExpression() ];
+    while (this.match(Syntax.Comma))
+      expressions.push(this.parseExpression());
+
+    return expressions;
+  }
+
   private advance<V extends ValueType = ValueType>(): Token<V> {
     const token = this.current;
     if (!this.isFinished)
@@ -476,8 +509,8 @@ export default class Parser extends ArrayStepper<Token> {
     return false;
   }
 
-  private checkType(): boolean {
-    return this.checkMultiple(Syntax.Identifier, Syntax.Undefined, Syntax.Null) && this.isTypeDefined(this.current.lexeme);
+  private checkType(offset = 0): boolean {
+    return this.checkMultiple([Syntax.Identifier, Syntax.Undefined, Syntax.Null], offset) && this.isTypeDefined(this.current.lexeme);
   }
 
   private isTypeDefined(name: string): boolean {
@@ -488,9 +521,9 @@ export default class Parser extends ArrayStepper<Token> {
     return false;
   }
 
-  private checkMultiple(...syntaxes: Syntax[]): boolean {
+  private checkMultiple(syntaxes: Syntax[], offset = 0): boolean {
     for (const syntax of syntaxes)
-      if (this.check(syntax))
+      if (this.check(syntax, offset))
         return true;
 
     return false;

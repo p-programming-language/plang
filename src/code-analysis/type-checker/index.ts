@@ -1,7 +1,7 @@
 import { TypeError } from "../../errors";
 import { BoundExpression, BoundNode, BoundStatement } from "./binder/bound-node";
 import type { Type } from "./types/type";
-import type { Callable } from "../../runtime/types/callable";
+import type PValue from "../../runtime/types/value";
 import type FunctionType from "./types/function-type";
 import AST from "../parser/ast";
 
@@ -22,14 +22,25 @@ import type BoundVariableDeclarationStatement from "./binder/bound-statements/va
 import type BoundBlockStatement from "./binder/bound-statements/block";
 import type BoundIfStatement from "./binder/bound-statements/if";
 import type BoundWhileStatement from "./binder/bound-statements/while";
+import type BoundFunctionDeclarationStatement from "./binder/bound-statements/function-declaration";
 import ArrayType from "./types/array-type";
 import SingularType from "./types/singular-type";
+import UnionType from "./types/union-type";
 
-export type ValueType = Callable | string | number | boolean | null | undefined | void | ValueType[];
+export type ValueType = PValue | string | number | boolean | null | undefined | void | ValueType[];
 
 // NOTE: always call check() before assert()
 
 export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
+  public visitFunctionDeclarationStatement(stmt: BoundFunctionDeclarationStatement): void {
+    this.check(stmt.parameters);
+    this.check(stmt.body);
+    if (stmt.body.type)
+      this.assert(stmt.body, stmt.body.type, stmt.symbol.type.returnType);
+    else if (!this.isUndefined(stmt.symbol.type.returnType))
+      throw new TypeError(`Function '${stmt.symbol.name.lexeme}' is expected to return type '${stmt.symbol.type.returnType.toString()}', got 'void'`, stmt.symbol.name);
+  }
+
   public visitWhileStatement(stmt: BoundWhileStatement): void {
     this.check(stmt.condition);
     this.check(stmt.body);
@@ -152,6 +163,13 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
         this.check(statement);
     else
       statements.accept(this);
+  }
+
+  private isUndefined(type: Type): boolean {
+    return type.isAssignableTo(new UnionType([
+      new SingularType("void"),
+      new SingularType("undefined")
+    ]));
   }
 
   private assert(node: BoundNode, a: Type, b: Type, message?: string): void {

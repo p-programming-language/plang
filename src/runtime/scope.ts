@@ -59,10 +59,14 @@ export default class Scope {
     this.variablesDefined.set(name.lexeme, typeof value !== "undefined");
   }
 
+  public unwrap(): Scope | undefined {
+    return this.enclosing;
+  }
+
   public ancestor(distance: number): Scope | undefined {
     let env: Scope = this;
     for (let i = 0; i < distance; i++)
-      env = <Scope>env.enclosing;
+      env = <Scope>env.unwrap();
 
     return env;
   }

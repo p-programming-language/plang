@@ -2,8 +2,8 @@ import { Range } from "../../utility";
 import { Callable, CallableType } from "./callable";
 import type { ValueType } from "../../code-analysis/type-checker";
 import type { VariableDeclarationStatement } from "../../code-analysis/parser/ast/statements/variable-declaration";
+import type { FunctionDeclarationStatement } from "../../code-analysis/parser/ast/statements/function-declaration";
 import type Interpreter from "../interpreter";
-import type AST from "../../code-analysis/parser/ast";
 import HookedExceptions from "../hooked-exceptions";
 import Scope from "../scope";
 
@@ -16,39 +16,34 @@ export default class PFunction<A extends ValueType[] = ValueType[], R extends Va
   public constructor(
     private readonly interpreter: Interpreter,
     private readonly closure: Scope,
-    private readonly definition: AST.Statement // temporary lol (VariableDeclarationStatement)
+    private readonly definition: FunctionDeclarationStatement
   ) {
 
     // assign default values & initialize param variables
     super();
-    // for (const param of this.parameters) {
-    //   const value = param.defaultValue ? interpreter.evaluate(param.defaultValue) : undefined;
-    //   closure.define(param.name, value, {
-    //     mutable: param.mutable
-    //   });
-    // }
-
-    // this.nonNullableParameters = this.parameters.filter(param => param.defaultValue !== undefined);
+    this.nonNullableParameters = this.parameters.filter(param => param.initializer !== undefined);
   }
 
   public call(...args: A): R | undefined {
-    const callScope = new Scope(this.closure);
-    // for (const param of this.parameters) {
-    //   const defaultValue = param.defaultValue ? this.interpreter.evaluate(param.defaultValue) : undefined;
-    //   const value = args.at(this.parameters.indexOf(param)) ?? defaultValue;
-    //   callScope.define(param.name, value, {
-    //     mutable: param.mutable
-    //   });
-    // }
+    this.interpreter.scope = new Scope(this.closure);
+    for (const param of this.parameters) {
+      const defaultValue = param.initializer ? this.interpreter.evaluate(param.initializer) : undefined;
+      const value = args[this.parameters.indexOf(param)] ?? defaultValue;
+      this.interpreter.scope.define(param.identifier.name, value, {
+        mutable: param.mutable
+      });
+    }
 
     try {
-      // this.interpreter.execute(this.definition.body);
+      this.interpreter.execute(this.definition.body);
     } catch(e) {
       if (e instanceof HookedExceptions.Return)
         return <R>e.value;
 
       throw e;
     }
+
+    this.interpreter.scope = this.interpreter.scope.unwrap()!;
   }
 
   public get arity(): number | Range {
@@ -62,6 +57,6 @@ export default class PFunction<A extends ValueType[] = ValueType[], R extends Va
   }
 
   private get parameters(): VariableDeclarationStatement[] {
-    return (<any>this.definition).parameters; // temporary lol
+    return this.definition.parameters; // temporary lol
   }
 }
