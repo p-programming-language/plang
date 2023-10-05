@@ -13,17 +13,26 @@ import pkg = require("../../package.json");
 
 PError.testing = true;
 
-function evaluate(source: string): ValueType {
+class Environment {
+  public readonly resolver = new Resolver;
+  public readonly binder = new Binder;
+  public readonly typeChecker = new TypeChecker;
+  public readonly interpreter = new Interpreter(this.resolver, this.binder);
+}
+
+let env = new Environment;
+function evaluate(source: string, createNewEnvironment = true): ValueType {
   const parser = new Parser(source);
-  const resolver = new Resolver;
-  const binder = new Binder;
-  const typeChecker = new TypeChecker;
-  const interpreter = new Interpreter(resolver, binder);
   const ast = parser.parse();
-  resolver.resolve(ast);
-  const boundAST = binder.bindStatements(ast);
-  typeChecker.check(boundAST);
-  return interpreter.evaluate(ast);
+  env.resolver.resolve(ast);
+  const boundAST = env.binder.bindStatements(ast);
+  env.typeChecker.check(boundAST);
+  const result = env.interpreter.evaluate(ast);
+
+  if (createNewEnvironment)
+    env = new Environment;
+
+  return result;
 }
 
 const testDirectory = "./tests/";
@@ -73,9 +82,21 @@ describe(Interpreter.name, () => {
     evaluate("#['a','b','c']")?.should.equal(3);
   });
   it("evaluates variable declarations & compound assignments", () => {
-    evaluate("mut int x = 2; ++x")?.should.equal(3);
-    evaluate("mut int x = 2; x += 7")?.should.equal(9);
-    evaluate("mut int x = 2; x := 1")?.should.equal(1);
+    evaluate("mut int x = 2", false)?.should.be.undefined();
+    evaluate("++x", false)?.should.equal(3);
+    evaluate("x += 7", false)?.should.equal(10);
+    evaluate("x := 1")?.should.equal(1);
+  });
+  it("evaluates if statements", () => {
+    evaluate("mut bool cool = true", false)?.should.be.undefined();
+    evaluate("cool", false)?.should.equal(true);
+    evaluate("if cool\n\tcool = false", false)?.should.be.undefined();
+    evaluate("cool")?.should.equal(false);
+  });
+  it("evaluates while statements", () => {
+    evaluate("mut int i = 0", false)?.should.be.undefined();
+    evaluate("until i == 5\n\t++i", false)?.should.be.undefined();
+    evaluate("i")?.should.equal(5);
   });
   it("evaluates intrinsics", () => {
     evaluate("__version")?.should.equal("v" + pkg.version);
