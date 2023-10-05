@@ -16,6 +16,7 @@ import type { VariableAssignmentStatement } from "./statements/variable-assignme
 import type { VariableDeclarationStatement } from "./statements/variable-declaration";
 import type { BlockStatement } from "./statements/block";
 import type { IfStatement } from "./statements/if";
+import type { WhileStatement } from "./statements/while";
 import type BoundLiteralExpression from "../../type-checker/binder/bound-expressions/literal";
 import type BoundArrayLiteralExpression from "../../type-checker/binder/bound-expressions/array-literal";
 import type BoundParenthesizedExpression from "../../type-checker/binder/bound-expressions/parenthesized";
@@ -31,6 +32,7 @@ import type BoundVariableAssignmentStatement from "../../type-checker/binder/bou
 import type BoundVariableDeclarationStatement from "../../type-checker/binder/bound-statements/variable-declaration";
 import type BoundBlockStatement from "../../type-checker/binder/bound-statements/block";
 import type BoundIfStatement from "../../type-checker/binder/bound-statements/if";
+import type BoundWhileStatement from "../../type-checker/binder/bound-statements/if";
 
 namespace AST {
   export abstract class Node {
@@ -63,6 +65,7 @@ namespace AST {
     }
 
     export abstract class Statement<R> {
+      public abstract visitWhileStatement(stmt: WhileStatement): R
       public abstract visitIfStatement(stmt: IfStatement): R
       public abstract visitBlockStatement(stmt: BlockStatement): R
       public abstract visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): R
@@ -84,6 +87,7 @@ namespace AST {
     }
 
     export abstract class BoundStatement<R> {
+      public abstract visitWhileStatement(stmt: BoundWhileStatement): R
       public abstract visitIfStatement(stmt: BoundIfStatement): R
       public abstract visitBlockStatement(stmt: BoundBlockStatement): R
       public abstract visitVariableDeclarationStatement(stmt: BoundVariableDeclarationStatement): R

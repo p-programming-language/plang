@@ -14,16 +14,17 @@ import type { ArrayLiteralExpression } from "../code-analysis/parser/ast/express
 import type { ParenthesizedExpression } from "../code-analysis/parser/ast/expressions/parenthesized";
 import type { UnaryExpression } from "../code-analysis/parser/ast/expressions/unary";
 import { BinaryExpression } from "../code-analysis/parser/ast/expressions/binary";
+import type { TernaryExpression } from "../code-analysis/parser/ast/expressions/ternary";
 import { IdentifierExpression } from "../code-analysis/parser/ast/expressions/identifier";
 import { CompoundAssignmentExpression } from "../code-analysis/parser/ast/expressions/compound-assignment";
 import { VariableAssignmentExpression } from "../code-analysis/parser/ast/expressions/variable-assignment";
 import type { ExpressionStatement } from "../code-analysis/parser/ast/statements/expression";
+import type { PrintlnStatement } from "../code-analysis/parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../code-analysis/parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
 import type { BlockStatement } from "../code-analysis/parser/ast/statements/block";
 import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
-import { PrintlnStatement } from "../code-analysis/parser/ast/statements/println";
-import { TernaryExpression } from "../code-analysis/parser/ast/expressions/ternary";
+import type { WhileStatement } from "../code-analysis/parser/ast/statements/while";
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public readonly globals = new Scope;
@@ -32,6 +33,12 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public constructor(resolver: Resolver, binder: Binder) {
     const intrinsics = new Intrinsics(this, resolver, binder);
     intrinsics.inject();
+  }
+
+  public visitWhileStatement(stmt: WhileStatement): void {
+    const inverted = stmt.token.syntax === Syntax.Until;
+    while (inverted ? !this.evaluate(stmt.condition) : this.evaluate(stmt.condition))
+      this.evaluate(stmt.body);
   }
 
   public visitIfStatement(stmt: IfStatement): void {
@@ -170,7 +177,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
       case Syntax.BangEqual:
         return left !== right;
       case Syntax.LT:
-        return <number>left > <number>right;
+        return <number>left < <number>right;
       case Syntax.LTE:
         return <number>left <= <number>right;
       case Syntax.GT:

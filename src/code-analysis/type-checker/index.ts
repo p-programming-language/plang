@@ -4,8 +4,9 @@ import { Type } from "./types/type";
 import AST from "../parser/ast";
 
 import BoundParenthesizedExpression from "./binder/bound-expressions/parenthesized";
-import BoundBinaryExpression from "./binder/bound-expressions/binary";
 import BoundUnaryExpression from "./binder/bound-expressions/unary";
+import BoundBinaryExpression from "./binder/bound-expressions/binary";
+import BoundTernaryExpression from "./binder/bound-expressions/ternary";
 import BoundCompoundAssignmentExpression from "./binder/bound-expressions/compound-assignment";
 import BoundVariableAssignmentExpression from "./binder/bound-expressions/variable-assignment";
 import BoundExpressionStatement from "./binder/bound-statements/expression";
@@ -15,11 +16,16 @@ import BoundVariableDeclarationStatement from "./binder/bound-statements/variabl
 import BoundArrayLiteralExpression from "./binder/bound-expressions/array-literal";
 import BoundBlockStatement from "./binder/bound-statements/block";
 import BoundIfStatement from "./binder/bound-statements/if";
-import BoundTernaryExpression from "./binder/bound-expressions/ternary";
+import BoundWhileStatement from "./binder/bound-statements/while";
 
 export type ValueType = string | number | boolean | null | undefined | void | ValueType[];
 
 export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
+  public visitWhileStatement(stmt: BoundWhileStatement): void {
+    this.check(stmt.condition);
+    this.check(stmt.body);
+  }
+
   public visitIfStatement(stmt: BoundIfStatement): void {
     this.check(stmt.condition);
     this.check(stmt.body);

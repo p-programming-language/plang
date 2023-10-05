@@ -10,8 +10,9 @@ import AST from "./ast";
 
 import { LiteralExpression } from "./ast/expressions/literal";
 import { ParenthesizedExpression } from "./ast/expressions/parenthesized";
-import { BinaryExpression } from "./ast/expressions/binary";
 import { UnaryExpression } from "./ast/expressions/unary";
+import { BinaryExpression } from "./ast/expressions/binary";
+import { TernaryExpression } from "./ast/expressions/ternary";
 import { IdentifierExpression } from "./ast/expressions/identifier";
 import { VariableAssignmentExpression } from "./ast/expressions/variable-assignment";
 import { CompoundAssignmentExpression } from "./ast/expressions/compound-assignment";
@@ -22,10 +23,10 @@ import { VariableAssignmentStatement } from "./ast/statements/variable-assignmen
 import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
 import { ArrayLiteralExpression } from "./ast/expressions/array-literal";
 import { ArrayTypeExpression } from "./ast/type-nodes/array-type";
-import { IfStatement } from "./ast/statements/if";
 import { BlockStatement } from "./ast/statements/block";
 import { PrintlnStatement } from "./ast/statements/println";
-import { TernaryExpression } from "./ast/expressions/ternary";
+import { IfStatement } from "./ast/statements/if";
+import { WhileStatement } from "./ast/statements/while";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -63,6 +64,13 @@ export default class Parser extends ArrayStepper<Token> {
       const body = this.parseStatement();
       const elseBranch = this.match(Syntax.Else) ? this.parseStatement() : undefined;
       return new IfStatement(keyword, condition, body, elseBranch);
+    }
+
+    if (this.match(Syntax.While, Syntax.Until)) {
+      const keyword = this.previous<undefined>();
+      const condition = this.parseExpression();
+      const body = this.parseStatement();
+      return new WhileStatement(keyword, condition, body);
     }
 
     if (this.match(Syntax.LBrace))

@@ -1,7 +1,7 @@
 import { Token } from "../../../syntax/token";
 import AST from "..";
 
-export class IfStatement extends AST.Statement {
+export class WhileStatement extends AST.Statement {
   public constructor(
     public readonly token: Token,
     public readonly condition: AST.Expression,
@@ -10,6 +10,6 @@ export class IfStatement extends AST.Statement {
   ) { super(); }
 
   public accept<R>(visitor: AST.Visitor.Statement<R>): R {
-    return visitor.visitIfStatement(this);
+    return visitor.visitWhileStatement(this);
   }
 }

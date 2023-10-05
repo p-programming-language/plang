@@ -15,8 +15,9 @@ import AST from "../../parser/ast";
 import type { LiteralExpression } from "../../parser/ast/expressions/literal";
 import type { ArrayLiteralExpression } from "../../parser/ast/expressions/array-literal";
 import type { ParenthesizedExpression } from "../../parser/ast/expressions/parenthesized";
-import type { BinaryExpression } from "../../parser/ast/expressions/binary";
 import type { UnaryExpression } from "../../parser/ast/expressions/unary";
+import type { BinaryExpression } from "../../parser/ast/expressions/binary";
+import type { TernaryExpression } from "../../parser/ast/expressions/ternary";
 import type { IdentifierExpression } from "../../parser/ast/expressions/identifier";
 import type { CompoundAssignmentExpression } from "../../parser/ast/expressions/compound-assignment";
 import type { VariableAssignmentExpression } from "../../parser/ast/expressions/variable-assignment";
@@ -24,31 +25,38 @@ import { SingularTypeExpression } from "../../parser/ast/type-nodes/singular-typ
 import { UnionTypeExpression } from "../../parser/ast/type-nodes/union-type";
 import { ArrayTypeExpression } from "../../parser/ast/type-nodes/array-type";
 import type { ExpressionStatement } from "../../parser/ast/statements/expression";
+import type { PrintlnStatement } from "../../parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../../parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../../parser/ast/statements/variable-declaration";
 import type { BlockStatement } from "../../parser/ast/statements/block";
 import type { IfStatement } from "../../parser/ast/statements/if";
+import type { WhileStatement } from "../../parser/ast/statements/while";
 
 import BoundLiteralExpression from "./bound-expressions/literal";
+import BoundArrayLiteralExpression from "./bound-expressions/array-literal";
 import BoundParenthesizedExpression from "./bound-expressions/parenthesized";
-import BoundBinaryExpression from "./bound-expressions/binary";
 import BoundUnaryExpression from "./bound-expressions/unary";
+import BoundBinaryExpression from "./bound-expressions/binary";
+import BoundTernaryExpression from "./bound-expressions/ternary";
 import BoundIdentifierExpression from "./bound-expressions/identifier";
 import BoundCompoundAssignmentExpression from "./bound-expressions/compound-assignment";
 import BoundVariableAssignmentExpression from "./bound-expressions/variable-assignment";
 import BoundExpressionStatement from "./bound-statements/expression";
+import BoundPrintlnStatement from "./bound-statements/println";
 import BoundVariableAssignmentStatement from "./bound-statements/variable-assignment";
 import BoundVariableDeclarationStatement from "./bound-statements/variable-declaration";
-import BoundArrayLiteralExpression from "./bound-expressions/array-literal";
 import BoundBlockStatement from "./bound-statements/block";
 import BoundIfStatement from "./bound-statements/if";
-import BoundPrintlnStatement from "./bound-statements/println";
-import { PrintlnStatement } from "../../parser/ast/statements/println";
-import { TernaryExpression } from "../../parser/ast/expressions/ternary";
-import BoundTernaryExpression from "./bound-expressions/ternary";
+import BoundWhileStatement from "./bound-statements/while";
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variables: VariableSymbol[] = [];
+
+  public visitWhileStatement(stmt: WhileStatement): BoundWhileStatement {
+    const condition = this.bind(stmt.condition);
+    const body = this.bind(stmt.body);
+    return new BoundWhileStatement(stmt.token, condition, body);
+  }
 
   public visitIfStatement(stmt: IfStatement): BoundIfStatement {
     const condition = this.bind(stmt.condition);

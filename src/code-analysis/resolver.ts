@@ -2,20 +2,21 @@ import { ReferenceError } from "../errors";
 import type { Token } from "./syntax/token";
 import AST from "../code-analysis/parser/ast";
 
+import type { ArrayLiteralExpression } from "./parser/ast/expressions/array-literal";
 import type { ParenthesizedExpression } from "../code-analysis/parser/ast/expressions/parenthesized";
 import type { UnaryExpression } from "../code-analysis/parser/ast/expressions/unary";
 import type { BinaryExpression } from "../code-analysis/parser/ast/expressions/binary";
+import type { TernaryExpression } from "./parser/ast/expressions/ternary";
 import { IdentifierExpression } from "../code-analysis/parser/ast/expressions/identifier";
 import type { CompoundAssignmentExpression } from "./parser/ast/expressions/compound-assignment";
 import type { VariableAssignmentExpression } from "./parser/ast/expressions/variable-assignment";
 import type { ExpressionStatement } from "./parser/ast/statements/expression";
+import type { PrintlnStatement } from "./parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "./parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
-import { ArrayLiteralExpression } from "./parser/ast/expressions/array-literal";
-import { BlockStatement } from "./parser/ast/statements/block";
-import { IfStatement } from "./parser/ast/statements/if";
-import { PrintlnStatement } from "./parser/ast/statements/println";
-import { TernaryExpression } from "./parser/ast/expressions/ternary";
+import type { BlockStatement } from "./parser/ast/statements/block";
+import type { IfStatement } from "./parser/ast/statements/if";
+import type { WhileStatement } from "./parser/ast/statements/while";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   // the boolean represents whether the variable is defined or not
@@ -24,6 +25,11 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
   public constructor() {
     this.beginScope();
+  }
+
+  public visitWhileStatement(stmt: WhileStatement): void {
+    this.resolve(stmt.condition);
+    this.resolve(stmt.body);
   }
 
   public visitIfStatement(stmt: IfStatement): void {
