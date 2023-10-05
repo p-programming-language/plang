@@ -10,7 +10,7 @@ export default class BoundArrayLiteralExpression extends BoundExpression {
   ) { super(); }
 
   public accept<R>(visitor: AST.Visitor.BoundExpression<R>): R {
-    return visitor.visitLiteralExpression(this);
+    return visitor.visitArrayLiteralExpression(this);
   }
 
   public get token(): Token {

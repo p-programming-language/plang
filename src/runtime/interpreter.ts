@@ -28,6 +28,7 @@ import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/s
 import type { BlockStatement } from "../code-analysis/parser/ast/statements/block";
 import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 import type { WhileStatement } from "../code-analysis/parser/ast/statements/while";
+import { IndexExpression } from "../code-analysis/parser/ast/expressions";
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public readonly globals = new Scope;
@@ -80,6 +81,12 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitExpressionStatement(stmt: ExpressionStatement): ValueType {
     return this.evaluate(stmt.expression);
+  }
+
+  public visitIndexExpression(expr: IndexExpression): ValueType {
+    const object = this.evaluate(expr.object);
+    const index = this.evaluate(expr.index);
+    return (<any[]>object)[<number>index]; // modify to work with objects, any[] | Record and number | string
   }
 
   public visitCallExpression(expr: CallExpression): ValueType {

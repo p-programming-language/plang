@@ -2,6 +2,7 @@
 import { Token } from "../syntax/token";
 import { ParsingError } from "../../errors";
 import { ValueType } from "../type-checker";
+import { fakeToken } from "../../utility";
 import ArrayStepper from "../array-stepper";
 import Lexer from "../syntax/lexer";
 import Syntax from "../syntax/syntax-type";
@@ -17,8 +18,10 @@ import { IdentifierExpression } from "./ast/expressions/identifier";
 import { VariableAssignmentExpression } from "./ast/expressions/variable-assignment";
 import { CompoundAssignmentExpression } from "./ast/expressions/compound-assignment";
 import { SingularTypeExpression } from "./ast/type-nodes/singular-type";
-import { ExpressionStatement } from "./ast/statements/expression";
 import { UnionTypeExpression } from "./ast/type-nodes/union-type";
+import { CallExpression } from "./ast/expressions/call";
+import { IndexExpression } from "./ast/expressions";
+import { ExpressionStatement } from "./ast/statements/expression";
 import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
 import { ArrayLiteralExpression } from "./ast/expressions/array-literal";
@@ -27,8 +30,6 @@ import { BlockStatement } from "./ast/statements/block";
 import { PrintlnStatement } from "./ast/statements/println";
 import { IfStatement } from "./ast/statements/if";
 import { WhileStatement } from "./ast/statements/while";
-import { CallExpression } from "./ast/expressions/call";
-import { fakeToken } from "../../utility";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -154,7 +155,7 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseTernary(): AST.Expression | AST.Statement {
-    let left = this.parseCall();
+    let left = this.parseIndex();
 
     while (this.match(Syntax.Question)) {
       const operator = this.previous<undefined>();
@@ -165,6 +166,19 @@ export default class Parser extends ArrayStepper<Token> {
     }
 
     return left;
+  }
+
+  private parseIndex(): AST.Expression | AST.Statement  {
+    let object = this.parseCall();
+
+    while (this.match(Syntax.LBracket)) {
+      const bracket = this.previous<undefined>();
+      const index = this.parseExpression();
+      this.consume(Syntax.RBracket, "']'");
+      object = new IndexExpression(bracket, <AST.Expression>object, index);
+    }
+
+    return object;
   }
 
   private parseCall(): AST.Expression | AST.Statement  {

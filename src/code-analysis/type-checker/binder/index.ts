@@ -25,6 +25,7 @@ import type { CallExpression } from "../../parser/ast/expressions/call";
 import { SingularTypeExpression } from "../../parser/ast/type-nodes/singular-type";
 import { UnionTypeExpression } from "../../parser/ast/type-nodes/union-type";
 import { ArrayTypeExpression } from "../../parser/ast/type-nodes/array-type";
+import type { IndexExpression } from "../../parser/ast/expressions";
 import type { ExpressionStatement } from "../../parser/ast/statements/expression";
 import type { PrintlnStatement } from "../../parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../../parser/ast/statements/variable-assignment";
@@ -50,6 +51,7 @@ import BoundVariableDeclarationStatement from "./bound-statements/variable-decla
 import BoundBlockStatement from "./bound-statements/block";
 import BoundIfStatement from "./bound-statements/if";
 import BoundWhileStatement from "./bound-statements/while";
+import BoundIndexExpression from "./bound-expressions";
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variables: VariableSymbol[] = [];
@@ -91,6 +93,12 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitExpressionStatement(stmt: ExpressionStatement): BoundExpressionStatement {
     return new BoundExpressionStatement(this.bind(stmt.expression));
+  }
+
+  public visitIndexExpression(expr: IndexExpression): BoundExpression {
+    const object = this.bind(expr.object);
+    const index = this.bind(expr.index);
+    return new BoundIndexExpression(expr.token, object, index);
   }
 
   public visitCallExpression(expr: CallExpression): BoundCallExpression {
@@ -157,7 +165,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       }
 
       if (elementType.isSingular() && elementType.name !== "undefined") {
-        if (element.type.isSingular())
+        if (element.type.isSingular() && elementType.name !== element.type.name)
           elementType = new UnionType([elementType, element.type]);
         else if (element.type.isUnion())
           elementType = new UnionType([elementType, ...element.type.types]);
@@ -165,12 +173,11 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
         continue;
       }
 
-      if (elementType.isUnion()) {
+      if (elementType.isUnion())
         if (element.type.isSingular())
           elementType = new UnionType([...elementType.types, element.type]);
-        else if (element.type.isUnion())
+        else if (element.type.isUnion() && elementType.types.every((t, i) => t.name !== (<UnionType>element.type).types[i].name))
           elementType = new UnionType([...elementType.types, ...element.type.types]);
-      }
     }
 
     const type = new ArrayType(elementType);

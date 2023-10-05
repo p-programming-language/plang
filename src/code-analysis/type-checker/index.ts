@@ -13,6 +13,7 @@ import type BoundTernaryExpression from "./binder/bound-expressions/ternary";
 import type BoundCompoundAssignmentExpression from "./binder/bound-expressions/compound-assignment";
 import type BoundVariableAssignmentExpression from "./binder/bound-expressions/variable-assignment";
 import type BoundCallExpression from "./binder/bound-expressions/call";
+import type BoundIndexExpression from "./binder/bound-expressions";
 import type BoundExpressionStatement from "./binder/bound-statements/expression";
 import type BoundPrintlnStatement from "./binder/bound-statements/println";
 import type BoundVariableAssignmentStatement from "./binder/bound-statements/variable-assignment";
@@ -20,6 +21,8 @@ import type BoundVariableDeclarationStatement from "./binder/bound-statements/va
 import type BoundBlockStatement from "./binder/bound-statements/block";
 import type BoundIfStatement from "./binder/bound-statements/if";
 import type BoundWhileStatement from "./binder/bound-statements/while";
+import ArrayType from "./types/array-type";
+import SingularType from "./types/singular-type";
 
 export type ValueType = Callable | string | number | boolean | null | undefined | void | ValueType[];
 
@@ -60,6 +63,13 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
 
   public visitExpressionStatement(stmt: BoundExpressionStatement): void {
     this.check(stmt.expression);
+  }
+
+  public visitIndexExpression(expr: BoundIndexExpression): void {
+    this.check(expr.object);
+    this.check(expr.index);
+    this.assert(expr.object, expr.object.type, new ArrayType(new SingularType("any")));
+    this.assert(expr.index, expr.index.type, new SingularType("int"))
   }
 
   public visitCallExpression(expr: BoundCallExpression): void {

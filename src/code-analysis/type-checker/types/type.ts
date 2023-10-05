@@ -5,7 +5,7 @@ import type UnionType from "./union-type";
 import type ArrayType from "./array-type";
 import type FunctionType from "./function-type";
 
-export const enum TypeKind {
+export enum TypeKind {
   Singular,
   Union,
   Array,
@@ -32,11 +32,26 @@ export abstract class Type {
     return this.kind === TypeKind.Function;
   }
 
+  public is(other: Type): boolean {
+    if (this.isUnion())
+      return this.types.every(type => type.is(other));
+
+    return this.isAssignableTo(other);
+  }
+
   public isAssignableTo(other: Type): boolean {
     if (this.isUnion())
       return this.types.some(type => type.isAssignableTo(other));
     else if (this.isSingular())
-      if (other.isSingular()) {
+      if (this.name === "Array") {
+        if (other.isSingular() ? other.name !== "Array" : !other.isArray()) return false;
+        if (other.isSingular() ? (other.typeArguments !== undefined && other.typeArguments.length < 1) : false) return false;
+
+        const elementType = this.isArray() ? this.elementType : this.typeArguments![0];
+        return other.isArray() ?
+          other.elementType.is(elementType)
+          : elementType.is((<SingularType>other).typeArguments![0]);
+      } else if (other.isSingular()) {
         if (this.name === "any" || other.name === "any")
           return true;
 
