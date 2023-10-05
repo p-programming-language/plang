@@ -9,6 +9,9 @@ export default class UnionType extends Type {
   ) { super(); }
 
   public toString(): string {
-    return this.types.map(t => t.toString()).join(" | ");
+    return this.types
+      .map(t => t.toString())
+      .join(" | ")
+      .replace(/ \| undefined/, "?");
   }
 }
