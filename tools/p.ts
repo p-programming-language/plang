@@ -1,5 +1,6 @@
 import { readFileSync } from "fs";
 import util from "util";
+import "colors.ts";
 
 import { TypeChecker, ValueType } from "../src/code-analysis/type-checker";
 import Parser from "../src/code-analysis/parser";
@@ -40,7 +41,7 @@ export default class P {
     const result = this.interpreter.evaluate(ast);
 
     if (this.executionOptions.outputResult)
-      console.log(util.inspect(result, { colors: true, compact: false }));
+      console.log("↳".gray(8), util.inspect(result, { colors: true, compact: false }));
 
     return result;
   }

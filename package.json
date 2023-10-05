@@ -1,6 +1,6 @@
 {
   "name": "plang",
-  "version": "0.0.1",
+  "version": "0.1.2",
   "description": "A general purpose, statically-typed, interpreted language.",
   "displayName": "PLang",
   "icon": "https://avatars.githubusercontent.com/u/146694713?s=400&u=4e01b5afefbf7e40641702e5cbdf785ff183fe35&v=4",
@@ -23,12 +23,14 @@
     "plang",
     "language"
   ],
-  "author": "Kevin \"Puffer\" Alavik",
+  "author": "KevinAlavik, R-unic",
   "contributors": [
-    "Runic"
+    "runicly",
+    "kevinalavik"
   ],
   "license": "LGPL-2.1-or-later",
   "dependencies": {
+    "colors.ts": "^1.0.20",
     "mocha": "^10.2.0",
     "os": "^0.1.2",
     "should": "^13.2.3",
