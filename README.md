@@ -14,6 +14,9 @@ The P programming language
 ## Why?
 becuz im bored
 
+## Examples
+Check out **[tests/](https://github.com/p-programming-language/plang/tree/main/tests)** for some examples.
+
 ## Tools
 - pint
     - The P interpreter CLI
