@@ -12,6 +12,7 @@ import type BoundBinaryExpression from "./binder/bound-expressions/binary";
 import type BoundTernaryExpression from "./binder/bound-expressions/ternary";
 import type BoundCompoundAssignmentExpression from "./binder/bound-expressions/compound-assignment";
 import type BoundVariableAssignmentExpression from "./binder/bound-expressions/variable-assignment";
+import type BoundPropertyAssignmentExpression from "./binder/bound-expressions/property-assignment";
 import type BoundCallExpression from "./binder/bound-expressions/call";
 import type BoundIndexExpression from "./binder/bound-expressions";
 import type BoundExpressionStatement from "./binder/bound-statements/expression";
@@ -83,6 +84,12 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
       this.check(arg);
       this.assert(arg, arg.type, expectedTypes[expr.args.indexOf(arg)]);
     }
+  }
+
+  public visitPropertyAssignmentExpression(expr: BoundPropertyAssignmentExpression): void {
+    this.check(expr.access);
+    this.check(expr.value);
+    this.assert(expr.access, expr.access.type, expr.value.type);
   }
 
   public visitVariableAssignmentExpression(expr: BoundVariableAssignmentExpression): void {

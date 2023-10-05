@@ -10,6 +10,7 @@ import type { TernaryExpression } from "./parser/ast/expressions/ternary";
 import type { IdentifierExpression } from "../code-analysis/parser/ast/expressions/identifier";
 import type { CompoundAssignmentExpression } from "./parser/ast/expressions/compound-assignment";
 import type { VariableAssignmentExpression } from "./parser/ast/expressions/variable-assignment";
+import type { PropertyAssignmentExpression } from "./parser/ast/expressions/property-assignment";
 import type { CallExpression } from "./parser/ast/expressions/call";
 import type { IndexExpression } from "./parser/ast/expressions";
 import type { ExpressionStatement } from "./parser/ast/statements/expression";
@@ -81,6 +82,11 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
     this.resolve(expr.callee);
     for (const arg of expr.args)
       this.resolve(arg);
+  }
+
+  public visitPropertyAssignmentExpression(expr: PropertyAssignmentExpression): void {
+    this.resolve(expr.access);
+    this.resolve(expr.value);
   }
 
   public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): void {

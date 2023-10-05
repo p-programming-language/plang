@@ -30,6 +30,7 @@ import { BlockStatement } from "./ast/statements/block";
 import { PrintlnStatement } from "./ast/statements/println";
 import { IfStatement } from "./ast/statements/if";
 import { WhileStatement } from "./ast/statements/while";
+import { PropertyAssignmentExpression } from "./ast/expressions/property-assignment";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -155,7 +156,7 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseTernary(): AST.Expression | AST.Statement {
-    let left = this.parseIndex();
+    let left = this.parseVariableAssignment();
 
     while (this.match(Syntax.Question)) {
       const operator = this.previous<undefined>();
@@ -168,34 +169,6 @@ export default class Parser extends ArrayStepper<Token> {
     return left;
   }
 
-  private parseIndex(): AST.Expression | AST.Statement  {
-    let object = this.parseCall();
-
-    while (this.match(Syntax.LBracket)) {
-      const bracket = this.previous<undefined>();
-      const index = this.parseExpression();
-      this.consume(Syntax.RBracket, "']'");
-      object = new IndexExpression(bracket, <AST.Expression>object, index);
-    }
-
-    return object;
-  }
-
-  private parseCall(): AST.Expression | AST.Statement  {
-    let callee = this.parseVariableAssignment();
-
-    while (this.match(Syntax.LParen)) {
-      let args: AST.Expression[] = [];
-      if (!this.check(Syntax.RParen))
-        args = this.parseExpressionList();
-
-      this.consume(Syntax.RParen, "')'");
-      callee = new CallExpression(<AST.Expression>callee, args);
-    }
-
-    return callee;
-  }
-
   private parseVariableAssignment(): AST.Expression | AST.Statement {
     let left = this.parseCompoundAssignment();
 
@@ -203,12 +176,15 @@ export default class Parser extends ArrayStepper<Token> {
       const isStatement = this.check(Syntax.Equal, -1);
       const value = <AST.Expression>this.parseExpression();
 
+      if (!this.isAssignmentTarget(left))
+        throw new ParsingError("Invalid assignment target", this.current);
+
       if (left instanceof IdentifierExpression)
         return isStatement ?
           new VariableAssignmentStatement(left, value)
           : new VariableAssignmentExpression(left, value);
-
-      throw new ParsingError("Invalid assignment target", this.current);
+      else if (left instanceof IndexExpression)
+        return new PropertyAssignmentExpression(left, value);
     }
 
     return left;
@@ -220,10 +196,10 @@ export default class Parser extends ArrayStepper<Token> {
     if (this.matchSet(COMPOUND_ASSIGNMENT_SYNTAXES)) {
       const operator = this.previous<undefined>();
       const right = this.parseLogicalOr();
-      if (!(left instanceof IdentifierExpression)) // || left instanceof AccessExpression
+      if (!this.isAssignmentTarget(left))
         throw new ParsingError("Invalid compound assignment target", this.current);
 
-      left = new CompoundAssignmentExpression(left, right, operator);
+      left = new CompoundAssignmentExpression(<IdentifierExpression | IndexExpression>left, right, operator);
     }
 
     return left;
@@ -352,13 +328,46 @@ export default class Parser extends ArrayStepper<Token> {
   private parseUnary(): AST.Expression {
     if (this.matchSet(UNARY_SYNTAXES)) {
       const operator = this.previous<undefined>();
-      const operand = this.parseUnary();
-      if (!(operand instanceof IdentifierExpression) && (operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus))
+      const operand = this.parseCall();
+      if (!this.isAssignmentTarget(operand) && (operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus))
         throw new ParsingError("Invalid assignment target", operand.token);
 
       return new UnaryExpression(operator, operand);
     } else
       return this.parsePrimary();
+  }
+
+  private parseCall(): AST.Expression {
+    let callee = this.parseIndex();
+
+    while (this.match(Syntax.LParen)) {
+      let args: AST.Expression[] = [];
+      if (!this.check(Syntax.RParen))
+        args = this.parseExpressionList();
+
+      this.consume(Syntax.RParen, "')'");
+      callee = new CallExpression(<AST.Expression>callee, args);
+    }
+
+    return callee;
+  }
+
+  private parseIndex(): AST.Expression {
+    let object = this.parseExpression();
+
+    while (this.match(Syntax.LBracket)) {
+      const bracket = this.previous<undefined>();
+      const index = this.parseExpression();
+      this.consume(Syntax.RBracket, "']'");
+      object = new IndexExpression(bracket, <AST.Expression>object, index);
+    }
+
+    return object;
+  }
+
+  private isAssignmentTarget(operand: AST.Expression): boolean {
+    return operand instanceof IdentifierExpression
+      || operand instanceof IndexExpression;
   }
 
   private parsePrimary(): AST.Expression {

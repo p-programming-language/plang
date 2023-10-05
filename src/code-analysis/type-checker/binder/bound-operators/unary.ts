@@ -51,7 +51,7 @@ export class BoundUnaryOperator {
       .find(op => op.syntax === operatorToken.syntax && operandType.isAssignableTo(op.operandType));
 
     if (!operator)
-      throw new TypeError(`Invalid operand type for '${operatorToken.lexeme}': ${operatorToken.lexeme}${operandType.toString()}`, operatorToken);
+      throw new TypeError(`Invalid operand type for '${operatorToken.lexeme}': ${operandType.toString()}`, operatorToken);
 
     return operator;
   }

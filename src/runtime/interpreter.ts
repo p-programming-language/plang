@@ -29,6 +29,7 @@ import type { BlockStatement } from "../code-analysis/parser/ast/statements/bloc
 import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 import type { WhileStatement } from "../code-analysis/parser/ast/statements/while";
 import { IndexExpression } from "../code-analysis/parser/ast/expressions";
+import { PropertyAssignmentExpression } from "../code-analysis/parser/ast/expressions/property-assignment";
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public readonly globals = new Scope;
@@ -99,6 +100,14 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     return fn.call(...args);
   }
 
+  public visitPropertyAssignmentExpression(expr: PropertyAssignmentExpression): ValueType {
+    const value = this.evaluate(expr.value);
+    const object = this.evaluate(expr.access.object);
+    const index = this.evaluate(expr.access.index);
+    (<any[]>object)[<number>index] = value; // modify to work with objects, any[] | Record and number | string
+    return value;
+  }
+
   public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): ValueType {
     const value = this.evaluate(expr.value);
     this.scope.assign(expr.identifier.name, value);
@@ -115,7 +124,10 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     );
 
     const binary = new BinaryExpression(expr.left, expr.right, fixedOperator);
-    const assignment = new VariableAssignmentExpression(expr.left, binary);
+    const assignment = expr.left instanceof IdentifierExpression ?
+      new VariableAssignmentExpression(expr.left, binary)
+      : new PropertyAssignmentExpression(expr.left, binary);
+
     return this.evaluate(assignment);
   }
 

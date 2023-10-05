@@ -10,6 +10,7 @@ import type { TernaryExpression } from "./expressions/ternary";
 import type { IdentifierExpression } from "./expressions/identifier";
 import type { CompoundAssignmentExpression } from "./expressions/compound-assignment";
 import type { VariableAssignmentExpression } from "./expressions/variable-assignment";
+import type { PropertyAssignmentExpression } from "./expressions/property-assignment";
 import type { CallExpression } from "./expressions/call";
 import type { IndexExpression } from "./expressions";
 import type { ExpressionStatement } from "./statements/expression";
@@ -28,6 +29,8 @@ import type BoundTernaryExpression from "../../type-checker/binder/bound-express
 import type BoundIdentifierExpression from "../../type-checker/binder/bound-expressions/identifier";
 import type BoundCompoundAssignmentExpression from "../../type-checker/binder/bound-expressions/compound-assignment";
 import type BoundVariableAssignmentExpression from "../../type-checker/binder/bound-expressions/variable-assignment";
+import type BoundPropertyAssignmentExpression from "../../type-checker/binder/bound-expressions/property-assignment";
+import type BoundCallExpression from "../../type-checker/binder/bound-expressions/call";
 import type BoundIndexExpression from "../../type-checker/binder/bound-expressions";
 import type BoundExpressionStatement from "../../type-checker/binder/bound-statements/expression";
 import type BoundPrintlnStatement from "../../type-checker/binder/bound-statements/println";
@@ -36,7 +39,6 @@ import type BoundVariableDeclarationStatement from "../../type-checker/binder/bo
 import type BoundBlockStatement from "../../type-checker/binder/bound-statements/block";
 import type BoundIfStatement from "../../type-checker/binder/bound-statements/if";
 import type BoundWhileStatement from "../../type-checker/binder/bound-statements/if";
-import type BoundCallExpression from "../../type-checker/binder/bound-expressions/call";
 
 namespace AST {
   export abstract class Node {
@@ -59,6 +61,7 @@ namespace AST {
     export abstract class Expression<R> {
       public abstract visitIndexExpression(expr: IndexExpression): R
       public abstract visitCallExpression(expr: CallExpression): R
+      public abstract visitPropertyAssignmentExpression(expr: PropertyAssignmentExpression): R
       public abstract visitVariableAssignmentExpression(expr: VariableAssignmentExpression): R
       public abstract visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): R
       public abstract visitIdentifierExpression(expr: IdentifierExpression): R
@@ -83,6 +86,7 @@ namespace AST {
     export abstract class BoundExpression<R> {
       public abstract visitIndexExpression(expr: BoundIndexExpression): R
       public abstract visitCallExpression(expr: BoundCallExpression): R
+      public abstract visitPropertyAssignmentExpression(expr: BoundPropertyAssignmentExpression): R
       public abstract visitVariableAssignmentExpression(expr: BoundVariableAssignmentExpression): R
       public abstract visitCompoundAssignmentExpression(expr: BoundCompoundAssignmentExpression): R
       public abstract visitIdentifierExpression(expr: BoundIdentifierExpression): R

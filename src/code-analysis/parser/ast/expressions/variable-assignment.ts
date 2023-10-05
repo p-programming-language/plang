@@ -4,7 +4,7 @@ import { IdentifierExpression } from "./identifier";
 
 export class VariableAssignmentExpression extends AST.Expression {
   public constructor(
-    public readonly identifier: IdentifierExpression, // | AccessExpression
+    public readonly identifier: IdentifierExpression,
     public readonly value: AST.Expression
   ) { super(); }
 

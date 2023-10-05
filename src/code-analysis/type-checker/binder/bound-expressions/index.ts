@@ -4,7 +4,13 @@ import SingularType from "../../types/singular-type";
 import AST from "../../../parser/ast";
 
 export default class BoundIndexExpression extends BoundExpression {
-  public override readonly type = this.object.type.isArray() ? this.object.type.elementType : new SingularType("undefined");
+  public override readonly type = this.object.type.isArray() ?
+    this.object.type.elementType
+    : (
+      this.object.type.isSingular() && this.object.type.name === "Array" ?
+        this.object.type.typeArguments![0]
+        : new SingularType("undefined")
+    );
 
   public constructor(
     public readonly token: Token<undefined>,
