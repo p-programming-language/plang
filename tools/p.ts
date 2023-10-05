@@ -7,6 +7,7 @@ import Parser from "../src/code-analysis/parser";
 import Binder from "../src/code-analysis/type-checker/binder";
 import Resolver from "../src/code-analysis/resolver";
 import Interpreter from "../src/runtime/interpreter";
+import pkg = require("../package.json");
 
 interface PExecutionOptions {
   outputAST: boolean;
@@ -20,6 +21,7 @@ export default class P {
   private typeChecker = new TypeChecker;
   private interpreter = new Interpreter(this, this.resolver, this.binder);
 
+  public version = "v" + pkg.version;
   public executionOptions: PExecutionOptions = {
     outputAST: false,
     outputBoundAST: false,

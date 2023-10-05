@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 import reader from "readline-sync";
 import { platform } from "os";
+
 import { clearTerminal } from "../src/utility";
 import { PError } from "../src/errors";
 import P from "./p";
 import "colors.ts";
 
+const p = new P;
 const os = platform();
 const outputTitle = () =>
-  console.log(`prepl v0.1.5 on ${os}`);
+  console.log(`P ${p.version} on ${os}`);
 
-const p = new P;
 p.executionOptions.outputResult = true;
 outputTitle();
 

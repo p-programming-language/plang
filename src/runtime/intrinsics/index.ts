@@ -11,7 +11,6 @@ import Intrinsic from "../types/intrinsic";
 import type Interpreter from "../interpreter";
 import type Resolver from "../../code-analysis/resolver";
 import type Binder from "../../code-analysis/type-checker/binder";
-import pkg = require("../../../package.json");
 
 import Readln from "./readln";
 import Eval from "./eval";
@@ -24,7 +23,7 @@ export default class Intrinsics {
   ) {}
 
   public inject(): void {
-    this.define("__version", "v" + pkg.version, new SingularType("string"));
+    this.define("__version", this.interpreter.runner.version, new SingularType("string"));
     this.define("argv", argv.slice(2), new ArrayType(new SingularType("string")));
     this.defineFunction("readln", Readln);
     this.defineFunction("eval", Eval);
