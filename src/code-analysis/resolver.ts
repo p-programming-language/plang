@@ -23,6 +23,7 @@ import type { IfStatement } from "./parser/ast/statements/if";
 import type { WhileStatement } from "./parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "./parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "./parser/ast/statements/return";
+import { StringInterpolationExpression } from "./parser/ast/expressions/string-interpolation";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   public readonly locals = new Map<AST.Node, number>;
@@ -136,6 +137,11 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
   public visitParenthesizedExpression(expr: ParenthesizedExpression): void {
     this.resolve(expr.expression);
+  }
+
+  public visitStringInterpolationExpression(expr: StringInterpolationExpression): void {
+    for (const part of expr.parts)
+      this.resolve(part);
   }
 
   public visitArrayLiteralExpression(expr: ArrayLiteralExpression): void {

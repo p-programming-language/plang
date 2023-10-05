@@ -15,6 +15,7 @@ import P from "../../tools/p";
 
 import { LiteralExpression } from "../code-analysis/parser/ast/expressions/literal";
 import type { ArrayLiteralExpression } from "../code-analysis/parser/ast/expressions/array-literal";
+import type { StringInterpolationExpression } from "../code-analysis/parser/ast/expressions/string-interpolation";
 import type { ParenthesizedExpression } from "../code-analysis/parser/ast/expressions/parenthesized";
 import type { UnaryExpression } from "../code-analysis/parser/ast/expressions/unary";
 import { BinaryExpression } from "../code-analysis/parser/ast/expressions/binary";
@@ -266,6 +267,17 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitParenthesizedExpression(expr: ParenthesizedExpression): ValueType {
     return this.evaluate(expr.expression);
+  }
+
+  public visitStringInterpolationExpression(expr: StringInterpolationExpression): ValueType {
+    return expr.parts.map(part =>
+      part === undefined ?
+        "undefined"
+        : (part === null ?
+          "null"
+          : this.evaluate(part)!.toString()
+        )
+    ).join("");
   }
 
   public visitArrayLiteralExpression(expr: ArrayLiteralExpression): ValueType {

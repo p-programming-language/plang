@@ -14,6 +14,7 @@ import AST from "../../parser/ast";
 
 import type { LiteralExpression } from "../../parser/ast/expressions/literal";
 import type { ArrayLiteralExpression } from "../../parser/ast/expressions/array-literal";
+import type { StringInterpolationExpression } from "../../parser/ast/expressions/string-interpolation";
 import type { ParenthesizedExpression } from "../../parser/ast/expressions/parenthesized";
 import type { UnaryExpression } from "../../parser/ast/expressions/unary";
 import type { BinaryExpression } from "../../parser/ast/expressions/binary";
@@ -59,9 +60,14 @@ import BoundWhileStatement from "./bound-statements/while";
 import BoundFunctionDeclarationStatement from "./bound-statements/function-declaration";
 import FunctionType from "../types/function-type";
 import BoundReturnStatement from "./bound-statements/return";
+import BoundStringInterpolationExpression from "./bound-expressions/string-interpolation";
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
-  private readonly variables: VariableSymbol[] = [];
+  private readonly variableScopes: VariableSymbol[][] = [];
+
+  public constructor() {
+    this.beginScope();
+  }
 
   public visitReturnStatement(stmt: ReturnStatement): BoundReturnStatement {
     const expr = this.bind(stmt.expression);
@@ -95,7 +101,9 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   }
 
   public visitBlockStatement(stmt: BlockStatement): BoundBlockStatement {
+    this.beginScope();
     const boundStatements = this.bindStatements(stmt.statements);
+    this.endScope();
     return new BoundBlockStatement(stmt.token, boundStatements);
   }
 
@@ -154,9 +162,6 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitIdentifierExpression(expr: IdentifierExpression): BoundIdentifierExpression {
     const variableSymbol = this.findSymbol(expr.token);
-    if (!variableSymbol)
-      throw new BindingError(`Failed to find variable symbol for '${expr.token.lexeme}'`, expr.token)
-
     return new BoundIdentifierExpression(expr.name, variableSymbol.type);
   }
 
@@ -182,6 +187,10 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitParenthesizedExpression(expr: ParenthesizedExpression): BoundParenthesizedExpression {
     return new BoundParenthesizedExpression(this.bind(expr.expression));
+  }
+
+  public visitStringInterpolationExpression(expr: StringInterpolationExpression): BoundStringInterpolationExpression {
+    return new BoundStringInterpolationExpression(expr.parts.map(part => this.bind(part)));
   }
 
   public visitArrayLiteralExpression(expr: ArrayLiteralExpression): BoundExpression {
@@ -220,14 +229,15 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     return new BoundLiteralExpression(expr.token, type);
   }
 
-  public bindStatements(statements: AST.Statement[]): BoundStatement[] {
-    return statements.map(statement => this.bind(statement));
-  }
-
   public defineSymbol<T extends Type = Type>(name: Token, type: T): VariableSymbol<T> {
     const variableSymbol = new VariableSymbol<T>(name, type);
-    this.variables.push(variableSymbol);
+    const scope = this.variableScopes.at(-1);
+    scope?.push(variableSymbol);
     return variableSymbol;
+  }
+
+  public bindStatements(statements: AST.Statement[]): BoundStatement[] {
+    return statements.map(statement => this.bind(statement));
   }
 
   private bind<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement, R extends BoundExpression | BoundStatement = T extends AST.Expression ? BoundExpression : BoundStatement>(node: T): R {
@@ -236,9 +246,22 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       : node.accept<BoundStatement>(this));
   }
 
+  private beginScope(): void {
+    this.variableScopes.push([]);
+  }
+
+  private endScope<T extends Type = Type>(): VariableSymbol<T>[] {
+    return <VariableSymbol<T>[]>this.variableScopes.pop()!;
+  }
+
   private findSymbol(name: Token): VariableSymbol {
-    return this.variables
-      .find(symbol => symbol.name.lexeme === name.lexeme)!;
+    for (let i = this.variableScopes.length - 1; i >= 0; i--) {
+      const scope = this.variableScopes[i];
+      const symbol = scope.find(symbol => symbol.name.lexeme === name.lexeme)!;
+      if (!symbol) continue;
+      return symbol;
+    }
+    throw new BindingError(`Failed to find variable symbol for '${name.lexeme}'`, name)
   }
 
   private getTypeFromTypeRef(node: AST.TypeRef): Type {

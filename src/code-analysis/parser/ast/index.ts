@@ -3,6 +3,7 @@ import util from "util";
 import type { Token } from "../../syntax/token";
 import type { LiteralExpression } from "./expressions/literal";
 import type { ArrayLiteralExpression } from "./expressions/array-literal";
+import type { StringInterpolationExpression } from "./expressions/string-interpolation";
 import type { ParenthesizedExpression } from "./expressions/parenthesized";
 import type { UnaryExpression } from "./expressions/unary";
 import type { BinaryExpression } from "./expressions/binary";
@@ -43,6 +44,7 @@ import type BoundIfStatement from "../../type-checker/binder/bound-statements/if
 import type BoundWhileStatement from "../../type-checker/binder/bound-statements/if";
 import type BoundFunctionDeclarationStatement from "../../type-checker/binder/bound-statements/function-declaration";
 import type BoundReturnStatement from "../../type-checker/binder/bound-statements/return";
+import type BoundStringInterpolationExpression from "../../type-checker/binder/bound-expressions/string-interpolation";
 
 namespace AST {
   export abstract class Node {
@@ -73,6 +75,7 @@ namespace AST {
       public abstract visitBinaryExpression(expr: BinaryExpression): R
       public abstract visitUnaryExpression(expr: UnaryExpression): R
       public abstract visitParenthesizedExpression(expr: ParenthesizedExpression): R
+      public abstract visitStringInterpolationExpression(expr: StringInterpolationExpression): R
       public abstract visitArrayLiteralExpression(expr: ArrayLiteralExpression): R
       public abstract visitLiteralExpression(expr: LiteralExpression): R
     }
@@ -100,6 +103,7 @@ namespace AST {
       public abstract visitBinaryExpression(expr: BoundBinaryExpression): R
       public abstract visitUnaryExpression(expr: BoundUnaryExpression): R
       public abstract visitParenthesizedExpression(expr: BoundParenthesizedExpression): R
+      public abstract visitStringInterpolationExpression(expr: BoundStringInterpolationExpression): R
       public abstract visitArrayLiteralExpression(expr: BoundArrayLiteralExpression): R
       public abstract visitLiteralExpression(expr: BoundLiteralExpression): R
     }

@@ -2,15 +2,14 @@ import { TypeError } from "../../errors";
 import { BoundExpression, BoundNode, BoundStatement } from "./binder/bound-node";
 import type { Type } from "./types/type";
 import type PValue from "../../runtime/types/value";
-import type Resolver from "../resolver";
 import type FunctionType from "./types/function-type";
 import ArrayType from "./types/array-type";
 import SingularType from "./types/singular-type";
 import UnionType from "./types/union-type";
-import ScopeContext from "../scope-context";
 import AST from "../parser/ast";
 
 import BoundArrayLiteralExpression from "./binder/bound-expressions/array-literal";
+import type BoundStringInterpolationExpression from "./binder/bound-expressions/string-interpolation";
 import type BoundParenthesizedExpression from "./binder/bound-expressions/parenthesized";
 import type BoundUnaryExpression from "./binder/bound-expressions/unary";
 import type BoundBinaryExpression from "./binder/bound-expressions/binary";
@@ -28,7 +27,7 @@ import type BoundBlockStatement from "./binder/bound-statements/block";
 import type BoundIfStatement from "./binder/bound-statements/if";
 import type BoundWhileStatement from "./binder/bound-statements/while";
 import type BoundFunctionDeclarationStatement from "./binder/bound-statements/function-declaration";
-import BoundReturnStatement from "./binder/bound-statements/return";
+import type BoundReturnStatement from "./binder/bound-statements/return";
 
 export type ValueType = PValue | string | number | boolean | null | undefined | void | ValueType[];
 
@@ -151,6 +150,11 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
 
   public visitParenthesizedExpression(expr: BoundParenthesizedExpression): void {
     this.check(expr.expression);
+  }
+
+  public visitStringInterpolationExpression(expr: BoundStringInterpolationExpression): void {
+    for (const part of expr.parts)
+      this.check(part);
   }
 
   public visitArrayLiteralExpression(expr: BoundArrayLiteralExpression): void {

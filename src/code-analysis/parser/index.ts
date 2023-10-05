@@ -33,6 +33,7 @@ import { WhileStatement } from "./ast/statements/while";
 import { PropertyAssignmentExpression } from "./ast/expressions/property-assignment";
 import { FunctionDeclarationStatement } from "./ast/statements/function-declaration";
 import { ReturnStatement } from "./ast/statements/return";
+import { StringInterpolationExpression } from "./ast/expressions/string-interpolation";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -121,7 +122,7 @@ export default class Parser extends ArrayStepper<Token> {
       || syntax === Syntax.RBracket
       || syntax === Syntax.Question;
 
-    return (this.check(Syntax.Mut) ? this.checkType(1) : this.checkType(1))
+    return (this.check(Syntax.Mut) ? this.checkType(1) : this.checkType())
       && (isVariableDeclarationSyntax(nextSyntax) || isVariableDeclarationSyntax(nextNextSyntax));
   }
 
@@ -398,9 +399,12 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parsePrimary(): AST.Expression {
-    if (this.matchSet(LITERAL_SYNTAXES))
-      return new LiteralExpression(this.previous());
-    if (this.match(Syntax.LBracket)) {
+    if (this.matchSet(LITERAL_SYNTAXES)) {
+      const token = this.previous();
+      return token.syntax === Syntax.String && token.lexeme.includes("%{") ?
+        this.parseStringInterpolation(<Token<string, Syntax.String>>token)
+        : new LiteralExpression(token);
+    } if (this.match(Syntax.LBracket)) {
       const bracket = this.previous<undefined>();
       const elements = this.parseExpressionList();
       this.consume(Syntax.RBracket, "']'");
@@ -415,7 +419,42 @@ export default class Parser extends ArrayStepper<Token> {
       return new ParenthesizedExpression(expr);
     }
 
-    throw new ParsingError("Expected expression", this.current);
+    throw new ParsingError(`Expected expression, got '${this.current.lexeme}'`, this.current);
+  }
+
+  private parseStringInterpolation(string: Token<string, Syntax.String>): StringInterpolationExpression {
+    const rawParts = this.extractInterpolationParts(string.lexeme);
+    const parts: (LiteralExpression<string> | AST.Expression)[] = [];
+
+    for (const part of rawParts) {
+      if (part.startsWith("%{")) {
+        const interpolationParser = new Parser(part.slice(2, -1));
+        const expression = interpolationParser.parseExpression();
+        parts.push(expression);
+      } else
+        parts.push(new LiteralExpression(fakeToken(Syntax.String, part, part)));
+    }
+
+    return new StringInterpolationExpression(parts);
+  }
+
+  private extractInterpolationParts(string: string): string[] {
+    const rawParts: string[] = [];
+    const pattern = /%\{([^{}]+)\}/;
+    const match = string.match(pattern);
+
+    if (match !== null) {
+      rawParts.push(match.input!.slice(0, match.index!));
+      rawParts.push(match[0]);
+
+      if (pattern.test(match.input!.slice(match.index! + match[0].length))) {
+        rawParts.push(...this.extractInterpolationParts(match.input!.slice(match.index! + match[0].length)));
+      } else {
+        rawParts.push(match.input!.slice(match.index! + match[0].length));
+      }
+    }
+
+    return rawParts;
   }
 
   private parseType(): AST.TypeRef {
@@ -520,7 +559,7 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private checkType(offset = 0): boolean {
-    return this.checkMultiple([Syntax.Identifier, Syntax.Undefined, Syntax.Null], offset) && this.isTypeDefined(this.current.lexeme);
+    return this.checkMultiple([Syntax.Identifier, Syntax.Undefined, Syntax.Null], offset) && this.isTypeDefined(this.peek(offset)!.lexeme);
   }
 
   private isTypeDefined(name: string): boolean {

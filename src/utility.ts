@@ -14,9 +14,9 @@ export function clearTerminal(): void {
     spawnSync("clear", [], { stdio: "inherit" });
 }
 
-export function fakeToken<V extends ValueType = ValueType>(syntax: Syntax, lexeme: string, value?: V): Token<V> {
+export function fakeToken<V extends ValueType = ValueType, S extends Syntax = Syntax>(syntax: S, lexeme: string, value?: V): Token<V, S> {
   const pseudoLocation = new LocationSpan(new Location(-1, -1), new Location(-1, -1));
-  return new Token(syntax, lexeme, <V>value, pseudoLocation);
+  return new Token<V, S>(syntax, lexeme, <V>value, pseudoLocation);
 }
 
 export class Range {
