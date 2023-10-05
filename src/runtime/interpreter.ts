@@ -38,16 +38,16 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public visitWhileStatement(stmt: WhileStatement): void {
     const inverted = stmt.token.syntax === Syntax.Until;
     while (inverted ? !this.evaluate(stmt.condition) : this.evaluate(stmt.condition))
-      this.evaluate(stmt.body);
+      this.execute(stmt.body);
   }
 
   public visitIfStatement(stmt: IfStatement): void {
     const condition = this.evaluate(stmt.condition);
     const inverted = stmt.token.syntax === Syntax.Unless;
     if (inverted ? !condition : condition)
-      this.evaluate(stmt.body)
+      this.execute(stmt.body)
     else if (stmt.elseBranch)
-      this.evaluate(stmt.elseBranch);
+      this.execute(stmt.elseBranch);
   }
 
   public visitBlockStatement(stmt: BlockStatement): void {
@@ -206,6 +206,10 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitLiteralExpression<V extends ValueType = ValueType>(expr: LiteralExpression<V>): V {
     return expr.token.value;
+  }
+
+  public execute(statement: AST.Statement): void {
+    this.evaluate(statement);
   }
 
   public evaluate<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement>(statements: T | AST.Statement[]): ValueType {

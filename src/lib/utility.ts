@@ -33,3 +33,10 @@ export function fakeToken<V extends ValueType = ValueType>(syntax: Syntax, lexem
   const pseudoLocation = new LocationSpan(new Location(-1, -1), new Location(-1, -1));
   return new Token(syntax, lexeme, <V>value, pseudoLocation);
 }
+
+export class Range {
+  public constructor(
+    public readonly minimum: number,
+    public readonly maximum: number
+  ) {}
+}
