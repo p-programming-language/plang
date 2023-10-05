@@ -3,11 +3,13 @@ import util from "util";
 import type SingularType from "./singular-type";
 import type UnionType from "./union-type";
 import type ArrayType from "./array-type";
+import type FunctionType from "./function-type";
 
 export const enum TypeKind {
   Singular,
   Union,
-  Array
+  Array,
+  Function
 }
 
 export abstract class Type {
@@ -26,6 +28,10 @@ export abstract class Type {
     return this.kind === TypeKind.Array;
   }
 
+  public isFunction(): this is FunctionType {
+    return this.kind === TypeKind.Function;
+  }
+
   public isAssignableTo(other: Type): boolean {
     if (this.isUnion())
       return this.types.some(type => type.isAssignableTo(other));
@@ -40,6 +46,13 @@ export abstract class Type {
     else if (this.isArray()) {
       if (!other.isArray()) return false;
       return this.elementType.isAssignableTo(other.elementType);
+    } else if (this.isFunction()) {
+      if (!other.isFunction()) return false;
+
+      const parametersAreAssignable = Array.from(this.parameterTypes.entries())
+        .every(([key, paramType]) => other.parameterTypes.has(key) && paramType.isAssignableTo(other.parameterTypes.get(key)!));
+
+      return parametersAreAssignable && this.returnType.isAssignableTo(other.returnType);
     }
 
     return false;
