@@ -14,10 +14,20 @@ import BoundBinaryExpression from "../../src/code-analysis/type-checker/binder/b
 import BoundArrayLiteralExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/array-literal";
 import BoundExpressionStatement from "../../src/code-analysis/type-checker/binder/bound-statements/expression";
 import BoundVariableDeclarationStatement from "../../src/code-analysis/type-checker/binder/bound-statements/variable-declaration";
+import BoundIndexExpression from "../../src/code-analysis/type-checker/binder/bound-expressions";
+import BoundIdentifierExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/identifier";
+import BoundCallExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/call";
+import FunctionType from "../../src/code-analysis/type-checker/types/function-type";
+import Resolver from "../../src/code-analysis/resolver";
+import Interpreter from "../../src/runtime/interpreter";
+import P from "../p";
 
 function bind(source: string): BoundStatement[] {
   const parser = new Parser(source);
   const binder = new Binder;
+  const resolver = new Resolver;
+  const p = new P;
+  new Interpreter(p, resolver, binder);
   const ast = parser.parse();
   return binder.bindStatements(ast);
 }
@@ -138,6 +148,49 @@ describe(Binder.name, () => {
       const value = <BoundLiteralExpression>declaration.initializer;
       value.token.syntax.should.equal(Syntax.Int);
       value.token.value?.should.equal(123);
+    }
+  });
+  it("binds indexing expressions", () => {
+    {
+      const [_, node] = bind("int[] myArr = [1,2,3,4]; myArr[3]");
+      node.should.be.an.instanceof(BoundExpressionStatement);
+      const expr = (<BoundExpressionStatement>node).expression;
+      expr.should.be.an.instanceof(BoundIndexExpression);
+      const indexing = <BoundIndexExpression>expr;
+      indexing.object.should.be.an.instanceof(BoundIdentifierExpression);
+      indexing.object.type.isSingular().should.be.true();
+      const objectType = <SingularType>indexing.object.type;
+      objectType.name.should.equal("Array");
+      objectType.typeArguments![0].isSingular().should.be.true();
+      (<SingularType>objectType.typeArguments![0]).name.should.equal("int");
+      indexing.type.isSingular().should.be.true();
+      (<SingularType>indexing.type).name.should.equal("int");
+      (<BoundIdentifierExpression>indexing.object).name.lexeme.should.equal("myArr");
+      indexing.index.should.be.an.instanceof(BoundLiteralExpression);
+      const index = <BoundLiteralExpression>indexing.index;
+      index.token.syntax.should.equal(Syntax.Int);
+      index.token.value?.should.equal(3);
+    }
+  });
+  it("binds call expressions", () => {
+    {
+
+      const [node] = bind("eval('1 + 1')");
+      node.should.be.an.instanceof(BoundExpressionStatement);
+      const expr = (<BoundExpressionStatement>node).expression;
+      expr.should.be.an.instanceof(BoundCallExpression);
+      const call = <BoundCallExpression>expr;
+      call.callee.should.be.an.instanceof(BoundIdentifierExpression);
+      call.callee.type.isFunction().should.be.true();
+      const calleeType = <FunctionType>call.callee.type;
+      calleeType.returnType.isSingular().should.be.true();
+      (<SingularType>calleeType.returnType).name.should.equal("any");
+      const [arg] = call.args;
+      arg.should.be.an.instanceof(BoundLiteralExpression);
+      const argLiteral = <BoundLiteralExpression>arg;
+      argLiteral.token.value?.should.equal("1 + 1");
+      argLiteral.type.isSingular().should.be.true();
+      (<SingularType>argLiteral.type).name.should.equal("string");
     }
   });
   describe("binds general tests (tests/)", () => {

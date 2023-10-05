@@ -289,7 +289,7 @@ describe(Parser.name, () => {
       declaration.initializer?.should.be.an.instanceof(ArrayLiteralExpression);
     });
   });
-  it("parses indexing", () => {
+  it("parses indexing expressions", () => {
     const [node] = parse("myStuff[69]");
     node.should.be.an.instanceof(ExpressionStatement);
     const expr = (<ExpressionStatement>node).expression;
@@ -302,7 +302,7 @@ describe(Parser.name, () => {
     value.token.syntax.should.equal(Syntax.Int);
     value.token.value?.should.equal(69);
   });
-  it("parses calls", () => {
+  it("parses call expressions", () => {
     const [node] = parse("myFunc('hello', 123)");
     node.should.be.an.instanceof(ExpressionStatement);
     const expr = (<ExpressionStatement>node).expression;

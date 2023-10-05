@@ -9,17 +9,13 @@ import ArrayType from "../../code-analysis/type-checker/types/array-type";
 import FunctionType from "../../code-analysis/type-checker/types/function-type";
 import Intrinsic from "../types/intrinsic";
 import type Interpreter from "../interpreter";
-import type Resolver from "../../code-analysis/resolver";
-import type Binder from "../../code-analysis/type-checker/binder";
 
 import Readln from "./readln";
 import Eval from "./eval";
 
 export default class Intrinsics {
   public constructor(
-    private readonly interpreter: Interpreter,
-    private readonly resolver: Resolver,
-    private readonly binder: Binder
+    private readonly interpreter: Interpreter
   ) {}
 
   public inject(): void {
@@ -37,8 +33,8 @@ export default class Intrinsics {
 
   private define<V extends ValueType = ValueType>(name: string, value: V, type: Type): void {
     const identifier = fakeToken<undefined>(Syntax.Identifier, name);
-    this.resolver.define(identifier);
-    this.binder.defineSymbol(identifier, type);
+    this.interpreter.resolver.define(identifier);
+    this.interpreter.binder.defineSymbol(identifier, type);
     this.interpreter.globals.define(identifier, value, {
       mutable: false
     });
