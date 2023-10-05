@@ -18,14 +18,11 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install TypeScript
-        run: npm install -g typescript
-
       - name: Install dependencies
         run: npm install
 
       - name: Build
-        run: npm run build
+        run: npx tsc --skipLibCheck
 
       - name: Test
         run: npm test

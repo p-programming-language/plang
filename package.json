@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "mocha dist/tools/unit-tests -j 4 --extension js",
-    "build": "tsc --skipDefaultLibCheck",
+    "build": "tsc",
     "repl": "node dist/tools/repl.js",
     "pint": "node dist/tools/pint.js",
     "path": "tsc && npm link",
