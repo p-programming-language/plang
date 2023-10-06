@@ -1,5 +1,5 @@
 import { BoundStatement } from "../bound-node";
-import type { Token } from "../../../syntax/token";
+import type { Token } from "../../../tokenization/token";
 import type VariableSymbol from "../variable-symbol";
 import type BoundVariableDeclarationStatement from "./variable-declaration";
 import type BoundBlockStatement from "./block";

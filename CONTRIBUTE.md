@@ -14,13 +14,38 @@ We currently don't have any documentation or guides for P. Feel free to create s
 #### Files
 - code-analysis/
     - parser/
-        * This is where all parsing and AST code resides
-    - syntax/
-        * This is where anything to do with syntax recognition resides. This includes the lexer, keywords, syntax types, etc.
+        * This is where all parsing code resides
+        - ast/
+            - expressions/
+                * This is where all expression node classes are stored.
+            - statements/
+                * This is where all statement node classes are stored.
+            - type-nodes/
+                * This is where all type reference node classes are stored.
+    - tokenization/
+        * This is where anything to do with tokenization resides. This includes the lexer, keywords, syntax types, etc.
+    - resolver.ts
+        * This is P's resolver. It assures variables are being used and referenced properly.
     - type-checker/
-        * This is where all type checking and binding code resides, including bound AST nodes.
+        * This is where all type checking code resides.
+        - types/
+            * This is where all of the type constructs recognized by the type checker and created by the binder are stored.
+        - binder/
+            * This is where all binding code resides.
+            - bound-expressions/
+                * This is where all bound expression node classes are stored.
+            - bound-statements/
+                * This is where all bound statement node classes are stored.
+            - bound-operators/
+                * This is where binary/unary expression operand types are evaluated.
 - runtime/
-    * This is where all runtime code resides. This includes the interpreter, and all types that the interpreter may use such as functions or classes.
+    * This is where all runtime code resides. This includes the interpreter, and all runtime types that the interpreter may use.
+    - values/
+        * This is where custom value constructs are stored, such as functions, classes, intrinsic constructs, etc.
+    - intrinsics/
+        * This is where all intrinsic functions and libraries are defined.
+        - index.ts
+            * This is where added functions/libraries are defined in the scope. Every time you create a new intrinsic function/library you will need to define it here.
 
 - utility.ts
     - This is where the utilities used by the **tools/** reside.

@@ -1,8 +1,8 @@
 import { BoundExpression } from "../bound-node";
-import type { Token } from "../../../syntax/token";
+import type { Token } from "../../../tokenization/token";
 import type { ValueType } from "../../../type-checker";
 import type { Type } from "../../types/type";
-import type Syntax from "../../../syntax/syntax-type";
+import type Syntax from "../../../tokenization/syntax-type";
 import AST from "../../../parser/ast";
 
 export default class BoundLiteralExpression<V extends ValueType = ValueType, S extends Syntax = Syntax> extends BoundExpression {

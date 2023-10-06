@@ -1,4 +1,4 @@
-import { Token } from "../../../syntax/token";
+import { Token } from "../../../tokenization/token";
 import AST from "..";
 
 export class TernaryExpression extends AST.Expression {

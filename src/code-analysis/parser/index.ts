@@ -1,12 +1,12 @@
 
-import { Token } from "../syntax/token";
+import { Token } from "../tokenization/token";
 import { ParserSyntaxError } from "../../errors";
 import { ValueType } from "../type-checker";
 import { fakeToken } from "../../utility";
 import ArrayStepper from "../array-stepper";
-import Lexer from "../syntax/lexer";
-import Syntax from "../syntax/syntax-type";
-import * as SyntaxSets from "../syntax/syntax-sets";
+import Lexer from "../tokenization/lexer";
+import Syntax from "../tokenization/syntax-type";
+import * as SyntaxSets from "../tokenization/syntax-sets";
 import AST from "./ast";
 
 import { LiteralExpression } from "./ast/expressions/literal";

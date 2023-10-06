@@ -1,4 +1,4 @@
-import { Token } from "../../../syntax/token";
+import { Token } from "../../../tokenization/token";
 import { VariableDeclarationStatement } from "./variable-declaration";
 import { BlockStatement } from "./block";
 import AST from "..";

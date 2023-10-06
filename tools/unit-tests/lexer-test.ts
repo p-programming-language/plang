@@ -3,9 +3,9 @@ import { readFileSync, readdirSync } from "fs";
 import path from "path";
 import "should";
 
-import { Token } from "../../src/code-analysis/syntax/token";
-import Lexer from "../../src/code-analysis/syntax/lexer";
-import Syntax from "../../src/code-analysis/syntax/syntax-type";
+import { Token } from "../code-analysis/tokenization/token";
+import Lexer from "../code-analysis/tokenization/lexer";
+import Syntax from "../code-analysis/tokenization/syntax-type";
 
 function tokenize(source: string): Token[] {
   const lexer = new Lexer(source);

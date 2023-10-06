@@ -1,6 +1,6 @@
 import { BoundExpression } from "../bound-node";
 import type { BoundBinaryOperator } from "../bound-operators/binary";
-import type { Token } from "../../../syntax/token";
+import type { Token } from "../../../tokenization/token";
 import type BoundIdentifierExpression from "./identifier";
 import type BoundIndexExpression from ".";
 import AST from "../../../parser/ast";

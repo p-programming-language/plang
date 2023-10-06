@@ -4,7 +4,7 @@ import path from "path";
 import type { ValueType } from "../../code-analysis/type-checker";
 import type { Type } from "../../code-analysis/type-checker/types/type";
 import { fakeToken } from "../../utility";
-import Syntax from "../../code-analysis/syntax/syntax-type";
+import Syntax from "../../code-analysis/tokenization/syntax-type";
 import SingularType from "../../code-analysis/type-checker/types/singular-type";
 import ArrayType from "../../code-analysis/type-checker/types/array-type";
 import FunctionType from "../../code-analysis/type-checker/types/function-type";

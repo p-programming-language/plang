@@ -1,5 +1,5 @@
 import { BoundExpression } from "../bound-node";
-import type { Token } from "../../../syntax/token";
+import type { Token } from "../../../tokenization/token";
 import SingularType from "../../types/singular-type";
 import AST from "../../../parser/ast";
 

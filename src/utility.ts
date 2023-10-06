@@ -1,9 +1,9 @@
 import { platform } from "os";
 import { spawnSync } from "child_process";
 
-import { LocationSpan, Location, Token } from "./code-analysis/syntax/token";
+import { LocationSpan, Location, Token } from "./code-analysis/tokenization/token";
 import { ValueType } from "./code-analysis/type-checker";
-import Syntax from "./code-analysis/syntax/syntax-type";
+import Syntax from "./code-analysis/tokenization/syntax-type";
 
 export function clearTerminal(): void {
   const os = platform();

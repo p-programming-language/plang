@@ -1,5 +1,5 @@
 import { PError } from "../errors";
-import type { Token } from "../code-analysis/syntax/token";
+import type { Token } from "../code-analysis/tokenization/token";
 import type { ValueType } from "../code-analysis/type-checker";
 
 namespace HookedException {

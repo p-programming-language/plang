@@ -1,5 +1,5 @@
 import { ReferenceError, ResolutionError } from "../errors";
-import type { Token } from "./syntax/token";
+import type { Token } from "./tokenization/token";
 import ScopeContext from "./scope-context";
 import AST from "../code-analysis/parser/ast";
 

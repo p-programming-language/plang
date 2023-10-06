@@ -4,7 +4,7 @@ import path from "path";
 import "should";
 
 import { BoundStatement } from "../../src/code-analysis/type-checker/binder/bound-node";
-import Syntax from "../../src/code-analysis/syntax/syntax-type";
+import Syntax from "../code-analysis/tokenization/syntax-type";
 import Parser from "../../src/code-analysis/parser";
 import Binder from "../../src/code-analysis/type-checker/binder";
 import SingularType from "../../src/code-analysis/type-checker/types/singular-type";

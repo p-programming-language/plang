@@ -1,7 +1,7 @@
 import { BindingError, TypeError } from "../../../errors";
 import { BoundExpression, BoundStatement } from "./bound-node";
 import { INDEX_TYPE } from "../types/type-sets";
-import type { Token } from "../../syntax/token";
+import type { Token } from "../../tokenization/token";
 import type { Type } from "../types/type";
 import type { ValueType } from "..";
 import { BoundBinaryOperator } from "./bound-operators/binary";
@@ -12,7 +12,7 @@ import UnionType from "../types/union-type";
 import FunctionType from "../types/function-type";
 import InterfaceType from "../types/interface-type";
 import ArrayType from "../types/array-type";
-import Syntax from "../../syntax/syntax-type";
+import Syntax from "../../tokenization/syntax-type";
 import AST from "../../parser/ast";
 
 import { LiteralExpression } from "../../parser/ast/expressions/literal";

@@ -1,8 +1,8 @@
-import type { Token } from "../../../syntax/token";
+import type { Token } from "../../../tokenization/token";
 import { SingularTypeExpression } from "./singular-type";
 import { fakeToken } from "../../../../utility";
 import type AST from "..";
-import Syntax from "../../../syntax/syntax-type";
+import Syntax from "../../../tokenization/syntax-type";
 
 export class ArrayTypeExpression extends SingularTypeExpression {
   public constructor(

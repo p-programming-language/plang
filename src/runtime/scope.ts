@@ -1,4 +1,4 @@
-import type { Token } from "../code-analysis/syntax/token";
+import type { Token } from "../code-analysis/tokenization/token";
 import type { ValueType } from "../code-analysis/type-checker";
 import { RuntimeError } from "../errors";
 

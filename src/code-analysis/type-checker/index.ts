@@ -1,7 +1,7 @@
 import { TypeError } from "../../errors";
 import { BoundExpression, BoundNode, BoundStatement } from "./binder/bound-node";
 import { INDEX_TYPE } from "./types/type-sets";
-import type { Token } from "../syntax/token";
+import type { Token } from "../tokenization/token";
 import type { Type } from "./types/type";
 import type PValue from "../../runtime/values/value";
 import type FunctionType from "./types/function-type";
@@ -9,7 +9,7 @@ import type InterfaceType from "./types/interface-type";
 import ArrayType from "./types/array-type";
 import SingularType from "./types/singular-type";
 import UnionType from "./types/union-type";
-import Syntax from "../syntax/syntax-type";
+import Syntax from "../tokenization/syntax-type";
 import AST from "../parser/ast";
 
 import BoundLiteralExpression from "./binder/bound-expressions/literal";

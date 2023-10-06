@@ -1,6 +1,6 @@
 import type { ValueType } from "../../../type-checker";
-import type { Token } from "../../../syntax/token";
-import type Syntax from "../../../syntax/syntax-type";
+import type { Token } from "../../../tokenization/token";
+import type Syntax from "../../../tokenization/syntax-type";
 import AST from "..";
 
 export class LiteralExpression<V extends ValueType = ValueType, S extends Syntax = Syntax> extends AST.Expression {

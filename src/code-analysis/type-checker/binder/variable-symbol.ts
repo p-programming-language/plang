@@ -1,4 +1,4 @@
-import type { Token } from "../../syntax/token";
+import type { Token } from "../../tokenization/token";
 import type { Type } from "../types/type";
 
 export default class VariableSymbol<T extends Type = Type> {

@@ -1,4 +1,4 @@
-import type { Token } from "../../../syntax/token";
+import type { Token } from "../../../tokenization/token";
 import type { LiteralExpression } from "./literal";
 import AST from "..";
 

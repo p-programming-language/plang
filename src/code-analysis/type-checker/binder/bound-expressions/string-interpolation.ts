@@ -1,4 +1,4 @@
-import { Token } from "../../../syntax/token";
+import { Token } from "../../../tokenization/token";
 import { BoundExpression } from "../bound-node";
 import BoundLiteralExpression from "./literal";
 import SingularType from "../../types/singular-type";

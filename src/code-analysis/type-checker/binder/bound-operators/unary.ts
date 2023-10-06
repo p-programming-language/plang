@@ -1,7 +1,7 @@
 import { TypeError } from "../../../../errors";
-import type { Token } from "../../../syntax/token";
+import type { Token } from "../../../tokenization/token";
 import type { Type } from "../../types/type";
-import Syntax from "../../../syntax/syntax-type";
+import Syntax from "../../../tokenization/syntax-type";
 import SingularType from "../../types/singular-type";
 import UnionType from "../../types/union-type";
 import ArrayType from "../../types/array-type";

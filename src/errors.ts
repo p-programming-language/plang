@@ -1,4 +1,4 @@
-import { Token } from "./code-analysis/syntax/token";
+import { Token } from "./code-analysis/tokenization/token";
 
 export class PError {
   public static testing = false;

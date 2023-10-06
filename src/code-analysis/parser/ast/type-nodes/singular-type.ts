@@ -1,6 +1,6 @@
-import { Token } from "../../../syntax/token";
+import { Token } from "../../../tokenization/token";
 import AST from "..";
-import Syntax from "../../../syntax/syntax-type";
+import Syntax from "../../../tokenization/syntax-type";
 
 export class SingularTypeExpression<Name extends string = string> extends AST.TypeRef {
   public constructor(

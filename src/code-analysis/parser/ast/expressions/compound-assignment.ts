@@ -1,4 +1,4 @@
-import { Token } from "../../../syntax/token";
+import { Token } from "../../../tokenization/token";
 import { IdentifierExpression } from "./identifier";
 import { IndexExpression } from ".";
 import AST from "..";

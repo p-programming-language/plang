@@ -1,5 +1,5 @@
 import { BoundStatement } from "../bound-node";
-import type { Token } from "../../../syntax/token";
+import type { Token } from "../../../tokenization/token";
 import UnionType from "../../types/union-type";
 import BoundReturnStatement from "./return";
 import AST from "../../../parser/ast";

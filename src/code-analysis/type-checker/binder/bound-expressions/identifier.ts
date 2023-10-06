@@ -1,6 +1,6 @@
 import { BoundExpression } from "../bound-node";
 import type { Type } from "../../types/type";
-import type { Token } from "../../../syntax/token";
+import type { Token } from "../../../tokenization/token";
 import AST from "../../../parser/ast";
 
 export default class BoundIdentifierExpression<T extends Type = Type> extends BoundExpression {

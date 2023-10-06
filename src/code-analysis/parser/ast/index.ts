@@ -1,6 +1,6 @@
 import util from "util";
 
-import type { Token } from "../../syntax/token";
+import type { Token } from "../../tokenization/token";
 import type { LiteralExpression } from "./expressions/literal";
 import type { StringInterpolationExpression } from "./expressions/string-interpolation";
 import type { ArrayLiteralExpression } from "./expressions/array-literal";

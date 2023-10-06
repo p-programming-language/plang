@@ -1,4 +1,4 @@
-import { Token } from "../../../syntax/token";
+import { Token } from "../../../tokenization/token";
 import AST from "..";
 
 export class IfStatement extends AST.Statement {

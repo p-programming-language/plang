@@ -1,6 +1,6 @@
 import { RuntimeError } from "../errors";
 import type { IndexType, ObjectType, ValueType } from "../code-analysis/type-checker";
-import { Token } from "../code-analysis/syntax/token";
+import { Token } from "../code-analysis/tokenization/token";
 import { fakeToken } from "../utility";
 import type { Callable } from "./values/callable";
 import type Binder from "../code-analysis/type-checker/binder";
@@ -9,7 +9,7 @@ import Scope from "./scope";
 import PFunction from "./values/function";
 import HookedException from "./hooked-exceptions";
 import Intrinsics from "./intrinsics";
-import Syntax from "../code-analysis/syntax/syntax-type";
+import Syntax from "../code-analysis/tokenization/syntax-type";
 import AST from "../code-analysis/parser/ast";
 import P from "../../tools/p";
 

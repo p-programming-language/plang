@@ -1,5 +1,5 @@
 import { BoundExpression, BoundStatement } from "../bound-node";
-import type { Token } from "../../../syntax/token";
+import type { Token } from "../../../tokenization/token";
 import AST from "../../../parser/ast";
 
 export default class BoundReturnStatement extends BoundStatement {
