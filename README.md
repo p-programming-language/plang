@@ -66,7 +66,8 @@ yarn run <tool>
     - Boolean literals
     - Identifiers
     - Keywords
-    - Symbols
+    - Symbols (`+`, `-`, etc.)
+    - Comments (`## single line`, `##: multi line :##`)
 - Parsing + Binding + Type checking + Interpreting:
     - Literals
         - Basics (numbers, strings, booleans)
