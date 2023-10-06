@@ -1,19 +1,15 @@
 import { readFileSync } from "fs";
-import { platform } from "os";
-import reader from "readline-sync";
 import util from "util";
 import "colors.ts";
 
-import { PError } from "../src/errors";
 import { TypeChecker, ValueType } from "../src/code-analysis/type-checker";
-import { clearTerminal } from "../src/utility";
 import Parser from "../src/code-analysis/parser";
 import Binder from "../src/code-analysis/type-checker/binder";
 import Resolver from "../src/code-analysis/resolver";
 import Interpreter from "../src/runtime/interpreter";
 import PValue from "./runtime/values/value";
-import ASTViewer from "./classes/ast-viewer";
 import pkg = require("../package.json");
+import REPL from "./classes/repl";
 
 interface PExecutionOptions {
   outputAST: boolean;
@@ -21,13 +17,9 @@ interface PExecutionOptions {
   outputResult: boolean;
 }
 
-const os = platform();
-
 export default class P {
   private binder = new Binder;
   private resolver = new Resolver;
-  private replActive = false;
-  private replIndentation = 0;
 
   public typeChecker = new TypeChecker;
   public interpreter: Interpreter;
@@ -40,6 +32,11 @@ export default class P {
 
   public constructor(fileName?: string) {
     this.interpreter = new Interpreter(this, this.resolver, this.binder, fileName)
+  }
+
+  public startREPL(): void {
+    const repl = new REPL(this);
+    repl.start();
   }
 
   public doString(source: string): ValueType {
@@ -74,95 +71,10 @@ export default class P {
     return result;
   }
 
-  public startREPL(): void {
-    this.outputVersion();
-    const enclosingOutputEnabled = this.executionOptions.outputResult;
-    this.executionOptions.outputResult = true;
-    this.replActive = true;
-
-    while (this.replActive) {
-      const line = reader.question("» ".green);
-      if (!line.trim()) continue;
-      if (this.didInputDirectives(line)) continue;
-
-      if (!this.replActive) break;
-      if (line.endsWith("{"))
-        this.doString(this.readBlock(line));
-      else
-        this.doString(line);
-    }
-
-    this.executionOptions.outputResult = enclosingOutputEnabled;
-  }
-
-  public stopREPL(): void {
-    this.replActive = false;
-  }
-
   public refreshResources(): void {
     this.binder = new Binder;
     this.resolver = new Resolver;
     this.typeChecker = new TypeChecker;
     this.interpreter = new Interpreter(this, this.resolver, this.binder);
-  }
-
-  private didInputDirectives(code: string): boolean {
-    switch (code.toLowerCase()) {
-      case "@clear": {
-        clearTerminal();
-        this.outputVersion();
-        return true;
-      }
-      case "@ast": {
-        this.executionOptions.outputAST = !this.executionOptions.outputAST;
-        console.log(`AST output has been turned ${this.executionOptions.outputAST ? "on".green : "off".red}`.gray(18).gray_bg(6));
-        return true;
-      }
-      case "@bound_ast": {
-        this.executionOptions.outputBoundAST = !this.executionOptions.outputBoundAST;
-        console.log(`Bound AST output has been turned ${this.executionOptions.outputBoundAST ? "on".green : "off".red}`.gray(18).gray_bg(6));
-        return true;
-      }
-      case "@results": {
-        this.executionOptions.outputResult = !this.executionOptions.outputResult;
-        console.log(`Interpreter result output has been turned ${this.executionOptions.outputResult ? "on".green : "off".red}`.gray(18).gray_bg(6));
-        return true;
-      }
-      case "@show_trace": {
-        PError.showTrace = !PError.showTrace;
-        console.log(`Full error traces have been turned ${this.executionOptions.outputResult ? "on".green : "off".red}`.gray(18).gray_bg(6));
-        return true;
-      }
-      case "@ast_viewer": {
-        this.stopREPL();
-        this.refreshResources();
-        ASTViewer.start(this.binder);
-        this.refreshResources();
-        break;
-      }
-    }
-
-    return false;
-  }
-
-  private readBlock(firstLine: string): string {
-    let code = firstLine;
-    this.replIndentation++;
-
-    while (!code.endsWith("}")) {
-      const line = reader.question("...".repeat(this.replIndentation).gray(8) + " ");
-
-      if (line.endsWith("{") && !line.startsWith("}"))
-        code += this.readBlock(line) + " ";
-      else
-        code += line;
-    }
-
-    this.replIndentation--;
-    return code;
-  }
-
-  private outputVersion(): void {
-    console.log(`P ${this.version} on ${os}`);
   }
 }
