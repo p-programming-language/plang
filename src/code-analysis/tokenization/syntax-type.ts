@@ -19,7 +19,7 @@ enum Syntax {
   LParen, RParen,
   LBracket, RBracket,
   LBrace, RBrace,
-  Dot, Colon,
+  Dot, ColonColon, Colon,
   LT, GT, LTE, GTE,// <, >, <=, >=
   LDoubleArrow, RDoubleArrow,
   Tilde,

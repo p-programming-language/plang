@@ -1,5 +1,5 @@
 import { RuntimeError } from "../errors";
-import type { IndexType, ObjectType, ValueType } from "../code-analysis/type-checker";
+import type { IndexValueType, ObjectType, ValueType } from "../code-analysis/type-checker";
 import { Token } from "../code-analysis/tokenization/token";
 import { fakeToken } from "../utility";
 import type { Callable } from "./values/callable";
@@ -290,7 +290,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public visitObjectLiteralExpression(expr: ObjectLiteralExpression): ObjectType {
     const object: ObjectType = {};
     for (const [key, value] of expr.properties)
-      object[<IndexType>this.evaluate(key)] = this.evaluate(value);
+      object[<IndexValueType>this.evaluate(key)] = this.evaluate(value);
 
     return object;
   }

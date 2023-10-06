@@ -1,4 +1,5 @@
 import { Type, TypeKind } from "./type";
+import type { IndexType } from "..";
 import SingularType from "./singular-type";
 
 export default class InterfaceType extends SingularType {
@@ -6,7 +7,7 @@ export default class InterfaceType extends SingularType {
 
   public constructor(
     public readonly properties: Map<string, Type>,
-    public readonly indexSignatures: Map<SingularType<"string"> | SingularType<"int">, Type>,
+    public readonly indexSignatures: Map<IndexType, Type>,
     // public readonly typeParameters?: TypeParameter[],
     name = "object"
   ) { super(name); }

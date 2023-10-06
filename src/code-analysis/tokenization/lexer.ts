@@ -72,6 +72,8 @@ export default class Lexer extends ArrayStepper<string> {
       case ":": {
         if (this.match("="))
           return this.addToken(Syntax.ColonEqual, undefined, true);
+        else if (this.match(":"))
+          return this.addToken(Syntax.ColonColon, undefined, true);
         else
           return this.addToken(Syntax.Colon, undefined, true);
       }

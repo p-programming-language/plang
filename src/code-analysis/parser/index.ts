@@ -376,15 +376,32 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseExponential(): AST.Expression {
-    let left = this.parseIndex();
+    let left = this.parseAccess();
 
     while (this.match(Syntax.Carat, Syntax.StarStar)) { // this is also where i parsed ".." in cosmo, AKA a range literal expression
       const operator = this.previous<undefined>();
-      const right = this.parseIndex();
+      const right = this.parseAccess();
       left = new BinaryExpression(left, right, operator);
     }
 
     return left;
+  }
+
+  private parseAccess(): AST.Expression {
+    let object = this.parseIndex();
+
+    while (this.match(Syntax.Dot, Syntax.ColonColon)) {
+      const accessToken = this.previous<undefined>();
+      const indexIdentifier = this.consume<string>(Syntax.Identifier);
+      indexIdentifier.syntax = Syntax.String;
+      indexIdentifier.value = indexIdentifier.lexeme;
+      indexIdentifier.lexeme = `"${indexIdentifier.lexeme}"`;
+
+      const index = new LiteralExpression(indexIdentifier);
+      object = new IndexExpression(accessToken, object, index);
+    }
+
+    return object;
   }
 
   private parseIndex(): AST.Expression {
@@ -398,7 +415,7 @@ export default class Parser extends ArrayStepper<Token> {
       const bracket = this.previous<undefined>();
       const index = this.parseExpression();
       this.consume(Syntax.RBracket, "']'");
-      object = new IndexExpression(bracket, <AST.Expression>object, index);
+      object = new IndexExpression(bracket, object, index);
     }
 
     return object;
@@ -410,7 +427,7 @@ export default class Parser extends ArrayStepper<Token> {
     while (this.match(Syntax.LParen)) {
       const args = this.parseExpressionList(Syntax.RParen);
       this.consume(Syntax.RParen, "')'");
-      callee = new CallExpression(<AST.Expression>callee, args);
+      callee = new CallExpression(callee, args);
     }
 
     return callee;

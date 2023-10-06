@@ -46,9 +46,9 @@ export class Token<
 > {
 
   public constructor(
-    public readonly syntax: S,
-    public readonly lexeme: L,
-    public readonly value: V,
+    public syntax: S,
+    public lexeme: L,
+    public value: V,
     public readonly locationSpan: LocationSpan
   ) {}
 

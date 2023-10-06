@@ -36,12 +36,14 @@ import type BoundWhileStatement from "./binder/bound-statements/while";
 import type BoundFunctionDeclarationStatement from "./binder/bound-statements/function-declaration";
 import type BoundReturnStatement from "./binder/bound-statements/return";
 
-export type ValueType = SingularValue | ValueType[] | ObjectType;
-export type SingularValue = PValue | string | number | boolean | null | undefined | void;
-export type IndexType = string | number;
+export type ValueType = SingularValueType | ValueType[] | ObjectType;
+export type SingularValueType = PValue | string | number | boolean | null | undefined | void;
+export type IndexValueType = string | number;
 export interface ObjectType {
-  [key: IndexType]: ValueType;
+  [key: IndexValueType]: ValueType;
 };
+
+export type IndexType = SingularType<"string"> | SingularType<"int">
 
 // NOTE: always call check() before assert()
 
