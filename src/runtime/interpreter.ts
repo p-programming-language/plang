@@ -37,6 +37,7 @@ import type { WhileStatement } from "../code-analysis/parser/ast/statements/whil
 import type { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "../code-analysis/parser/ast/statements/return";
 import { TypeDeclarationStatement } from "../code-analysis/parser/ast/statements/type-declaration";
+import { INDEXABLE_LITERAL_VALUE_TYPES as INTRINSIC_EXTENDED_LITERAL_TYPE } from "../code-analysis/type-checker/types/type-sets";
 
 const MAX_RECURSION_DEPTH = 1200;
 
@@ -126,6 +127,10 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public visitIndexExpression(expr: IndexExpression): ValueType {
     const object = this.evaluate(expr.object);
     const index = this.evaluate(expr.index);
+    // if (INTRINSIC_EXTENDED_LITERAL_TYPE.includes(typeof index)) {
+
+    // }
+
     return (<ValueType[] | ObjectType>object)[<any>index];
   }
 

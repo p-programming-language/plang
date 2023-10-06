@@ -1,6 +1,6 @@
 import { TypeError } from "../../errors";
 import { BoundExpression, BoundNode, BoundStatement } from "./binder/bound-node";
-import { INDEX_TYPE } from "./types/type-sets";
+import { INDEX_TYPE, INDEXABLE_LITERAL_TYPES } from "./types/type-sets";
 import type { Token } from "../tokenization/token";
 import type { Type } from "./types/type";
 import type PValue from "../../runtime/values/value";
@@ -43,7 +43,7 @@ export interface ObjectType {
   [key: IndexValueType]: ValueType;
 };
 
-export type IndexType = SingularType<"string"> | SingularType<"int">
+export type IndexType = SingularType<"string"> | SingularType<"int">;
 
 // NOTE: always call check() before assert()
 
@@ -109,9 +109,11 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
   public visitIndexExpression(expr: BoundIndexExpression): void {
     this.check(expr.object);
     this.check(expr.index);
+
     if (
       !expr.object.type.isAssignableTo(new ArrayType(new SingularType("any")))
       && !expr.object.type.isInterface()
+      && !INDEXABLE_LITERAL_TYPES.some(type => expr.object.type.is(type))
     ) {
       throw new TypeError(`Attempt to index '${expr.object.type.toString()}'`, expr.object.token);
     }
