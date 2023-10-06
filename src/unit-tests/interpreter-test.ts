@@ -6,7 +6,7 @@ import "should";
 import { PError } from "../../src/errors";
 import type { ValueType } from "../../src/code-analysis/type-checker";
 import Interpreter from "../../src/runtime/interpreter";
-import P from "../p";
+import P from "../../tools/p";
 import pkg = require("../../package.json");
 
 PError.testing = true;
@@ -93,7 +93,8 @@ describe(Interpreter.name, () => {
     evaluate("eval('1 + 2')")?.should.equal(3);
   });
   it("evaluates intrinsics", () => {
-    evaluate("__version")?.should.equal("v" + pkg.version);
+    evaluate("version$")?.should.equal("v" + pkg.version);
+    evaluate("filename$")?.should.equal("repl");
   });
   describe("evaluates general tests (tests/)", () => {
     testFiles.forEach((file) => {

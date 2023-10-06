@@ -9,7 +9,7 @@ import Parser from "../../src/code-analysis/parser";
 import Binder from "../../src/code-analysis/type-checker/binder";
 import SingularType from "../../src/code-analysis/type-checker/types/singular-type";
 import FunctionType from "../../src/code-analysis/type-checker/types/function-type";
-import P from "../p";
+import P from "../../tools/p";
 
 import BoundLiteralExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/literal";
 import BoundUnaryExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/unary";
