@@ -504,7 +504,7 @@ export default class Parser extends ArrayStepper<Token> {
     let key;
     if (this.match(Syntax.Identifier)) {
       const identifier = this.previous<undefined, Syntax.Identifier>();
-      key = new LiteralExpression(fakeToken(Syntax.String, identifier.lexeme, identifier.lexeme));
+      key = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
     } else {
       this.consume(Syntax.LBracket, "'['");
       key = this.parseExpression();
