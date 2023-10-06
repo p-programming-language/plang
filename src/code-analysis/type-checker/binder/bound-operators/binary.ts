@@ -230,8 +230,6 @@ const BOUND_BINARY_OPERATORS = [
   new BoundBinaryOperator(
     [Syntax.QuestionQuestion, Syntax.QuestionQuestionEqual],
     BoundBinaryOperatorType.NullishCoalescing,
-    new SingularType("any"),
-    new SingularType("any"),
     new SingularType("any")
   ),
 ];
