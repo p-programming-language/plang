@@ -13,7 +13,8 @@
   "scripts": {
     "test": "mocha dist/tools/unit-tests -j 4 --extension js",
     "build": "tsc --skipLibCheck",
-    "start": "node dist/tools/pint.js",
+    "start": "npm run -s pint",
+    "pint": "node dist/tools/pint.js",
     "repl": "node dist/tools/repl.js",
     "ast-viewer": "dist/tools/ast-viewer.js",
     "path": "tsc --skipLibCheck && npm link",
