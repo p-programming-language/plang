@@ -70,8 +70,9 @@ yarn run <tool>
 - Parsing + Binding + Type checking + Interpreting:
     - Literals
         - Basics (numbers, strings, booleans)
-        - Array literals/types
         - String interpolations
+        - Array literals/types
+        - Object literals
     - Array indexing
     - Binary expressions (including compound assignment)
     - Unary expressions (including `++` and `--`)
@@ -82,4 +83,4 @@ yarn run <tool>
 
 ## Planned Features
 - Classes
-- Object literals/types
+- Object types

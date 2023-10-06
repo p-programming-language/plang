@@ -45,6 +45,10 @@ When adding a private tool: Do everything the same, but don't add it to `package
     - This is an interactive terminal where you can run P line by line.
     - Info:
         - Name: prepl
+- ast-viewer.ts
+    - This is an interactive terminal where you can inspect the AST node-by-node.
+    - Info:
+        - Name: ast-viewer
 - p.ts
     - This is a tool used to execute a P string or file, or start a REPL. Used by `pint` and `prepl`.
 - unit-tests/
