@@ -606,7 +606,7 @@ export default class Parser extends ArrayStepper<Token> {
     if (!this.checkType())
       throw new ParserSyntaxError(`Expected type, got '${this.current.lexeme}'`, this.current);
 
-    const typeKeyword = this.advance<undefined>();
+    const typeKeyword = this.advance<undefined, Syntax.Identifier>();
     let typeArgs: AST.TypeRef[] | undefined;
     if (this.match(Syntax.LT)) {
       typeArgs = this.parseTypeList();
@@ -651,12 +651,12 @@ export default class Parser extends ArrayStepper<Token> {
    * Advances to the next token
    * @returns The previous token
    */
-  private advance<V extends ValueType = ValueType>(): Token<V> {
+  private advance<V extends ValueType = ValueType, S extends Syntax = Syntax>(): Token<V, S> {
     const token = this.current;
     if (!this.isFinished)
       this.position++;
 
-    return <Token<V>>token;
+    return <Token<V, S>>token;
   }
 
   /**

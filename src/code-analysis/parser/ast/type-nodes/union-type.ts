@@ -1,6 +1,5 @@
 import type { Token } from "../../../syntax/token";
 import type { SingularTypeExpression } from "./singular-type";
-import type { ArrayTypeExpression } from "./array-type";
 import AST from "..";
 
 export class UnionTypeExpression extends AST.TypeRef {

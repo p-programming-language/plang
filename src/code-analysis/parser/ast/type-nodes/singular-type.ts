@@ -1,9 +1,10 @@
 import { Token } from "../../../syntax/token";
 import AST from "..";
+import Syntax from "../../../syntax/syntax-type";
 
-export class SingularTypeExpression extends AST.TypeRef {
+export class SingularTypeExpression<Name extends string = string> extends AST.TypeRef {
   public constructor(
-    public readonly name: Token<undefined>,
+    public readonly name: Token<undefined, Syntax.Identifier | Syntax.Undefined | Syntax.Null, Name>,
     public readonly typeArguments?: AST.TypeRef[]
   ) { super(); }
 

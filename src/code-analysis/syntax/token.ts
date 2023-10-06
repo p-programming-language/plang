@@ -39,10 +39,15 @@ export class LocationSpan {
   }
 }
 
-export class Token<V extends ValueType = ValueType, S extends Syntax = Syntax> {
+export class Token<
+  V extends ValueType = ValueType,
+  S extends Syntax = Syntax,
+  L extends string = string
+> {
+
   public constructor(
     public readonly syntax: S,
-    public readonly lexeme: string,
+    public readonly lexeme: L,
     public readonly value: V,
     public readonly locationSpan: LocationSpan
   ) {}
