@@ -11,7 +11,7 @@ import Parser from "../src/code-analysis/parser";
 import Binder from "../src/code-analysis/type-checker/binder";
 import Resolver from "../src/code-analysis/resolver";
 import Interpreter from "../src/runtime/interpreter";
-import PValue from "../src/runtime/types/value";
+import PValue from "./runtime/values/value";
 import ASTViewer from "./classes/ast-viewer";
 import pkg = require("../package.json");
 

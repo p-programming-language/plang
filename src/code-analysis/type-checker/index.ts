@@ -3,7 +3,7 @@ import { BoundExpression, BoundNode, BoundStatement } from "./binder/bound-node"
 import { INDEX_TYPE } from "./types/type-sets";
 import type { Token } from "../syntax/token";
 import type { Type } from "./types/type";
-import type PValue from "../../runtime/types/value";
+import type PValue from "../../runtime/values/value";
 import type FunctionType from "./types/function-type";
 import type InterfaceType from "./types/interface-type";
 import ArrayType from "./types/array-type";
@@ -115,8 +115,6 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
 
   public visitCallExpression(expr: BoundCallExpression): void {
     this.check(expr.callee);
-    if (!expr.callee.type.isFunction())
-      throw new TypeError(`Attempt to call '${expr.callee.type.toString()}'`, expr.callee.token);
 
     const type = <FunctionType>expr.callee.type;
     const expectedTypes = Array.from(type.parameterTypes.values());

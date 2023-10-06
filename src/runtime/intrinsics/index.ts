@@ -8,7 +8,7 @@ import Syntax from "../../code-analysis/syntax/syntax-type";
 import SingularType from "../../code-analysis/type-checker/types/singular-type";
 import ArrayType from "../../code-analysis/type-checker/types/array-type";
 import FunctionType from "../../code-analysis/type-checker/types/function-type";
-import Intrinsic from "../types/intrinsic";
+import Intrinsic from "../values/intrinsic";
 import type Interpreter from "../interpreter";
 
 import Std from "./std";

@@ -2,11 +2,11 @@ import { RuntimeError } from "../errors";
 import type { IndexType, ObjectType, ValueType } from "../code-analysis/type-checker";
 import { Token } from "../code-analysis/syntax/token";
 import { fakeToken } from "../utility";
-import type { Callable } from "./types/callable";
+import type { Callable } from "./values/callable";
 import type Binder from "../code-analysis/type-checker/binder";
 import type Resolver from "../code-analysis/resolver";
 import Scope from "./scope";
-import PFunction from "./types/function";
+import PFunction from "./values/function";
 import HookedException from "./hooked-exceptions";
 import Intrinsics from "./intrinsics";
 import Syntax from "../code-analysis/syntax/syntax-type";
@@ -298,28 +298,29 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     return expr.token.value;
   }
 
-  public execute(statement: AST.Statement): void {
-    this.evaluate(statement);
-  }
-
-  public evaluate<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement>(statements: T | AST.Statement[]): ValueType {
-    if (statements instanceof Array) {
-      let lastResult: ValueType;
-      for (const statement of statements)
-        lastResult = statement.accept(this);
-
-      return lastResult;
-    } else
-      return statements.accept(this);
-  }
-
-  private startRecursion(token: Token<undefined>): void {
+  public startRecursion(token: Token<undefined>): void {
     this.recursionDepth++;
     if (this.recursionDepth < MAX_RECURSION_DEPTH) return;
     throw new RuntimeError(`Stack overflow: Recursion depth of ${MAX_RECURSION_DEPTH} exceeded`, token);
   }
 
-  private endRecursion(level = 1): void {
+  public endRecursion(level = 1): void {
     this.recursionDepth -= level;
+  }
+
+  public execute(statement: AST.Statement): void {
+    this.evaluate(statement);
+  }
+
+  public evaluate<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement>(statements: T | AST.Statement[]): ValueType {
+    if (statements instanceof AST.Node)
+      return statements.accept(this);
+    else {
+      let lastResult: ValueType;
+      for (const statement of statements)
+        lastResult = statement.accept(this);
+
+      return lastResult;
+    }
   }
 }

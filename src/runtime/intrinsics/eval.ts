@@ -1,5 +1,5 @@
 import { ValueType } from "../../code-analysis/type-checker";
-import Intrinsic from "../types/intrinsic";
+import Intrinsic from "../values/intrinsic";
 import SingularType from "../../code-analysis/type-checker/types/singular-type";
 
 export default class Eval extends Intrinsic.Function {

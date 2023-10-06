@@ -1,4 +1,4 @@
-import { BindingError } from "../../../errors";
+import { BindingError, TypeError } from "../../../errors";
 import { BoundExpression, BoundStatement } from "./bound-node";
 import { INDEX_TYPE } from "../types/type-sets";
 import type { Token } from "../../syntax/token";
@@ -141,6 +141,11 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   public visitCallExpression(expr: CallExpression): BoundCallExpression {
     const callee = this.bind(expr.callee);
     const args = expr.args.map(arg => this.bind(arg));
+
+    // if we add lambdas we put that here too
+    if (!(callee instanceof BoundIdentifierExpression && callee.type.isFunction()))
+      throw new TypeError(`Attempt to call '${callee.type.toString()}'`, callee.token);
+
     return new BoundCallExpression(callee, args);
   }
 

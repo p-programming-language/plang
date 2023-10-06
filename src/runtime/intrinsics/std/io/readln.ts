@@ -1,6 +1,6 @@
 import reader from "readline-sync";
 
-import Intrinsic from "../../../types/intrinsic";
+import Intrinsic from "../../../values/intrinsic";
 import UnionType from "../../../../code-analysis/type-checker/types/union-type";
 import SingularType from "../../../../code-analysis/type-checker/types/singular-type";
 

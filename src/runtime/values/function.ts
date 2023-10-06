@@ -11,18 +11,13 @@ const MAX_FN_PARAMS = 255;
 
 export default class PFunction<A extends ValueType[] = ValueType[], R extends ValueType = ValueType> extends Callable<A, R> {
   public override readonly type = CallableType.Function;
-  private nonNullableParameters: VariableDeclarationStatement[] = [];
+  private nonNullableParameters = this.parameters.filter(param => param.initializer !== undefined);
 
   public constructor(
     private readonly interpreter: Interpreter,
     private readonly closure: Scope,
     private readonly definition: FunctionDeclarationStatement
-  ) {
-
-    // assign default values & initialize param variables
-    super();
-    this.nonNullableParameters = this.parameters.filter(param => param.initializer !== undefined);
-  }
+  ) { super(); }
 
   public call(...args: A): R | undefined {
     this.interpreter.scope = new Scope(this.closure);
@@ -34,6 +29,7 @@ export default class PFunction<A extends ValueType[] = ValueType[], R extends Va
       });
     }
 
+    this.interpreter.startRecursion(this.definition.token);
     try {
       this.interpreter.execute(this.definition.body);
     } catch(e) {
@@ -43,7 +39,8 @@ export default class PFunction<A extends ValueType[] = ValueType[], R extends Va
       throw e;
     }
 
-    this.interpreter.scope = this.interpreter.scope.unwrap()!;
+    this.interpreter.endRecursion();
+    this.interpreter.scope = this.interpreter.scope.enclosing ?? this.interpreter.scope;
   }
 
   public get arity(): number | Range {
@@ -57,6 +54,6 @@ export default class PFunction<A extends ValueType[] = ValueType[], R extends Va
   }
 
   private get parameters(): VariableDeclarationStatement[] {
-    return this.definition.parameters; // temporary lol
+    return this.definition.parameters;
   }
 }
