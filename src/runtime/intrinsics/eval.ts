@@ -7,10 +7,10 @@ export default class Eval extends Intrinsic.Function {
   public readonly returnType = new SingularType("any");
 
   public call(code: string): ValueType {
-    const enclosingResultOutputEnabled = this.interpreter.runner.executionOptions.outputResult;
-    this.interpreter.runner.executionOptions.outputResult = false;
-    const result = this.interpreter.runner.doString(code);
-    this.interpreter.runner.executionOptions.outputResult = enclosingResultOutputEnabled;
+    const enclosingResultOutputEnabled = this.intrinsics.interpreter.runner.executionOptions.outputResult;
+    this.intrinsics.interpreter.runner.executionOptions.outputResult = false;
+    const result = this.intrinsics.interpreter.runner.doString(code);
+    this.intrinsics.interpreter.runner.executionOptions.outputResult = enclosingResultOutputEnabled;
     return result;
   }
 }
