@@ -12,9 +12,8 @@ import Binder from "../src/code-analysis/type-checker/binder";
 import Resolver from "../src/code-analysis/resolver";
 import Interpreter from "../src/runtime/interpreter";
 import PValue from "../src/runtime/types/value";
+import ASTViewer from "./classes/ast-viewer";
 import pkg = require("../package.json");
-import AST from "./code-analysis/parser/ast";
-import { BoundNode } from "./code-analysis/type-checker/binder/bound-node";
 
 interface PExecutionOptions {
   outputAST: boolean;
@@ -27,11 +26,10 @@ const os = platform();
 export default class P {
   private binder = new Binder;
   private resolver = new Resolver;
-  private typeChecker = new TypeChecker;
-  private interpreter = new Interpreter(this, this.resolver, this.binder);
+  public typeChecker = new TypeChecker;
+  public interpreter = new Interpreter(this, this.resolver, this.binder);
   private replActive = false;
   private replIndentation = 0;
-  private astViewerActive = false;
 
   public version = "v" + pkg.version;
   public executionOptions: PExecutionOptions = {
@@ -105,7 +103,7 @@ export default class P {
   }
 
   private didInputDirectives(code: string): boolean {
-    switch (code) {
+    switch (code.toLowerCase()) {
       case "@clear": {
         clearTerminal();
         this.outputVersion();
@@ -132,34 +130,10 @@ export default class P {
         return true;
       }
       case "@ast_viewer": {
-        let option = undefined;
-        while (option !== "bound" && option !== "regular")
-          option = reader.question("Which AST do you want to view (regular/bound)? ").trim().toLowerCase();
-
-        console.log(`Entering ${option === "bound" ? option : ""} AST viewer`.green.gray_bg(6));
-        this.astViewerActive = true;
         this.stopREPL();
         this.refreshResources();
-
-        const source = reader.question("Input the source code you want to view the AST of: ").trim();
-        const parser = new Parser(source);
-        const ast = parser.parse();
-        if (option === "bound") {
-          const boundAST = this.binder.bindStatements(ast);
-          // const viewer = new ASTViewer<AST.Node>(this);
-          // viewer.start();
-        } else {
-          // const viewer = new ASTViewer<BoundNode>(this);
-          // viewer.start();
-        }
-
+        ASTViewer.start(this.binder);
         this.refreshResources();
-        break;
-      }
-      case "@exit": {
-        if (!this.astViewerActive) return false;
-        this.astViewerActive = false;
-        this.startREPL();
         break;
       }
     }

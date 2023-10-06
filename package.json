@@ -33,7 +33,6 @@
   "license": "LGPL-2.1-or-later",
   "dependencies": {
     "colors.ts": "^1.0.20",
-    "keypress": "^0.2.1",
     "mocha": "^10.2.0",
     "os": "^0.1.2",
     "readline-sync": "^1.4.10",
