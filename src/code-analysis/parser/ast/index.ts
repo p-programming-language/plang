@@ -2,8 +2,9 @@ import util from "util";
 
 import type { Token } from "../../syntax/token";
 import type { LiteralExpression } from "./expressions/literal";
-import type { ArrayLiteralExpression } from "./expressions/array-literal";
 import type { StringInterpolationExpression } from "./expressions/string-interpolation";
+import type { ArrayLiteralExpression } from "./expressions/array-literal";
+import type { ObjectLiteralExpression } from "./expressions/object-literal";
 import type { ParenthesizedExpression } from "./expressions/parenthesized";
 import type { UnaryExpression } from "./expressions/unary";
 import type { BinaryExpression } from "./expressions/binary";
@@ -24,7 +25,9 @@ import type { WhileStatement } from "./statements/while";
 import type { FunctionDeclarationStatement } from "./statements/function-declaration";
 import type { ReturnStatement } from "./statements/return";
 import type BoundLiteralExpression from "../../type-checker/binder/bound-expressions/literal";
+import type BoundStringInterpolationExpression from "../../type-checker/binder/bound-expressions/string-interpolation";
 import type BoundArrayLiteralExpression from "../../type-checker/binder/bound-expressions/array-literal";
+import type BoundObjectLiteralExpression from "../../type-checker/binder/bound-expressions/object-literal";
 import type BoundParenthesizedExpression from "../../type-checker/binder/bound-expressions/parenthesized";
 import type BoundBinaryExpression from "../../type-checker/binder/bound-expressions/binary";
 import type BoundUnaryExpression from "../../type-checker/binder/bound-expressions/unary";
@@ -44,7 +47,6 @@ import type BoundIfStatement from "../../type-checker/binder/bound-statements/if
 import type BoundWhileStatement from "../../type-checker/binder/bound-statements/if";
 import type BoundFunctionDeclarationStatement from "../../type-checker/binder/bound-statements/function-declaration";
 import type BoundReturnStatement from "../../type-checker/binder/bound-statements/return";
-import type BoundStringInterpolationExpression from "../../type-checker/binder/bound-expressions/string-interpolation";
 
 namespace AST {
   export abstract class Node {
@@ -76,6 +78,7 @@ namespace AST {
       public abstract visitUnaryExpression(expr: UnaryExpression): R
       public abstract visitParenthesizedExpression(expr: ParenthesizedExpression): R
       public abstract visitStringInterpolationExpression(expr: StringInterpolationExpression): R
+      public abstract visitObjectLiteralExpression(expr: ObjectLiteralExpression): R
       public abstract visitArrayLiteralExpression(expr: ArrayLiteralExpression): R
       public abstract visitLiteralExpression(expr: LiteralExpression): R
     }
@@ -104,6 +107,7 @@ namespace AST {
       public abstract visitUnaryExpression(expr: BoundUnaryExpression): R
       public abstract visitParenthesizedExpression(expr: BoundParenthesizedExpression): R
       public abstract visitStringInterpolationExpression(expr: BoundStringInterpolationExpression): R
+      public abstract visitObjectLiteralExpression(expr: BoundObjectLiteralExpression): R
       public abstract visitArrayLiteralExpression(expr: BoundArrayLiteralExpression): R
       public abstract visitLiteralExpression(expr: BoundLiteralExpression): R
     }

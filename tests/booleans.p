@@ -1,2 +1,2 @@
-false
-true
+bool pSucks = false
+bool pIsAwesome = true

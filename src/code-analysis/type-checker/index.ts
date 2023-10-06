@@ -1,19 +1,26 @@
 import { TypeError } from "../../errors";
 import { BoundExpression, BoundNode, BoundStatement } from "./binder/bound-node";
+import { INDEX_TYPE } from "./types/type-sets";
+import type { Token } from "../syntax/token";
 import type { Type } from "./types/type";
 import type PValue from "../../runtime/types/value";
 import type FunctionType from "./types/function-type";
+import type InterfaceType from "./types/interface-type";
 import ArrayType from "./types/array-type";
 import SingularType from "./types/singular-type";
 import UnionType from "./types/union-type";
+import Syntax from "../syntax/syntax-type";
 import AST from "../parser/ast";
 
+import BoundLiteralExpression from "./binder/bound-expressions/literal";
 import BoundArrayLiteralExpression from "./binder/bound-expressions/array-literal";
+import type BoundObjectLiteralExpression from "./binder/bound-expressions/object-literal";
 import type BoundStringInterpolationExpression from "./binder/bound-expressions/string-interpolation";
 import type BoundParenthesizedExpression from "./binder/bound-expressions/parenthesized";
 import type BoundUnaryExpression from "./binder/bound-expressions/unary";
 import type BoundBinaryExpression from "./binder/bound-expressions/binary";
 import type BoundTernaryExpression from "./binder/bound-expressions/ternary";
+import BoundIdentifierExpression from "./binder/bound-expressions/identifier";
 import type BoundCompoundAssignmentExpression from "./binder/bound-expressions/compound-assignment";
 import type BoundVariableAssignmentExpression from "./binder/bound-expressions/variable-assignment";
 import type BoundPropertyAssignmentExpression from "./binder/bound-expressions/property-assignment";
@@ -29,7 +36,12 @@ import type BoundWhileStatement from "./binder/bound-statements/while";
 import type BoundFunctionDeclarationStatement from "./binder/bound-statements/function-declaration";
 import type BoundReturnStatement from "./binder/bound-statements/return";
 
-export type ValueType = PValue | string | number | boolean | null | undefined | void | ValueType[];
+export type ValueType = SingularValue | ValueType[] | ObjectType;
+export type SingularValue = PValue | string | number | boolean | null | undefined | void;
+export type IndexType = string | number;
+export interface ObjectType {
+  [key: IndexType]: ValueType;
+};
 
 // NOTE: always call check() before assert()
 
@@ -90,8 +102,14 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
   public visitIndexExpression(expr: BoundIndexExpression): void {
     this.check(expr.object);
     this.check(expr.index);
-    this.assert(expr.object, expr.object.type, new ArrayType(new SingularType("any")));
-    this.assert(expr.index, expr.index.type, new SingularType("int"))
+    if (
+      !expr.object.type.isAssignableTo(new ArrayType(new SingularType("any")))
+      && !expr.object.type.isInterface()
+    ) {
+      throw new TypeError(`Attempt to index '${expr.object.type.toString()}'`, expr.object.token);
+    }
+
+    this.assert(expr.index, expr.index.type, INDEX_TYPE);
   }
 
   public visitCallExpression(expr: BoundCallExpression): void {
@@ -155,6 +173,36 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
   public visitStringInterpolationExpression(expr: BoundStringInterpolationExpression): void {
     for (const part of expr.parts)
       this.check(part);
+  }
+
+  public visitObjectLiteralExpression(expr: BoundObjectLiteralExpression): void {
+    for (const [key, value] of expr.properties) {
+      this.check(key);
+      this.check(value);
+      if (key instanceof BoundIdentifierExpression) {
+        const propertyName = key.name.lexeme;
+        const valueType = this.getValueType(expr.type, propertyName, key.name);
+        this.assert(value, value.type, valueType);
+      } else if (key instanceof BoundLiteralExpression && key.token.syntax === Syntax.String) {
+        const propertyName: string = key.token.value;
+        const valueType = this.getValueType(expr.type, propertyName, key.token);
+        this.assert(value, value.type, valueType);
+      } else {
+        const valueType = key.type.isAssignableTo(INDEX_TYPE) && expr.type.indexSignatures.get(<SingularType<"string"> | SingularType<"int">>key.type);
+        if (!valueType)
+          throw new TypeError(`Index signature for '${key.type.toString()}' does not exist on '${expr.type.name}'`, key.token);
+
+        this.assert(value, value.type, valueType);
+      }
+    }
+  }
+
+  private getValueType(interfaceType: InterfaceType, propertyName: string, token: Token): Type {
+    const valueType = interfaceType.properties.get(propertyName);
+    if (!valueType)
+      throw new TypeError(`Property '${propertyName}' does not exist on '${interfaceType.name}'`, token);
+
+    return valueType;
   }
 
   public visitArrayLiteralExpression(expr: BoundArrayLiteralExpression): void {

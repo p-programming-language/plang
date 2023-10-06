@@ -1,6 +1,6 @@
 
 import { Token } from "../syntax/token";
-import { ParsingError } from "../../errors";
+import { SyntaxError } from "../../errors";
 import { ValueType } from "../type-checker";
 import { fakeToken } from "../../utility";
 import ArrayStepper from "../array-stepper";
@@ -34,6 +34,7 @@ import { PropertyAssignmentExpression } from "./ast/expressions/property-assignm
 import { FunctionDeclarationStatement } from "./ast/statements/function-declaration";
 import { ReturnStatement } from "./ast/statements/return";
 import { StringInterpolationExpression } from "./ast/expressions/string-interpolation";
+import { ObjectLiteralExpression } from "./ast/expressions/object-literal";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
@@ -89,12 +90,27 @@ export default class Parser extends ArrayStepper<Token> {
       return new ReturnStatement(keyword, expr);
     }
 
-    if (this.match(Syntax.LBrace))
+    if (this.match(Syntax.LBrace)) {
+      const brace = this.previous<undefined>();
+      if (this.match(Syntax.RBrace))
+        return new ExpressionStatement(new ObjectLiteralExpression(brace, new Map));
+
+      if (this.check(Syntax.Identifier) && this.check(Syntax.Colon, 1))
+        return new ExpressionStatement(this.parseObjectContents(brace));
+      else if (this.check(Syntax.LBracket)) {
+        let offset = 1;
+        while (!this.check(Syntax.RBracket, offset))
+          ++offset;
+
+        if (this.check(Syntax.Colon, offset + 1))
+          return new ExpressionStatement(this.parseObjectContents(brace));
+      }
+
       return this.parseBlock();
+    }
 
     return this.parseExpressionStatement();
   }
-
 
   // parse declarations like classes, variables, functions, etc.
   private declaration(): AST.Statement {
@@ -203,7 +219,7 @@ export default class Parser extends ArrayStepper<Token> {
       const value = <AST.Expression>this.parseExpression();
 
       if (!this.isAssignmentTarget(left))
-        throw new ParsingError("Invalid assignment target", this.current);
+        throw new SyntaxError("Invalid assignment target", this.current);
 
       if (left instanceof IdentifierExpression)
         return isStatement ?
@@ -223,7 +239,7 @@ export default class Parser extends ArrayStepper<Token> {
       const operator = this.previous<undefined>();
       const right = this.parseIndex();
       if (!this.isAssignmentTarget(left))
-        throw new ParsingError("Invalid compound assignment target", this.current);
+        throw new SyntaxError("Invalid compound assignment target", this.current);
 
       left = new CompoundAssignmentExpression(<IdentifierExpression | IndexExpression>left, right, operator);
     }
@@ -353,10 +369,12 @@ export default class Parser extends ArrayStepper<Token> {
 
   private parseIndex(): AST.Expression {
     let object = this.parseCall();
-    if (!this.check(Syntax.RBracket, -1) && !this.check(Syntax.RBrace, -1) && !this.check(Syntax.Identifier, -1))
-      return object;
 
-    while (this.match(Syntax.LBracket)) {
+    while (this.check(Syntax.LBracket)) {
+      this.consume(Syntax.LBracket);
+      if (!this.checkMultiple([Syntax.RBracket, Syntax.RBrace, Syntax.RParen, Syntax.Identifier], -2))
+        continue;
+
       const bracket = this.previous<undefined>();
       const index = this.parseExpression();
       this.consume(Syntax.RBracket, "']'");
@@ -386,25 +404,61 @@ export default class Parser extends ArrayStepper<Token> {
       const operator = this.previous<undefined>();
       const operand = this.parseUnary();
       if (!this.isAssignmentTarget(operand) && (operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus))
-        throw new ParsingError("Invalid increment/decrement target", operand.token);
+        throw new SyntaxError("Invalid increment/decrement target", operand.token);
 
       return new UnaryExpression(operator, operand);
     } else
       return this.parsePrimary();
   }
 
-  private isAssignmentTarget(operand: AST.Expression): boolean {
-    return operand instanceof IdentifierExpression
-      || operand instanceof IndexExpression;
-  }
-
   private parsePrimary(): AST.Expression {
+    if (this.match(Syntax.LParen)) {
+      const expr = this.parseExpression();
+      this.consume(Syntax.RParen, "')'");
+      return new ParenthesizedExpression(expr);
+    }
+
     if (this.matchSet(LITERAL_SYNTAXES)) {
       const token = this.previous();
+      if (this.checkMultiple(LITERAL_SYNTAXES, -2)) {
+        let message = "Unexpected ";
+        switch(token.syntax) {
+          case Syntax.Float:
+          case Syntax.Int: {
+            message += "number";
+            break;
+          }
+          case Syntax.String: {
+            message += "string";
+            break;
+          }
+          case Syntax.Boolean: {
+            message += "boolean";
+            break;
+          }
+          default: {
+            message += "literal";
+            break;
+          }
+        }
+
+        throw new SyntaxError(message, token);
+      }
+
       return token.syntax === Syntax.String && token.lexeme.includes("%{") ?
         this.parseStringInterpolation(<Token<string, Syntax.String>>token)
         : new LiteralExpression(token);
-    } if (this.match(Syntax.LBracket)) {
+    }
+
+    if (this.match(Syntax.LBrace)) {
+      const brace = this.previous<undefined>();
+      if (this.match(Syntax.RBrace))
+        return new ObjectLiteralExpression(brace, new Map);
+
+      return this.parseObjectContents(brace);
+    }
+
+    if (this.match(Syntax.LBracket)) {
       const bracket = this.previous<undefined>();
       const elements = this.parseExpressionList();
       this.consume(Syntax.RBracket, "']'");
@@ -413,13 +467,33 @@ export default class Parser extends ArrayStepper<Token> {
 
     if (this.match(Syntax.Identifier))
       return new IdentifierExpression(this.previous());
-    if (this.match(Syntax.LParen)) {
-      const expr = this.parseExpression();
-      this.consume(Syntax.RParen, "')'");
-      return new ParenthesizedExpression(expr);
+
+    throw new SyntaxError(`Expected expression, got '${this.current.lexeme}'`, this.current);
+  }
+
+  private parseObjectContents(brace: Token<undefined, Syntax>) {
+    const keyValuePairs = [this.parseObjectKeyValuePair()];
+    while (this.match(Syntax.Comma))
+      keyValuePairs.push(this.parseObjectKeyValuePair());
+
+    this.consume(Syntax.RBrace, "'}'");
+    return new ObjectLiteralExpression(brace, new Map(keyValuePairs));
+  }
+
+  private parseObjectKeyValuePair(): [AST.Expression, AST.Expression] {
+    let key;
+    if (this.match(Syntax.Identifier)) {
+      const identifier = this.previous<undefined, Syntax.Identifier>();
+      key = new LiteralExpression(fakeToken(Syntax.String, identifier.lexeme, identifier.lexeme));
+    } else {
+      this.consume(Syntax.LBracket, "'['");
+      key = this.parseExpression();
+      this.consume(Syntax.RBracket, "']'");
     }
 
-    throw new ParsingError(`Expected expression, got '${this.current.lexeme}'`, this.current);
+    this.consume(Syntax.Colon, "':'");
+    const value = this.parseExpression();
+    return [key, value];
   }
 
   private parseStringInterpolation(string: Token<string, Syntax.String>): StringInterpolationExpression {
@@ -455,6 +529,11 @@ export default class Parser extends ArrayStepper<Token> {
     }
 
     return rawParts;
+  }
+
+  private isAssignmentTarget(operand: AST.Expression): boolean {
+    return operand instanceof IdentifierExpression
+      || operand instanceof IndexExpression;
   }
 
   private parseType(): AST.TypeRef {
@@ -497,7 +576,7 @@ export default class Parser extends ArrayStepper<Token> {
 
   private parseSingularType(): SingularTypeExpression {
     if (!this.checkType())
-      throw new ParsingError(`Expected type, got '${this.current.lexeme}'`, this.current);
+      throw new SyntaxError(`Expected type, got '${this.current.lexeme}'`, this.current);
 
     const typeKeyword = this.advance<undefined>();
     let typeArgs: AST.TypeRef[] | undefined;
@@ -540,8 +619,8 @@ export default class Parser extends ArrayStepper<Token> {
     return <Token<V>>token;
   }
 
-  private previous<V extends ValueType = ValueType>(): Token<V> {
-    return <Token<V>>this.peek(-1)!;
+  private previous<V extends ValueType = ValueType, S extends Syntax = Syntax>(): Token<V, S> {
+    return <Token<V, S>>this.peek(-1)!;
   }
 
   private matchSet(syntaxSet: SyntaxSet): boolean {
@@ -585,7 +664,7 @@ export default class Parser extends ArrayStepper<Token> {
   private consume<V extends ValueType = ValueType>(syntax: Syntax, expectedOverride?: string): Token<V> {
     const gotSyntax = this.current ? Syntax[this.current.syntax] : "EOF";
     if (!this.match(syntax))
-      throw new ParsingError(`Expected ${expectedOverride ?? `'${Syntax[syntax]}'`}, got ${gotSyntax}`, this.current);
+      throw new SyntaxError(`Expected ${expectedOverride ?? `'${Syntax[syntax]}'`}, got ${gotSyntax}`, this.current);
 
     return this.previous();
   }

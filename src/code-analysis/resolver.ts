@@ -4,6 +4,8 @@ import ScopeContext from "./scope-context";
 import AST from "../code-analysis/parser/ast";
 
 import type { ArrayLiteralExpression } from "./parser/ast/expressions/array-literal";
+import type { ObjectLiteralExpression } from "./parser/ast/expressions/object-literal";
+import type { StringInterpolationExpression } from "./parser/ast/expressions/string-interpolation";
 import type { ParenthesizedExpression } from "../code-analysis/parser/ast/expressions/parenthesized";
 import type { UnaryExpression } from "../code-analysis/parser/ast/expressions/unary";
 import type { BinaryExpression } from "../code-analysis/parser/ast/expressions/binary";
@@ -23,7 +25,6 @@ import type { IfStatement } from "./parser/ast/statements/if";
 import type { WhileStatement } from "./parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "./parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "./parser/ast/statements/return";
-import { StringInterpolationExpression } from "./parser/ast/expressions/string-interpolation";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   public readonly locals = new Map<AST.Node, number>;
@@ -142,6 +143,13 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   public visitStringInterpolationExpression(expr: StringInterpolationExpression): void {
     for (const part of expr.parts)
       this.resolve(part);
+  }
+
+  public visitObjectLiteralExpression(expr: ObjectLiteralExpression): void {
+    for (const [key, value] of expr.properties) {
+      this.resolve(key);
+      this.resolve(value);
+    }
   }
 
   public visitArrayLiteralExpression(expr: ArrayLiteralExpression): void {

@@ -1,5 +1,6 @@
 import { BindingError } from "../../../errors";
-import type { BoundExpression, BoundStatement } from "./bound-node";
+import { BoundExpression, BoundStatement } from "./bound-node";
+import { INDEX_TYPE } from "../types/type-sets";
 import type { Token } from "../../syntax/token";
 import type { Type } from "../types/type";
 import type { ValueType } from "..";
@@ -8,13 +9,16 @@ import { BoundUnaryOperator } from "./bound-operators/unary";
 import VariableSymbol from "./variable-symbol";
 import SingularType from "../types/singular-type";
 import UnionType from "../types/union-type";
+import FunctionType from "../types/function-type";
+import InterfaceType from "../types/interface-type";
 import ArrayType from "../types/array-type";
 import Syntax from "../../syntax/syntax-type";
 import AST from "../../parser/ast";
 
-import type { LiteralExpression } from "../../parser/ast/expressions/literal";
-import type { ArrayLiteralExpression } from "../../parser/ast/expressions/array-literal";
+import { LiteralExpression } from "../../parser/ast/expressions/literal";
 import type { StringInterpolationExpression } from "../../parser/ast/expressions/string-interpolation";
+import type { ArrayLiteralExpression } from "../../parser/ast/expressions/array-literal";
+import type { ObjectLiteralExpression } from "../../parser/ast/expressions/object-literal";
 import type { ParenthesizedExpression } from "../../parser/ast/expressions/parenthesized";
 import type { UnaryExpression } from "../../parser/ast/expressions/unary";
 import type { BinaryExpression } from "../../parser/ast/expressions/binary";
@@ -39,7 +43,9 @@ import type { FunctionDeclarationStatement } from "../../parser/ast/statements/f
 import type { ReturnStatement } from "../../parser/ast/statements/return";
 
 import BoundLiteralExpression from "./bound-expressions/literal";
+import BoundStringInterpolationExpression from "./bound-expressions/string-interpolation";
 import BoundArrayLiteralExpression from "./bound-expressions/array-literal";
+import BoundObjectLiteralExpression from "./bound-expressions/object-literal";
 import BoundParenthesizedExpression from "./bound-expressions/parenthesized";
 import BoundUnaryExpression from "./bound-expressions/unary";
 import BoundBinaryExpression from "./bound-expressions/binary";
@@ -58,9 +64,7 @@ import BoundBlockStatement from "./bound-statements/block";
 import BoundIfStatement from "./bound-statements/if";
 import BoundWhileStatement from "./bound-statements/while";
 import BoundFunctionDeclarationStatement from "./bound-statements/function-declaration";
-import FunctionType from "../types/function-type";
 import BoundReturnStatement from "./bound-statements/return";
-import BoundStringInterpolationExpression from "./bound-expressions/string-interpolation";
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variableScopes: VariableSymbol[][] = [];
@@ -191,6 +195,32 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitStringInterpolationExpression(expr: StringInterpolationExpression): BoundStringInterpolationExpression {
     return new BoundStringInterpolationExpression(expr.parts.map(part => this.bind(part)));
+  }
+
+  public visitObjectLiteralExpression(expr: ObjectLiteralExpression): BoundObjectLiteralExpression {
+    const properties = new Map<BoundExpression, BoundExpression>();
+    for (const [key, value] of expr.properties)
+      properties.set(this.bind(key), this.bind(value));
+
+    // inferring interface type
+    const indexSignatures = new Map<SingularType<"string"> | SingularType<"int">, Type>();
+    const typeProperties = Array.from(properties.entries())
+      .map<[string | number, Type] | undefined>(([key, value]) => {
+        if (key instanceof BoundIdentifierExpression)
+          return [key.name.lexeme, value.type];
+        else if (key instanceof BoundLiteralExpression && key.token.syntax === Syntax.String)
+          return [key.token.value, value.type];
+        else {
+          if (!key.type.isAssignableTo(INDEX_TYPE))
+            throw new BindingError("An index signature parameter type must be 'string' or 'int'", key.token);
+
+          indexSignatures.set(<SingularType<"string"> | SingularType<"int">>key.type, value.type);
+        }
+      })
+      .filter((props): props is [string, Type] => props !== undefined);
+
+    const type = new InterfaceType(new Map<string, Type>(typeProperties), indexSignatures);
+    return new BoundObjectLiteralExpression(expr.token, properties, type);
   }
 
   public visitArrayLiteralExpression(expr: ArrayLiteralExpression): BoundExpression {

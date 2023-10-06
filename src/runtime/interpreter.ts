@@ -1,7 +1,5 @@
-import util from "util";
-
 import { RuntimeError } from "../errors";
-import type { ValueType } from "../code-analysis/type-checker";
+import type { IndexType, ObjectType, ValueType } from "../code-analysis/type-checker";
 import { Token } from "../code-analysis/syntax/token";
 import { fakeToken } from "../utility";
 import type { Callable } from "./types/callable";
@@ -16,8 +14,9 @@ import AST from "../code-analysis/parser/ast";
 import P from "../../tools/p";
 
 import { LiteralExpression } from "../code-analysis/parser/ast/expressions/literal";
-import type { ArrayLiteralExpression } from "../code-analysis/parser/ast/expressions/array-literal";
 import type { StringInterpolationExpression } from "../code-analysis/parser/ast/expressions/string-interpolation";
+import type { ArrayLiteralExpression } from "../code-analysis/parser/ast/expressions/array-literal";
+import type { ObjectLiteralExpression } from "../code-analysis/parser/ast/expressions/object-literal";
 import type { ParenthesizedExpression } from "../code-analysis/parser/ast/expressions/parenthesized";
 import type { UnaryExpression } from "../code-analysis/parser/ast/expressions/unary";
 import { BinaryExpression } from "../code-analysis/parser/ast/expressions/binary";
@@ -25,7 +24,9 @@ import type { TernaryExpression } from "../code-analysis/parser/ast/expressions/
 import { IdentifierExpression } from "../code-analysis/parser/ast/expressions/identifier";
 import { CompoundAssignmentExpression } from "../code-analysis/parser/ast/expressions/compound-assignment";
 import { VariableAssignmentExpression } from "../code-analysis/parser/ast/expressions/variable-assignment";
+import { PropertyAssignmentExpression } from "../code-analysis/parser/ast/expressions/property-assignment";
 import type { CallExpression } from "../code-analysis/parser/ast/expressions/call";
+import type { IndexExpression } from "../code-analysis/parser/ast/expressions";
 import type { ExpressionStatement } from "../code-analysis/parser/ast/statements/expression";
 import type { PrintlnStatement } from "../code-analysis/parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../code-analysis/parser/ast/statements/variable-assignment";
@@ -33,8 +34,6 @@ import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/s
 import type { BlockStatement } from "../code-analysis/parser/ast/statements/block";
 import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 import type { WhileStatement } from "../code-analysis/parser/ast/statements/while";
-import type { IndexExpression } from "../code-analysis/parser/ast/expressions";
-import { PropertyAssignmentExpression } from "../code-analysis/parser/ast/expressions/property-assignment";
 import type { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "../code-analysis/parser/ast/statements/return";
 
@@ -121,7 +120,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public visitIndexExpression(expr: IndexExpression): ValueType {
     const object = this.evaluate(expr.object);
     const index = this.evaluate(expr.index);
-    return (<any[]>object)[<number>index]; // modify to work with objects, any[] | Record and number | string
+    return (<ValueType[] | ObjectType>object)[<any>index];
   }
 
   public visitCallExpression(expr: CallExpression): ValueType {
@@ -282,7 +281,15 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     ).join("");
   }
 
-  public visitArrayLiteralExpression(expr: ArrayLiteralExpression): ValueType {
+  public visitObjectLiteralExpression(expr: ObjectLiteralExpression): ObjectType {
+    const object: ObjectType = {};
+    for (const [key, value] of expr.properties)
+      object[<IndexType>this.evaluate(key)] = this.evaluate(value);
+
+    return object;
+  }
+
+  public visitArrayLiteralExpression(expr: ArrayLiteralExpression): ValueType[] {
     return expr.elements.map(element => this.evaluate(element));
   }
 

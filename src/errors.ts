@@ -30,9 +30,9 @@ export class TokenizationError extends PError {
   }
 }
 
-export class ParsingError extends PError {
+export class SyntaxError extends PError {
   public constructor(message: string, token: Token) {
-    super(ParsingError.name, message, token.locationSpan.start.line, token.locationSpan.start.column);
+    super(SyntaxError.name, message, token.locationSpan.start.line, token.locationSpan.start.column);
   }
 }
 

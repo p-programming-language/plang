@@ -1,10 +1,3 @@
-1
-2
-3
-4
-5
-6
-7
-8
-9
-0
+int one = 1
+int two = 2
+int three = 3
