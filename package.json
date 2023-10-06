@@ -7,13 +7,15 @@
   "main": "dist/src/main.js",
   "bin": {
     "pint": "dist/tools/pint.js",
-    "prepl": "dist/tools/repl.js"
+    "prepl": "dist/tools/repl.js",
+    "ast-viewer": "dist/tools/ast-viewer.js"
   },
   "scripts": {
     "test": "mocha dist/tools/unit-tests -j 4 --extension js",
     "build": "tsc --skipLibCheck",
+    "start": "node dist/tools/pint.js",
     "repl": "node dist/tools/repl.js",
-    "pint": "node dist/tools/pint.js",
+    "ast-viewer": "dist/tools/ast-viewer.js",
     "path": "tsc --skipLibCheck && npm link",
     "docs": "npx typedoc",
     "push": "npm run docs -s && git add . && git commit -m 'docs: (autogenerate)' && git push -u"
@@ -31,6 +33,7 @@
   "license": "LGPL-2.1-or-later",
   "dependencies": {
     "colors.ts": "^1.0.20",
+    "keypress": "^0.2.1",
     "mocha": "^10.2.0",
     "os": "^0.1.2",
     "readline-sync": "^1.4.10",

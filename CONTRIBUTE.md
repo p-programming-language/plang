@@ -46,7 +46,7 @@ When adding a private tool: Do everything the same, but don't add it to `package
     - Info:
         - Name: prepl
 - p.ts
-    - This is a tool used to execute a P string or file. Used by `prepl` and `pint`.
+    - This is a tool used to execute a P string or file, or start a REPL. Used by `pint` and `prepl`.
 - unit-tests/
     - This is where all unit tests reside (via mocha). These tests assure that each aspect of the lexer, parser, binder, resolver, type checker, and interpreter works as expected.
 
