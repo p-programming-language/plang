@@ -6,8 +6,11 @@ import { fakeToken } from "../../utility";
 import ArrayStepper from "../array-stepper";
 import Lexer from "../tokenization/lexer";
 import Syntax from "../tokenization/syntax-type";
-import * as SyntaxSets from "../tokenization/syntax-sets";
+import TypeAnalyzer from "./type-analyzer";
 import AST from "./ast";
+
+import * as SyntaxSets from "../tokenization/syntax-sets";
+const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 import { LiteralExpression } from "./ast/expressions/literal";
 import { ParenthesizedExpression } from "./ast/expressions/parenthesized";
@@ -35,15 +38,13 @@ import { FunctionDeclarationStatement } from "./ast/statements/function-declarat
 import { ReturnStatement } from "./ast/statements/return";
 import { StringInterpolationExpression } from "./ast/expressions/string-interpolation";
 import { ObjectLiteralExpression } from "./ast/expressions/object-literal";
-const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
+import { InterfaceTypeExpression } from "./ast/type-nodes/interface-type";
+import { TypeDeclarationStatement } from "./ast/statements/type-declaration";
 
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
 
 export default class Parser extends ArrayStepper<Token> {
   public readonly lexer: Lexer;
-  private readonly typeScopes: string[][] = [
-    ["int", "float", "string", "bool", "undefined", "null", "void", "any", "Array"]
-  ];
 
   public constructor(source: string) {
     super();
@@ -61,7 +62,7 @@ export default class Parser extends ArrayStepper<Token> {
     while (!until())
       statements.push(this.declaration());
 
-    return statements;
+     return statements;
   }
 
   /**
@@ -136,6 +137,12 @@ export default class Parser extends ArrayStepper<Token> {
       return declaration;
     }
 
+    if (this.match(Syntax.Interface)) {
+      const declaration = this.parseInterfaceType();
+      this.consumeSemicolons();
+      return new TypeDeclarationStatement(declaration.name, declaration);
+    }
+
     const stmt = this.parseStatement();
     this.consumeSemicolons();
     return stmt;
@@ -191,9 +198,7 @@ export default class Parser extends ArrayStepper<Token> {
 
   private parseBlock(): BlockStatement {
     const brace = this.previous<undefined>();
-    this.typeScopes.push([]);
     const statements = this.parse(() => this.match(Syntax.RBrace));
-    this.typeScopes.pop();
     return new BlockStatement(brace, statements);
   }
 
@@ -403,10 +408,7 @@ export default class Parser extends ArrayStepper<Token> {
     let callee = this.parseUnary();
 
     while (this.match(Syntax.LParen)) {
-      let args: AST.Expression[] = [];
-      if (!this.check(Syntax.RParen))
-        args = this.parseExpressionList();
-
+      const args = this.parseExpressionList(Syntax.RParen);
       this.consume(Syntax.RParen, "')'");
       callee = new CallExpression(<AST.Expression>callee, args);
     }
@@ -478,7 +480,7 @@ export default class Parser extends ArrayStepper<Token> {
 
     if (this.match(Syntax.LBracket)) {
       const bracket = this.previous<undefined>();
-      const elements = this.parseExpressionList();
+      const elements = this.parseExpressionList(Syntax.RBracket);
       this.consume(Syntax.RBracket, "']'");
       return new ArrayLiteralExpression(bracket, elements);
     }
@@ -494,8 +496,8 @@ export default class Parser extends ArrayStepper<Token> {
    * @param brace The left brace token
    */
   private parseObjectContents(brace: Token<undefined, Syntax>): ObjectLiteralExpression {
-    const keyValuePairs = [this.parseObjectKeyValuePair()];
-    while (this.match(Syntax.Comma))
+    const keyValuePairs = [ this.parseObjectKeyValuePair() ];
+    while (this.match(Syntax.Comma) && !this.check(Syntax.RBrace))
       keyValuePairs.push(this.parseObjectKeyValuePair());
 
     this.consume(Syntax.RBrace, "'}'");
@@ -562,6 +564,57 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   /**
+   * This has no precedence, since it's a declaration
+   *
+   * This is the reason it is not grouped with the below methods.
+   */
+  private parseInterfaceType(): InterfaceTypeExpression {
+    const name = this.consume<undefined>(Syntax.Identifier);
+    this.consume<undefined>(Syntax.LBrace, "'{'");
+    const properties = new Map<LiteralExpression<string, Syntax>, AST.TypeRef>();
+    const indexSignatures = new Map<AST.TypeRef, AST.TypeRef>();
+
+    if (!this.match(Syntax.RBrace)) {
+      const contents = this.parseInterfaceContents();
+      for (const [key, value] of contents)
+        if (key instanceof LiteralExpression)
+          properties.set(key, value);
+        else
+          indexSignatures.set(key, value);
+
+      this.consume<undefined>(Syntax.RBrace, "'}'");
+    }
+
+    const typeRef = new InterfaceTypeExpression(name, properties, indexSignatures);
+    TypeAnalyzer.defineType(name.lexeme, typeRef);
+    return typeRef;
+  }
+
+  private parseInterfaceContents(): Map<LiteralExpression<string, Syntax> | AST.TypeRef, AST.TypeRef> {
+    const keyValuePairs = [ this.parseInterfaceKeyValuePair() ];
+    while (this.match(Syntax.Comma, Syntax.Semicolon) && !this.check(Syntax.RBrace))
+      keyValuePairs.push(this.parseInterfaceKeyValuePair());
+
+    return new Map(keyValuePairs);
+  }
+
+  private parseInterfaceKeyValuePair(): [LiteralExpression<string, Syntax> | AST.TypeRef, AST.TypeRef] {
+    let key;
+    if (this.match(Syntax.Identifier)) {
+      const identifier = this.previous<undefined, Syntax.Identifier>();
+      key = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
+    } else {
+      this.consume(Syntax.LBracket, "'['");
+      key = this.parseType();
+      this.consume(Syntax.RBracket, "']'");
+    }
+
+    this.consume(Syntax.Colon, "':'");
+    const value = this.parseType();
+    return [key, value];
+  }
+
+  /**
    * Parses a type reference
    */
   private parseType(): AST.TypeRef {
@@ -607,11 +660,15 @@ export default class Parser extends ArrayStepper<Token> {
       throw new ParserSyntaxError(`Expected type, got '${this.current.lexeme}'`, this.current);
 
     const typeKeyword = this.advance<undefined, Syntax.Identifier>();
+    const typeName = typeKeyword.lexeme;
     let typeArgs: AST.TypeRef[] | undefined;
     if (this.match(Syntax.LT)) {
       typeArgs = this.parseTypeList();
       this.consume(Syntax.GT, "'>'");
     }
+
+    if (TypeAnalyzer.isCustomType(typeName))
+      return TypeAnalyzer.getRef(typeName)!;
 
     return new SingularTypeExpression(typeKeyword, typeArgs);
   }
@@ -636,12 +693,12 @@ export default class Parser extends ArrayStepper<Token> {
   /**
    * Parses a list of expressions separated by commas
    */
-  private parseExpressionList(): AST.Expression[] {
-    if (this.checkMultiple([Syntax.RBracket, Syntax.RParen]))
+  private parseExpressionList(closer?: Syntax): AST.Expression[] {
+    if (closer && this.check(closer))
       return [];
 
     const expressions = [ this.parseExpression() ];
-    while (this.match(Syntax.Comma))
+    while (this.match(Syntax.Comma) && (closer !== undefined ? !this.check(closer) : true))
       expressions.push(this.parseExpression());
 
     return expressions;
@@ -692,18 +749,7 @@ export default class Parser extends ArrayStepper<Token> {
    * @returns Whether or not we're currently at a type reference
    */
   private checkType(offset = 0): boolean {
-    return this.checkMultiple([Syntax.Identifier, Syntax.Undefined, Syntax.Null], offset) && this.isTypeDefined(this.peek(offset)!.lexeme);
-  }
-
-  /**
-   * @returns Whether or not `name` is a type recognized by P
-   */
-  private isTypeDefined(name: string): boolean {
-    for (let i = this.typeScopes.length - 1; i >= 0; i--)
-      if (this.typeScopes[i].includes(name))
-        return true;
-
-    return false;
+    return this.checkMultiple([Syntax.Identifier, Syntax.Undefined, Syntax.Null], offset) && TypeAnalyzer.isTypeDefined(this.peek(offset)!.lexeme);
   }
 
   /**
@@ -729,12 +775,12 @@ export default class Parser extends ArrayStepper<Token> {
    *
    * Advances the parser if it does
    */
-  private consume<V extends ValueType = ValueType>(syntax: Syntax, expectedOverride?: string): Token<V> {
+  private consume<V extends ValueType = ValueType, S extends Syntax = Syntax>(syntax: Syntax, expectedOverride?: string): Token<V, S> {
     const gotSyntax = this.current ? Syntax[this.current.syntax] : "EOF";
     if (!this.match(syntax))
       throw new ParserSyntaxError(`Expected ${expectedOverride ?? `'${Syntax[syntax]}'`}, got ${gotSyntax}`, this.current);
 
-    return this.previous();
+    return this.previous<V, S>();
   }
 
   protected override get isFinished(): boolean {

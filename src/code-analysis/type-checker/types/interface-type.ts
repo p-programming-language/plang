@@ -7,12 +7,12 @@ export default class InterfaceType extends SingularType {
   public constructor(
     public readonly properties: Map<string, Type>,
     public readonly indexSignatures: Map<SingularType<"string"> | SingularType<"int">, Type>,
+    // public readonly typeParameters?: TypeParameter[],
     name = "object"
-    // public readonly typeParameters?: TypeParameter[]
   ) { super(name); }
 
   public toString(indent = 0): string {
-    let result = "{";
+    let result = (this.name === "object" ? "" : this.name + " ") + "{";
     if (this.indexSignatures.size > 0 || this.properties.size > 0)
       indent += 1;
 

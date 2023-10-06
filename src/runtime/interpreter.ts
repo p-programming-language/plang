@@ -36,6 +36,7 @@ import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 import type { WhileStatement } from "../code-analysis/parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "../code-analysis/parser/ast/statements/return";
+import { TypeDeclarationStatement } from "../code-analysis/parser/ast/statements/type-declaration";
 
 const MAX_RECURSION_DEPTH = 1200;
 
@@ -55,6 +56,10 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
     const intrinsics = new Intrinsics(this);
     intrinsics.inject();
+  }
+
+  public visitTypeDeclarationStatement(stmt: TypeDeclarationStatement): void {
+    // do nothing
   }
 
   public visitReturnStatement(stmt: ReturnStatement): void {

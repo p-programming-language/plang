@@ -4,7 +4,7 @@ import AST from "..";
 
 export class VariableDeclarationStatement extends AST.Statement {
   public constructor(
-    public readonly type: AST.TypeRef,
+    public readonly typeRef: AST.TypeRef,
     public readonly identifier: IdentifierExpression,
     public readonly mutable: boolean,
     public readonly initializer?: AST.Expression,
@@ -15,6 +15,6 @@ export class VariableDeclarationStatement extends AST.Statement {
   }
 
   public get token(): Token {
-    return this.type.token;
+    return this.typeRef.token;
   }
 }

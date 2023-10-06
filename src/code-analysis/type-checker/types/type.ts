@@ -1,6 +1,6 @@
 import util from "util";
 
-import type SingularType from "./singular-type";
+import SingularType from "./singular-type";
 import type UnionType from "./union-type";
 import type ArrayType from "./array-type";
 import type FunctionType from "./function-type";
@@ -61,7 +61,18 @@ export abstract class Type {
       return this.types.some(type => type.isAssignableTo(other));
     else if (this.isNullish())
       return other.isNullish();
-    else if (this.isSingular())
+    if (this.isInterface()) {
+      if (!other.isInterface()) return false;
+
+      const propertiesAreAssignable = Array.from(this.properties.entries())
+        .every(([key, valueType]) => (other.properties.has(key) && other.properties.get(key)!.isAssignableTo(valueType))
+          || Array.from(other.indexSignatures.values()).some(type => type.isAssignableTo(valueType)));
+
+      const indexSignaturesAreAssignable = Array.from(this.indexSignatures.entries())
+        .every(([keyType, valueType]) => other.indexSignatures.has(keyType) && valueType.isAssignableTo(other.indexSignatures.get(keyType)!));
+
+      return propertiesAreAssignable && indexSignaturesAreAssignable;
+    } else if (this.isSingular())
       if (this.name === "Array") {
         if (other.isSingular() ? other.name !== "Array" : !other.isArray()) return false;
         if (other.isSingular() ? (other.typeArguments !== undefined && other.typeArguments.length < 1) : false) return false;
@@ -92,16 +103,6 @@ export abstract class Type {
         .every(([key, paramType]) => other.parameterTypes.has(key) && paramType.isAssignableTo(other.parameterTypes.get(key)!));
 
       return parametersAreAssignable && this.returnType.isAssignableTo(other.returnType);
-    } else if (this.isInterface()) {
-      if (!other.isInterface()) return false;
-
-      const propertiesAreAssignable = Array.from(this.properties.entries())
-        .every(([key, valueType]) => other.properties.has(key) && valueType.isAssignableTo(other.properties.get(key)!));
-
-      const indexSignaturesAreAssignable = Array.from(this.indexSignatures.entries())
-        .every(([keyType, valueType]) => other.indexSignatures.has(keyType) && valueType.isAssignableTo(other.indexSignatures.get(keyType)!));
-
-      return propertiesAreAssignable && indexSignaturesAreAssignable;
     }
 
     return false;

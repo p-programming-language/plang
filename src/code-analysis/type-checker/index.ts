@@ -46,6 +46,10 @@ export interface ObjectType {
 // NOTE: always call check() before assert()
 
 export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
+  public visitTypeDeclarationStatement(): void {
+    // do nothing
+  }
+
   public visitReturnStatement(stmt: BoundReturnStatement): void {
     this.check(stmt.expression);
   }

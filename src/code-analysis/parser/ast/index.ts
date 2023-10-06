@@ -24,6 +24,7 @@ import type { IfStatement } from "./statements/if";
 import type { WhileStatement } from "./statements/while";
 import type { FunctionDeclarationStatement } from "./statements/function-declaration";
 import type { ReturnStatement } from "./statements/return";
+import type { TypeDeclarationStatement } from "./statements/type-declaration";
 import type BoundLiteralExpression from "../../type-checker/binder/bound-expressions/literal";
 import type BoundStringInterpolationExpression from "../../type-checker/binder/bound-expressions/string-interpolation";
 import type BoundArrayLiteralExpression from "../../type-checker/binder/bound-expressions/array-literal";
@@ -47,6 +48,7 @@ import type BoundIfStatement from "../../type-checker/binder/bound-statements/if
 import type BoundWhileStatement from "../../type-checker/binder/bound-statements/if";
 import type BoundFunctionDeclarationStatement from "../../type-checker/binder/bound-statements/function-declaration";
 import type BoundReturnStatement from "../../type-checker/binder/bound-statements/return";
+import type BoundTypeDeclarationStatement from "../../type-checker/binder/bound-statements/type-declaration";
 
 namespace AST {
   export abstract class Node {
@@ -84,6 +86,7 @@ namespace AST {
     }
 
     export abstract class Statement<R> {
+      public abstract visitTypeDeclarationStatement(stmt: TypeDeclarationStatement): R
       public abstract visitReturnStatement(stmt: ReturnStatement): R
       public abstract visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): R
       public abstract visitWhileStatement(stmt: WhileStatement): R
@@ -113,6 +116,7 @@ namespace AST {
     }
 
     export abstract class BoundStatement<R> {
+      public abstract visitTypeDeclarationStatement(stmt: BoundTypeDeclarationStatement): R
       public abstract visitReturnStatement(stmt: BoundReturnStatement): R
       public abstract visitFunctionDeclarationStatement(stmt: BoundFunctionDeclarationStatement): R
       public abstract visitWhileStatement(stmt: BoundWhileStatement): R

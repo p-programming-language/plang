@@ -35,6 +35,10 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
     this.beginScope();
   }
 
+  public visitTypeDeclarationStatement(): void {
+    // do nothing
+  }
+
   public visitReturnStatement(stmt: ReturnStatement): void {
     if (this.context !== ScopeContext.Function)
       throw new ResolutionError("Invalid return statement: Can only use 'return' within a function body", stmt.token);

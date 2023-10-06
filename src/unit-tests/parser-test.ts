@@ -230,8 +230,8 @@ describe(Parser.name, () => {
       const [node] = parse("int y = 123");
       node.should.be.an.instanceof(VariableDeclarationStatement);
       const declaration = <VariableDeclarationStatement>node;
-      declaration.type.token.syntax.should.equal(Syntax.Identifier);
-      declaration.type.token.lexeme.should.equal("int");
+      declaration.typeRef.token.syntax.should.equal(Syntax.Identifier);
+      declaration.typeRef.token.lexeme.should.equal("int");
       declaration.identifier.token.lexeme.should.equal("y");
       declaration.initializer?.should.be.an.instanceof(LiteralExpression);
       const value = <LiteralExpression>declaration.initializer;
@@ -242,8 +242,8 @@ describe(Parser.name, () => {
       const [node] = parse("string abc");
       node.should.be.an.instanceof(VariableDeclarationStatement);
       const declaration = <VariableDeclarationStatement>node;
-      declaration.type.token.syntax.should.equal(Syntax.Identifier);
-      declaration.type.token.lexeme.should.equal("string");
+      declaration.typeRef.token.syntax.should.equal(Syntax.Identifier);
+      declaration.typeRef.token.lexeme.should.equal("string");
       declaration.identifier.token.lexeme.should.equal("abc");
       declaration.initializer?.should.be.undefined();
     }
@@ -251,8 +251,8 @@ describe(Parser.name, () => {
       const [node] = parse("null nothing = null");
       node.should.be.an.instanceof(VariableDeclarationStatement);
       const declaration = <VariableDeclarationStatement>node;
-      declaration.type.token.syntax.should.equal(Syntax.Null);
-      declaration.type.token.lexeme.should.equal("null");
+      declaration.typeRef.token.syntax.should.equal(Syntax.Null);
+      declaration.typeRef.token.lexeme.should.equal("null");
       declaration.identifier.token.lexeme.should.equal("nothing");
       const value = <LiteralExpression>declaration.initializer;
       value.token.syntax.should.equal(Syntax.Null);
@@ -264,8 +264,8 @@ describe(Parser.name, () => {
       const [node] = parse("int | float y = 123");
       node.should.be.an.instanceof(VariableDeclarationStatement);
       const declaration = <VariableDeclarationStatement>node;
-      declaration.type.should.be.an.instanceof(UnionTypeExpression);
-      const union = <UnionTypeExpression>declaration.type;
+      declaration.typeRef.should.be.an.instanceof(UnionTypeExpression);
+      const union = <UnionTypeExpression>declaration.typeRef;
       union.types.length.should.be.equal(2);
       const [int, float] = union.types;
       int.token.syntax.should.equal(Syntax.Identifier);
@@ -282,8 +282,8 @@ describe(Parser.name, () => {
       const [node] = parse("int[] nums = [1, 2, 3]");
       node.should.be.an.instanceof(VariableDeclarationStatement);
       const declaration = <VariableDeclarationStatement>node;
-      declaration.type.should.be.an.instanceof(ArrayTypeExpression);
-      const arrayType = <ArrayTypeExpression>declaration.type;
+      declaration.typeRef.should.be.an.instanceof(ArrayTypeExpression);
+      const arrayType = <ArrayTypeExpression>declaration.typeRef;
       arrayType.elementType.token.syntax.should.equal(Syntax.Identifier);
       arrayType.elementType.token.lexeme.should.equal("int");
       declaration.identifier.token.lexeme.should.equal("nums");

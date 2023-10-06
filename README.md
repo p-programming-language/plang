@@ -83,5 +83,5 @@ yarn run <tool>
     - Function declarations and calls
 
 ## Planned Features
+- Analyze created types before parsing references to them
 - Classes
-- Object types
