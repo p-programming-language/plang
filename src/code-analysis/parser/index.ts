@@ -1,6 +1,6 @@
 
 import { Token } from "../syntax/token";
-import { SyntaxError } from "../../errors";
+import { ParserSyntaxError } from "../../errors";
 import { ValueType } from "../type-checker";
 import { fakeToken } from "../../utility";
 import ArrayStepper from "../array-stepper";
@@ -234,7 +234,7 @@ export default class Parser extends ArrayStepper<Token> {
       const value = <AST.Expression>this.parseExpression();
 
       if (!this.isAssignmentTarget(left))
-        throw new SyntaxError("Invalid assignment target", this.current);
+        throw new ParserSyntaxError("Invalid assignment target", this.current);
 
       if (left instanceof IdentifierExpression)
         return isStatement ?
@@ -254,7 +254,7 @@ export default class Parser extends ArrayStepper<Token> {
       const operator = this.previous<undefined>();
       const right = this.parseIndex();
       if (!this.isAssignmentTarget(left))
-        throw new SyntaxError("Invalid compound assignment target", this.current);
+        throw new ParserSyntaxError("Invalid compound assignment target", this.current);
 
       left = new CompoundAssignmentExpression(<IdentifierExpression | IndexExpression>left, right, operator);
     }
@@ -419,7 +419,7 @@ export default class Parser extends ArrayStepper<Token> {
       const operator = this.previous<undefined>();
       const operand = this.parseUnary();
       if (!this.isAssignmentTarget(operand) && (operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus))
-        throw new SyntaxError("Invalid increment/decrement target", operand.token);
+        throw new ParserSyntaxError("Invalid increment/decrement target", operand.token);
 
       return new UnaryExpression(operator, operand);
     } else
@@ -460,7 +460,7 @@ export default class Parser extends ArrayStepper<Token> {
           }
         }
 
-        throw new SyntaxError(message, token);
+        throw new ParserSyntaxError(message, token);
       }
 
       return token.syntax === Syntax.String && token.lexeme.includes("%{") ?
@@ -486,7 +486,7 @@ export default class Parser extends ArrayStepper<Token> {
     if (this.match(Syntax.Identifier))
       return new IdentifierExpression(this.previous());
 
-    throw new SyntaxError(`Expected expression, got '${this.current.syntax === Syntax.EOF ? "EOF" : this.current.lexeme}'`, this.current);
+    throw new ParserSyntaxError(`Expected expression, got '${this.current.syntax === Syntax.EOF ? "EOF" : this.current.lexeme}'`, this.current);
   }
 
   /**
@@ -604,7 +604,7 @@ export default class Parser extends ArrayStepper<Token> {
 
   private parseSingularType(): SingularTypeExpression {
     if (!this.checkType())
-      throw new SyntaxError(`Expected type, got '${this.current.lexeme}'`, this.current);
+      throw new ParserSyntaxError(`Expected type, got '${this.current.lexeme}'`, this.current);
 
     const typeKeyword = this.advance<undefined>();
     let typeArgs: AST.TypeRef[] | undefined;
@@ -732,7 +732,7 @@ export default class Parser extends ArrayStepper<Token> {
   private consume<V extends ValueType = ValueType>(syntax: Syntax, expectedOverride?: string): Token<V> {
     const gotSyntax = this.current ? Syntax[this.current.syntax] : "EOF";
     if (!this.match(syntax))
-      throw new SyntaxError(`Expected ${expectedOverride ?? `'${Syntax[syntax]}'`}, got ${gotSyntax}`, this.current);
+      throw new ParserSyntaxError(`Expected ${expectedOverride ?? `'${Syntax[syntax]}'`}, got ${gotSyntax}`, this.current);
 
     return this.previous();
   }

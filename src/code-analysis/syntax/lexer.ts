@@ -1,11 +1,11 @@
-import { TokenizationError } from "../../errors";
+import { LexerSyntaxError } from "../../errors";
 import { Token, Location, LocationSpan } from "./token";
 import { ValueType } from "../type-checker";
 import { KEYWORDS } from "./keywords";
 import ArrayStepper from "../array-stepper";
 import Syntax from "./syntax-type";
 
-const ALPHABETICAL = /[a-zA-Z_]/;
+const VALID_IDENTIFIER = /[a-zA-Z_$]/;
 const NUMERIC = /^[0-9]$/;
 const WHITESPACE = /\s+/;
 
@@ -20,6 +20,9 @@ export default class Lexer extends ArrayStepper<string> {
   private currentLexemeCharacters: string[] = [];
   private readonly tokens: Token[] = []
 
+  /**
+   * Lexes the entire input
+   */
   public tokenize(): Token[] {
     while (!this.isFinished)
       this.lex();
@@ -29,6 +32,9 @@ export default class Lexer extends ArrayStepper<string> {
     return this.tokens;
   }
 
+  /**
+   * Lexes exactly one token
+   */
   private lex(): void {
     const char = this.current;
     if (char === "\n") {
@@ -186,7 +192,7 @@ export default class Lexer extends ArrayStepper<string> {
       default: {
         if (NUMERIC.test(char))
           return this.readNumber();
-        else if (ALPHABETICAL.test(char)) {
+        else if (VALID_IDENTIFIER.test(char)) {
           const identifierLexeme = this.readIdentifier();
           const keywordSyntax = Object.keys(KEYWORDS).includes(identifierLexeme) ? KEYWORDS[<keyof typeof KEYWORDS>identifierLexeme] : false;
           if (keywordSyntax)
@@ -205,16 +211,22 @@ export default class Lexer extends ArrayStepper<string> {
           return;
         }
 
-        throw new TokenizationError(`Unexpected character: ${char}`, this.line, this.column);
+        throw new LexerSyntaxError(`Unexpected character: ${char}`, this.line, this.column);
       }
     }
   }
 
+  /**
+   * Skip current whitespace and all whitespaces after
+   */
   private skipWhiteSpace(): void {
     while (WHITESPACE.test(this.current))
       this.advance();
   }
 
+  /**
+   * Skip comment syntax
+   */
   private skipComment({ multiline }: CommentOptions): void {
     const condition = () => multiline ?
       this.current === ":" && this.peek() === "#" && this.peek(2) === "#"
@@ -230,9 +242,13 @@ export default class Lexer extends ArrayStepper<string> {
     consumeEndOfComment();
   }
 
+  /**
+   * Skip current whitespace and all whitespaces after
+   */
   private readIdentifier(): string {
     let lexeme = "";
-    while (!this.isFinished && (ALPHABETICAL.test(this.current) || NUMERIC.test(this.current)))
+
+    while (!this.isFinished && (VALID_IDENTIFIER.test(this.current) || NUMERIC.test(this.current)))
       lexeme += this.advance();
 
     return lexeme;
@@ -240,10 +256,9 @@ export default class Lexer extends ArrayStepper<string> {
 
   private readString(): void {
     const delimiter = this.advance();
-    while (this.current !== delimiter) {
+    while (this.current !== delimiter)
       if (this.advance(true) === "\n")
-        throw new TokenizationError("Unterminated string literal", this.line, this.column);
-    }
+        throw new LexerSyntaxError("Unterminated string literal", this.line, this.column);
 
     this.advance(); // advance final delimiter
     const stringContents = this.currentLexeme.slice(1, -1);
@@ -255,7 +270,7 @@ export default class Lexer extends ArrayStepper<string> {
     while (/^[0-9]$/.test(this.current) || this.current === ".") {
       if (this.advance() === ".")
         if (usedDecimal)
-          throw new TokenizationError("Malformed number", this.line, this.column);
+          throw new LexerSyntaxError("Malformed number", this.line, this.column);
         else
           usedDecimal = true;
     }

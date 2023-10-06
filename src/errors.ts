@@ -24,15 +24,15 @@ export class PError {
   }
 }
 
-export class TokenizationError extends PError {
+export class LexerSyntaxError extends PError {
   public constructor(message: string, line: number, column: number) {
-    super(TokenizationError.name, message, line, column);
+    super("SyntaxError", message, line, column);
   }
 }
 
-export class SyntaxError extends PError {
+export class ParserSyntaxError extends PError {
   public constructor(message: string, token: Token) {
-    super(SyntaxError.name, message, token.locationSpan.start.line, token.locationSpan.start.column);
+    super("SyntaxError", message, token.locationSpan.start.line, token.locationSpan.start.column);
   }
 }
 
