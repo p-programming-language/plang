@@ -486,7 +486,7 @@ export default class Parser extends ArrayStepper<Token> {
     if (this.match(Syntax.Identifier))
       return new IdentifierExpression(this.previous());
 
-    throw new SyntaxError(`Expected expression, got '${this.current.lexeme}'`, this.current);
+    throw new SyntaxError(`Expected expression, got '${this.current.syntax === Syntax.EOF ? "EOF" : this.current.lexeme}'`, this.current);
   }
 
   /**

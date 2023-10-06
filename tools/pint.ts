@@ -22,7 +22,7 @@ function main() {
     return console.log(USAGE);
 
   if (args.length === 0)
-    return p.startREPL();
+    return p.repl.start();
 
   try {
     p.executionOptions.outputAST = false;

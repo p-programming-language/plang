@@ -23,8 +23,9 @@ export default class P {
 
   public typeChecker = new TypeChecker;
   public interpreter: Interpreter;
-  public version = "v" + pkg.version;
-  public executionOptions: PExecutionOptions = {
+  public readonly repl = new REPL(this);
+  public readonly version = "v" + pkg.version;
+  public readonly executionOptions: PExecutionOptions = {
     outputAST: false,
     outputBoundAST: false,
     outputResult: false
@@ -32,11 +33,6 @@ export default class P {
 
   public constructor(fileName?: string) {
     this.interpreter = new Interpreter(this, this.resolver, this.binder, fileName)
-  }
-
-  public startREPL(): void {
-    const repl = new REPL(this);
-    repl.start();
   }
 
   public doString(source: string): ValueType {

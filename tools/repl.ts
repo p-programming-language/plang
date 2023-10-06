@@ -2,4 +2,4 @@
 import P from "./p";
 
 const p = new P("repl");
-p.startREPL();
+p.repl.start();
