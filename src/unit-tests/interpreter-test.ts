@@ -94,7 +94,7 @@ describe(Interpreter.name, () => {
   });
   it("evaluates intrinsics", () => {
     evaluate("version$")?.should.equal("v" + pkg.version);
-    evaluate("filename$")?.should.equal("repl");
+    evaluate("filename$")?.should.equal("test");
   });
   describe("evaluates general tests (tests/)", () => {
     testFiles.forEach((file) => {

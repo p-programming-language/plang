@@ -76,6 +76,6 @@ export default class P {
     this.binder = new Binder;
     this.resolver = new Resolver;
     this.typeChecker = new TypeChecker;
-    this.interpreter = new Interpreter(this, this.resolver, this.binder);
+    this.interpreter = new Interpreter(this, this.resolver, this.binder,  this.interpreter.fileName);
   }
 }
