@@ -39,6 +39,13 @@ export abstract class Type {
     return this.kind === TypeKind.Interface;
   }
 
+  public isNullable(): this is SingularType<"void" | "undefined" | "null"> {
+    return this.isSingular()
+      && (this.name === "void"
+      || this.name === "undefined"
+      || this.name === "null");
+  }
+
   public is(other: Type): boolean {
     if (this.isUnion())
       return this.types.every(type => type.is(other));
@@ -49,6 +56,8 @@ export abstract class Type {
   public isAssignableTo(other: Type): boolean {
     if (this.isUnion())
       return this.types.some(type => type.isAssignableTo(other));
+    else if (this.isNullable())
+      return other.isNullable();
     else if (this.isSingular())
       if (this.name === "Array") {
         if (other.isSingular() ? other.name !== "Array" : !other.isArray()) return false;

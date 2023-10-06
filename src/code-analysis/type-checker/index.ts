@@ -55,6 +55,7 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
     this.check(stmt.body);
     if (stmt.body.type)
       this.assert(stmt.body, stmt.body.type, stmt.symbol.type.returnType);
+
     else if (!this.isUndefined(stmt.symbol.type.returnType))
       throw new TypeError(`Function '${stmt.symbol.name.lexeme}' is expected to return type '${stmt.symbol.type.returnType.toString()}', got 'void'`, stmt.symbol.name);
   }

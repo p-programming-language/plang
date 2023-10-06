@@ -11,7 +11,7 @@ import pkg = require("../../package.json");
 
 PError.testing = true;
 
-let p = new P;
+let p = new P("test");
 function evaluate(source: string, createNewEnvironment = true): ValueType {
   const result = p.doString(source);
   if (createNewEnvironment)

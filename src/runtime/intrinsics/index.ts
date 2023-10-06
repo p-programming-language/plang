@@ -1,4 +1,5 @@
 import { argv } from "process";
+import path from "path";
 
 import type { ValueType } from "../../code-analysis/type-checker";
 import type { Type } from "../../code-analysis/type-checker/types/type";
@@ -20,7 +21,9 @@ export default class Intrinsics {
 
   public inject(): void {
     this.define("__version", this.interpreter.runner.version, new SingularType("string"));
-    this.define("argv", argv.slice(2), new ArrayType(new SingularType("string")));
+    this.define("__filename", this.interpreter.fileName, new SingularType("string"));
+    this.define("__dirname", path.dirname(this.interpreter.fileName), new SingularType("string"));
+    this.define("argv", argv.slice(3), new ArrayType(new SingularType("string")));
     this.defineFunction("eval", Eval);
     (new Std(this)).inject();
   }

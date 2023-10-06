@@ -124,12 +124,14 @@ export default class Parser extends ArrayStepper<Token> {
    * Parses a declaration statement like a class, variable, function, etc.
    */
   private declaration(): AST.Statement {
-    if (this.atVariableDeclaration) {
-      const declaration = this.parseVariableDeclaration();
+    if (this.checkType() && this.check(Syntax.Function, 1)) {
+      const declaration = this.parseFunctionDeclaration();
       this.consumeSemicolons();
       return declaration;
-    } else if (this.checkType() && this.check(Syntax.Function, 1)) {
-      const declaration = this.parseFunctionDeclaration();
+    }
+
+    if (this.atVariableDeclaration) {
+      const declaration = this.parseVariableDeclaration();
       this.consumeSemicolons();
       return declaration;
     }

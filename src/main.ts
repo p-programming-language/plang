@@ -5,7 +5,7 @@ async function main() {
 "hello" + "world"
   `;
 
-  const p = new P;
+  const p = new P("main.ts");
   p.doString(code);
 }
 

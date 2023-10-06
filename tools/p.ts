@@ -26,17 +26,21 @@ const os = platform();
 export default class P {
   private binder = new Binder;
   private resolver = new Resolver;
-  public typeChecker = new TypeChecker;
-  public interpreter = new Interpreter(this, this.resolver, this.binder);
   private replActive = false;
   private replIndentation = 0;
 
+  public typeChecker = new TypeChecker;
+  public interpreter: Interpreter;
   public version = "v" + pkg.version;
   public executionOptions: PExecutionOptions = {
     outputAST: false,
     outputBoundAST: false,
     outputResult: false
   };
+
+  public constructor(fileName?: string) {
+    this.interpreter = new Interpreter(this, this.resolver, this.binder, fileName)
+  }
 
   public doString(source: string): ValueType {
     const parser = new Parser(source);
@@ -111,22 +115,22 @@ export default class P {
       }
       case "@ast": {
         this.executionOptions.outputAST = !this.executionOptions.outputAST;
-        console.log(`AST output has been turned ${this.executionOptions.outputAST ? "on".green : "off".red}`.gray(16).gray_bg(6));
+        console.log(`AST output has been turned ${this.executionOptions.outputAST ? "on".green : "off".red}`.gray(18).gray_bg(6));
         return true;
       }
       case "@bound_ast": {
         this.executionOptions.outputBoundAST = !this.executionOptions.outputBoundAST;
-        console.log(`Bound AST output has been turned ${this.executionOptions.outputBoundAST ? "on".green : "off".red}`.gray(16).gray_bg(6));
+        console.log(`Bound AST output has been turned ${this.executionOptions.outputBoundAST ? "on".green : "off".red}`.gray(18).gray_bg(6));
         return true;
       }
       case "@results": {
         this.executionOptions.outputResult = !this.executionOptions.outputResult;
-        console.log(`Interpreter result output has been turned ${this.executionOptions.outputResult ? "on".green : "off".red}`.gray(16).gray_bg(6));
+        console.log(`Interpreter result output has been turned ${this.executionOptions.outputResult ? "on".green : "off".red}`.gray(18).gray_bg(6));
         return true;
       }
       case "@show_trace": {
         PError.showTrace = !PError.showTrace;
-        console.log(`Full error traces have been turned ${this.executionOptions.outputResult ? "on".green : "off".red}`.gray(16).gray_bg(6));
+        console.log(`Full error traces have been turned ${this.executionOptions.outputResult ? "on".green : "off".red}`.gray(18).gray_bg(6));
         return true;
       }
       case "@ast_viewer": {

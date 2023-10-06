@@ -14,15 +14,16 @@ Options:
 
 function main() {
   const args = process.argv.slice(2);
-  const p = new P;
+  const [filePath] = args;
+  const p = new P(filePath ?? "repl");
 
-  if (args.length > 1) {
-    console.error(USAGE);
-    process.exit(1);
-  } else if (args.length === 0)
+  // TODO: use a command handler so we can also have a -- option
+  if (args.includes("--help") || args.includes("-h"))
+    return console.log(USAGE);
+
+  if (args.length === 0)
     return p.startREPL();
 
-  const [filePath] = args;
   try {
     p.executionOptions.outputAST = false;
     p.executionOptions.outputBoundAST = false;

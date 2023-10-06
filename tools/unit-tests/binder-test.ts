@@ -8,6 +8,9 @@ import Syntax from "../../src/code-analysis/syntax/syntax-type";
 import Parser from "../../src/code-analysis/parser";
 import Binder from "../../src/code-analysis/type-checker/binder";
 import SingularType from "../../src/code-analysis/type-checker/types/singular-type";
+import FunctionType from "../../src/code-analysis/type-checker/types/function-type";
+import P from "../p";
+
 import BoundLiteralExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/literal";
 import BoundUnaryExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/unary";
 import BoundBinaryExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/binary";
@@ -17,19 +20,12 @@ import BoundVariableDeclarationStatement from "../../src/code-analysis/type-chec
 import BoundIndexExpression from "../../src/code-analysis/type-checker/binder/bound-expressions";
 import BoundIdentifierExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/identifier";
 import BoundCallExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/call";
-import FunctionType from "../../src/code-analysis/type-checker/types/function-type";
-import Resolver from "../../src/code-analysis/resolver";
-import Interpreter from "../../src/runtime/interpreter";
-import P from "../p";
 
 function bind(source: string): BoundStatement[] {
+  const p = new P("test");
   const parser = new Parser(source);
-  const binder = new Binder;
-  const resolver = new Resolver;
-  const p = new P;
-  new Interpreter(p, resolver, binder);
   const ast = parser.parse();
-  return binder.bindStatements(ast);
+  return p.interpreter.binder.bindStatements(ast);
 }
 
 const testDirectory = "./tests/";

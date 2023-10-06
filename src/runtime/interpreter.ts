@@ -49,7 +49,8 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public constructor(
     public readonly runner: P,
     public readonly resolver: Resolver,
-    public readonly binder: Binder
+    public readonly binder: Binder,
+    public fileName = "unnamed"
   ) {
 
     const intrinsics = new Intrinsics(this);
