@@ -1,7 +1,5 @@
-string error
 if #argv < 2 {
-    error = "Usage: " + argv[0] + " <name>"
-    println(error)
+    println "Usage: " + argv[0] + " <name>"
 } else {
-    println("Hello " + argv[1])
+    println "Hello " + argv[1]
 }
