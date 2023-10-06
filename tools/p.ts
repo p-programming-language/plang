@@ -7,9 +7,9 @@ import Parser from "../src/code-analysis/parser";
 import Binder from "../src/code-analysis/type-checker/binder";
 import Resolver from "../src/code-analysis/resolver";
 import Interpreter from "../src/runtime/interpreter";
-import PValue from "./runtime/values/value";
-import pkg = require("../package.json");
+import PValue from "../src/runtime/values/value";
 import REPL from "./classes/repl";
+import pkg = require("../package.json");
 
 interface PExecutionOptions {
   outputAST: boolean;
