@@ -7,7 +7,7 @@
   "main": "dist/src/main.js",
   "bin": { "pint": "dist/tools/pint.js" },
   "scripts": {
-    "test": "mocha dist/tools/unit-tests -j 4 --extension js",
+    "test": "mocha dist/src/unit-tests -j 4 --extension js",
     "build": "tsc --skipLibCheck",
     "start": "npm run -s pint",
     "pint": "node dist/tools/pint.js",
@@ -22,7 +22,11 @@
     "plang",
     "language"
   ],
-  "author": "KevinAlavik, R-unic",
+  "author": {
+    "name": "KevinAlavik",
+    "email": "kevin@alavik.se",
+    "url": "https://github.com/KevinAlavik"
+  },
   "contributors": [
     "runicly",
     "kevinalavik"
