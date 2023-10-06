@@ -14,15 +14,20 @@ Options:
 
 function main() {
   const args = process.argv.slice(2);
-  const p = new P;
+  const p = new P();
 
-  if (args.length > 1) {
-    console.error(USAGE);
-    process.exit(1);
-  } else if (args.length === 0)
-    return p.startREPL();
+  if (args.length === 0) {
+    p.startREPL();
+    return;
+  }
 
-  const [filePath] = args;
+  if (args.includes("-h")) {
+    console.log(USAGE);
+    return;
+  }
+
+  const [filePath, ...argv] = args;
+
   try {
     p.executionOptions.outputAST = false;
     p.executionOptions.outputBoundAST = false;
