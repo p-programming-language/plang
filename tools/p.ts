@@ -12,6 +12,7 @@ import REPL from "./classes/repl";
 import pkg = require("../package.json");
 
 interface PExecutionOptions {
+  outputTokens: boolean;
   outputAST: boolean;
   outputBoundAST: boolean;
   outputResult: boolean;
@@ -26,6 +27,7 @@ export default class P {
   public readonly repl = new REPL(this);
   public readonly version = "v" + pkg.version;
   public readonly executionOptions: PExecutionOptions = {
+    outputTokens: false,
     outputAST: false,
     outputBoundAST: false,
     outputResult: false
@@ -37,6 +39,9 @@ export default class P {
 
   public doString(source: string): ValueType {
     const parser = new Parser(source);
+    if (this.executionOptions.outputTokens)
+      console.log(parser.input!.toString());
+
     const ast = parser.parse();
     if (this.executionOptions.outputAST)
       console.log(ast.toString());

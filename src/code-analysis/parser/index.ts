@@ -40,14 +40,15 @@ const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = Synta
 type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
 
 export default class Parser extends ArrayStepper<Token> {
+  public readonly lexer: Lexer;
   private readonly typeScopes: string[][] = [
     ["int", "float", "string", "bool", "undefined", "null", "void", "any", "Array"]
   ];
 
   public constructor(source: string) {
-    const lexer = new Lexer(source);
-    const tokens = lexer.tokenize();
-    super(tokens);
+    super();
+    this.lexer = new Lexer(source);
+    this.input = this.lexer.tokenize();
   }
 
   /**
@@ -56,11 +57,10 @@ export default class Parser extends ArrayStepper<Token> {
    * Predicate returns whether or not the parser is finished by default
    */
   public parse(until = () => this.isFinished): AST.Statement[] {
-    const statements = [];
-    while (!until()) {
-      const stmt = this.declaration();
-      statements.push(stmt);
-    }
+    const statements: AST.Statement[] = [];
+    while (!until())
+      statements.push(this.declaration());
+
     return statements;
   }
 

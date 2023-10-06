@@ -9,6 +9,10 @@ const ALPHABETICAL = /[a-zA-Z_]/;
 const NUMERIC = /^[0-9]$/;
 const WHITESPACE = /\s+/;
 
+interface CommentOptions {
+  readonly multiline: boolean;
+}
+
 export default class Lexer extends ArrayStepper<string> {
   private line = 1;
   private column = 1;
@@ -20,12 +24,19 @@ export default class Lexer extends ArrayStepper<string> {
     while (!this.isFinished)
       this.lex();
 
+    this.currentLexemeCharacters = [];
     this.addToken(Syntax.EOF);
     return this.tokens;
   }
 
   private lex(): void {
     const char = this.current;
+    if (char === "\n") {
+      this.advance();
+      return;
+    } if (WHITESPACE.test(char))
+      return this.skipWhiteSpace();
+
     switch (char) {
       case ";":
         return this.addToken(Syntax.Semicolon, undefined, true);
@@ -46,7 +57,10 @@ export default class Lexer extends ArrayStepper<string> {
       case ".":
         return this.addToken(Syntax.Dot, undefined, true);
       case "#":
-        return this.addToken(Syntax.Hashtag, undefined, true);
+        if (this.match("#"))
+          return this.skipComment({ multiline: this.match(":") });
+        else
+          return this.addToken(Syntax.Hashtag, undefined, true);
       case "~":
         return this.addToken(Syntax.Tilde, undefined, true);
       case ":": {
@@ -172,10 +186,7 @@ export default class Lexer extends ArrayStepper<string> {
       default: {
         if (NUMERIC.test(char))
           return this.readNumber();
-        else if (WHITESPACE.test(char)) {
-          this.advance();
-          return;
-        } else if (ALPHABETICAL.test(char)) {
+        else if (ALPHABETICAL.test(char)) {
           const identifierLexeme = this.readIdentifier();
           const keywordSyntax = Object.keys(KEYWORDS).includes(identifierLexeme) ? KEYWORDS[<keyof typeof KEYWORDS>identifierLexeme] : false;
           if (keywordSyntax)
@@ -197,6 +208,26 @@ export default class Lexer extends ArrayStepper<string> {
         throw new TokenizationError(`Unexpected character: ${char}`, this.line, this.column);
       }
     }
+  }
+
+  private skipWhiteSpace(): void {
+    while (WHITESPACE.test(this.current))
+      this.advance();
+  }
+
+  private skipComment({ multiline }: CommentOptions): void {
+    const condition = () => multiline ?
+      this.current === ":" && this.peek() === "#" && this.peek(2) === "#"
+      : this.current === "\n" || this.isFinished;
+
+    const consumeEndOfComment = () => multiline ?
+      this.advanceMultiple(3)
+      : this.advance();
+
+    while (!condition())
+      this.advance();
+
+    consumeEndOfComment();
   }
 
   private readIdentifier(): string {
@@ -252,9 +283,14 @@ export default class Lexer extends ArrayStepper<string> {
     return false;
   }
 
+  private advanceMultiple(times: number, allowWhitespace?: boolean): void {
+    for (let i = 0; i < times; i++)
+      this.advance(allowWhitespace);
+  }
+
   private advance(allowWhitespace = false): string {
     const char = this.current;
-    const isWhiteSpace = /\s+/.test(char);
+    const isWhiteSpace = WHITESPACE.test(char);
     if (!isWhiteSpace || allowWhitespace) // don't add to lexeme if whitespace
       this.currentLexemeCharacters.push(char);
 

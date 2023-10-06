@@ -47,6 +47,11 @@ export default class REPL {
         this.outputVersion();
         return true;
       }
+      case "@tokens": {
+        this.p.executionOptions.outputTokens = !this.p.executionOptions.outputTokens;
+        console.log(`Tokenization output has been turned ${this.p.executionOptions.outputTokens ? "on".green : "off".red}`.gray(18).gray_bg(6));
+        return true;
+      }
       case "@ast": {
         this.p.executionOptions.outputAST = !this.p.executionOptions.outputAST;
         console.log(`AST output has been turned ${this.p.executionOptions.outputAST ? "on".green : "off".red}`.gray(18).gray_bg(6));
