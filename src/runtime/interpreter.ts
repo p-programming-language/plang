@@ -6,13 +6,13 @@ import { fakeToken, getIntrinsicExtension } from "../utility";
 import { INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES } from "../code-analysis/type-checker/types/type-sets";
 import type Binder from "../code-analysis/type-checker/binder";
 import type Resolver from "../code-analysis/resolver";
+import type P from "../../tools/p";
+import Syntax from "../code-analysis/tokenization/syntax-type";
 import Scope from "./scope";
-import PFunction from "./values/function";
 import HookedException from "./hooked-exceptions";
 import Intrinsics from "./intrinsics";
-import Syntax from "../code-analysis/tokenization/syntax-type";
+import PFunction from "./values/function";
 import AST from "../code-analysis/parser/ast";
-import P from "../../tools/p";
 
 import { LiteralExpression } from "../code-analysis/parser/ast/expressions/literal";
 import type { StringInterpolationExpression } from "../code-analysis/parser/ast/expressions/string-interpolation";
@@ -37,7 +37,6 @@ import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 import type { WhileStatement } from "../code-analysis/parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "../code-analysis/parser/ast/statements/return";
-import Intrinsic from "./values/intrinsic";
 
 const MAX_RECURSION_DEPTH = 1200;
 
@@ -50,7 +49,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   private readonly intrinsics = new Intrinsics(this);
 
   public constructor(
-    public readonly runner: P,
+    public readonly host: P,
     public readonly resolver: Resolver,
     public readonly binder: Binder,
     public fileName = "unnamed"

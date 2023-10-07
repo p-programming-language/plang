@@ -3,7 +3,6 @@ import reader from "readline-sync";
 import { BoundNode } from "../../src/code-analysis/type-checker/binder/bound-node";
 import { Type } from "../../src/code-analysis/type-checker/types/type";
 import type P from "../p";
-import Parser from "../../src/code-analysis/parser";
 import AST from "../../src/code-analysis/parser/ast";
 
 namespace ASTViewer {
@@ -17,7 +16,7 @@ namespace ASTViewer {
     const parser = p.createParser(source);
     const ast = parser.parse();
     if (option === "bound") {
-      const boundAST = p.binder.bindStatements(ast);
+      const boundAST = p.host.binder.bindStatements(ast);
       viewNodeList(boundAST);
     }
     else

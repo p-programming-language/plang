@@ -15,7 +15,7 @@ let p = new P("test");
 function evaluate(source: string, createNewEnvironment = true): ValueType {
   const result = p.doString(source);
   if (createNewEnvironment)
-    p.refreshResources();
+    p.newHost();
 
   return result;
 }

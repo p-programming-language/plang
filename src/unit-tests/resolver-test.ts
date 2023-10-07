@@ -13,7 +13,7 @@ function getResolveFunction(source: string): () => void {
   const p = new P("test");
   const parser = p.createParser(source);
   const ast = parser.parse();
-  return () => p.resolver.resolve(ast);
+  return () => p.host.resolver.resolve(ast);
 }
 
 const testDirectory = "./tests/";

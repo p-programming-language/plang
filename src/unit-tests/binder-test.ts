@@ -24,7 +24,7 @@ function bind(source: string): BoundStatement[] {
   const p = new P("test");
   const parser = p.createParser(source);
   const ast = parser.parse();
-  return p.binder.bindStatements(ast);
+  return p.host.binder.bindStatements(ast);
 }
 
 const testDirectory = "./tests/";

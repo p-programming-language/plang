@@ -5,7 +5,9 @@
   "displayName": "PLang",
   "icon": "https://avatars.githubusercontent.com/u/146694713?s=400&u=4e01b5afefbf7e40641702e5cbdf785ff183fe35&v=4",
   "main": "dist/src/main.js",
-  "bin": { "pint": "dist/tools/pint.js" },
+  "bin": {
+    "pint": "dist/tools/pint.js"
+  },
   "scripts": {
     "test": "mocha dist/src/unit-tests -j 4 --extension js",
     "build": "tsc --skipLibCheck",

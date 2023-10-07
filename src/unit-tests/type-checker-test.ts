@@ -13,9 +13,9 @@ function getCheckFunction(source: string): () => void {
   const p = new P("test");
   const parser = p.createParser(source);
   const ast = parser.parse();
-  p.resolver.resolve(ast);
-  const boundAST = p.binder.bindStatements(ast);
-  return () => p.typeChecker.check(boundAST);
+  p.host.resolver.resolve(ast);
+  const boundAST = p.host.binder.bindStatements(ast);
+  return () => p.host.typeChecker.check(boundAST);
 }
 
 const testDirectory = "./tests/";

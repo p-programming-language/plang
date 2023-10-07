@@ -21,7 +21,7 @@ export default class Intrinsics {
   ) {}
 
   public inject(): void {
-    this.define("version$", this.interpreter.runner.version, new SingularType("string"));
+    this.define("version$", this.interpreter.host.version, new SingularType("string"));
     this.define("filename$", this.interpreter.fileName, new SingularType("string"));
     this.define("dirname$", path.dirname(this.interpreter.fileName), new SingularType("string"));
     this.define("argv", argv.slice(3), new ArrayType(new SingularType("string")));
