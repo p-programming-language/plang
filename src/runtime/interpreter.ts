@@ -1,8 +1,9 @@
 import { RuntimeError } from "../errors";
 import type { IndexValueType, ObjectType, ValueType } from "../code-analysis/type-checker";
-import { Token } from "../code-analysis/tokenization/token";
-import { fakeToken } from "../utility";
 import type { Callable } from "./values/callable";
+import { Token } from "../code-analysis/tokenization/token";
+import { fakeToken, getIntrinsicExtension } from "../utility";
+import { INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES } from "../code-analysis/type-checker/types/type-sets";
 import type Binder from "../code-analysis/type-checker/binder";
 import type Resolver from "../code-analysis/resolver";
 import Scope from "./scope";
@@ -36,8 +37,7 @@ import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 import type { WhileStatement } from "../code-analysis/parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "../code-analysis/parser/ast/statements/return";
-import { TypeDeclarationStatement } from "../code-analysis/parser/ast/statements/type-declaration";
-import { INDEXABLE_LITERAL_VALUE_TYPES as INTRINSIC_EXTENDED_LITERAL_TYPE } from "../code-analysis/type-checker/types/type-sets";
+import Intrinsic from "./values/intrinsic";
 
 const MAX_RECURSION_DEPTH = 1200;
 
@@ -47,6 +47,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   private loopLevel = 0;
   private recursionDepth = 1;
+  private readonly intrinsics = new Intrinsics(this);
 
   public constructor(
     public readonly runner: P,
@@ -54,12 +55,10 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     public readonly binder: Binder,
     public fileName = "unnamed"
   ) {
-
-    const intrinsics = new Intrinsics(this);
-    intrinsics.inject();
+    this.intrinsics.inject();
   }
 
-  public visitTypeDeclarationStatement(stmt: TypeDeclarationStatement): void {
+  public visitTypeDeclarationStatement(): void {
     // do nothing
   }
 
@@ -127,11 +126,13 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public visitIndexExpression(expr: IndexExpression): ValueType {
     const object = this.evaluate(expr.object);
     const index = this.evaluate(expr.index);
-    // if (INTRINSIC_EXTENDED_LITERAL_TYPE.includes(typeof index)) {
+    const realValue = (<ValueType[] | ObjectType>object)[<any>index];
+    if (INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES.includes(typeof object)) {
+      const extension = getIntrinsicExtension(object);
+      return extension.members[<any>index] ?? realValue;
+    }
 
-    // }
-
-    return (<ValueType[] | ObjectType>object)[<any>index];
+    return realValue;
   }
 
   public visitCallExpression(expr: CallExpression): ValueType {

@@ -1,11 +1,12 @@
 import { BindingError, TypeError } from "../../../errors";
 import { BoundExpression, BoundStatement } from "./bound-node";
-import { INDEX_TYPE } from "../types/type-sets";
+import { INDEX_TYPE, INTRINSIC_EXTENDED_LITERAL_TYPES } from "../types/type-sets";
 import type { Token } from "../../tokenization/token";
 import type { Type } from "../types/type";
 import type { ValueType } from "..";
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
+import { getFakeIntrinsicExtension } from "../../../utility";
 import VariableSymbol from "./variable-symbol";
 import SingularType from "../types/singular-type";
 import UnionType from "../types/union-type";
@@ -68,6 +69,7 @@ import BoundWhileStatement from "./bound-statements/while";
 import BoundFunctionDeclarationStatement from "./bound-statements/function-declaration";
 import BoundReturnStatement from "./bound-statements/return";
 import BoundTypeDeclarationStatement from "./bound-statements/type-declaration";
+import Intrinsic from "../../../runtime/values/intrinsic";
 
 type IndexType = SingularType<"string"> | SingularType<"int">;
 
@@ -145,16 +147,36 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   public visitIndexExpression(expr: IndexExpression): BoundExpression {
     const object = this.bind(expr.object);
     const index = this.bind(expr.index);
+    if (
+      INTRINSIC_EXTENDED_LITERAL_TYPES.some(type => object.type.is(type))
+      && index instanceof BoundLiteralExpression
+    ) {
+
+      const extension = getFakeIntrinsicExtension((<SingularType>object.type).name);
+      const member = extension.members[index.token.value];
+      let type: Type;
+      if (member instanceof Intrinsic.Function)
+        type = new FunctionType(new Map(Object.entries(member.argumentTypes)), member.returnType);
+      else
+        type = this.getSingularTypeFromValue(member);
+
+      return new BoundIndexExpression(expr.token, object, index, type);
+    }
+
     return new BoundIndexExpression(expr.token, object, index);
   }
 
   public visitCallExpression(expr: CallExpression): BoundCallExpression {
     const callee = this.bind(expr.callee);
     const args = expr.args.map(arg => this.bind(arg));
+    const message = `Attempt to call '${callee.type.toString()}'`;
 
     // if we add lambdas we put that here too
-    if (!(callee instanceof BoundIdentifierExpression && callee.type.isFunction()))
-      throw new TypeError(`Attempt to call '${callee.type.toString()}'`, callee.token);
+    if (!(callee instanceof BoundIdentifierExpression || callee instanceof BoundIndexExpression))
+      throw new TypeError(message, callee.token);
+
+    if (!callee.type.isFunction() && (!callee.type.isSingular() || callee.type.name !== "any"))
+      throw new TypeError(message, callee.token);
 
     return new BoundCallExpression(callee, args);
   }
@@ -289,6 +311,23 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     return <R>(node instanceof AST.Expression ?
       node.accept<BoundExpression>(this)
       : node.accept<BoundStatement>(this));
+  }
+
+  private getSingularTypeFromValue(value: ValueType): Type {
+    switch(typeof value) {
+      case "number": {
+        if (value !== Math.floor(value))
+          new SingularType("float");
+        else
+          new SingularType("int");
+      }
+
+      case "boolean":
+        return new SingularType("bool");
+
+      default:
+        return new SingularType(typeof value);
+    }
   }
 
   private beginScope(): void {

@@ -2,10 +2,21 @@ import { Callable, CallableType } from "./callable";
 import type { ValueType } from "../../code-analysis/type-checker";
 import type { Type } from "../../code-analysis/type-checker/types/type";
 import { Range } from "../../utility";
-import SingularType from "../../code-analysis/type-checker/types/singular-type";
 import type Intrinsics from "../intrinsics";
+import type Interpreter from "../interpreter";
+import SingularType from "../../code-analysis/type-checker/types/singular-type";
+
+import StringExtension from "../intrinsics/literal-extensions/string";
 
 namespace Intrinsic {
+  export abstract class ValueExtension<V extends ValueType = ValueType> {
+    public constructor(
+      protected readonly value: V
+    ) {}
+
+    public abstract get members(): Record<any, ValueType>;
+  }
+
   export abstract class Lib {
     public constructor(
       protected readonly intrinsics: Intrinsics
@@ -20,7 +31,7 @@ namespace Intrinsic {
     public abstract readonly returnType: Type;
 
     public constructor(
-      protected readonly intrinsics: Intrinsics
+      protected readonly interpreter?: Interpreter
     ) { super(); }
 
     public abstract call(...args: A): R;

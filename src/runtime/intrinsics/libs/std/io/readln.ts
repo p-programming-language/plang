@@ -1,8 +1,8 @@
 import reader from "readline-sync";
 
-import Intrinsic from "../../../values/intrinsic";
-import UnionType from "../../../../code-analysis/type-checker/types/union-type";
-import SingularType from "../../../../code-analysis/type-checker/types/singular-type";
+import Intrinsic from "../../../../values/intrinsic";
+import UnionType from "../../../../../code-analysis/type-checker/types/union-type";
+import SingularType from "../../../../../code-analysis/type-checker/types/singular-type";
 
 export default class Readln extends Intrinsic.Function {
   public readonly argumentTypes = {

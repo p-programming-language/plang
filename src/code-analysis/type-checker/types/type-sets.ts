@@ -10,6 +10,9 @@ export const INDEXABLE_LITERAL_TYPES = [
   new SingularType("string")
 ];
 
-export const INDEXABLE_LITERAL_VALUE_TYPES = [
+export const INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES = [
   "string"
 ];
+
+export const INTRINSIC_EXTENDED_LITERAL_TYPES = INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES
+  .map(name => new SingularType(name));

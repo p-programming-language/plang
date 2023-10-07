@@ -10,8 +10,9 @@ import ArrayType from "../../code-analysis/type-checker/types/array-type";
 import FunctionType from "../../code-analysis/type-checker/types/function-type";
 import Intrinsic from "../values/intrinsic";
 import type Interpreter from "../interpreter";
+import type P from "../../p";
 
-import Std from "./std";
+import Std from "./libs/std";
 import Eval from "./eval";
 
 export default class Intrinsics {
@@ -37,8 +38,8 @@ export default class Intrinsics {
     });
   }
 
-  public defineFunction<F extends Intrinsic.Function>(name: string, IntrinsicFunction: { new(intrinsics: Intrinsics): F }): void {
-    const fn = new IntrinsicFunction(this);
+  public defineFunction<F extends Intrinsic.Function>(name: string, IntrinsicFunction: { new(interpreter?: Interpreter): F }): void {
+    const fn = new IntrinsicFunction(this.interpreter);
     const type = new FunctionType(new Map<string, Type>(Object.entries(fn.argumentTypes)), fn.returnType);
     this.define(name, fn, type);
   }

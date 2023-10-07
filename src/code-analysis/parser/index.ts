@@ -376,15 +376,27 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseExponential(): AST.Expression {
-    let left = this.parseAccess();
+    let left = this.parseCall();
 
     while (this.match(Syntax.Carat, Syntax.StarStar)) { // this is also where i parsed ".." in cosmo, AKA a range literal expression
       const operator = this.previous<undefined>();
-      const right = this.parseAccess();
+      const right = this.parseCall();
       left = new BinaryExpression(left, right, operator);
     }
 
     return left;
+  }
+
+  private parseCall(): AST.Expression {
+    let callee = this.parseAccess();
+
+    while (this.match(Syntax.LParen)) {
+      const args = this.parseExpressionList(Syntax.RParen);
+      this.consume(Syntax.RParen, "')'");
+      callee = new CallExpression(callee, args);
+    }
+
+    return callee;
   }
 
   private parseAccess(): AST.Expression {
@@ -405,7 +417,7 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   private parseIndex(): AST.Expression {
-    let object = this.parseCall();
+    let object = this.parseUnary();
 
     while (this.check(Syntax.LBracket)) {
       this.consume(Syntax.LBracket);
@@ -419,18 +431,6 @@ export default class Parser extends ArrayStepper<Token> {
     }
 
     return object;
-  }
-
-  private parseCall(): AST.Expression {
-    let callee = this.parseUnary();
-
-    while (this.match(Syntax.LParen)) {
-      const args = this.parseExpressionList(Syntax.RParen);
-      this.consume(Syntax.RParen, "')'");
-      callee = new CallExpression(callee, args);
-    }
-
-    return callee;
   }
 
   private parseUnary(): AST.Expression {
