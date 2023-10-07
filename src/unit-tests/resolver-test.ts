@@ -3,17 +3,17 @@ import { readFileSync, readdirSync } from "fs";
 import path from "path";
 import "should";
 
-import Parser from "../../src/code-analysis/parser";
 import Resolver from "../../src/code-analysis/resolver";
 import { PError } from "../../src/errors";
+import P from "../../tools/p";
 
 PError.testing = true;
 
 function getResolveFunction(source: string): () => void {
-  const parser = new Parser(source);
-  const resolver = new Resolver;
+  const p = new P("test");
+  const parser = p.createParser(source);
   const ast = parser.parse();
-  return () => resolver.resolve(ast);
+  return () => p.resolver.resolve(ast);
 }
 
 const testDirectory = "./tests/";

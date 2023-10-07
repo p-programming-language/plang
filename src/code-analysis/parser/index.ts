@@ -1,18 +1,20 @@
 
 import { Token } from "../tokenization/token";
 import { ParserSyntaxError } from "../../errors";
-import { ValueType } from "../type-checker";
 import { fakeToken } from "../../utility";
-import ArrayStepper from "../array-stepper";
-import Lexer from "../tokenization/lexer";
+import type P from "../../p";
+import type TypeAnalyzer from "./type-analyzer";
+import TypeParser from "./type-parser";
 import Syntax from "../tokenization/syntax-type";
-import TypeAnalyzer from "./type-analyzer";
 import AST from "./ast";
 
 import * as SyntaxSets from "../tokenization/syntax-sets";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 import { LiteralExpression } from "./ast/expressions/literal";
+import { StringInterpolationExpression } from "./ast/expressions/string-interpolation";
+import { ArrayLiteralExpression } from "./ast/expressions/array-literal";
+import { ObjectLiteralExpression } from "./ast/expressions/object-literal";
 import { ParenthesizedExpression } from "./ast/expressions/parenthesized";
 import { UnaryExpression } from "./ast/expressions/unary";
 import { BinaryExpression } from "./ast/expressions/binary";
@@ -20,37 +22,26 @@ import { TernaryExpression } from "./ast/expressions/ternary";
 import { IdentifierExpression } from "./ast/expressions/identifier";
 import { VariableAssignmentExpression } from "./ast/expressions/variable-assignment";
 import { CompoundAssignmentExpression } from "./ast/expressions/compound-assignment";
-import { SingularTypeExpression } from "./ast/type-nodes/singular-type";
-import { UnionTypeExpression } from "./ast/type-nodes/union-type";
+import { PropertyAssignmentExpression } from "./ast/expressions/property-assignment";
 import { CallExpression } from "./ast/expressions/call";
 import { IndexExpression } from "./ast/expressions";
 import { ExpressionStatement } from "./ast/statements/expression";
 import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
-import { ArrayLiteralExpression } from "./ast/expressions/array-literal";
-import { ArrayTypeExpression } from "./ast/type-nodes/array-type";
 import { BlockStatement } from "./ast/statements/block";
 import { PrintlnStatement } from "./ast/statements/println";
 import { IfStatement } from "./ast/statements/if";
 import { WhileStatement } from "./ast/statements/while";
-import { PropertyAssignmentExpression } from "./ast/expressions/property-assignment";
 import { FunctionDeclarationStatement } from "./ast/statements/function-declaration";
 import { ReturnStatement } from "./ast/statements/return";
-import { StringInterpolationExpression } from "./ast/expressions/string-interpolation";
-import { ObjectLiteralExpression } from "./ast/expressions/object-literal";
-import { InterfaceTypeExpression } from "./ast/type-nodes/interface-type";
 import { TypeDeclarationStatement } from "./ast/statements/type-declaration";
 
-type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
-
-export default class Parser extends ArrayStepper<Token> {
-  public readonly lexer: Lexer;
-
-  public constructor(source: string) {
-    super();
-    this.lexer = new Lexer(source);
-    this.input = this.lexer.tokenize();
-  }
+export default class Parser extends TypeParser {
+  public constructor(
+    tokens: Token[],
+    protected readonly typeAnalyzer: TypeAnalyzer,
+    private readonly runner: P
+  ) { super(tokens); }
 
   /**
    * Parses until the predicate returns true
@@ -190,7 +181,7 @@ export default class Parser extends ArrayStepper<Token> {
     const identifierToken = this.consume<undefined>(Syntax.Identifier, "identifier");
     const initializer = this.match(Syntax.Equal) ?
       this.parseExpression()
-        : undefined;
+      : undefined;
 
     const identifier = new IdentifierExpression(identifierToken);
     return new VariableDeclarationStatement(type, identifier, isMutable, initializer);
@@ -198,7 +189,9 @@ export default class Parser extends ArrayStepper<Token> {
 
   private parseBlock(): BlockStatement {
     const brace = this.previous<undefined>();
+    this.typeAnalyzer!.typeTracker.beginTypeScope();
     const statements = this.parse(() => this.match(Syntax.RBrace));
+    this.typeAnalyzer!.typeTracker.endTypeScope();
     return new BlockStatement(brace, statements);
   }
 
@@ -543,7 +536,7 @@ export default class Parser extends ArrayStepper<Token> {
 
     for (const part of rawParts) {
       if (part.startsWith("%{")) {
-        const interpolationParser = new Parser(part.slice(2, -1));
+        const interpolationParser =  this.runner.createParser(part.slice(2, -1));
         const expression = interpolationParser.parseExpression();
         parts.push(expression);
       } else
@@ -581,133 +574,6 @@ export default class Parser extends ArrayStepper<Token> {
   }
 
   /**
-   * This has no precedence, since it's a declaration
-   *
-   * This is the reason it is not grouped with the below methods.
-   */
-  private parseInterfaceType(): InterfaceTypeExpression {
-    const name = this.consume<undefined>(Syntax.Identifier);
-    this.consume<undefined>(Syntax.LBrace, "'{'");
-    const properties = new Map<LiteralExpression<string, Syntax>, AST.TypeRef>();
-    const indexSignatures = new Map<AST.TypeRef, AST.TypeRef>();
-
-    if (!this.match(Syntax.RBrace)) {
-      const contents = this.parseInterfaceContents();
-      for (const [key, value] of contents)
-        if (key instanceof LiteralExpression)
-          properties.set(key, value);
-        else
-          indexSignatures.set(key, value);
-
-      this.consume<undefined>(Syntax.RBrace, "'}'");
-    }
-
-    const typeRef = new InterfaceTypeExpression(name, properties, indexSignatures);
-    TypeAnalyzer.defineType(name.lexeme, typeRef);
-    return typeRef;
-  }
-
-  private parseInterfaceContents(): Map<LiteralExpression<string, Syntax> | AST.TypeRef, AST.TypeRef> {
-    const keyValuePairs = [ this.parseInterfaceKeyValuePair() ];
-    while (this.match(Syntax.Comma, Syntax.Semicolon) && !this.check(Syntax.RBrace))
-      keyValuePairs.push(this.parseInterfaceKeyValuePair());
-
-    return new Map(keyValuePairs);
-  }
-
-  private parseInterfaceKeyValuePair(): [LiteralExpression<string, Syntax> | AST.TypeRef, AST.TypeRef] {
-    let key;
-    if (this.match(Syntax.Identifier)) {
-      const identifier = this.previous<undefined, Syntax.Identifier>();
-      key = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
-    } else {
-      this.consume(Syntax.LBracket, "'['");
-      key = this.parseType();
-      this.consume(Syntax.RBracket, "']'");
-    }
-
-    this.consume(Syntax.Colon, "':'");
-    const value = this.parseType();
-    return [key, value];
-  }
-
-  /**
-   * Parses a type reference
-   */
-  private parseType(): AST.TypeRef {
-    return this.parseUnionType();
-  }
-
-  private parseUnionType(): AST.TypeRef {
-    let left = this.parseArrayType();
-
-    while (this.match(Syntax.Pipe)) {
-      const singularTypes: (SingularTypeExpression | ArrayTypeExpression)[] = [];
-      if (left instanceof UnionTypeExpression)
-        singularTypes.push(...left.types);
-      else if (left instanceof SingularTypeExpression || left instanceof ArrayTypeExpression)
-        singularTypes.push(left);
-
-      singularTypes.push(this.parseSingularType());
-      left = new UnionTypeExpression(singularTypes);
-    }
-
-    return left;
-  }
-
-  private parseArrayType(): AST.TypeRef {
-    let left: AST.TypeRef = this.parseSingularType();
-
-    while (this.match(Syntax.LBracket)) {
-      this.consume(Syntax.RBracket, "']'");
-      left = new ArrayTypeExpression(left);
-    }
-
-    if (this.match(Syntax.Question))
-      left = new UnionTypeExpression([
-        <SingularTypeExpression>left,
-        new SingularTypeExpression(fakeToken(Syntax.Undefined, "undefined"))
-      ]);
-
-    return left;
-  }
-
-  private parseSingularType(): SingularTypeExpression {
-    if (!this.checkType())
-      throw new ParserSyntaxError(`Expected type, got '${this.current.lexeme}'`, this.current);
-
-    const typeKeyword = this.advance<undefined, Syntax.Identifier>();
-    const typeName = typeKeyword.lexeme;
-    let typeArgs: AST.TypeRef[] | undefined;
-    if (this.match(Syntax.LT)) {
-      typeArgs = this.parseTypeList();
-      this.consume(Syntax.GT, "'>'");
-    }
-
-    if (TypeAnalyzer.isCustomType(typeName))
-      return TypeAnalyzer.getRef(typeName)!;
-
-    return new SingularTypeExpression(typeKeyword, typeArgs);
-  }
-
-  private consumeSemicolons(): void {
-    while (this.match(Syntax.Semicolon));
-  }
-
-  /**
-   * Parses a list of type references separated by commas
-   *
-   * Must have at least one type
-   */
-  private parseTypeList(): AST.TypeRef[] {
-    const types = [ this.parseType() ];
-    while (this.match(Syntax.Comma))
-      types.push(this.parseType());
-
-    return types;
-  }
-
-  /**
    * Parses a list of expressions separated by commas
    */
   private parseExpressionList(closer?: Syntax): AST.Expression[] {
@@ -719,88 +585,5 @@ export default class Parser extends ArrayStepper<Token> {
       expressions.push(this.parseExpression());
 
     return expressions;
-  }
-
-  /**
-   * Advances to the next token
-   * @returns The previous token
-   */
-  private advance<V extends ValueType = ValueType, S extends Syntax = Syntax>(): Token<V, S> {
-    const token = this.current;
-    if (!this.isFinished)
-      this.position++;
-
-    return <Token<V, S>>token;
-  }
-
-  /**
-   * @returns The previous token
-   */
-  private previous<V extends ValueType = ValueType, S extends Syntax = Syntax>(): Token<V, S> {
-    return <Token<V, S>>this.peek(-1)!;
-  }
-
-  /**
-   * Checks for a set of syntax types, and consumes it if one exists
-   * @returns True if the current syntax matches any one syntax in `syntaxSet`
-   */
-  private matchSet(syntaxSet: SyntaxSet): boolean {
-    return this.match(...syntaxSet);
-  }
-
-  /**
-   * Checks for a syntax type, and consumes it if it exists
-   * @returns True if the current syntax matches any one syntax in `syntaxes`
-   */
-  private match(...syntaxes: Syntax[]): boolean {
-    for (const syntax of syntaxes)
-      if (this.check(syntax)) {
-        this.advance();
-        return true;
-      }
-
-    return false;
-  }
-
-  /**
-   * @returns Whether or not we're currently at a type reference
-   */
-  private checkType(offset = 0): boolean {
-    return this.checkMultiple([Syntax.Identifier, Syntax.Undefined, Syntax.Null], offset) && TypeAnalyzer.isTypeDefined(this.peek(offset)!.lexeme);
-  }
-
-  /**
-   * @returns True if the syntax at `offset` matches any one syntax in `syntaxes`
-   */
-  private checkMultiple(syntaxes: Syntax[], offset = 0): boolean {
-    for (const syntax of syntaxes)
-      if (this.check(syntax, offset))
-        return true;
-
-    return false;
-  }
-
-  /**
-   * @returns True if the syntax at `offset` matches `syntax`
-   */
-  private check(syntax: Syntax, offset = 0): boolean {
-    return this.peek(offset)?.syntax === syntax;
-  }
-
-  /**
-   * Expects `syntax` to exist, and throws if it does not
-   *
-   * Advances the parser if it does
-   */
-  private consume<V extends ValueType = ValueType, S extends Syntax = Syntax>(syntax: Syntax, expectedOverride?: string): Token<V, S> {
-    const gotSyntax = this.current ? Syntax[this.current.syntax] : "EOF";
-    if (!this.match(syntax))
-      throw new ParserSyntaxError(`Expected ${expectedOverride ?? `'${Syntax[syntax]}'`}, got ${gotSyntax}`, this.current);
-
-    return this.previous<V, S>();
-  }
-
-  protected override get isFinished(): boolean {
-    return this.check(Syntax.EOF);
   }
 }

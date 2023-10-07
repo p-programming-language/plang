@@ -4,22 +4,17 @@ import path from "path";
 import "should";
 
 import { PError } from "../../src/errors";
-import { TypeChecker } from "../../src/code-analysis/type-checker";
-import Parser from "../../src/code-analysis/parser";
-import Resolver from "../../src/code-analysis/resolver";
-import Binder from "../../src/code-analysis/type-checker/binder";
+import { TypeChecker } from "../../src/code-analysis/type-checker";import P from "../p";
 
 PError.testing = true;
 
 function getCheckFunction(source: string): () => void {
-  const parser = new Parser(source);
-  const resolver = new Resolver;
-  const binder = new Binder;
-  const typeChecker = new TypeChecker;
+  const p = new P("test");
+  const parser = p.createParser(source);
   const ast = parser.parse();
-  resolver.resolve(ast);
-  const boundAST = binder.bindStatements(ast);
-  return () => typeChecker.check(boundAST);
+  p.resolver.resolve(ast);
+  const boundAST = p.binder.bindStatements(ast);
+  return () => p.typeChecker.check(boundAST);
 }
 
 const testDirectory = "./tests/";

@@ -2,5 +2,4 @@
 import ASTViewer from "./classes/ast-viewer";
 import P from "./p";
 
-const p = new P("ast-viewer");
-ASTViewer.start(p.interpreter.binder);
+ASTViewer.start(new P("ast-viewer"));

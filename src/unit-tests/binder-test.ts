@@ -4,8 +4,7 @@ import path from "path";
 import "should";
 
 import { BoundStatement } from "../../src/code-analysis/type-checker/binder/bound-node";
-import Syntax from "../code-analysis/tokenization/syntax-type";
-import Parser from "../../src/code-analysis/parser";
+import Syntax from "../../src/code-analysis/tokenization/syntax-type";
 import Binder from "../../src/code-analysis/type-checker/binder";
 import SingularType from "../../src/code-analysis/type-checker/types/singular-type";
 import FunctionType from "../../src/code-analysis/type-checker/types/function-type";
@@ -23,9 +22,9 @@ import BoundCallExpression from "../../src/code-analysis/type-checker/binder/bou
 
 function bind(source: string): BoundStatement[] {
   const p = new P("test");
-  const parser = new Parser(source);
+  const parser = p.createParser(source);
   const ast = parser.parse();
-  return p.interpreter.binder.bindStatements(ast);
+  return p.binder.bindStatements(ast);
 }
 
 const testDirectory = "./tests/";

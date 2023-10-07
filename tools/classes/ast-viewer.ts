@@ -2,22 +2,22 @@ import reader from "readline-sync";
 
 import { BoundNode } from "../../src/code-analysis/type-checker/binder/bound-node";
 import { Type } from "../../src/code-analysis/type-checker/types/type";
-import type Binder from "../../src/code-analysis/type-checker/binder";
+import type P from "../p";
 import Parser from "../../src/code-analysis/parser";
 import AST from "../../src/code-analysis/parser/ast";
 
 namespace ASTViewer {
-  export function start(binder: Binder): void {
+  export function start(p: P): void {
     let option = undefined;
     while (option !== "bound" && option !== "regular")
       option = reader.question("Which AST do you want to view (regular/bound)? ").trim().toLowerCase();
 
     console.log(`Entering ${option === "bound" ? option : ""} AST viewer`.green.gray_bg(6));
     const source = reader.question("Input the source code you want to view the AST of: ").trim();
-    const parser = new Parser(source);
+    const parser = p.createParser(source);
     const ast = parser.parse();
     if (option === "bound") {
-      const boundAST = binder.bindStatements(ast);
+      const boundAST = p.binder.bindStatements(ast);
       viewNodeList(boundAST);
     }
     else

@@ -3,6 +3,9 @@ import util from "util";
 import "colors.ts";
 
 import { TypeChecker, ValueType } from "../src/code-analysis/type-checker";
+import Lexer from "../src/code-analysis/tokenization/lexer";
+import TypeTracker from "../src/code-analysis/parser/type-tracker";
+import TypeAnalyzer from "../src/code-analysis/parser/type-analyzer";
 import Parser from "../src/code-analysis/parser";
 import Binder from "../src/code-analysis/type-checker/binder";
 import Resolver from "../src/code-analysis/resolver";
@@ -19,9 +22,10 @@ interface PExecutionOptions {
 }
 
 export default class P {
-  private binder = new Binder;
-  private resolver = new Resolver;
+  private typeTracker = new TypeTracker;
 
+  public resolver = new Resolver;
+  public binder = new Binder;
   public typeChecker = new TypeChecker;
   public interpreter: Interpreter;
   public readonly repl = new REPL(this);
@@ -37,8 +41,16 @@ export default class P {
     this.interpreter = new Interpreter(this, this.resolver, this.binder, fileName)
   }
 
+  public createParser(source: string): Parser {
+    const lexer = new Lexer(source);
+    const tokens = lexer.tokenize();
+    const typeAnalyzer = new TypeAnalyzer(tokens, this.typeTracker);
+    typeAnalyzer.analyze();
+    return new Parser(tokens, typeAnalyzer, this);
+  }
+
   public doString(source: string): ValueType {
-    const parser = new Parser(source);
+    const parser = this.createParser(source);
     if (this.executionOptions.outputTokens)
       console.log(parser.input!.toString());
 
@@ -73,6 +85,7 @@ export default class P {
   }
 
   public refreshResources(): void {
+    this.typeTracker = new TypeTracker;
     this.binder = new Binder;
     this.resolver = new Resolver;
     this.typeChecker = new TypeChecker;
