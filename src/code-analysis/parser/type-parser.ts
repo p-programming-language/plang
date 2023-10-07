@@ -9,10 +9,12 @@ import { LiteralTypeExpression } from "./ast/type-nodes/literal-type";
 import { UnionTypeExpression } from "./ast/type-nodes/union-type";
 import { ArrayTypeExpression } from "./ast/type-nodes/array-type";
 import { InterfaceTypeExpression } from "./ast/type-nodes/interface-type";
+import { FunctionTypeExpression } from "./ast/type-nodes/function-type";
 import type TypeAnalyzer from "./type-analyzer";
 import type AST from "./ast";
 import TokenStepper from "./token-stepper";
 import Syntax from "../tokenization/syntax-type";
+
 
 export default abstract class TypeParser extends TokenStepper {
   protected abstract readonly typeAnalyzer: TypeAnalyzer;
@@ -39,8 +41,7 @@ export default abstract class TypeParser extends TokenStepper {
       this.consume<undefined>(Syntax.RBrace, "'}'");
     }
 
-    const typeRef = new InterfaceTypeExpression(name, properties, indexSignatures);
-    return typeRef;
+    return new InterfaceTypeExpression(name, properties, indexSignatures);
   }
 
   protected parseInterfaceContents(): Map<LiteralExpression<string, Syntax> | AST.TypeRef, InterfacePropertySignature<AST.TypeRef>> {
@@ -52,31 +53,61 @@ export default abstract class TypeParser extends TokenStepper {
   }
 
   protected parseInterfaceKeyValuePair(): [LiteralExpression<string, Syntax> | AST.TypeRef, InterfacePropertySignature<AST.TypeRef>] {
-    let key;
-    let value;
+    let key: AST.TypeRef;
+    let valueType: AST.TypeRef;
     let isMutable = false;
     if (this.match(Syntax.LBracket)) {
       key = this.parseType();
       this.consume(Syntax.RBracket, "']'");
       this.consume(Syntax.Colon, "':'");
-      value = this.parseType();
+      valueType = this.parseType();
     } else {
-      isMutable = this.match(Syntax.Mut);
-      value = this.parseType();
-      const identifier = this.consume<undefined>(Syntax.Identifier);
-      key = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
+      ({ isMutable, valueType, key } = this.parseNamedType(true));
     }
 
     return [key, {
-      valueType: value,
+      valueType,
       mutable: isMutable
     }];
+  }
+
+  private parseNamedType(allowMutable = false) {
+    const isMutable = allowMutable ? this.match(Syntax.Mut) : false;
+    const valueType = this.parseType();
+    const identifier = this.consume<undefined>(Syntax.Identifier);
+    const key = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
+    return { isMutable, valueType, key };
   }
 
   /**
    * Parses a type reference
    */
   protected parseType(): AST.TypeRef {
+    return this.parseFunctionType();
+  }
+
+  protected parseFunctionType(): AST.TypeRef {
+    if (this.match(Syntax.LParen)) {
+      const parameterTypes = new Map<string, AST.TypeRef>();
+      if (!this.match(Syntax.RParen)) {
+        const parseParameter = () => {
+          const param = this.parseNamedType();
+          parameterTypes.set(param.key.token.value, param.valueType);
+        }
+
+        parseParameter();
+        while (this.match(Syntax.Comma))
+          parseParameter();
+
+        this.consume(Syntax.RParen);
+      }
+
+
+      this.consume(Syntax.ColonColon, "'::'");
+      const returnType = this.parseType();
+      return new FunctionTypeExpression(parameterTypes, returnType);
+    }
+
     return this.parseUnionType();
   }
 
@@ -149,7 +180,7 @@ export default abstract class TypeParser extends TokenStepper {
   }
 
   /**
-   * @returns Whether or not we're currently at a type reference
+   * @returns Whether or not we matched a type reference
    */
   protected matchType(offset = 0): boolean {
     if (this.checkType(offset)) {
@@ -163,8 +194,14 @@ export default abstract class TypeParser extends TokenStepper {
    * @returns Whether or not we're currently at a type reference
    */
   protected checkType(offset = 0): boolean {
-    return this.checkMultiple([Syntax.Identifier, Syntax.Undefined, Syntax.Null], offset)
+    return (this.check(Syntax.LParen, offset) && (
+      this.checkType(offset + 1)
+      || (this.check(Syntax.RParen, offset + 1) && this.check(Syntax.ColonColon, offset + 2))
+    ))
+    || (
+      this.checkMultiple([Syntax.Identifier, Syntax.Undefined, Syntax.Null], offset)
       && this.typeAnalyzer!.typeTracker.isTypeDefined(this.peek(offset)!.lexeme)
-      || this.checkMultiple([Syntax.String, Syntax.Boolean, Syntax.Int, Syntax.Float], offset);
+    )
+    || this.checkMultiple([Syntax.String, Syntax.Boolean, Syntax.Int, Syntax.Float], offset)
   }
 }

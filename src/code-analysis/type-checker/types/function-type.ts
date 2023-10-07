@@ -15,6 +15,6 @@ export default class FunctionType extends SingularType {
       .map(([name, type]) => `${type.toString(colors)} ${name}`)
       .join(", ");
 
-    return `(${parameterList}) => ${this.returnType.toString(colors)}`;
+    return `(${parameterList}) :: ${this.returnType.toString(colors)}`;
   }
 }

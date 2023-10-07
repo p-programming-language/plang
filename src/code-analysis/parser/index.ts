@@ -118,17 +118,11 @@ export default class Parser extends TypeParser {
    * Parses a declaration statement like a class, variable, function, etc.
    */
   private declaration(): AST.Statement {
-    if (this.checkType() && this.check(Syntax.Function, 1)) {
-      const declaration = this.parseFunctionDeclaration();
-      this.consumeSemicolons();
-      return declaration;
-    }
+    if (this.atVariableDeclaration)
+      return this.parseVariableDeclaration();
 
-    if (this.atVariableDeclaration) {
-      const declaration = this.parseVariableDeclaration();
-      this.consumeSemicolons();
-      return declaration;
-    }
+    if (this.atFunctionDeclaration)
+      return this.parseFunctionDeclaration();
 
     if (this.match(Syntax.Interface)) {
       const declaration = this.parseInterfaceType();
@@ -141,17 +135,51 @@ export default class Parser extends TypeParser {
     return stmt;
   }
 
-  private get atVariableDeclaration(): boolean {
-    const nextSyntax = this.peek()?.syntax;
-    const nextNextSyntax = this.peek(2)?.syntax;
-    const isVariableDeclarationSyntax = (syntax?: Syntax) => syntax === Syntax.Identifier
-      || syntax === Syntax.Pipe
-      || syntax === Syntax.LBracket
-      || syntax === Syntax.RBracket
-      || syntax === Syntax.Question;
+  private get atFunctionDeclaration(): boolean {
+    if (this.check(Syntax.Mut))
+      return false;
 
-    return (this.check(Syntax.Mut) ? this.checkType(1) : this.checkType())
-      && (isVariableDeclarationSyntax(nextSyntax) || isVariableDeclarationSyntax(nextNextSyntax));
+    let offsetToFnKeyword = 0;
+    let passedClosingParen = false;
+    if (this.checkType() && this.check(Syntax.LParen))
+      while (!this.check(Syntax.Function, offsetToFnKeyword)) {
+        if (this.check(Syntax.RParen, offsetToFnKeyword))
+          passedClosingParen = true;
+
+        if (!this.checkType(offsetToFnKeyword) && this.check(Syntax.Identifier, offsetToFnKeyword) && passedClosingParen)
+          return false;
+
+        offsetToFnKeyword++;
+      }
+    else if (!this.checkType() && this.check(Syntax.Identifier))
+      return false;
+
+    return this.checkType() && this.check(Syntax.Function, offsetToFnKeyword === 0 ? 1 : offsetToFnKeyword);
+  }
+
+  private get atVariableDeclaration(): boolean {
+    const isVariableDeclarationSyntax = (offset = 1) =>
+      this.checkMultiple([
+        Syntax.Identifier, Syntax.Pipe,
+        Syntax.LBracket, Syntax.RBracket,
+        Syntax.RParen, Syntax.ColonColon,
+        Syntax.Question
+      ], offset);
+
+    const soFarSoGood = (this.check(Syntax.Mut) ? this.checkType(1) : this.checkType())
+      && (isVariableDeclarationSyntax() || isVariableDeclarationSyntax(2));
+
+    if (soFarSoGood) {
+      let offset = 1;
+      while (!this.check(Syntax.Equal, offset)) {
+        if (this.check(Syntax.Function, offset))
+          return false;
+
+        offset++
+      }
+    }
+
+    return soFarSoGood;
   }
 
   private parseFunctionDeclaration(): AST.Statement {
@@ -186,7 +214,9 @@ export default class Parser extends TypeParser {
       : undefined;
 
     const identifier = new IdentifierExpression(identifierToken);
-    return new VariableDeclarationStatement(type, identifier, isMutable, initializer);
+    const declaration = new VariableDeclarationStatement(type, identifier, isMutable, initializer);
+    this.consumeSemicolons();
+    return declaration;
   }
 
   private parseBlock(): BlockStatement {

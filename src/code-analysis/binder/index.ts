@@ -125,8 +125,23 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): BoundVariableDeclarationStatement {
     const initializer = stmt.initializer ? this.bind(stmt.initializer) : undefined;
-    const type = getTypeFromTypeRef(stmt.typeRef);
-    const variableSymbol = this.defineSymbol(stmt.identifier.token, type.isSingular() && type.name === "any" ? (initializer?.type ?? type) : type);
+    const variableType = getTypeFromTypeRef(stmt.typeRef);
+    let type: Type;
+
+    const valueIsUndefined = (initializer?.type ?? new SingularType("undefined")).isUndefined();
+    if (valueIsUndefined)
+      type = variableType instanceof UnionType ?
+        new UnionType([...variableType.types, new SingularType("undefined")])
+        : new UnionType([<SingularType>variableType, new SingularType("undefined")])
+    else if (variableType.isSingular())
+      if (variableType.name === "any")
+        type = initializer?.type ?? variableType
+      else
+        type = variableType
+    else
+      type = variableType
+
+    const variableSymbol = this.defineSymbol(stmt.identifier.token, type);
     return new BoundVariableDeclarationStatement(variableSymbol, stmt.mutable, initializer);
   }
 
@@ -191,7 +206,6 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       && access.index instanceof BoundLiteralExpression
       && access.object.type.properties.get(access.index.token.value)?.mutable === false
     ) {
-      // TODO: have keys of interfaces be literal types so we can get the exact property name
       throw new TypeError(`Attempt to assign to immutable property '${access.index.token.value}'`, expr.access.index.token)
     }
 

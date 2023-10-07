@@ -1,4 +1,4 @@
-any fn greeter(string greeting = "Hello") {
+(string name) :: void fn greeter(string greeting = "Hello") {
   void fn greet(string name) {
     println "%{greeting}, %{name}!"
   }
@@ -6,7 +6,7 @@ any fn greeter(string greeting = "Hello") {
   return greet
 }
 
-any greetEnglish = greeter()
-any greetSpanish = greeter("Hola")
+(string name) :: void greetEnglish = greeter();
+(string name) :: void greetSpanish = greeter("Hola")
 greetEnglish("Kevin")
 greetSpanish("Kevin")
