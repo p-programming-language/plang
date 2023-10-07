@@ -74,7 +74,7 @@ yarn run <tool>
         - Basics (numbers, strings, booleans)
         - String interpolations
         - Array literals/types
-        - Object literals
+        - Object literals/types
     - Array indexing
     - Binary expressions (including compound assignment)
     - Unary expressions (including `++` and `--`)
@@ -87,4 +87,5 @@ yarn run <tool>
 - Type aliases (e.x. `type number = int | float`)
 - `typeof`, `is`
 - `value is in array`
+- Type guards (`value is T`, `"property" is in object`)
 - Classes

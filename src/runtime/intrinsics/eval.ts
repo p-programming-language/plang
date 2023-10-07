@@ -5,12 +5,12 @@ import Intrinsic from "../values/intrinsic";
 export default class Eval extends Intrinsic.Function {
   public readonly name = "eval";
   public readonly returnType = new SingularType("any");
-  public readonly argumentTypes = { code: new SingularType("string") };
+  public readonly argumentTypes = { source: new SingularType("string") };
 
-  public call(code: string): ValueType {
+  public call(source: string): ValueType {
     const enclosingResultOutputEnabled = this.interpreter!.host.executionOptions.outputResult;
     this.interpreter!.host.executionOptions.outputResult = false;
-    const result = this.interpreter!.host.doString(code);
+    const result = this.interpreter!.host.doString(source);
     this.interpreter!.host.executionOptions.outputResult = enclosingResultOutputEnabled;
     return result;
   }

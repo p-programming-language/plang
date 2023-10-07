@@ -131,10 +131,11 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
     this.check(expr.callee);
 
     const type = <FunctionType>expr.callee.type;
-    const expectedTypes = Array.from(type.parameterTypes.values());
+    const expectedTypes = Array.from(type.parameterTypes.entries());
     for (const arg of expr.args) {
+      const [parameterName, expectedType] = expectedTypes[expr.args.indexOf(arg)];
       this.check(arg);
-      this.assert(arg, arg.type, expectedTypes[expr.args.indexOf(arg)]);
+      this.assert(arg, arg.type, expectedType, `Argument type '${arg.type.toString()}' is not assignable to type '${expectedType.toString()}' of parameter '${parameterName}'`);
     }
   }
 
