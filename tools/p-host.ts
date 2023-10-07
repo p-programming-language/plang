@@ -1,12 +1,12 @@
-import { TypeChecker } from "../../src/code-analysis/type-checker";
-import type P from "../p";
-import Lexer from "../../src/code-analysis/tokenization/lexer";
-import TypeTracker from "../../src/code-analysis/parser/type-tracker";
-import TypeAnalyzer from "../../src/code-analysis/parser/type-analyzer";
-import Parser from "../../src/code-analysis/parser";
-import Resolver from "../../src/code-analysis/resolver";
-import Binder from "../../src/code-analysis/binder";
-import Interpreter from "../../src/runtime/interpreter";
+import { TypeChecker } from "../src/code-analysis/type-checker";
+import type P from "./p";
+import Lexer from "../src/code-analysis/tokenization/lexer";
+import TypeTracker from "../src/code-analysis/parser/type-tracker";
+import TypeAnalyzer from "../src/code-analysis/parser/type-analyzer";
+import Parser from "../src/code-analysis/parser";
+import Resolver from "../src/code-analysis/resolver";
+import Binder from "../src/code-analysis/binder";
+import Interpreter from "../src/runtime/interpreter";
 
 export default class PHost {
   private typeTracker = new TypeTracker;

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import P from "./p";
+import P from "../p";
 
 const USAGE = `
 Usage: p <file> [argv...]

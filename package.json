@@ -6,15 +6,15 @@
   "icon": "https://avatars.githubusercontent.com/u/146694713?s=400&u=4e01b5afefbf7e40641702e5cbdf785ff183fe35&v=4",
   "main": "dist/src/main.js",
   "bin": {
-    "pint": "dist/tools/pint.js"
+    "pint": "dist/tools/binaries/pint.js"
   },
   "scripts": {
     "test": "mocha dist/src/unit-tests -j 4 --extension js",
     "build": "tsc --skipLibCheck",
     "start": "npm run -s pint",
-    "pint": "node dist/tools/pint.js",
-    "repl": "node dist/tools/repl.js",
-    "ast-viewer": "node dist/tools/ast-viewer.js",
+    "pint": "node dist/tools/binaries/pint.js",
+    "repl": "node dist/tools/binaries/repl.js",
+    "ast-viewer": "node dist/tools/binaries/ast-viewer.js",
     "path": "tsc --skipLibCheck && npm link",
     "docs": "npx typedoc",
     "push": "npm run docs -s && git add . && git commit -m 'docs: (autogenerate)' && git push -u"

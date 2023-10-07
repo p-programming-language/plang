@@ -3,10 +3,10 @@ import util from "util";
 import "colors.ts";
 
 import type { ValueType } from "../src/code-analysis/type-checker";
-import PHost from "./classes/p-host";
 import Parser from "../src/code-analysis/parser";
 import PValue from "../src/runtime/values/value";
-import REPL from "./classes/repl";
+import PHost from "./p-host";
+import REPL from "./repl";
 import pkg = require("../package.json");
 
 interface PExecutionOptions {
