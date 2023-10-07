@@ -402,7 +402,7 @@ export default class Parser extends ArrayStepper<Token> {
   private parseAccess(): AST.Expression {
     let object = this.parseIndex();
 
-    while (this.match(Syntax.Dot, Syntax.ColonColon)) {
+    while (this.match(Syntax.Dot)) {
       const accessToken = this.previous<undefined>();
       const indexIdentifier = this.consume<string>(Syntax.Identifier);
       indexIdentifier.syntax = Syntax.String;
