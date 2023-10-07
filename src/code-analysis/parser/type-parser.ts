@@ -49,17 +49,18 @@ export default abstract class TypeParser extends TokenStepper {
 
   protected parseInterfaceKeyValuePair(): [LiteralExpression<string, Syntax> | AST.TypeRef, AST.TypeRef] {
     let key;
-    if (this.match(Syntax.Identifier)) {
-      const identifier = this.previous<undefined, Syntax.Identifier>();
-      key = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
-    } else {
-      this.consume(Syntax.LBracket, "'['");
+    let value;
+    if (this.match(Syntax.LBracket)) {
       key = this.parseType();
       this.consume(Syntax.RBracket, "']'");
+      this.consume(Syntax.Colon, "':'");
+      value = this.parseType();
+    } else {
+      value = this.parseType();
+      const identifier = this.consume<undefined>(Syntax.Identifier);
+      key = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
     }
 
-    this.consume(Syntax.Colon, "':'");
-    const value = this.parseType();
     return [key, value];
   }
 

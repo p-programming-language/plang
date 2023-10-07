@@ -60,6 +60,7 @@ yarn run <tool>
 ```
 
 ## Current Features
+- Type analyzation & hoisting before parsing
 - Tokenizing:
     - Number literals (int, float)
     - String literals, supports both single and double quotes
@@ -83,5 +84,5 @@ yarn run <tool>
     - Function declarations and calls
 
 ## Planned Features
-- Analyze created types before parsing references to them
+- Range literals
 - Classes

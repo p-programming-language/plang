@@ -12,6 +12,7 @@ export default class TypeAnalyzer extends TypeParser {
   ) { super(tokens); }
 
   public analyze(): void {
+    // TODO: add type aliases here
     while (!this.isFinished)
       if (this.match(Syntax.Interface)) {
         const declaration = this.parseInterfaceType();
