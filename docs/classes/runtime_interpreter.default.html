@@ -26,7 +26,7 @@
 <li><a href="../modules/code_analysis_parser_ast.default.html" class="tsd-signature-type tsd-kind-namespace">default</a><span class="tsd-signature-symbol">.</span><a href="../modules/code_analysis_parser_ast.default.Visitor.html" class="tsd-signature-type tsd-kind-namespace">Visitor</a><span class="tsd-signature-symbol">.</span><a href="code_analysis_parser_ast.default.Visitor.Expression.html" class="tsd-signature-type tsd-kind-class">Expression</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a><span class="tsd-signature-symbol">&gt;</span></li>
 <li><a href="../modules/code_analysis_parser_ast.default.html" class="tsd-signature-type tsd-kind-namespace">default</a><span class="tsd-signature-symbol">.</span><a href="../modules/code_analysis_parser_ast.default.Visitor.html" class="tsd-signature-type tsd-kind-namespace">Visitor</a><span class="tsd-signature-symbol">.</span><a href="code_analysis_parser_ast.default.Visitor.Statement.html" class="tsd-signature-type tsd-kind-class">Statement</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L43">runtime/interpreter.ts:43</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L46">runtime/interpreter.ts:46</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -69,6 +69,7 @@
 <a href="runtime_interpreter.default.html#visitParenthesizedExpression" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Parenthesized<wbr/>Expression</span></a>
 <a href="runtime_interpreter.default.html#visitPrintlnStatement" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Println<wbr/>Statement</span></a>
 <a href="runtime_interpreter.default.html#visitPropertyAssignmentExpression" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Property<wbr/>Assignment<wbr/>Expression</span></a>
+<a href="runtime_interpreter.default.html#visitRangeLiteralExpression" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Range<wbr/>Literal<wbr/>Expression</span></a>
 <a href="runtime_interpreter.default.html#visitReturnStatement" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Return<wbr/>Statement</span></a>
 <a href="runtime_interpreter.default.html#visitStringInterpolationExpression" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>String<wbr/>Interpolation<wbr/>Expression</span></a>
 <a href="runtime_interpreter.default.html#visitTernaryExpression" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Ternary<wbr/>Expression</span></a>
@@ -99,54 +100,54 @@
 <h5><span class="tsd-kind-parameter">fileName</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;unnamed&quot;</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="runtime_interpreter.default.html" class="tsd-signature-type tsd-kind-class">default</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L51">runtime/interpreter.ts:51</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L54">runtime/interpreter.ts:54</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member"><a id="binder" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>binder</span><a href="#binder" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">binder</span><span class="tsd-signature-symbol">:</span> <a href="code_analysis_binder.default.html" class="tsd-signature-type tsd-kind-class">default</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L54">runtime/interpreter.ts:54</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L57">runtime/interpreter.ts:57</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="fileName" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>file<wbr/>Name</span><a href="#fileName" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">file<wbr/>Name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;unnamed&quot;</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L55">runtime/interpreter.ts:55</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L58">runtime/interpreter.ts:58</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="globals" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>globals</span><a href="#globals" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">globals</span><span class="tsd-signature-symbol">:</span> <a href="runtime_scope.default.html" class="tsd-signature-type tsd-kind-class">default</a><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L44">runtime/interpreter.ts:44</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L47">runtime/interpreter.ts:47</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="host" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>host</span><a href="#host" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">host</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">default</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L52">runtime/interpreter.ts:52</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L55">runtime/interpreter.ts:55</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="intrinsics" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>intrinsics</span><a href="#intrinsics" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">intrinsics</span><span class="tsd-signature-symbol">:</span> <a href="runtime_intrinsics.default.html" class="tsd-signature-type tsd-kind-class">default</a><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L49">runtime/interpreter.ts:49</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L52">runtime/interpreter.ts:52</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="loopLevel" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>loop<wbr/>Level</span><a href="#loopLevel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">loop<wbr/>Level</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L47">runtime/interpreter.ts:47</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L50">runtime/interpreter.ts:50</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="recursionDepth" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>recursion<wbr/>Depth</span><a href="#recursionDepth" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">recursion<wbr/>Depth</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 1</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L48">runtime/interpreter.ts:48</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L51">runtime/interpreter.ts:51</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="resolver" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>resolver</span><a href="#resolver" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">resolver</span><span class="tsd-signature-symbol">:</span> <a href="code_analysis_resolver.default.html" class="tsd-signature-type tsd-kind-class">default</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L53">runtime/interpreter.ts:53</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L56">runtime/interpreter.ts:56</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="scope" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>scope</span><a href="#scope" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">scope</span><span class="tsd-signature-symbol">:</span> <a href="runtime_scope.default.html" class="tsd-signature-type tsd-kind-class">default</a><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L45">runtime/interpreter.ts:45</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L48">runtime/interpreter.ts:48</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member"><a id="endRecursion" class="tsd-anchor"></a>
@@ -161,7 +162,7 @@
 <h5><span class="tsd-kind-parameter">level</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 1</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L317">runtime/interpreter.ts:317</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L326">runtime/interpreter.ts:326</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="evaluate" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>evaluate</span><a href="#evaluate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -179,7 +180,7 @@
 <h5><span class="tsd-kind-parameter">statements</span>: <a href="../modules/code_analysis_parser_ast.default.html" class="tsd-signature-type tsd-kind-namespace">default</a><span class="tsd-signature-symbol">.</span><a href="code_analysis_parser_ast.default.Statement.html" class="tsd-signature-type tsd-kind-class">Statement</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">T</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L325">runtime/interpreter.ts:325</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L334">runtime/interpreter.ts:334</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="execute" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>execute</span><a href="#execute" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -192,7 +193,7 @@
 <h5><span class="tsd-kind-parameter">statement</span>: <a href="../modules/code_analysis_parser_ast.default.html" class="tsd-signature-type tsd-kind-namespace">default</a><span class="tsd-signature-symbol">.</span><a href="code_analysis_parser_ast.default.Statement.html" class="tsd-signature-type tsd-kind-class">Statement</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L321">runtime/interpreter.ts:321</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L330">runtime/interpreter.ts:330</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="startRecursion" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>start<wbr/>Recursion</span><a href="#startRecursion" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -205,7 +206,7 @@
 <h5><span class="tsd-kind-parameter">token</span>: <a href="code_analysis_tokenization_token.Token.html" class="tsd-signature-type tsd-kind-class">Token</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">, </span><a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L311">runtime/interpreter.ts:311</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L320">runtime/interpreter.ts:320</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitArrayLiteralExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Array<wbr/>Literal<wbr/>Expression</span><a href="#visitArrayLiteralExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -219,7 +220,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitArrayLiteralExpression">visitArrayLiteralExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L303">runtime/interpreter.ts:303</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L306">runtime/interpreter.ts:306</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitBinaryExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Binary<wbr/>Expression</span><a href="#visitBinaryExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -233,7 +234,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitBinaryExpression">visitBinaryExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L221">runtime/interpreter.ts:221</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L224">runtime/interpreter.ts:224</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitBlockStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Block<wbr/>Statement</span><a href="#visitBlockStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -247,7 +248,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Statement.html">Statement</a>.<a href="code_analysis_parser_ast.default.Visitor.Statement.html#visitBlockStatement">visitBlockStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L101">runtime/interpreter.ts:101</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L104">runtime/interpreter.ts:104</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitCallExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Call<wbr/>Expression</span><a href="#visitCallExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -261,7 +262,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitCallExpression">visitCallExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L137">runtime/interpreter.ts:137</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L140">runtime/interpreter.ts:140</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitCompoundAssignmentExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Compound<wbr/>Assignment<wbr/>Expression</span><a href="#visitCompoundAssignmentExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -275,7 +276,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitCompoundAssignmentExpression">visitCompoundAssignmentExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L161">runtime/interpreter.ts:161</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L164">runtime/interpreter.ts:164</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitExpressionStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Expression<wbr/>Statement</span><a href="#visitExpressionStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -289,7 +290,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Statement.html">Statement</a>.<a href="code_analysis_parser_ast.default.Visitor.Statement.html#visitExpressionStatement">visitExpressionStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L121">runtime/interpreter.ts:121</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L124">runtime/interpreter.ts:124</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitFunctionDeclarationStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Function<wbr/>Declaration<wbr/>Statement</span><a href="#visitFunctionDeclarationStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -303,7 +304,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Statement.html">Statement</a>.<a href="code_analysis_parser_ast.default.Visitor.Statement.html#visitFunctionDeclarationStatement">visitFunctionDeclarationStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L69">runtime/interpreter.ts:69</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L72">runtime/interpreter.ts:72</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitIdentifierExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Identifier<wbr/>Expression</span><a href="#visitIdentifierExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -317,7 +318,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitIdentifierExpression">visitIdentifierExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L178">runtime/interpreter.ts:178</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L181">runtime/interpreter.ts:181</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitIfStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>If<wbr/>Statement</span><a href="#visitIfStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -331,7 +332,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Statement.html">Statement</a>.<a href="code_analysis_parser_ast.default.Visitor.Statement.html#visitIfStatement">visitIfStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L91">runtime/interpreter.ts:91</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L94">runtime/interpreter.ts:94</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitIndexExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Index<wbr/>Expression</span><a href="#visitIndexExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -345,7 +346,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitIndexExpression">visitIndexExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L125">runtime/interpreter.ts:125</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L128">runtime/interpreter.ts:128</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitLiteralExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Literal<wbr/>Expression</span><a href="#visitLiteralExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -364,7 +365,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type tsd-kind-type-parameter">V</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitLiteralExpression">visitLiteralExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L307">runtime/interpreter.ts:307</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L316">runtime/interpreter.ts:316</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitObjectLiteralExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Object<wbr/>Literal<wbr/>Expression</span><a href="#visitObjectLiteralExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -378,7 +379,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/code_analysis_type_checker.ObjectType.html" class="tsd-signature-type tsd-kind-interface">ObjectType</a></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitObjectLiteralExpression">visitObjectLiteralExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L295">runtime/interpreter.ts:295</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L298">runtime/interpreter.ts:298</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitParenthesizedExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Parenthesized<wbr/>Expression</span><a href="#visitParenthesizedExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -392,7 +393,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitParenthesizedExpression">visitParenthesizedExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L280">runtime/interpreter.ts:280</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L283">runtime/interpreter.ts:283</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitPrintlnStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Println<wbr/>Statement</span><a href="#visitPrintlnStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -406,7 +407,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Statement.html">Statement</a>.<a href="code_analysis_parser_ast.default.Visitor.Statement.html#visitPrintlnStatement">visitPrintlnStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L117">runtime/interpreter.ts:117</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L120">runtime/interpreter.ts:120</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitPropertyAssignmentExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Property<wbr/>Assignment<wbr/>Expression</span><a href="#visitPropertyAssignmentExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -420,7 +421,21 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitPropertyAssignmentExpression">visitPropertyAssignmentExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L147">runtime/interpreter.ts:147</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L150">runtime/interpreter.ts:150</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="visitRangeLiteralExpression" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>visit<wbr/>Range<wbr/>Literal<wbr/>Expression</span><a href="#visitRangeLiteralExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="visitRangeLiteralExpression.visitRangeLiteralExpression-1"><span class="tsd-kind-call-signature">visit<wbr/>Range<wbr/>Literal<wbr/>Expression</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">expr</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="runtime_values_range.Range.html" class="tsd-signature-type tsd-kind-class">Range</a><a href="#visitRangeLiteralExpression.visitRangeLiteralExpression-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">expr</span>: <a href="code_analysis_parser_ast_expressions_range_literal.RangeLiteralExpression.html" class="tsd-signature-type tsd-kind-class">RangeLiteralExpression</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="runtime_values_range.Range.html" class="tsd-signature-type tsd-kind-class">Range</a></h4><aside class="tsd-sources">
+<p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitRangeLiteralExpression">visitRangeLiteralExpression</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L310">runtime/interpreter.ts:310</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitReturnStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Return<wbr/>Statement</span><a href="#visitReturnStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -434,7 +449,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Statement.html">Statement</a>.<a href="code_analysis_parser_ast.default.Visitor.Statement.html#visitReturnStatement">visitReturnStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L64">runtime/interpreter.ts:64</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L67">runtime/interpreter.ts:67</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitStringInterpolationExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>String<wbr/>Interpolation<wbr/>Expression</span><a href="#visitStringInterpolationExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -448,7 +463,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitStringInterpolationExpression">visitStringInterpolationExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L284">runtime/interpreter.ts:284</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L287">runtime/interpreter.ts:287</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitTernaryExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Ternary<wbr/>Expression</span><a href="#visitTernaryExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -462,7 +477,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitTernaryExpression">visitTernaryExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L182">runtime/interpreter.ts:182</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L185">runtime/interpreter.ts:185</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitTypeDeclarationStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Type<wbr/>Declaration<wbr/>Statement</span><a href="#visitTypeDeclarationStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -471,7 +486,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Statement.html">Statement</a>.<a href="code_analysis_parser_ast.default.Visitor.Statement.html#visitTypeDeclarationStatement">visitTypeDeclarationStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L60">runtime/interpreter.ts:60</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L63">runtime/interpreter.ts:63</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitUnaryExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Unary<wbr/>Expression</span><a href="#visitUnaryExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -485,7 +500,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitUnaryExpression">visitUnaryExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L188">runtime/interpreter.ts:188</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L191">runtime/interpreter.ts:191</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitVariableAssignmentExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Variable<wbr/>Assignment<wbr/>Expression</span><a href="#visitVariableAssignmentExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -499,7 +514,7 @@
 <h4 class="tsd-returns-title">Returns <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Expression.html">Expression</a>.<a href="code_analysis_parser_ast.default.Visitor.Expression.html#visitVariableAssignmentExpression">visitVariableAssignmentExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L155">runtime/interpreter.ts:155</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L158">runtime/interpreter.ts:158</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitVariableAssignmentStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Variable<wbr/>Assignment<wbr/>Statement</span><a href="#visitVariableAssignmentStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -513,7 +528,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Statement.html">Statement</a>.<a href="code_analysis_parser_ast.default.Visitor.Statement.html#visitVariableAssignmentStatement">visitVariableAssignmentStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L112">runtime/interpreter.ts:112</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L115">runtime/interpreter.ts:115</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitVariableDeclarationStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Variable<wbr/>Declaration<wbr/>Statement</span><a href="#visitVariableDeclarationStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -527,7 +542,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Statement.html">Statement</a>.<a href="code_analysis_parser_ast.default.Visitor.Statement.html#visitVariableDeclarationStatement">visitVariableDeclarationStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L105">runtime/interpreter.ts:105</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L108">runtime/interpreter.ts:108</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitWhileStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>While<wbr/>Statement</span><a href="#visitWhileStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -541,7 +556,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="code_analysis_parser_ast.default.Visitor.Statement.html">Statement</a>.<a href="code_analysis_parser_ast.default.Visitor.Statement.html#visitWhileStatement">visitWhileStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/48590a8/src/runtime/interpreter.ts#L76">runtime/interpreter.ts:76</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/interpreter.ts#L79">runtime/interpreter.ts:79</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -590,6 +605,7 @@
 <li><a href="#visitParenthesizedExpression" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Parenthesized<wbr/>Expression</span></a></li>
 <li><a href="#visitPrintlnStatement" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Println<wbr/>Statement</span></a></li>
 <li><a href="#visitPropertyAssignmentExpression" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Property<wbr/>Assignment<wbr/>Expression</span></a></li>
+<li><a href="#visitRangeLiteralExpression" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Range<wbr/>Literal<wbr/>Expression</span></a></li>
 <li><a href="#visitReturnStatement" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Return<wbr/>Statement</span></a></li>
 <li><a href="#visitStringInterpolationExpression" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>String<wbr/>Interpolation<wbr/>Expression</span></a></li>
 <li><a href="#visitTernaryExpression" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Ternary<wbr/>Expression</span></a></li>
@@ -616,13 +632,13 @@
 <li><a href="../modules/code_analysis_binder_bound_expressions_object_literal.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions/object-literal</a></li>
 <li><a href="../modules/code_analysis_binder_bound_expressions_parenthesized.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions/parenthesized</a></li>
 <li><a href="../modules/code_analysis_binder_bound_expressions_property_assignment.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions/property-assignment</a></li>
+<li><a href="../modules/code_analysis_binder_bound_expressions_range_literal.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions/range-literal</a></li>
 <li><a href="../modules/code_analysis_binder_bound_expressions_string_interpolation.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions/string-interpolation</a></li>
 <li><a href="../modules/code_analysis_binder_bound_expressions_ternary.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions/ternary</a></li>
 <li><a href="../modules/code_analysis_binder_bound_expressions_unary.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions/unary</a></li>
 <li><a href="../modules/code_analysis_binder_bound_expressions_variable_assignment.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions/variable-assignment</a></li>
 <li><a href="../modules/code_analysis_binder_bound_node.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-node</a></li>
 <li><a href="../modules/code_analysis_binder_bound_operators_binary.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-operators/binary</a></li>
-<li><a href="../modules/code_analysis_binder_bound_operators_unary.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-operators/unary</a></li>
 <li>Loading...</li></ul></nav></div></div></div>
 <div class="tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" rel="noopener" target="_blank">TypeDoc</a></p></div>
