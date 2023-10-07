@@ -15,7 +15,7 @@ The P programming language
 becuz im bored
 
 ## Examples
-Check out **[tests/](https://github.com/p-programming-language/plang/tree/main/tests)** for some examples.
+Check out **[examples/](https://github.com/p-programming-language/plang/tree/main/examples)** for some examples.
 
 ## Tools
 - pint
