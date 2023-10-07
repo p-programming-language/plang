@@ -45,7 +45,7 @@ export default abstract class TypeParser extends TokenStepper {
 
   protected parseInterfaceContents(): Map<LiteralExpression<string, Syntax> | AST.TypeRef, InterfacePropertySignature<AST.TypeRef>> {
     const keyValuePairs = [ this.parseInterfaceKeyValuePair() ];
-    while (this.match(Syntax.Comma, Syntax.Semicolon) && !this.check(Syntax.RBrace))
+    while ((this.match(Syntax.Comma, Syntax.Semicolon) || this.checkType() || this.check(Syntax.Mut)) && !this.check(Syntax.RBrace))
       keyValuePairs.push(this.parseInterfaceKeyValuePair());
 
     return new Map(keyValuePairs);
@@ -151,9 +151,20 @@ export default abstract class TypeParser extends TokenStepper {
   /**
    * @returns Whether or not we're currently at a type reference
    */
+  protected matchType(offset = 0): boolean {
+    if (this.checkType(offset)) {
+      this.advance();
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * @returns Whether or not we're currently at a type reference
+   */
   protected checkType(offset = 0): boolean {
     return this.checkMultiple([Syntax.Identifier, Syntax.Undefined, Syntax.Null], offset)
       && this.typeAnalyzer!.typeTracker.isTypeDefined(this.peek(offset)!.lexeme)
-      || this.checkMultiple([Syntax.String, Syntax.Boolean, Syntax.Int, Syntax.Float]);
+      || this.checkMultiple([Syntax.String, Syntax.Boolean, Syntax.Int, Syntax.Float], offset);
   }
 }
