@@ -35,6 +35,7 @@ import { WhileStatement } from "./ast/statements/while";
 import { FunctionDeclarationStatement } from "./ast/statements/function-declaration";
 import { ReturnStatement } from "./ast/statements/return";
 import { TypeDeclarationStatement } from "./ast/statements/type-declaration";
+import { TypeLiteralValueType } from "../type-checker";
 
 export default class Parser extends TypeParser {
   public constructor(
@@ -84,7 +85,7 @@ export default class Parser extends TypeParser {
     if (this.match(Syntax.Return)) {
       const keyword = this.previous<undefined>();
       const expr = this.checkMultiple([Syntax.Semicolon, Syntax.RBrace, Syntax.EOF]) ?
-        new LiteralExpression(fakeToken(Syntax.Undefined, "undefined"))
+        new LiteralExpression(fakeToken<undefined>(Syntax.Undefined, "undefined"))
         : this.parseExpression();
 
       return new ReturnStatement(keyword, expr);
@@ -449,7 +450,7 @@ export default class Parser extends TypeParser {
     }
 
     if (this.matchSet(LITERAL_SYNTAXES)) {
-      const token = this.previous();
+      const token = this.previous<TypeLiteralValueType | null | undefined>();
       if (this.checkMultiple(LITERAL_SYNTAXES, -2)) {
         let message = "Unexpected ";
         switch(token.syntax) {

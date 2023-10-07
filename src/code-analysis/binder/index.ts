@@ -3,7 +3,7 @@ import { BoundExpression, BoundStatement } from "./bound-node";
 import { INDEX_TYPE, INTRINSIC_EXTENDED_LITERAL_TYPES } from "../type-checker/types/type-sets";
 import type { Token } from "../tokenization/token";
 import type { Type } from "../type-checker/types/type";
-import type { InterfacePropertySignature, ValueType } from "../type-checker";
+import type { InterfacePropertySignature, TypeLiteralValueType, ValueType } from "../type-checker";
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
 import { getFakeIntrinsicExtension } from "../../utility";
@@ -70,6 +70,8 @@ import BoundFunctionDeclarationStatement from "./bound-statements/function-decla
 import BoundReturnStatement from "./bound-statements/return";
 import BoundTypeDeclarationStatement from "./bound-statements/type-declaration";
 import Intrinsic from "../../runtime/values/intrinsic";
+import { LiteralTypeExpression } from "../parser/ast/type-nodes/literal-type";
+import LiteralType from "../type-checker/types/literal-type";
 
 type IndexType = SingularType<"string"> | SingularType<"int">;
 
@@ -158,7 +160,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       if (member instanceof Intrinsic.Function)
         type = new FunctionType(new Map(Object.entries(member.argumentTypes)), member.returnType);
       else
-        type = this.getSingularTypeFromValue(member);
+        type = SingularType.fromValue(member);
 
       return new BoundAccessExpression(expr.token, object, index, type);
     }
@@ -307,8 +309,8 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     return new BoundArrayLiteralExpression(expr.token, elements, type);
   }
 
-  public visitLiteralExpression<T extends ValueType = ValueType>(expr: LiteralExpression<T>): BoundLiteralExpression<T> {
-    const type = this.getTypeFromLiteralSyntax(expr.token.syntax)!;
+  public visitLiteralExpression<T extends TypeLiteralValueType = TypeLiteralValueType>(expr: LiteralExpression<T>): BoundLiteralExpression<T> {
+    const type = new LiteralType(expr.token.value);
     return new BoundLiteralExpression(expr.token, type);
   }
 
@@ -329,23 +331,6 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       : node.accept<BoundStatement>(this));
   }
 
-  private getSingularTypeFromValue(value: ValueType): Type {
-    switch(typeof value) {
-      case "number": {
-        if (value !== Math.floor(value))
-          new SingularType("float");
-        else
-          new SingularType("int");
-      }
-
-      case "boolean":
-        return new SingularType("bool");
-
-      default:
-        return new SingularType(typeof value);
-    }
-  }
-
   private beginScope(): void {
     this.variableScopes.push([]);
   }
@@ -362,12 +347,14 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   }
 
   private getTypeFromTypeRef<T extends Type = Type>(node: AST.TypeRef): T {
-    if (node instanceof SingularTypeExpression)
+    if (node instanceof ArrayTypeExpression)
+      return <T><unknown>new ArrayType(this.getTypeFromTypeRef(node.elementType));
+    else if (node instanceof LiteralTypeExpression)
+      return <T><unknown>new LiteralType(node.literalToken.value);
+    else if (node instanceof SingularTypeExpression)
       return <T><unknown>new SingularType(node.token.lexeme, node.typeArguments?.map(arg => this.getTypeFromTypeRef(arg)));
     else if (node instanceof UnionTypeExpression)
       return <T><unknown>new UnionType(node.types.map(singular => this.getTypeFromTypeRef<SingularType>(singular)));
-    else if (node instanceof ArrayTypeExpression)
-      return <T><unknown>new ArrayType(this.getTypeFromTypeRef(node.elementType));
     else if (node instanceof InterfaceTypeExpression) {
       const properties = new Map<string, InterfacePropertySignature<Type>>();
       const indexSignatures = new Map<IndexType, Type>();

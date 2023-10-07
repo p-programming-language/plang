@@ -1,9 +1,11 @@
 import { ParserSyntaxError } from "../../errors";
 import { fakeToken } from "../../utility";
 
-import type { InterfacePropertySignature } from "../type-checker";
+import type { Token } from "../tokenization/token";
+import type { InterfacePropertySignature, TypeLiteralValueType, TypeNameSyntax } from "../type-checker";
 import { LiteralExpression } from "./ast/expressions/literal";
 import { SingularTypeExpression } from "./ast/type-nodes/singular-type";
+import { LiteralTypeExpression } from "./ast/type-nodes/literal-type";
 import { UnionTypeExpression } from "./ast/type-nodes/union-type";
 import { ArrayTypeExpression } from "./ast/type-nodes/array-type";
 import { InterfaceTypeExpression } from "./ast/type-nodes/interface-type";
@@ -116,7 +118,10 @@ export default abstract class TypeParser extends TokenStepper {
     if (!this.checkType())
       throw new ParserSyntaxError(`Expected type, got '${this.current.lexeme}'`, this.current);
 
-    const typeKeyword = this.advance<undefined, Syntax.Identifier>();
+    const typeKeyword = this.advance<TypeLiteralValueType | undefined, TypeNameSyntax>();
+    if (typeKeyword.value !== undefined)
+      return new LiteralTypeExpression(<Token<TypeLiteralValueType, TypeNameSyntax>>typeKeyword);
+
     const typeName = typeKeyword.lexeme;
     let typeArgs: AST.TypeRef[] | undefined;
     if (this.match(Syntax.LT)) {
@@ -148,6 +153,7 @@ export default abstract class TypeParser extends TokenStepper {
    */
   protected checkType(offset = 0): boolean {
     return this.checkMultiple([Syntax.Identifier, Syntax.Undefined, Syntax.Null], offset)
-      && this.typeAnalyzer!.typeTracker.isTypeDefined(this.peek(offset)!.lexeme);
+      && this.typeAnalyzer!.typeTracker.isTypeDefined(this.peek(offset)!.lexeme)
+      || this.checkMultiple([Syntax.String, Syntax.Boolean, Syntax.Int, Syntax.Float]);
   }
 }

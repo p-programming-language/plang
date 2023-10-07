@@ -1,6 +1,7 @@
 import util from "util";
 
 import SingularType from "./singular-type";
+import type LiteralType from "./literal-type";
 import type UnionType from "./union-type";
 import type ArrayType from "./array-type";
 import type FunctionType from "./function-type";
@@ -8,6 +9,7 @@ import type InterfaceType from "./interface-type";
 
 export enum TypeKind {
   Singular,
+  Literal,
   Union,
   Array,
   Function,
@@ -19,8 +21,13 @@ export abstract class Type {
 
   public isSingular(): this is SingularType {
     return this.kind === TypeKind.Singular
+      || this.kind === TypeKind.Literal
       || this.kind === TypeKind.Array
       || this.kind === TypeKind.Interface;
+  }
+
+  public isLiteral(): this is LiteralType {
+    return this.kind === TypeKind.Literal;
   }
 
   public isUnion(): this is UnionType {
@@ -57,10 +64,15 @@ export abstract class Type {
     if (other.isSingular() && other.name === "any")
       return true;
 
+    if (this.isLiteral())
+      return other.isLiteral() ? other.value === this.value : other.isAssignableTo(SingularType.fromValue(this.value));
+
     if (this.isUnion())
       return this.types.some(type => type.isAssignableTo(other));
-    else if (this.isNullish())
+
+    if (this.isNullish())
       return other.isNullish();
+
     if (this.isInterface()) {
       if (!other.isInterface()) return false;
 
@@ -85,6 +97,9 @@ export abstract class Type {
         if (this.name === "any")
           return true;
 
+        if (other.isLiteral())
+          return other.isAssignableTo(this);
+
         if (this.typeArguments) {
           if (!other.typeArguments) return false;
           return this.typeArguments.every((arg, i) => arg.isAssignableTo(other.typeArguments![i]));
@@ -93,10 +108,13 @@ export abstract class Type {
         return this.name === other.name;
       } else
         return other.isAssignableTo(this);
-    else if (this.isArray()) {
+
+    if (this.isArray()) {
       if (!other.isArray()) return false;
       return this.elementType.isAssignableTo(other.elementType);
-    } else if (this.isFunction()) {
+    }
+
+    if (this.isFunction()) {
       if (!other.isFunction()) return false;
 
       const parametersAreAssignable = Array.from(this.parameterTypes.entries())

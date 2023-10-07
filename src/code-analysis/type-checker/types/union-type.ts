@@ -12,6 +12,6 @@ export default class UnionType extends Type {
     return this.types
       .map(t => t.toString())
       .join(" | ")
-      .replace(/ \| undefined/, "?");
+      .replace(/ \| undefined/g, "?");
   }
 }

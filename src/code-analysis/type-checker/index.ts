@@ -37,12 +37,14 @@ import type BoundFunctionDeclarationStatement from "../binder/bound-statements/f
 import type BoundReturnStatement from "../binder/bound-statements/return";
 
 export type ValueType = SingularValueType | ValueType[] | ObjectType;
-export type SingularValueType = PValue | string | number | boolean | null | undefined | void;
+export type TypeLiteralValueType = string | boolean | number;
+export type SingularValueType = PValue | TypeLiteralValueType | null | undefined | void;
 export type IndexValueType = string | number;
 export interface ObjectType {
   [key: IndexValueType]: ValueType;
 };
 
+export type TypeNameSyntax = Syntax.Identifier | Syntax.Undefined | Syntax.Null | Syntax.String | Syntax.Int | Syntax.Float | Syntax.Boolean;
 export type IndexType = SingularType<"string"> | SingularType<"int">;
 export interface InterfacePropertySignature<T> {
   readonly valueType: T;

@@ -1,10 +1,10 @@
-import { Token } from "../../../tokenization/token";
+import type { Token } from "../../../tokenization/token";
+import type { TypeLiteralValueType, TypeNameSyntax } from "../../../type-checker";
 import AST from "..";
-import Syntax from "../../../tokenization/syntax-type";
 
 export class SingularTypeExpression<Name extends string = string> extends AST.TypeRef {
   public constructor(
-    public readonly name: Token<undefined, Syntax.Identifier | Syntax.Undefined | Syntax.Null, Name>,
+    public readonly name: Token<TypeLiteralValueType | undefined, TypeNameSyntax, Name>,
     public readonly typeArguments?: AST.TypeRef[]
   ) { super(); }
 
@@ -13,7 +13,7 @@ export class SingularTypeExpression<Name extends string = string> extends AST.Ty
     return this.typeArguments.length > 0;
   }
 
-  public get token(): Token<undefined> {
+  public get token(): Token<TypeLiteralValueType | undefined> {
     return this.name;
   }
 }

@@ -1,4 +1,5 @@
 import type { Token } from "../../../tokenization/token";
+import type { TypeLiteralValueType } from "../../../type-checker";
 import { SingularTypeExpression } from "./singular-type";
 import { fakeToken } from "../../../../utility";
 import type AST from "..";
@@ -13,7 +14,7 @@ export class ArrayTypeExpression extends SingularTypeExpression {
     super(typeKeyword, [elementType]);
   }
 
-  public get token(): Token<undefined> {
+  public get token(): Token<TypeLiteralValueType | undefined> {
     return super.token;
   }
 }

@@ -1,5 +1,5 @@
 import { RuntimeError } from "../errors";
-import type { IndexValueType, ObjectType, ValueType } from "../code-analysis/type-checker";
+import type { IndexValueType, ObjectType, TypeLiteralValueType, ValueType } from "../code-analysis/type-checker";
 import type { Callable } from "./values/callable";
 import { Token } from "../code-analysis/tokenization/token";
 import { fakeToken, getIntrinsicExtension } from "../utility";
@@ -304,7 +304,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     return expr.elements.map(element => this.evaluate(element));
   }
 
-  public visitLiteralExpression<V extends ValueType = ValueType>(expr: LiteralExpression<V>): V {
+  public visitLiteralExpression<V extends TypeLiteralValueType | null | undefined = TypeLiteralValueType | null | undefined>(expr: LiteralExpression<V>): V {
     return expr.token.value;
   }
 
