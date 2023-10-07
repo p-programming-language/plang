@@ -19,11 +19,11 @@
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
-<li><a href="code_analysis_array_stepper.default.html" class="tsd-signature-type tsd-kind-class">default</a><span class="tsd-signature-symbol">&lt;</span><a href="code_analysis_tokenization_token.Token.html" class="tsd-signature-type tsd-kind-class">Token</a><span class="tsd-signature-symbol">&gt;</span>
+<li><a href="code_analysis_parser_type_parser.default.html" class="tsd-signature-type tsd-kind-class">default</a>
 <ul class="tsd-hierarchy">
 <li><span class="target">default</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/parser/type-analyzer.ts#L6">code-analysis/parser/type-analyzer.ts:6</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-analyzer.ts#L6">code-analysis/parser/type-analyzer.ts:6</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -31,14 +31,14 @@
 <div class="tsd-accordion-details">
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Constructors</h3>
-<div class="tsd-index-list"><a href="code_analysis_parser_type_analyzer.default.html#constructor" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a>
+<div class="tsd-index-list"><a href="code_analysis_parser_type_analyzer.default.html#constructor" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Properties</h3>
 <div class="tsd-index-list"><a href="code_analysis_parser_type_analyzer.default.html#input" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>input?</span></a>
 <a href="code_analysis_parser_type_analyzer.default.html#position" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>position</span></a>
-<a href="code_analysis_parser_type_analyzer.default.html#customTypes" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>custom<wbr/>Types</span></a>
-<a href="code_analysis_parser_type_analyzer.default.html#typeScopes" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>type<wbr/>Scopes</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#typeAnalyzer" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>type<wbr/>Analyzer</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#typeTracker" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>type<wbr/>Tracker</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Accessors</h3>
@@ -47,54 +47,69 @@
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Methods</h3>
-<div class="tsd-index-list"><a href="code_analysis_parser_type_analyzer.default.html#peek" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>peek</span></a>
-<a href="code_analysis_parser_type_analyzer.default.html#beginTypeScope" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>begin<wbr/>Type<wbr/>Scope</span></a>
-<a href="code_analysis_parser_type_analyzer.default.html#defineType" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>define<wbr/>Type</span></a>
-<a href="code_analysis_parser_type_analyzer.default.html#endTypeScope" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>end<wbr/>Type<wbr/>Scope</span></a>
-<a href="code_analysis_parser_type_analyzer.default.html#getRef" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Ref</span></a>
-<a href="code_analysis_parser_type_analyzer.default.html#isCustomType" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Custom<wbr/>Type</span></a>
-<a href="code_analysis_parser_type_analyzer.default.html#isTypeDefined" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Type<wbr/>Defined</span></a>
+<div class="tsd-index-list"><a href="code_analysis_parser_type_analyzer.default.html#advance" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>advance</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#analyze" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>analyze</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#check" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>check</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#checkMultiple" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>check<wbr/>Multiple</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#checkType" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>check<wbr/>Type</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#consume" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>consume</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#consumeSemicolons" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>consume<wbr/>Semicolons</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#match" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>match</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#matchSet" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>match<wbr/>Set</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#parseArrayType" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Array<wbr/>Type</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#parseInterfaceContents" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Interface<wbr/>Contents</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#parseInterfaceKeyValuePair" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Interface<wbr/>Key<wbr/>Value<wbr/>Pair</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#parseInterfaceType" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Interface<wbr/>Type</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#parseSingularType" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Singular<wbr/>Type</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#parseType" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Type</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#parseTypeList" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Type<wbr/>List</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#parseUnionType" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Union<wbr/>Type</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#peek" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>peek</span></a>
+<a href="code_analysis_parser_type_analyzer.default.html#previous" class="tsd-index-link tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>previous</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Constructors</h2>
-<section class="tsd-panel tsd-member tsd-is-inherited"><a id="constructor" class="tsd-anchor"></a>
+<section class="tsd-panel tsd-member"><a id="constructor" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures tsd-is-inherited">
-<li class="tsd-signature tsd-anchor-link" id="constructor.new_default"><span class="tsd-kind-constructor-signature">new default</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">input</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="code_analysis_parser_type_analyzer.default.html" class="tsd-signature-type tsd-kind-class">default</a><a href="#constructor.new_default" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="constructor.new_default"><span class="tsd-kind-constructor-signature">new default</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">tokens</span>, <span class="tsd-kind-parameter">typeTracker</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="code_analysis_parser_type_analyzer.default.html" class="tsd-signature-type tsd-kind-class">default</a><a href="#constructor.new_default" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">input</span>: <span class="tsd-signature-type ">ArrayLike</span><span class="tsd-signature-symbol">&lt;</span><a href="code_analysis_tokenization_token.Token.html" class="tsd-signature-type tsd-kind-class">Token</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a><span class="tsd-signature-symbol">, </span><a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h5><span class="tsd-kind-parameter">tokens</span>: <a href="code_analysis_tokenization_token.Token.html" class="tsd-signature-type tsd-kind-class">Token</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a><span class="tsd-signature-symbol">, </span><a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5></li>
+<li>
+<h5><span class="tsd-kind-parameter">typeTracker</span>: <a href="code_analysis_parser_type_tracker.default.html" class="tsd-signature-type tsd-kind-class">default</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="code_analysis_parser_type_analyzer.default.html" class="tsd-signature-type tsd-kind-class">default</a></h4><aside class="tsd-sources">
-<p>Inherited from <a href="code_analysis_array_stepper.default.html">default</a>.<a href="code_analysis_array_stepper.default.html#constructor">constructor</a></p>
+<p>Overrides <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/array-stepper.ts#L4">code-analysis/array-stepper.ts:4</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-analyzer.ts#L9">code-analysis/parser/type-analyzer.ts:9</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="input" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>input</span><a href="#input" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">input</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type ">ArrayLike</span><span class="tsd-signature-symbol">&lt;</span><a href="code_analysis_tokenization_token.Token.html" class="tsd-signature-type tsd-kind-class">Token</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a><span class="tsd-signature-symbol">, </span><a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
-<p>Inherited from <a href="code_analysis_array_stepper.default.html">default</a>.<a href="code_analysis_array_stepper.default.html#input">input</a></p>
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#input">input</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/array-stepper.ts#L5">code-analysis/array-stepper.ts:5</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/array-stepper.ts#L5">code-analysis/array-stepper.ts:5</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="position" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>position</span><a href="#position" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">position</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></div><aside class="tsd-sources">
-<p>Inherited from <a href="code_analysis_array_stepper.default.html">default</a>.<a href="code_analysis_array_stepper.default.html#position">position</a></p>
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#position">position</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/array-stepper.ts#L2">code-analysis/array-stepper.ts:2</a></li></ul></aside></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="customTypes" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>custom<wbr/>Types</span><a href="#customTypes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">custom<wbr/>Types</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/array-stepper.ts#L2">code-analysis/array-stepper.ts:2</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-protected"><a id="typeAnalyzer" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>type<wbr/>Analyzer</span><a href="#typeAnalyzer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">type<wbr/>Analyzer</span><span class="tsd-signature-symbol">:</span> <a href="code_analysis_parser_type_analyzer.default.html" class="tsd-signature-type tsd-kind-class">default</a><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<p>Overrides <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#typeAnalyzer">typeAnalyzer</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/parser/type-analyzer.ts#L7">code-analysis/parser/type-analyzer.ts:7</a></li></ul></aside></section>
-<section class="tsd-panel tsd-member tsd-is-private"><a id="typeScopes" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>type<wbr/>Scopes</span><a href="#typeScopes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">type<wbr/>Scopes</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-analyzer.ts#L7">code-analysis/parser/type-analyzer.ts:7</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="typeTracker" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>type<wbr/>Tracker</span><a href="#typeTracker" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">type<wbr/>Tracker</span><span class="tsd-signature-symbol">:</span> <a href="code_analysis_parser_type_tracker.default.html" class="tsd-signature-type tsd-kind-class">default</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/parser/type-analyzer.ts#L8">code-analysis/parser/type-analyzer.ts:8</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-analyzer.ts#L11">code-analysis/parser/type-analyzer.ts:11</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Accessors</h2>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="current" class="tsd-anchor"></a>
@@ -103,20 +118,255 @@
 <li class="tsd-signature" id="current.current-1"><span class="tsd-signature-symbol">get</span> current<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type tsd-kind-type-parameter">T</span></li>
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type tsd-kind-type-parameter">T</span></h4><aside class="tsd-sources">
-<p>Inherited from ArrayStepper.current</p>
+<p>Inherited from TypeParser.current</p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/array-stepper.ts#L17">code-analysis/array-stepper.ts:17</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/array-stepper.ts#L17">code-analysis/array-stepper.ts:17</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="isFinished" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>is<wbr/>Finished</span><a href="#isFinished" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
 <li class="tsd-signature" id="isFinished.isFinished-1"><span class="tsd-signature-symbol">get</span> isFinished<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
-<p>Inherited from ArrayStepper.isFinished</p>
+<p>Inherited from TypeParser.isFinished</p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/array-stepper.ts#L13">code-analysis/array-stepper.ts:13</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/token-stepper.ts#L88">code-analysis/parser/token-stepper.ts:88</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="advance" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>advance</span><a href="#advance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="advance.advance-1"><span class="tsd-kind-call-signature">advance</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">V</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="code_analysis_tokenization_token.Token.html" class="tsd-signature-type tsd-kind-class">Token</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">V</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><a href="#advance.advance-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Advances to the next token</p>
+</div>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li>
+<h4><span class="tsd-kind-type-parameter">V</span><span class="tsd-signature-symbol"> extends </span><a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a> = <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4></li>
+<li>
+<h4><span class="tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol"> extends </span><a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a> = <a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a></h4></li></ul></section>
+<h4 class="tsd-returns-title">Returns <a href="code_analysis_tokenization_token.Token.html" class="tsd-signature-type tsd-kind-class">Token</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">V</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><p>The previous token</p>
+
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#advance">advance</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/token-stepper.ts#L33">code-analysis/parser/token-stepper.ts:33</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="analyze" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>analyze</span><a href="#analyze" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="analyze.analyze-1"><span class="tsd-kind-call-signature">analyze</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#analyze.analyze-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-analyzer.ts#L14">code-analysis/parser/type-analyzer.ts:14</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="check" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>check</span><a href="#check" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="check.check-1"><span class="tsd-kind-call-signature">check</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">syntax</span>, <span class="tsd-kind-parameter">offset</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#check.check-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">syntax</span>: <a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a></h5></li>
+<li>
+<h5><span class="tsd-kind-parameter">offset</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p>True if the syntax at <code>offset</code> matches <code>syntax</code></p>
+
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#check">check</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/token-stepper.ts#L84">code-analysis/parser/token-stepper.ts:84</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="checkMultiple" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>check<wbr/>Multiple</span><a href="#checkMultiple" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="checkMultiple.checkMultiple-1"><span class="tsd-kind-call-signature">check<wbr/>Multiple</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">syntaxes</span>, <span class="tsd-kind-parameter">offset</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#checkMultiple.checkMultiple-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">syntaxes</span>: <a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a><span class="tsd-signature-symbol">[]</span></h5></li>
+<li>
+<h5><span class="tsd-kind-parameter">offset</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p>True if the syntax at <code>offset</code> matches any one syntax in <code>syntaxes</code></p>
+
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#checkMultiple">checkMultiple</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/token-stepper.ts#L73">code-analysis/parser/token-stepper.ts:73</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="checkType" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>check<wbr/>Type</span><a href="#checkType" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="checkType.checkType-1"><span class="tsd-kind-call-signature">check<wbr/>Type</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">offset</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#checkType.checkType-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">offset</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p>Whether or not we&#39;re currently at a type reference</p>
+
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#checkType">checkType</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-parser.ts#L141">code-analysis/parser/type-parser.ts:141</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="consume" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>consume</span><a href="#consume" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="consume.consume-1"><span class="tsd-kind-call-signature">consume</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">V</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">syntax</span>, <span class="tsd-kind-parameter">expectedOverride</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="code_analysis_tokenization_token.Token.html" class="tsd-signature-type tsd-kind-class">Token</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">V</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><a href="#consume.consume-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Expects <code>syntax</code> to exist, and throws if it does not</p>
+<p>Advances the parser if it does</p>
+</div>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li>
+<h4><span class="tsd-kind-type-parameter">V</span><span class="tsd-signature-symbol"> extends </span><a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a> = <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4></li>
+<li>
+<h4><span class="tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol"> extends </span><a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a> = <a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a></h4></li></ul></section>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">syntax</span>: <a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a></h5></li>
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">expectedOverride</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="code_analysis_tokenization_token.Token.html" class="tsd-signature-type tsd-kind-class">Token</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">V</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#consume">consume</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/token-stepper.ts#L21">code-analysis/parser/token-stepper.ts:21</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="consumeSemicolons" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>consume<wbr/>Semicolons</span><a href="#consumeSemicolons" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="consumeSemicolons.consumeSemicolons-1"><span class="tsd-kind-call-signature">consume<wbr/>Semicolons</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#consumeSemicolons.consumeSemicolons-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#consumeSemicolons">consumeSemicolons</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/token-stepper.ts#L12">code-analysis/parser/token-stepper.ts:12</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="match" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>match</span><a href="#match" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="match.match-1"><span class="tsd-kind-call-signature">match</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">syntaxes</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#match.match-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Checks for a syntax type, and consumes it if it exists</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><code class="tsd-tag ts-flagRest">Rest</code> <span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">syntaxes</span>: <a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p>True if the current syntax matches any one syntax in <code>syntaxes</code></p>
+
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#match">match</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/token-stepper.ts#L60">code-analysis/parser/token-stepper.ts:60</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="matchSet" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>match<wbr/>Set</span><a href="#matchSet" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="matchSet.matchSet-1"><span class="tsd-kind-call-signature">match<wbr/>Set</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">syntaxSet</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#matchSet.matchSet-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Checks for a set of syntax types, and consumes it if one exists</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">syntaxSet</span>: <a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p>True if the current syntax matches any one syntax in <code>syntaxSet</code></p>
+
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#matchSet">matchSet</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/token-stepper.ts#L52">code-analysis/parser/token-stepper.ts:52</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="parseArrayType" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>parse<wbr/>Array<wbr/>Type</span><a href="#parseArrayType" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="parseArrayType.parseArrayType-1"><span class="tsd-kind-call-signature">parse<wbr/>Array<wbr/>Type</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><a href="#parseArrayType.parseArrayType-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a></h4><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#parseArrayType">parseArrayType</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-parser.ts#L90">code-analysis/parser/type-parser.ts:90</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="parseInterfaceContents" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>parse<wbr/>Interface<wbr/>Contents</span><a href="#parseInterfaceContents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="parseInterfaceContents.parseInterfaceContents-1"><span class="tsd-kind-call-signature">parse<wbr/>Interface<wbr/>Contents</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="code_analysis_parser_ast_expressions_literal.LiteralExpression.html" class="tsd-signature-type tsd-kind-class">LiteralExpression</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><span class="tsd-signature-symbol">, </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><span class="tsd-signature-symbol">&gt;</span><a href="#parseInterfaceContents.parseInterfaceContents-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="code_analysis_parser_ast_expressions_literal.LiteralExpression.html" class="tsd-signature-type tsd-kind-class">LiteralExpression</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><span class="tsd-signature-symbol">, </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#parseInterfaceContents">parseInterfaceContents</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-parser.ts#L42">code-analysis/parser/type-parser.ts:42</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="parseInterfaceKeyValuePair" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>parse<wbr/>Interface<wbr/>Key<wbr/>Value<wbr/>Pair</span><a href="#parseInterfaceKeyValuePair" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="parseInterfaceKeyValuePair.parseInterfaceKeyValuePair-1"><span class="tsd-kind-call-signature">parse<wbr/>Interface<wbr/>Key<wbr/>Value<wbr/>Pair</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><a href="code_analysis_parser_ast_expressions_literal.LiteralExpression.html" class="tsd-signature-type tsd-kind-class">LiteralExpression</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><span class="tsd-signature-symbol">, </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><span class="tsd-signature-symbol">]</span><a href="#parseInterfaceKeyValuePair.parseInterfaceKeyValuePair-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><a href="code_analysis_parser_ast_expressions_literal.LiteralExpression.html" class="tsd-signature-type tsd-kind-class">LiteralExpression</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><span class="tsd-signature-symbol">, </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><span class="tsd-signature-symbol">]</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#parseInterfaceKeyValuePair">parseInterfaceKeyValuePair</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-parser.ts#L50">code-analysis/parser/type-parser.ts:50</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="parseInterfaceType" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>parse<wbr/>Interface<wbr/>Type</span><a href="#parseInterfaceType" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="parseInterfaceType.parseInterfaceType-1"><span class="tsd-kind-call-signature">parse<wbr/>Interface<wbr/>Type</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="code_analysis_parser_ast_type_nodes_interface_type.InterfaceTypeExpression.html" class="tsd-signature-type tsd-kind-class">InterfaceTypeExpression</a><a href="#parseInterfaceType.parseInterfaceType-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>This has no precedence, since it&#39;s a declaration</p>
+<p>This is the reason it&#39;s not grouped with the below methods.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="code_analysis_parser_ast_type_nodes_interface_type.InterfaceTypeExpression.html" class="tsd-signature-type tsd-kind-class">InterfaceTypeExpression</a></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#parseInterfaceType">parseInterfaceType</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-parser.ts#L21">code-analysis/parser/type-parser.ts:21</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="parseSingularType" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>parse<wbr/>Singular<wbr/>Type</span><a href="#parseSingularType" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="parseSingularType.parseSingularType-1"><span class="tsd-kind-call-signature">parse<wbr/>Singular<wbr/>Type</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="code_analysis_parser_ast_type_nodes_singular_type.SingularTypeExpression.html" class="tsd-signature-type tsd-kind-class">SingularTypeExpression</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><a href="#parseSingularType.parseSingularType-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <a href="code_analysis_parser_ast_type_nodes_singular_type.SingularTypeExpression.html" class="tsd-signature-type tsd-kind-class">SingularTypeExpression</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#parseSingularType">parseSingularType</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-parser.ts#L107">code-analysis/parser/type-parser.ts:107</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="parseType" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>parse<wbr/>Type</span><a href="#parseType" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="parseType.parseType-1"><span class="tsd-kind-call-signature">parse<wbr/>Type</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><a href="#parseType.parseType-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Parses a type reference</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#parseType">parseType</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-parser.ts#L69">code-analysis/parser/type-parser.ts:69</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="parseTypeList" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>parse<wbr/>Type<wbr/>List</span><a href="#parseTypeList" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="parseTypeList.parseTypeList-1"><span class="tsd-kind-call-signature">parse<wbr/>Type<wbr/>List</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><span class="tsd-signature-symbol">[]</span><a href="#parseTypeList.parseTypeList-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Parses a list of type references separated by commas</p>
+<p>Must have at least one type</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><span class="tsd-signature-symbol">[]</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#parseTypeList">parseTypeList</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-parser.ts#L130">code-analysis/parser/type-parser.ts:130</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="parseUnionType" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>parse<wbr/>Union<wbr/>Type</span><a href="#parseUnionType" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="parseUnionType.parseUnionType-1"><span class="tsd-kind-call-signature">parse<wbr/>Union<wbr/>Type</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a><a href="#parseUnionType.parseUnionType-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a></h4><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#parseUnionType">parseUnionType</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/type-parser.ts#L73">code-analysis/parser/type-parser.ts:73</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="peek" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>peek</span><a href="#peek" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
@@ -128,90 +378,27 @@
 <li>
 <h5><span class="tsd-kind-parameter">offset</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 1</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="code_analysis_tokenization_token.Token.html" class="tsd-signature-type tsd-kind-class">Token</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a><span class="tsd-signature-symbol">, </span><a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
-<p>Inherited from <a href="code_analysis_array_stepper.default.html">default</a>.<a href="code_analysis_array_stepper.default.html#peek">peek</a></p>
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#peek">peek</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/array-stepper.ts#L8">code-analysis/array-stepper.ts:8</a></li></ul></aside></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="beginTypeScope" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>begin<wbr/>Type<wbr/>Scope</span><a href="#beginTypeScope" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="beginTypeScope.beginTypeScope-1"><span class="tsd-kind-call-signature">begin<wbr/>Type<wbr/>Scope</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#beginTypeScope.beginTypeScope-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
-<ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/parser/type-analyzer.ts#L37">code-analysis/parser/type-analyzer.ts:37</a></li></ul></aside></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="defineType" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>define<wbr/>Type</span><a href="#defineType" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="defineType.defineType-1"><span class="tsd-kind-call-signature">define<wbr/>Type</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">name</span>, <span class="tsd-kind-parameter">ref</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#defineType.defineType-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></h5></li>
-<li>
-<h5><span class="tsd-kind-parameter">ref</span>: <a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
-<ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/parser/type-analyzer.ts#L31">code-analysis/parser/type-analyzer.ts:31</a></li></ul></aside></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="endTypeScope" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>end<wbr/>Type<wbr/>Scope</span><a href="#endTypeScope" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="endTypeScope.endTypeScope-1"><span class="tsd-kind-call-signature">end<wbr/>Type<wbr/>Scope</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#endTypeScope.endTypeScope-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
-<ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/parser/type-analyzer.ts#L41">code-analysis/parser/type-analyzer.ts:41</a></li></ul></aside></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="getRef" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>get<wbr/>Ref</span><a href="#getRef" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="getRef.getRef-1"><span class="tsd-kind-call-signature">get<wbr/>Ref</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">Ref</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">name</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">Ref</span><a href="#getRef.getRef-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/array-stepper.ts#L8">code-analysis/array-stepper.ts:8</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><a id="previous" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <span>previous</span><a href="#previous" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-protected tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="previous.previous-1"><span class="tsd-kind-call-signature">previous</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">V</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="code_analysis_tokenization_token.Token.html" class="tsd-signature-type tsd-kind-class">Token</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">V</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><a href="#previous.previous-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
 <ul class="tsd-type-parameter-list">
 <li>
-<h4><span class="tsd-kind-type-parameter">Ref</span><span class="tsd-signature-symbol"> extends </span><a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a> = <a href="code_analysis_parser_ast.default.TypeRef.html" class="tsd-signature-type tsd-kind-class">TypeRef</a></h4></li></ul></section>
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
+<h4><span class="tsd-kind-type-parameter">V</span><span class="tsd-signature-symbol"> extends </span><a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a> = <a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a></h4></li>
 <li>
-<h5><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">Ref</span></h4><p>The TypeRef associated with <code>name</code></p>
+<h4><span class="tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol"> extends </span><a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a> = <a href="../enums/code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a></h4></li></ul></section>
+<h4 class="tsd-returns-title">Returns <a href="code_analysis_tokenization_token.Token.html" class="tsd-signature-type tsd-kind-class">Token</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">V</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type tsd-kind-type-parameter">S</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><p>The previous token</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="code_analysis_parser_type_parser.default.html">default</a>.<a href="code_analysis_parser_type_parser.default.html#previous">previous</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/parser/type-analyzer.ts#L13">code-analysis/parser/type-analyzer.ts:13</a></li></ul></aside></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="isCustomType" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>is<wbr/>Custom<wbr/>Type</span><a href="#isCustomType" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="isCustomType.isCustomType-1"><span class="tsd-kind-call-signature">is<wbr/>Custom<wbr/>Type</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">name</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#isCustomType.isCustomType-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p>Whether or not <code>name</code> is a type created by the user</p>
-
-<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
-<ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/parser/type-analyzer.ts#L20">code-analysis/parser/type-analyzer.ts:20</a></li></ul></aside></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="isTypeDefined" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>is<wbr/>Type<wbr/>Defined</span><a href="#isTypeDefined" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="isTypeDefined.isTypeDefined-1"><span class="tsd-kind-call-signature">is<wbr/>Type<wbr/>Defined</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">name</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#isTypeDefined.isTypeDefined-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-parameters">
-<h4 class="tsd-parameters-title">Parameters</h4>
-<ul class="tsd-parameter-list">
-<li>
-<h5><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p>Whether or not <code>name</code> is a type recognized by P</p>
-
-<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
-<ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4904dcd/src/code-analysis/parser/type-analyzer.ts#L27">code-analysis/parser/type-analyzer.ts:27</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/1d7f28d/src/code-analysis/parser/token-stepper.ts#L44">code-analysis/parser/token-stepper.ts:44</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -231,20 +418,32 @@
 <h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg>On This Page</h3></summary>
 <div class="tsd-accordion-details">
 <ul>
-<li><a href="#constructor" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a></li>
+<li><a href="#constructor" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a></li>
 <li><a href="#input" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>input</span></a></li>
 <li><a href="#position" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>position</span></a></li>
-<li><a href="#customTypes" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>custom<wbr/>Types</span></a></li>
-<li><a href="#typeScopes" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>type<wbr/>Scopes</span></a></li>
+<li><a href="#typeAnalyzer" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>type<wbr/>Analyzer</span></a></li>
+<li><a href="#typeTracker" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>type<wbr/>Tracker</span></a></li>
 <li><a href="#current" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>current</span></a></li>
 <li><a href="#isFinished" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>is<wbr/>Finished</span></a></li>
+<li><a href="#advance" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>advance</span></a></li>
+<li><a href="#analyze" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>analyze</span></a></li>
+<li><a href="#check" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>check</span></a></li>
+<li><a href="#checkMultiple" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>check<wbr/>Multiple</span></a></li>
+<li><a href="#checkType" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>check<wbr/>Type</span></a></li>
+<li><a href="#consume" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>consume</span></a></li>
+<li><a href="#consumeSemicolons" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>consume<wbr/>Semicolons</span></a></li>
+<li><a href="#match" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>match</span></a></li>
+<li><a href="#matchSet" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>match<wbr/>Set</span></a></li>
+<li><a href="#parseArrayType" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Array<wbr/>Type</span></a></li>
+<li><a href="#parseInterfaceContents" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Interface<wbr/>Contents</span></a></li>
+<li><a href="#parseInterfaceKeyValuePair" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Interface<wbr/>Key<wbr/>Value<wbr/>Pair</span></a></li>
+<li><a href="#parseInterfaceType" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Interface<wbr/>Type</span></a></li>
+<li><a href="#parseSingularType" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Singular<wbr/>Type</span></a></li>
+<li><a href="#parseType" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Type</span></a></li>
+<li><a href="#parseTypeList" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Type<wbr/>List</span></a></li>
+<li><a href="#parseUnionType" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>parse<wbr/>Union<wbr/>Type</span></a></li>
 <li><a href="#peek" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>peek</span></a></li>
-<li><a href="#beginTypeScope" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>begin<wbr/>Type<wbr/>Scope</span></a></li>
-<li><a href="#defineType" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>define<wbr/>Type</span></a></li>
-<li><a href="#endTypeScope" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>end<wbr/>Type<wbr/>Scope</span></a></li>
-<li><a href="#getRef" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Ref</span></a></li>
-<li><a href="#isCustomType" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Custom<wbr/>Type</span></a></li>
-<li><a href="#isTypeDefined" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Type<wbr/>Defined</span></a></li></ul></div></details></div>
+<li><a href="#previous" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>previous</span></a></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1"></use></svg><span>P API Reference</span></a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container" data-base="..">
