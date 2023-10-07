@@ -6,15 +6,17 @@ import type { Type } from "./types/type";
 import type PValue from "../../runtime/values/value";
 import type FunctionType from "./types/function-type";
 import type InterfaceType from "./types/interface-type";
-import ArrayType from "./types/array-type";
 import SingularType from "./types/singular-type";
+import LiteralType from "./types/literal-type";
 import UnionType from "./types/union-type";
+import ArrayType from "./types/array-type";
 import Syntax from "../tokenization/syntax-type";
 import AST from "../parser/ast";
 
+import type BoundStringInterpolationExpression from "../binder/bound-expressions/string-interpolation";
+import type BoundRangeLiteralExpression from "../binder/bound-expressions/range-literal";
 import BoundArrayLiteralExpression from "../binder/bound-expressions/array-literal";
 import type BoundObjectLiteralExpression from "../binder/bound-expressions/object-literal";
-import type BoundStringInterpolationExpression from "../binder/bound-expressions/string-interpolation";
 import type BoundParenthesizedExpression from "../binder/bound-expressions/parenthesized";
 import type BoundUnaryExpression from "../binder/bound-expressions/unary";
 import type BoundBinaryExpression from "../binder/bound-expressions/binary";
@@ -23,7 +25,7 @@ import type BoundCompoundAssignmentExpression from "../binder/bound-expressions/
 import type BoundVariableAssignmentExpression from "../binder/bound-expressions/variable-assignment";
 import type BoundPropertyAssignmentExpression from "../binder/bound-expressions/property-assignment";
 import type BoundCallExpression from "../binder/bound-expressions/call";
-import type BoundAccessExpression from "../binder/bound-expressions";
+import type BoundAccessExpression from "../binder/bound-expressions/access";
 import type BoundExpressionStatement from "../binder/bound-statements/expression";
 import type BoundPrintlnStatement from "../binder/bound-statements/println";
 import type BoundVariableAssignmentStatement from "../binder/bound-statements/variable-assignment";
@@ -33,12 +35,10 @@ import type BoundIfStatement from "../binder/bound-statements/if";
 import type BoundWhileStatement from "../binder/bound-statements/while";
 import type BoundFunctionDeclarationStatement from "../binder/bound-statements/function-declaration";
 import type BoundReturnStatement from "../binder/bound-statements/return";
-import LiteralType from "./types/literal-type";
-import BoundRangeLiteralExpression from "../binder/bound-expressions/range-literal";
 
 export type ValueType = SingularValueType | ValueType[] | ObjectType;
 export type TypeLiteralValueType = string | boolean | number;
-export type SingularValueType = PValue | TypeLiteralValueType | Range | null | undefined | void;
+export type SingularValueType = PValue | TypeLiteralValueType | null | undefined | void;
 export type IndexValueType = string | number;
 export interface ObjectType {
   [key: IndexValueType]: ValueType;

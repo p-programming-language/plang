@@ -1,6 +1,6 @@
 import { Token } from "../../../tokenization/token";
 import { IdentifierExpression } from "./identifier";
-import { AccessExpression } from ".";
+import { AccessExpression } from "./access";
 import AST from "..";
 
 export class CompoundAssignmentExpression extends AST.Expression {

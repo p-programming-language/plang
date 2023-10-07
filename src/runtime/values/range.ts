@@ -1,11 +1,11 @@
 import util from "util";
+import PValue from "./value";
 
-
-export class Range {
+export class Range extends PValue {
   public constructor(
     public readonly minimum: number,
     public readonly maximum: number
-  ) { }
+  ) { super(); }
 
   public doesFit(n: number): boolean {
     return n >= this.minimum && n <= this.maximum;

@@ -24,7 +24,7 @@ import { VariableAssignmentExpression } from "./ast/expressions/variable-assignm
 import { CompoundAssignmentExpression } from "./ast/expressions/compound-assignment";
 import { PropertyAssignmentExpression } from "./ast/expressions/property-assignment";
 import { CallExpression } from "./ast/expressions/call";
-import { AccessExpression } from "./ast/expressions";
+import { AccessExpression } from "./ast/expressions/access";
 import { ExpressionStatement } from "./ast/statements/expression";
 import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";

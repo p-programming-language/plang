@@ -16,7 +16,7 @@ import BoundBinaryExpression from "../code-analysis/binder/bound-expressions/bin
 import BoundArrayLiteralExpression from "../code-analysis/binder/bound-expressions/array-literal";
 import BoundExpressionStatement from "../code-analysis/binder/bound-statements/expression";
 import BoundVariableDeclarationStatement from "../code-analysis/binder/bound-statements/variable-declaration";
-import BoundAccessExpression from "../code-analysis/binder/bound-expressions";
+import BoundAccessExpression from "../code-analysis/binder/bound-expressions/access";
 import BoundIdentifierExpression from "../code-analysis/binder/bound-expressions/identifier";
 import BoundCallExpression from "../code-analysis/binder/bound-expressions/call";
 import ArrayType from "../code-analysis/type-checker/types/array-type";

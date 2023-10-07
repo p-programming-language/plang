@@ -17,7 +17,7 @@ export default class PFunction<A extends ValueType[] = ValueType[], R extends Va
   public constructor(
     private readonly interpreter: Interpreter,
     private readonly closure: Scope,
-    private readonly definition: FunctionDeclarationStatement
+    public readonly definition: FunctionDeclarationStatement
   ) {
     super();
     this.name = this.definition.name.lexeme;

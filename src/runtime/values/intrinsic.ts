@@ -1,27 +1,68 @@
+import util from "util";
+
 import { Callable, CallableType } from "./callable";
 import type { ValueType } from "../../code-analysis/type-checker";
 import type { Type } from "../../code-analysis/type-checker/types/type";
 import { Range } from "./range";
+import { generateAddress, getTypeFromTypeRef } from "../../utility";
 
 import type Intrinsics from "../intrinsics";
 import type Interpreter from "../interpreter";
 import SingularType from "../../code-analysis/type-checker/types/singular-type";
+import InterfaceType from "../../code-analysis/type-checker/types/interface-type";
+import LiteralType from "../../code-analysis/type-checker/types/literal-type";
+import PValue from "./value";
+import PFunction from "./function";
+import FunctionType from "../../code-analysis/type-checker/types/function-type";
 
 namespace Intrinsic {
-  export abstract class ValueExtension<V extends ValueType = ValueType> {
-    public constructor(
-      protected readonly value: V
-    ) {}
+  type IFunctionCtor = new (interpreter?: Interpreter | undefined) => Function<ValueType[], ValueType>;
 
-    public abstract get members(): Record<any, ValueType>;
+  abstract class Collection extends PValue {
+    public abstract get members(): Record<string, ValueType>;
+    public abstract get propertyTypes(): Record<string, Type>;
   }
 
-  export abstract class Lib {
+  export abstract class ValueExtension<V extends ValueType = ValueType> extends Collection {
+    public constructor(
+      protected readonly value: V
+    ) { super(); }
+  }
+
+  export abstract class Lib extends Collection {
+    public readonly address = generateAddress();
+
     public constructor(
       protected readonly intrinsics: Intrinsics
-    ) {}
+    ) { super(); }
 
-    public abstract inject(): void;
+    public inject(): void {
+      const members = Object.entries(this.members);
+      for (const [name, value] of members)
+        if (value instanceof Intrinsic.Function.constructor)
+          this.intrinsics.defineFunction(name, <IFunctionCtor><unknown>value);
+        else if (value instanceof Intrinsic.Lib) {
+          const libType = getLibType(new Map(Object.entries(value.members)), value);
+          const mappedLib = new Map(Object.entries(value.members)
+            .map(([ memberName, memberValue ]) => [
+              memberName,
+              memberValue instanceof Intrinsic.Function.constructor ?
+                new (<IFunctionCtor>memberValue)()
+                : memberValue
+            ]));
+
+          this.intrinsics.define(name, Object.fromEntries(mappedLib.entries()), libType);
+        } else
+          this.intrinsics.define(name, value, this.propertyTypes[name]);
+    }
+
+    public [util.inspect.custom](): string {
+      return this.toString();
+    }
+
+    public toString(): string {
+      return `<Intrinsic.Lib: ${this.address}>`
+    }
   }
 
   export abstract class Function<A extends ValueType[] = ValueType[], R extends ValueType = ValueType> extends Callable<A, R> {
@@ -45,10 +86,43 @@ namespace Intrinsic {
       return start === finish ? start : new Range(start, finish);
     }
 
+    public [util.inspect.custom](): string {
+      return this.toString();
+    }
+
     public toString(): string {
       return `<Intrinsic.Function: ${this.address}>`
     }
   }
+
+  const getLibType = (parentMembers: Map<string, ValueType>, lib: Lib): InterfaceType =>
+    new InterfaceType(
+      new Map(Array.from(parentMembers.entries()).map(([propName, propValue]) => {
+        let valueType: Type;
+        if (propValue instanceof PFunction)
+          valueType = new FunctionType(
+            new Map<string, Type>(propValue.definition.parameters.map(param => [param.identifier.name.lexeme, getTypeFromTypeRef(param.typeRef)])),
+            getTypeFromTypeRef(propValue.definition.returnType)
+          );
+        else if (propValue instanceof Intrinsic.Function.constructor) {
+          const fn = new (<IFunctionCtor>propValue)();
+          valueType = new FunctionType(
+            new Map(Object.entries(fn.argumentTypes)),
+            fn.returnType
+          );
+        } else if (propValue instanceof Intrinsic.Lib)
+          valueType = getLibType(new Map(Object.entries(propValue.members)), propValue);
+        else
+          valueType = SingularType.fromValue(propValue);
+
+        return [new LiteralType(propName), {
+          valueType,
+          mutable: false
+        }]
+      })),
+      new Map,
+      lib.constructor.name
+    );
 }
 
 export default Intrinsic;

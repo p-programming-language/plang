@@ -23,10 +23,12 @@ export default class BoundAccessExpression extends BoundExpression {
       this.type = object.type.elementType;
     else if (object.type.isSingular() && object.type.name === "Array")
       this.type = object.type.typeArguments![0];
-    else if (object.type.isInterface() && index instanceof BoundLiteralExpression && index.type.isSingular() && (index.type.name === "string" || index.type.name === "int")) {
-      const type = object.type.properties.get(index.token.value!.toString())?.valueType
-        ?? object.type.indexSignatures.get(<IndexType>index.type);
+    else if (object.type.isInterface() && index instanceof BoundLiteralExpression && new SingularType("string").isAssignableTo(index.type)) {
+      const propertyType = new Map(Array.from(object.type.properties.entries())
+        .map(([key, value]) => [key.value, value]))
+        .get(index.token.value!.toString())?.valueType
 
+      const type = propertyType ?? object.type.indexSignatures.get(<IndexType>index.type);
       if (!type) return;
       this.type = type;
     } else if (typeOverride)

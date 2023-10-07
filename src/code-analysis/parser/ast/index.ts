@@ -15,7 +15,7 @@ import type { CompoundAssignmentExpression } from "./expressions/compound-assign
 import type { VariableAssignmentExpression } from "./expressions/variable-assignment";
 import type { PropertyAssignmentExpression } from "./expressions/property-assignment";
 import type { CallExpression } from "./expressions/call";
-import type { AccessExpression } from "./expressions";
+import type { AccessExpression } from "./expressions/access";
 import type { ExpressionStatement } from "./statements/expression";
 import type { PrintlnStatement } from "./statements/println";
 import type { VariableAssignmentStatement } from "./statements/variable-assignment";
@@ -40,7 +40,7 @@ import type BoundCompoundAssignmentExpression from "../../binder/bound-expressio
 import type BoundVariableAssignmentExpression from "../../binder/bound-expressions/variable-assignment";
 import type BoundPropertyAssignmentExpression from "../../binder/bound-expressions/property-assignment";
 import type BoundCallExpression from "../../binder/bound-expressions/call";
-import type BoundAccessExpression from "../../binder/bound-expressions";
+import type BoundAccessExpression from "../../binder/bound-expressions/access";
 import type BoundExpressionStatement from "../../binder/bound-statements/expression";
 import type BoundPrintlnStatement from "../../binder/bound-statements/println";
 import type BoundVariableAssignmentStatement from "../../binder/bound-statements/variable-assignment";

@@ -1,6 +1,6 @@
 import { BoundExpression } from "../bound-node";
 import type { Token } from "../../tokenization/token";
-import BoundAccessExpression from ".";
+import BoundAccessExpression from "./access";
 import AST from "../../parser/ast";
 
 export default class BoundPropertyAssignmentExpression extends BoundExpression {

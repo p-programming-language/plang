@@ -4,7 +4,10 @@ import { ValueType } from "../type-checker";
 import Syntax from "./syntax-type";
 
 const TAB = " ".repeat(2);
-util.inspect.defaultOptions = { colors: true };
+util.inspect.defaultOptions = {
+  colors: true,
+  getters: true
+};
 
 export class Location {
   public constructor(

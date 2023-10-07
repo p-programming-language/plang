@@ -30,7 +30,7 @@ import { CompoundAssignmentExpression } from "../code-analysis/parser/ast/expres
 import { VariableAssignmentExpression } from "../code-analysis/parser/ast/expressions/variable-assignment";
 import { PropertyAssignmentExpression } from "../code-analysis/parser/ast/expressions/property-assignment";
 import type { CallExpression } from "../code-analysis/parser/ast/expressions/call";
-import type { AccessExpression } from "../code-analysis/parser/ast/expressions";
+import type { AccessExpression } from "../code-analysis/parser/ast/expressions/access";
 import type { ExpressionStatement } from "../code-analysis/parser/ast/statements/expression";
 import type { PrintlnStatement } from "../code-analysis/parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../code-analysis/parser/ast/statements/variable-assignment";
@@ -40,6 +40,7 @@ import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 import type { WhileStatement } from "../code-analysis/parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "../code-analysis/parser/ast/statements/return";
+import Intrinsic from "./values/intrinsic";
 
 const MAX_RECURSION_DEPTH = 1200;
 
@@ -52,7 +53,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   private readonly intrinsics = new Intrinsics(this);
 
   public constructor(
-    public readonly host: P,
+    public readonly runner: P,
     public readonly resolver: Resolver,
     public readonly binder: Binder,
     public fileName = "unnamed"
@@ -128,6 +129,9 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public visitIndexExpression(expr: AccessExpression): ValueType {
     const object = this.evaluate(expr.object);
     const index = this.evaluate(expr.index);
+    if (object instanceof Intrinsic.Lib)
+      return object.members[<any>index];
+
     const realValue = (<ValueType[] | ObjectType>object)[<any>index];
     if (INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES.includes(typeof object)) {
       const extension = IntrinsicExtension.get(object);

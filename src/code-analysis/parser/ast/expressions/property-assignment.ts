@@ -1,5 +1,5 @@
 import { Token } from "../../../tokenization/token";
-import { AccessExpression } from ".";
+import { AccessExpression } from "./access";
 import AST from "..";
 
 export class PropertyAssignmentExpression extends AST.Expression {

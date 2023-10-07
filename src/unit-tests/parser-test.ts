@@ -13,7 +13,7 @@ import { UnionTypeExpression } from "../../src/code-analysis/parser/ast/type-nod
 import { ArrayTypeExpression } from "../../src/code-analysis/parser/ast/type-nodes/array-type";
 import { ExpressionStatement } from "../../src/code-analysis/parser/ast/statements/expression";
 import { CallExpression } from "../../src/code-analysis/parser/ast/expressions/call";
-import { AccessExpression } from "../../src/code-analysis/parser/ast/expressions/index";
+import { AccessExpression } from "../code-analysis/parser/ast/expressions/access";
 import { PropertyAssignmentExpression } from "../../src/code-analysis/parser/ast/expressions/property-assignment";
 import { VariableAssignmentStatement } from "../../src/code-analysis/parser/ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "../../src/code-analysis/parser/ast/statements/variable-declaration";

@@ -12,7 +12,7 @@ import Intrinsic from "../values/intrinsic";
 import type Interpreter from "../interpreter";
 import type P from "../../p";
 
-import Std from "./libs/std";
+import StdLib from "./libs/std";
 import Eval from "./eval";
 
 export default class Intrinsics {
@@ -21,12 +21,12 @@ export default class Intrinsics {
   ) {}
 
   public inject(): void {
-    this.define("version$", this.interpreter.host.version, new SingularType("string"));
+    this.define("version$", this.interpreter.runner.version, new SingularType("string"));
     this.define("filename$", this.interpreter.fileName, new SingularType("string"));
     this.define("dirname$", path.dirname(this.interpreter.fileName), new SingularType("string"));
     this.define("argv", argv.slice(3), new ArrayType(new SingularType("string")));
     this.defineFunction("eval", Eval);
-    (new Std(this)).inject();
+    (new StdLib(this)).inject();
   }
 
   public define<V extends ValueType = ValueType>(name: string, value: V, type: Type): void {

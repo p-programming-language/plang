@@ -1,8 +1,16 @@
+import type { ValueType } from "../../../../code-analysis/type-checker";
+import type { Type } from "../../../../code-analysis/type-checker/types/type";
 import Intrinsic from "../../../values/intrinsic";
-import IO from "./io";
+import IOLib from "./io";
 
-export default class Std extends Intrinsic.Lib {
-  public inject(): void {
-    (new IO(this.intrinsics)).inject();
+export default class StdLib extends Intrinsic.Lib {
+  public get propertyTypes(): Record<string, Type> {
+    return {};
+  }
+
+  public get members(): Record<string, ValueType> {
+    return {
+      io: new IOLib(this.intrinsics)
+    };
   }
 }

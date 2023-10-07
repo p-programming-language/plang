@@ -2,7 +2,7 @@ import { BoundExpression } from "../bound-node";
 import type { Token } from "../../tokenization/token";
 import type FunctionType from "../../type-checker/types/function-type";
 import type BoundIdentifierExpression from "./identifier";
-import type BoundAccessExpression from ".";
+import type BoundAccessExpression from "./access";
 import AST from "../../parser/ast";
 
 export default class BoundCallExpression extends BoundExpression {

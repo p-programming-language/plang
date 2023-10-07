@@ -2,7 +2,7 @@ import { BoundExpression } from "../bound-node";
 import type { BoundBinaryOperator } from "../bound-operators/binary";
 import type { Token } from "../../tokenization/token";
 import type BoundIdentifierExpression from "./identifier";
-import type BoundAccessExpression from ".";
+import type BoundAccessExpression from "./access";
 import AST from "../../parser/ast";
 
 export default class BoundCompoundAssignmentExpression extends BoundExpression {

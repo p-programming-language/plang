@@ -1,11 +1,12 @@
 import { BindingError, TypeError } from "../../errors";
 import { BoundExpression, BoundStatement } from "./bound-node";
 import { INDEX_TYPE, INTRINSIC_EXTENDED_LITERAL_TYPES } from "../type-checker/types/type-sets";
+import { BoundBinaryOperator } from "./bound-operators/binary";
+import { BoundUnaryOperator } from "./bound-operators/unary";
+import { getTypeFromTypeRef } from "../../utility";
 import type { Token } from "../tokenization/token";
 import type { Type } from "../type-checker/types/type";
 import type { InterfacePropertySignature, TypeLiteralValueType } from "../type-checker";
-import { BoundBinaryOperator } from "./bound-operators/binary";
-import { BoundUnaryOperator } from "./bound-operators/unary";
 import Intrinsic from "../../runtime/values/intrinsic";
 import IntrinsicExtension from "../../runtime/intrinsics/literal-extensions";
 import VariableSymbol from "./variable-symbol";
@@ -31,13 +32,8 @@ import { IdentifierExpression } from "../parser/ast/expressions/identifier";
 import type { CompoundAssignmentExpression } from "../parser/ast/expressions/compound-assignment";
 import type { VariableAssignmentExpression } from "../parser/ast/expressions/variable-assignment";
 import type { PropertyAssignmentExpression } from "../parser/ast/expressions/property-assignment";
-import { SingularTypeExpression } from "../parser/ast/type-nodes/singular-type";
-import { LiteralTypeExpression } from "../parser/ast/type-nodes/literal-type";
-import { UnionTypeExpression } from "../parser/ast/type-nodes/union-type";
-import { ArrayTypeExpression } from "../parser/ast/type-nodes/array-type";
-import { InterfaceTypeExpression } from "../parser/ast/type-nodes/interface-type";
 import type { CallExpression } from "../parser/ast/expressions/call";
-import { AccessExpression } from "../parser/ast/expressions";
+import { AccessExpression } from "../parser/ast/expressions/access";
 import type { ExpressionStatement } from "../parser/ast/statements/expression";
 import type { PrintlnStatement } from "../parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../parser/ast/statements/variable-assignment";
@@ -63,7 +59,7 @@ import BoundCompoundAssignmentExpression from "./bound-expressions/compound-assi
 import BoundVariableAssignmentExpression from "./bound-expressions/variable-assignment";
 import BoundPropertyAssignmentExpression from "./bound-expressions/property-assignment";
 import BoundCallExpression from "./bound-expressions/call";
-import BoundAccessExpression from "./bound-expressions";
+import BoundAccessExpression from "./bound-expressions/access";
 import BoundExpressionStatement from "./bound-statements/expression";
 import BoundPrintlnStatement from "./bound-statements/println";
 import BoundVariableAssignmentStatement from "./bound-statements/variable-assignment";
@@ -86,7 +82,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   }
 
   public visitTypeDeclarationStatement(stmt: TypeDeclarationStatement): BoundTypeDeclarationStatement {
-    const symbol = this.defineSymbol(stmt.name, this.getTypeFromTypeRef(stmt.typeRef));
+    const symbol = this.defineSymbol(stmt.name, getTypeFromTypeRef(stmt.typeRef));
     return new BoundTypeDeclarationStatement(symbol);
   }
 
@@ -96,10 +92,9 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   }
 
   public visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): BoundFunctionDeclarationStatement {
-    const returnType = this.getTypeFromTypeRef(stmt.returnType);
     const type = new FunctionType(
-      new Map<string, Type>(stmt.parameters.map(param => [param.identifier.name.lexeme, this.getTypeFromTypeRef(param.typeRef)])),
-      returnType
+      new Map<string, Type>(stmt.parameters.map(param => [param.identifier.name.lexeme, getTypeFromTypeRef(param.typeRef)])),
+      getTypeFromTypeRef(stmt.returnType)
     );
 
     const variableSymbol = this.defineSymbol(stmt.name, type);
@@ -130,7 +125,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): BoundVariableDeclarationStatement {
     const initializer = stmt.initializer ? this.bind(stmt.initializer) : undefined;
-    const variableSymbol = this.defineSymbol(stmt.identifier.token, this.getTypeFromTypeRef(stmt.typeRef));
+    const variableSymbol = this.defineSymbol(stmt.identifier.token, getTypeFromTypeRef(stmt.typeRef));
     return new BoundVariableDeclarationStatement(variableSymbol, stmt.mutable, initializer);
   }
 
@@ -363,49 +358,5 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     if (symbol) return symbol;
 
     throw new BindingError(`Failed to find variable symbol for '${name.lexeme}'`, name)
-  }
-
-  private getTypeFromTypeRef<T extends Type = Type>(node: AST.TypeRef): T {
-    if (node instanceof ArrayTypeExpression)
-      return <T><unknown>new ArrayType(this.getTypeFromTypeRef(node.elementType));
-    else if (node instanceof LiteralTypeExpression)
-      return <T><unknown>new LiteralType(node.literalToken.value);
-    else if (node instanceof SingularTypeExpression)
-      return <T><unknown>new SingularType(node.token.lexeme, node.typeArguments?.map(arg => this.getTypeFromTypeRef(arg)));
-    else if (node instanceof UnionTypeExpression)
-      return <T><unknown>new UnionType(node.types.map(singular => this.getTypeFromTypeRef<SingularType>(singular)));
-    else if (node instanceof InterfaceTypeExpression) {
-      const properties = new Map<LiteralType<string>, InterfacePropertySignature<Type>>();
-      const indexSignatures = new Map<IndexType, Type>();
-      for (const [key, { mutable, valueType }] of node.properties)
-        properties.set(new LiteralType(key.token.value), {
-          valueType: this.getTypeFromTypeRef(valueType),
-          mutable
-        });
-
-      for (const [keyType, valueType] of node.indexSignatures)
-        indexSignatures.set(this.getTypeFromTypeRef<IndexType>(keyType), this.getTypeFromTypeRef(valueType))
-
-      return <T><unknown>new InterfaceType(properties, indexSignatures, node.name.lexeme);
-    }
-
-    throw new BindingError(`(BUG) Unhandled type expression: ${node}`, node.token);
-  }
-
-  private getTypeFromLiteralSyntax(syntax: Syntax): Type | undefined {
-    switch(syntax) {
-      case Syntax.String:
-        return new SingularType("string");
-      case Syntax.Int:
-        return new SingularType("int");
-      case Syntax.Float:
-        return new SingularType("float");
-      case Syntax.Boolean:
-        return new SingularType("bool");
-      case Syntax.Undefined:
-        return new SingularType("undefined");
-      case Syntax.Null:
-        return new SingularType("null");
-    }
   }
 }

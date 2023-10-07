@@ -3,8 +3,13 @@ import SingularType from "../../../code-analysis/type-checker/types/singular-typ
 import ArrayType from "../../../code-analysis/type-checker/types/array-type";
 import Intrinsic from "../../values/intrinsic";
 import UnionType from "../../../code-analysis/type-checker/types/union-type";
+import { Type } from "../../../code-analysis/type-checker/types/type";
 
 export default class StringExtension extends Intrinsic.ValueExtension<string> {
+  public get propertyTypes(): Record<string, Type> {
+    return {};
+  }
+
   public get members(): Record<string, ValueType> {
     const value = this.value;
     return {
