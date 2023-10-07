@@ -17,6 +17,8 @@ import LiteralType from "./code-analysis/type-checker/types/literal-type";
 import SingularType from "./code-analysis/type-checker/types/singular-type";
 import UnionType from "./code-analysis/type-checker/types/union-type";
 import InterfaceType from "./code-analysis/type-checker/types/interface-type";
+import { FunctionTypeExpression } from "./code-analysis/parser/ast/type-nodes/function-type";
+import FunctionType from "./code-analysis/type-checker/types/function-type";
 
 export function clearTerminal(): void {
   const os = platform();
@@ -37,7 +39,12 @@ export function generateAddress() {
 }
 
 export function getTypeFromTypeRef<T extends Type = Type>(node: AST.TypeRef): T {
-  if (node instanceof ArrayTypeExpression)
+  if (node instanceof FunctionTypeExpression)
+    return <T><unknown>new FunctionType(
+      new Map(Array.from(node.parameterTypes.entries()).map(([name, type]) => [name, getTypeFromTypeRef(type)])),
+      getTypeFromTypeRef(node.returnType)
+    );
+  else if (node instanceof ArrayTypeExpression)
     return <T><unknown>new ArrayType(getTypeFromTypeRef(node.elementType));
   else if (node instanceof LiteralTypeExpression)
     return <T><unknown>new LiteralType(node.literalToken.value);
