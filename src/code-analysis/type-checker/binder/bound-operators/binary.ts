@@ -4,33 +4,23 @@ import type { Type } from "../../types/type";
 import Syntax from "../../../tokenization/syntax-type";
 import UnionType from "../../types/union-type";
 import SingularType from "../../types/singular-type";
+import ArrayType from "../../types/array-type";
 
 export enum BoundBinaryOperatorType {
-  Addition,
-  Subtraction,
-  Multiplication,
-  Division,
-  IntDivision,
-  Exponentation,
-  Modulus,
-  EqualTo,
-  NotEqualTo,
-  LogicalAnd,
-  LogicalOr,
-  LessThan,
-  GreaterThan,
-  LessThanOrEqual,
-  GreaterThanOrEqual,
-  And,
-  Or,
-  BitwiseAnd,
-  BitwiseOr,
-  BitwiseXor,
-  ShiftLeft,
-  ShiftRight,
+  Addition, Subtraction,
+  Multiplication, Division, IntDivision,
+  Exponentation, Modulus,
+  EqualTo, NotEqualTo,
+  LogicalAnd, LogicalOr,
+  LessThan, GreaterThan,
+  LessThanOrEqual, GreaterThanOrEqual,
+  And, Or,
+  BitwiseAnd, BitwiseOr, BitwiseXor,
+  ShiftLeft, ShiftRight,
   NullishCoalescing,
   Concatenation,
-  Repetition
+  Repetition,
+  Split
 }
 
 export class BoundBinaryOperator {
@@ -121,13 +111,20 @@ const BOUND_BINARY_OPERATORS = [
     [Syntax.Star, Syntax.StarEqual],
     BoundBinaryOperatorType.Repetition,
     new SingularType("string"),
-    intOrFloat,
+    new SingularType("int"),
     new SingularType("string")
   ),
   new BoundBinaryOperator(
     [Syntax.Slash, Syntax.SlashEqual],
     BoundBinaryOperatorType.Division,
     intOrFloat
+  ),
+  new BoundBinaryOperator(
+    [Syntax.Slash, Syntax.SlashEqual],
+    BoundBinaryOperatorType.Split,
+    new SingularType("string"),
+    new SingularType("string"),
+    new ArrayType(new SingularType("string"))
   ),
   new BoundBinaryOperator(
     [Syntax.SlashSlash, Syntax.SlashSlashEqual],

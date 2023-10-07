@@ -233,10 +233,10 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
         else
           return (<string>left).repeat(<number>right);
       case Syntax.Slash:
-        // if (typeof left === "number")
+        if (typeof left === "number")
           return <number>left / <number>right;
-        // else
-        //   return (<string>left).split(<string>right);
+        else
+          return (<string>left).split(<string>right);
       case Syntax.SlashSlash:
         return Math.floor(<number>left / <number>right);
       case Syntax.StarStar:

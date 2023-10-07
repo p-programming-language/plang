@@ -8,10 +8,8 @@ import ArrayType from "../../types/array-type";
 
 
 export const enum BoundUnaryOperatorType {
-  Identity,
-  Negate,
-  Increment,
-  Decrement,
+  Identity, Negate,
+  Increment, Decrement,
   Length,
   Not,
   BitwiseNot
