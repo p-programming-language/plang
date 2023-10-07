@@ -61,7 +61,10 @@ export default class Lexer extends ArrayStepper<string> {
       case "}":
         return this.addToken(Syntax.RBrace, undefined, true);
       case ".":
-        return this.addToken(Syntax.Dot, undefined, true);
+        if (this.match("."))
+          return this.addToken(Syntax.DotDot, undefined, true);
+        else
+          return this.addToken(Syntax.Dot, undefined, true);
       case "#":
         if (this.match("#"))
           return this.skipComment({ multiline: this.match(":") });
@@ -269,7 +272,7 @@ export default class Lexer extends ArrayStepper<string> {
 
   private readNumber(): void {
     let usedDecimal = false;
-    while (/^[0-9]$/.test(this.current) || this.current === ".") {
+    while (/^[0-9]$/.test(this.current) || (this.current === "." && this.peek() !== ".")) {
       if (this.advance() === ".")
         if (usedDecimal)
           throw new LexerSyntaxError("Malformed number", this.line, this.column);

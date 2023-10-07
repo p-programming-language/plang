@@ -16,6 +16,7 @@ enum Syntax {
   Interface,
 
   Semicolon, Comma,
+  DotDot,
   LParen, RParen,
   LBracket, RBracket,
   LBrace, RBrace,

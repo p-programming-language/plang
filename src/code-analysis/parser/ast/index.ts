@@ -3,6 +3,7 @@ import util from "util";
 import type { Token } from "../../tokenization/token";
 import type { LiteralExpression } from "./expressions/literal";
 import type { StringInterpolationExpression } from "./expressions/string-interpolation";
+import type { RangeLiteralExpression } from "./expressions/range-literal";
 import type { ArrayLiteralExpression } from "./expressions/array-literal";
 import type { ObjectLiteralExpression } from "./expressions/object-literal";
 import type { ParenthesizedExpression } from "./expressions/parenthesized";
@@ -27,6 +28,7 @@ import type { ReturnStatement } from "./statements/return";
 import type { TypeDeclarationStatement } from "./statements/type-declaration";
 import type BoundLiteralExpression from "../../binder/bound-expressions/literal";
 import type BoundStringInterpolationExpression from "../../binder/bound-expressions/string-interpolation";
+import type BoundRangeLiteralExpression from "../../binder/bound-expressions/range-literal";
 import type BoundArrayLiteralExpression from "../../binder/bound-expressions/array-literal";
 import type BoundObjectLiteralExpression from "../../binder/bound-expressions/object-literal";
 import type BoundParenthesizedExpression from "../../binder/bound-expressions/parenthesized";
@@ -55,7 +57,7 @@ namespace AST {
     public abstract get token(): Token;
 
     public toString(): string {
-      return util.inspect(this, { colors: true, compact: false });
+      return util.inspect(this);
     }
   }
 
@@ -79,9 +81,10 @@ namespace AST {
       public abstract visitBinaryExpression(expr: BinaryExpression): R
       public abstract visitUnaryExpression(expr: UnaryExpression): R
       public abstract visitParenthesizedExpression(expr: ParenthesizedExpression): R
-      public abstract visitStringInterpolationExpression(expr: StringInterpolationExpression): R
       public abstract visitObjectLiteralExpression(expr: ObjectLiteralExpression): R
       public abstract visitArrayLiteralExpression(expr: ArrayLiteralExpression): R
+      public abstract visitRangeLiteralExpression(expr: RangeLiteralExpression): R
+      public abstract visitStringInterpolationExpression(expr: StringInterpolationExpression): R
       public abstract visitLiteralExpression(expr: LiteralExpression): R
     }
 
@@ -109,9 +112,10 @@ namespace AST {
       public abstract visitBinaryExpression(expr: BoundBinaryExpression): R
       public abstract visitUnaryExpression(expr: BoundUnaryExpression): R
       public abstract visitParenthesizedExpression(expr: BoundParenthesizedExpression): R
-      public abstract visitStringInterpolationExpression(expr: BoundStringInterpolationExpression): R
       public abstract visitObjectLiteralExpression(expr: BoundObjectLiteralExpression): R
       public abstract visitArrayLiteralExpression(expr: BoundArrayLiteralExpression): R
+      public abstract visitRangeLiteralExpression(expr: BoundRangeLiteralExpression): R
+      public abstract visitStringInterpolationExpression(expr: BoundStringInterpolationExpression): R
       public abstract visitLiteralExpression(expr: BoundLiteralExpression): R
     }
 

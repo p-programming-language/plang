@@ -9,7 +9,7 @@ export default class LiteralType<V extends TypeLiteralValueType = TypeLiteralVal
 
   public constructor(
     public readonly value: V
-  ) { super(util.inspect(value).replace(/'/g, '"')); }
+  ) { super(util.inspect(value, { colors: false }).replace(/'/g, '"')); }
 
   public toString(): string {
     return util.inspect(this.value).replace(/'/g, '"');

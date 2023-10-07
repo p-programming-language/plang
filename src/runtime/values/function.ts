@@ -1,4 +1,4 @@
-import { Range } from "../../utility";
+import { Range } from "./range";
 import { Callable, CallableType } from "./callable";
 import type { ValueType } from "../../code-analysis/type-checker";
 import type { VariableDeclarationStatement } from "../../code-analysis/parser/ast/statements/variable-declaration";

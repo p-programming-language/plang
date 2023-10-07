@@ -1,7 +1,8 @@
 import { Callable, CallableType } from "./callable";
 import type { ValueType } from "../../code-analysis/type-checker";
 import type { Type } from "../../code-analysis/type-checker/types/type";
-import { Range } from "../../utility";
+import { Range } from "./range";
+
 import type Intrinsics from "../intrinsics";
 import type Interpreter from "../interpreter";
 import SingularType from "../../code-analysis/type-checker/types/singular-type";

@@ -1,5 +1,5 @@
 import { ValueType } from "../../code-analysis/type-checker";
-import type { Range } from "../../utility";
+import type { Range } from "./range";
 import type Intrinsic from "./intrinsic";
 import PValue from "./value";
 

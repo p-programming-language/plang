@@ -44,18 +44,3 @@ export function getFakeIntrinsicExtension<V extends ValueType = ValueType>(type:
 
   return <Intrinsic.ValueExtension<V>>extension;
 }
-
-export class Range {
-  public constructor(
-    public readonly minimum: number,
-    public readonly maximum: number
-  ) {}
-
-  public isWithin(n: number): boolean {
-    return n >= this.minimum && n <= this.maximum;
-  }
-
-  public toString(): string {
-    return this.minimum + ".." + this.maximum;
-  }
-}

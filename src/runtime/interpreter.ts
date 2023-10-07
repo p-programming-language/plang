@@ -3,6 +3,7 @@ import type { IndexValueType, ObjectType, TypeLiteralValueType, ValueType } from
 import type { Callable } from "./values/callable";
 import { Token } from "../code-analysis/tokenization/token";
 import { fakeToken, getIntrinsicExtension } from "../utility";
+import { Range } from "./values/range";
 import { INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES } from "../code-analysis/type-checker/types/type-sets";
 import type Binder from "../code-analysis/binder";
 import type Resolver from "../code-analysis/resolver";
@@ -16,6 +17,7 @@ import AST from "../code-analysis/parser/ast";
 
 import { LiteralExpression } from "../code-analysis/parser/ast/expressions/literal";
 import type { StringInterpolationExpression } from "../code-analysis/parser/ast/expressions/string-interpolation";
+import type { RangeLiteralExpression } from "../code-analysis/parser/ast/expressions/range-literal";
 import type { ArrayLiteralExpression } from "../code-analysis/parser/ast/expressions/array-literal";
 import type { ObjectLiteralExpression } from "../code-analysis/parser/ast/expressions/object-literal";
 import type { ParenthesizedExpression } from "../code-analysis/parser/ast/expressions/parenthesized";
@@ -136,7 +138,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitCallExpression(expr: CallExpression): ValueType {
     const fn = <Callable>this.evaluate(expr.callee);
-    const fitsArity = typeof fn.arity === "number" ? expr.args.length === fn.arity : fn.arity.isWithin(expr.args.length);
+    const fitsArity = typeof fn.arity === "number" ? expr.args.length === fn.arity : fn.arity.doesFit(expr.args.length);
     if (!fitsArity)
       throw new RuntimeError(`Expected call to '${fn.name}()' to have ${fn.arity.toString()} arguments, got ${expr.args.length}`, expr.callee.token)
 
@@ -302,6 +304,12 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitArrayLiteralExpression(expr: ArrayLiteralExpression): ValueType[] {
     return expr.elements.map(element => this.evaluate(element));
+  }
+
+  public visitRangeLiteralExpression(expr: RangeLiteralExpression): Range {
+    const minimum = <number>this.evaluate(expr.minimum);
+    const maximum = <number>this.evaluate(expr.maximum);
+    return new Range(minimum, maximum);
   }
 
   public visitLiteralExpression<V extends TypeLiteralValueType | null | undefined = TypeLiteralValueType | null | undefined>(expr: LiteralExpression<V>): V {

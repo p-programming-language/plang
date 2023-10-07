@@ -1,6 +1,11 @@
 import type AST from "./ast";
 
-const INTRINSIC_TYPES = new Set<string>(["int", "float", "string", "bool", "undefined", "null", "void", "any", "Array"]);
+const INTRINSIC_TYPES = new Set<string>([
+  "int", "float", "string", "bool",
+  "undefined", "null", "void",
+  "any", "Array", "Range"
+]);
+
 export default class TypeTracker {
   private readonly customTypes = new Map<string, AST.TypeRef>;
   private readonly typeScopes: Set<string>[] = [INTRINSIC_TYPES];

@@ -1,12 +1,12 @@
 import util from "util";
 
+import type { InterfacePropertySignature } from "..";
 import SingularType from "./singular-type";
-import LiteralType from "./literal-type";
+import type LiteralType from "./literal-type";
 import type UnionType from "./union-type";
 import type ArrayType from "./array-type";
 import type FunctionType from "./function-type";
 import type InterfaceType from "./interface-type";
-import { InterfacePropertySignature } from "..";
 
 export enum TypeKind {
   Singular,
@@ -139,6 +139,6 @@ export abstract class Type {
   }
 
   public toString(): string {
-    return util.inspect(this, { colors: true, compact: false })
+    return util.inspect(this)
   }
 }

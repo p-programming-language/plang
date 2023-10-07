@@ -3,12 +3,14 @@ import { BoundExpression, BoundStatement } from "./bound-node";
 import { INDEX_TYPE, INTRINSIC_EXTENDED_LITERAL_TYPES } from "../type-checker/types/type-sets";
 import type { Token } from "../tokenization/token";
 import type { Type } from "../type-checker/types/type";
-import type { InterfacePropertySignature, TypeLiteralValueType, ValueType } from "../type-checker";
+import type { InterfacePropertySignature, TypeLiteralValueType } from "../type-checker";
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
 import { getFakeIntrinsicExtension } from "../../utility";
+import Intrinsic from "../../runtime/values/intrinsic";
 import VariableSymbol from "./variable-symbol";
 import SingularType from "../type-checker/types/singular-type";
+import LiteralType from "../type-checker/types/literal-type";
 import UnionType from "../type-checker/types/union-type";
 import FunctionType from "../type-checker/types/function-type";
 import InterfaceType from "../type-checker/types/interface-type";
@@ -18,6 +20,7 @@ import AST from "../parser/ast";
 
 import { LiteralExpression } from "../parser/ast/expressions/literal";
 import type { StringInterpolationExpression } from "../parser/ast/expressions/string-interpolation";
+import type { RangeLiteralExpression } from "../parser/ast/expressions/range-literal";
 import type { ArrayLiteralExpression } from "../parser/ast/expressions/array-literal";
 import type { ObjectLiteralExpression } from "../parser/ast/expressions/object-literal";
 import type { ParenthesizedExpression } from "../parser/ast/expressions/parenthesized";
@@ -48,6 +51,7 @@ import type { TypeDeclarationStatement } from "../parser/ast/statements/type-dec
 
 import BoundLiteralExpression from "./bound-expressions/literal";
 import BoundStringInterpolationExpression from "./bound-expressions/string-interpolation";
+import BoundRangeLiteralExpression from "./bound-expressions/range-literal";
 import BoundArrayLiteralExpression from "./bound-expressions/array-literal";
 import BoundObjectLiteralExpression from "./bound-expressions/object-literal";
 import BoundParenthesizedExpression from "./bound-expressions/parenthesized";
@@ -70,8 +74,6 @@ import BoundWhileStatement from "./bound-statements/while";
 import BoundFunctionDeclarationStatement from "./bound-statements/function-declaration";
 import BoundReturnStatement from "./bound-statements/return";
 import BoundTypeDeclarationStatement from "./bound-statements/type-declaration";
-import Intrinsic from "../../runtime/values/intrinsic";
-import LiteralType from "../type-checker/types/literal-type";
 
 type IndexType = SingularType<"string"> | SingularType<"int">;
 type PropertyPair = [LiteralType<string>, InterfacePropertySignature<Type>];
@@ -312,6 +314,18 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
     const type = new ArrayType(elementType);
     return new BoundArrayLiteralExpression(expr.token, elements, type);
+  }
+
+  public visitRangeLiteralExpression(expr: RangeLiteralExpression): BoundRangeLiteralExpression {
+    const minimum = this.bind(expr.minimum);
+    const maximum = this.bind(expr.maximum);
+    if (!minimum.type.isSingular() || !minimum.type.isAssignableTo(new SingularType("int")))
+      throw new TypeError(`Minimum value for range must be an 'int', got '${minimum.type.toString()}'`, minimum.token);
+    if (!maximum.type.isSingular() || !maximum.type.isAssignableTo(new SingularType("int")))
+      throw new TypeError(`Maximum value for range must be an 'int', got '${minimum.type.toString()}'`, minimum.token);
+
+    const type = new SingularType("Range");
+    return new BoundRangeLiteralExpression(expr.operator, minimum, maximum, type);
   }
 
   public visitLiteralExpression<T extends TypeLiteralValueType = TypeLiteralValueType>(expr: LiteralExpression<T>): BoundLiteralExpression<T> {

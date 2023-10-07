@@ -36,6 +36,7 @@ import { FunctionDeclarationStatement } from "./ast/statements/function-declarat
 import { ReturnStatement } from "./ast/statements/return";
 import { TypeDeclarationStatement } from "./ast/statements/type-declaration";
 import { TypeLiteralValueType } from "../type-checker";
+import { RangeLiteralExpression } from "./ast/expressions/range-literal";
 
 export default class Parser extends TypeParser {
   public constructor(
@@ -372,10 +373,12 @@ export default class Parser extends TypeParser {
   private parseExponential(): AST.Expression {
     let left = this.parseCall();
 
-    while (this.match(Syntax.Carat, Syntax.StarStar)) { // this is also where i parsed ".." in cosmo, AKA a range literal expression
+    while (this.match(Syntax.Carat, Syntax.StarStar, Syntax.DotDot)) {
       const operator = this.previous<undefined>();
       const right = this.parseCall();
-      left = new BinaryExpression(left, right, operator);
+      left = operator.syntax === Syntax.DotDot ?
+        new RangeLiteralExpression(left, right, operator)
+        : new BinaryExpression(left, right, operator);
     }
 
     return left;

@@ -161,6 +161,10 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
       this.resolve(element);
   }
 
+  public visitRangeLiteralExpression(): void {
+    // do nothing
+  }
+
   public visitLiteralExpression(): void {
     // do nothing
   }

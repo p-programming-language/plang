@@ -4,10 +4,7 @@ import { ValueType } from "../type-checker";
 import Syntax from "./syntax-type";
 
 const TAB = " ".repeat(2);
-const INSPECT_OPTIONS: util.InspectOptions = {
-  colors: true,
-  compact: false
-};
+util.inspect.defaultOptions = { colors: true };
 
 export class Location {
   public constructor(
@@ -15,12 +12,12 @@ export class Location {
     public readonly column: number
   ) {}
 
-  public inspect(): string {
+  public [util.inspect.custom](): string {
     return this.toString();
   }
 
   public toString(): string {
-    return `(${util.inspect(this.line, INSPECT_OPTIONS)}:${util.inspect(this.column, INSPECT_OPTIONS)})`;
+    return `(${util.inspect(this.line)}:${util.inspect(this.column)})`;
   }
 }
 
@@ -30,7 +27,7 @@ export class LocationSpan {
     public readonly finish: Location
   ) {}
 
-  public inspect(): string {
+  public [util.inspect.custom](): string {
     return this.toString();
   }
 
@@ -52,16 +49,16 @@ export class Token<
     public readonly locationSpan: LocationSpan
   ) {}
 
-  public inspect(): string {
+  public [util.inspect.custom](): string {
     return this.toString();
   }
 
   public toString(): string {
     return [
       "Token {",
-      `${TAB}syntax: ${Syntax[this.syntax]}`,
-      `${TAB}lexeme: ${util.inspect(this.lexeme, INSPECT_OPTIONS)}`,
-      `${TAB}value: ${util.inspect(this.value, INSPECT_OPTIONS)}`,
+      `${TAB}syntax: ${util.inspect(Syntax[this.syntax])}`,
+      `${TAB}lexeme: ${util.inspect(this.lexeme)}`,
+      `${TAB}value: ${util.inspect(this.value)}`,
       `${TAB}locationSpan: ${this.locationSpan.toString()}`,
       "}"
     ].join("\n");

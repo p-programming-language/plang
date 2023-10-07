@@ -12,7 +12,6 @@ import UnionType from "./types/union-type";
 import Syntax from "../tokenization/syntax-type";
 import AST from "../parser/ast";
 
-import BoundLiteralExpression from "../binder/bound-expressions/literal";
 import BoundArrayLiteralExpression from "../binder/bound-expressions/array-literal";
 import type BoundObjectLiteralExpression from "../binder/bound-expressions/object-literal";
 import type BoundStringInterpolationExpression from "../binder/bound-expressions/string-interpolation";
@@ -20,7 +19,6 @@ import type BoundParenthesizedExpression from "../binder/bound-expressions/paren
 import type BoundUnaryExpression from "../binder/bound-expressions/unary";
 import type BoundBinaryExpression from "../binder/bound-expressions/binary";
 import type BoundTernaryExpression from "../binder/bound-expressions/ternary";
-import BoundIdentifierExpression from "../binder/bound-expressions/identifier";
 import type BoundCompoundAssignmentExpression from "../binder/bound-expressions/compound-assignment";
 import type BoundVariableAssignmentExpression from "../binder/bound-expressions/variable-assignment";
 import type BoundPropertyAssignmentExpression from "../binder/bound-expressions/property-assignment";
@@ -36,6 +34,7 @@ import type BoundWhileStatement from "../binder/bound-statements/while";
 import type BoundFunctionDeclarationStatement from "../binder/bound-statements/function-declaration";
 import type BoundReturnStatement from "../binder/bound-statements/return";
 import LiteralType from "./types/literal-type";
+import BoundRangeLiteralExpression from "../binder/bound-expressions/range-literal";
 
 export type ValueType = SingularValueType | ValueType[] | ObjectType;
 export type TypeLiteralValueType = string | boolean | number;
@@ -221,6 +220,11 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
       this.check(element);
       this.assert(element, element.type, expr.type.elementType);
     }
+  }
+
+  public visitRangeLiteralExpression(expr: BoundRangeLiteralExpression): void {
+    this.check(expr.minimum);
+    this.check(expr.maximum);
   }
 
   public visitLiteralExpression(): void {
