@@ -3,8 +3,9 @@ import SingularType from "../../code-analysis/type-checker/types/singular-type";
 import Intrinsic from "../values/intrinsic";
 
 export default class Eval extends Intrinsic.Function {
-  public readonly argumentTypes = { code: new SingularType("string") };
+  public readonly name = "eval";
   public readonly returnType = new SingularType("any");
+  public readonly argumentTypes = { code: new SingularType("string") };
 
   public call(code: string): ValueType {
     const enclosingResultOutputEnabled = this.interpreter!.runner.executionOptions.outputResult;

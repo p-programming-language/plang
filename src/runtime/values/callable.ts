@@ -10,6 +10,7 @@ export const enum CallableType {
 }
 
 export abstract class Callable<A extends ValueType[] = ValueType[], R extends ValueType = ValueType> extends PValue {
+  public abstract readonly name: string;
   public abstract readonly type: CallableType;
   public abstract get arity(): number | Range;
   public abstract call(...args: A): R | undefined;

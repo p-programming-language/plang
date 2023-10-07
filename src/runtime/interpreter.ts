@@ -139,7 +139,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     const fn = <Callable>this.evaluate(expr.callee);
     const fitsArity = typeof fn.arity === "number" ? expr.args.length === fn.arity : fn.arity.isWithin(expr.args.length);
     if (!fitsArity)
-      throw new RuntimeError(`Expected '${expr.callee.token.lexeme}' to have ${fn.arity.toString()} arguments, got ${expr.args.length}`, expr.callee.token)
+      throw new RuntimeError(`Expected call to '${fn.name}()' to have ${fn.arity.toString()} arguments, got ${expr.args.length}`, expr.callee.token)
 
     const args = expr.args.map(arg => this.evaluate(arg));
     return fn.call(...args);

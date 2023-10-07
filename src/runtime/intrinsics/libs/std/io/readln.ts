@@ -5,6 +5,11 @@ import UnionType from "../../../../../code-analysis/type-checker/types/union-typ
 import SingularType from "../../../../../code-analysis/type-checker/types/singular-type";
 
 export default class Readln extends Intrinsic.Function {
+  public readonly name = "std::io.readln";
+  public readonly returnType = new UnionType([
+    new SingularType("string"),
+    new SingularType("undefined")
+  ]);
   public readonly argumentTypes = {
     prompt: new SingularType("string"),
     hideEchoBack: new UnionType([
@@ -12,10 +17,6 @@ export default class Readln extends Intrinsic.Function {
       new SingularType("undefined")
     ])
   };
-  public readonly returnType = new UnionType([
-    new SingularType("string"),
-    new SingularType("undefined")
-  ]);
 
   public call(prompt: string, hideEchoBack = false): string {
     return reader.question(prompt, { hideEchoBack });

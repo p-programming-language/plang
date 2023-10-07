@@ -6,8 +6,6 @@ import type Intrinsics from "../intrinsics";
 import type Interpreter from "../interpreter";
 import SingularType from "../../code-analysis/type-checker/types/singular-type";
 
-import StringExtension from "../intrinsics/literal-extensions/string";
-
 namespace Intrinsic {
   export abstract class ValueExtension<V extends ValueType = ValueType> {
     public constructor(
@@ -27,8 +25,9 @@ namespace Intrinsic {
 
   export abstract class Function<A extends ValueType[] = ValueType[], R extends ValueType = ValueType> extends Callable<A, R> {
     public override readonly type = CallableType.IntrinsicFunction;
-    public abstract readonly argumentTypes: Record<string, Type>;
+    public abstract readonly name: string
     public abstract readonly returnType: Type;
+    public abstract readonly argumentTypes: Record<string, Type>;
 
     public constructor(
       protected readonly interpreter?: Interpreter

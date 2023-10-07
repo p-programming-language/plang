@@ -10,6 +10,7 @@ import Scope from "../scope";
 const MAX_FN_PARAMS = 255;
 
 export default class PFunction<A extends ValueType[] = ValueType[], R extends ValueType = ValueType> extends Callable<A, R> {
+  public readonly name: string;
   public override readonly type = CallableType.Function;
   private nonNullableParameters = this.parameters.filter(param => param.initializer !== undefined);
 
@@ -17,7 +18,10 @@ export default class PFunction<A extends ValueType[] = ValueType[], R extends Va
     private readonly interpreter: Interpreter,
     private readonly closure: Scope,
     private readonly definition: FunctionDeclarationStatement
-  ) { super(); }
+  ) {
+    super();
+    this.name = this.definition.name.lexeme;
+  }
 
   public call(...args: A): R | undefined {
     this.interpreter.scope = new Scope(this.closure);
