@@ -27,7 +27,6 @@ import type { FunctionDeclarationStatement } from "./parser/ast/statements/funct
 import type { ReturnStatement } from "./parser/ast/statements/return";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
-  public readonly locals = new Map<AST.Node, number>;
   public context = ScopeContext.Global;
   private scopes: Map<string, boolean>[] = []; // the boolean represents whether the variable is defined or not. a variable can be declared without being defined
 

@@ -125,7 +125,8 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): BoundVariableDeclarationStatement {
     const initializer = stmt.initializer ? this.bind(stmt.initializer) : undefined;
-    const variableSymbol = this.defineSymbol(stmt.identifier.token, getTypeFromTypeRef(stmt.typeRef));
+    const type = getTypeFromTypeRef(stmt.typeRef);
+    const variableSymbol = this.defineSymbol(stmt.identifier.token, type.isSingular() && type.name === "any" ? (initializer?.type ?? type) : type);
     return new BoundVariableDeclarationStatement(variableSymbol, stmt.mutable, initializer);
   }
 

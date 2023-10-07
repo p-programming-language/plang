@@ -24,15 +24,10 @@ function main() {
   if (args.length === 0)
     return p.repl.start();
 
-  try {
-    p.executionOptions.outputAST = false;
-    p.executionOptions.outputBoundAST = false;
-    p.executionOptions.outputResult = false;
-    p.doFile(filePath);
-  } catch (error: any) {
-    console.error(`${error.message}`);
-    process.exit(1);
-  }
+  p.executionOptions.outputAST = false;
+  p.executionOptions.outputBoundAST = false;
+  p.executionOptions.outputResult = false;
+  p.doFile(filePath);
 }
 
 main();

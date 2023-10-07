@@ -71,7 +71,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   }
 
   public visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): void {
-    const fn = new PFunction(this, this.scope, stmt);
+    const fn = new PFunction(stmt, this.scope);
     this.scope.define(stmt.name, fn, {
       mutable: false
     });
@@ -148,7 +148,10 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
       throw new RuntimeError(`Expected call to '${fn.name}()' to have ${fn.arity.toString()} arguments, got ${expr.args.length}`, expr.callee.token)
 
     const args = expr.args.map(arg => this.evaluate(arg));
-    return fn.call(...args);
+    if (fn instanceof PFunction)
+      return fn.call(this, ...args);
+    else
+      return fn.call(...args);
   }
 
   public visitPropertyAssignmentExpression(expr: PropertyAssignmentExpression): ValueType {
@@ -183,7 +186,11 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   }
 
   public visitIdentifierExpression(expr: IdentifierExpression): ValueType {
-    return this.scope.get(expr.name);
+    return this.lookupVariable(expr.name);
+  }
+
+  private lookupVariable(name: Token<undefined>): ValueType {
+    return this.scope.get(name);
   }
 
   public visitTernaryExpression(expr: TernaryExpression): ValueType {
@@ -329,6 +336,17 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public endRecursion(level = 1): void {
     this.recursionDepth -= level;
+  }
+
+  public executeBlock(block: BlockStatement, scope: Scope): void  {
+    const enclosing = this.scope;
+    try {
+      this.scope = scope;
+      for (const statement of block.statements)
+        this.execute(statement);
+    } finally {
+      this.scope = enclosing;
+    }
   }
 
   public execute(statement: AST.Statement): void {

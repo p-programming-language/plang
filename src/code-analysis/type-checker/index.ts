@@ -4,7 +4,7 @@ import { INDEX_TYPE, INDEXABLE_LITERAL_TYPES } from "./types/type-sets";
 import type { Token } from "../tokenization/token";
 import type { Type } from "./types/type";
 import type PValue from "../../runtime/values/value";
-import type FunctionType from "./types/function-type";
+import FunctionType from "./types/function-type";
 import type InterfaceType from "./types/interface-type";
 import SingularType from "./types/singular-type";
 import LiteralType from "./types/literal-type";
@@ -130,8 +130,10 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
   public visitCallExpression(expr: BoundCallExpression): void {
     this.check(expr.callee);
 
-    const type = <FunctionType>expr.callee.type;
-    const expectedTypes = Array.from(type.parameterTypes.entries());
+    if (!(expr.callee.type instanceof FunctionType))
+      return;
+
+    const expectedTypes = Array.from(expr.callee.type.parameterTypes.entries());
     for (const arg of expr.args) {
       const [parameterName, expectedType] = expectedTypes[expr.args.indexOf(arg)];
       this.check(arg);

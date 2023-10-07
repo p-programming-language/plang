@@ -54,6 +54,10 @@ export abstract class Type {
       || this.name === "null");
   }
 
+  public isNullable(): boolean {
+    return this.isNullish() || (this.isUnion() && this.types.some(t => t.isNullish()));
+  }
+
   public is(other: Type): boolean {
     if (this.isUnion())
       return this.types.every(type => type.is(other));

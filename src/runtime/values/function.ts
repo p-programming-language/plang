@@ -6,49 +6,45 @@ import type { FunctionDeclarationStatement } from "../../code-analysis/parser/as
 import type Interpreter from "../interpreter";
 import HookedExceptions from "../hooked-exceptions";
 import Scope from "../scope";
+import { getTypeFromTypeRef } from "../../utility";
 
 const MAX_FN_PARAMS = 255;
 
-export default class PFunction<A extends ValueType[] = ValueType[], R extends ValueType = ValueType> extends Callable<A, R> {
-  public readonly name: string;
+export default class PFunction<A extends ValueType[] = ValueType[], R extends ValueType = ValueType> extends Callable<[Interpreter, ...A], R> {
+  public readonly name = this.definition.name.lexeme;
   public override readonly type = CallableType.Function;
-  private nonNullableParameters = this.parameters.filter(param => param.initializer !== undefined);
+  private nullableParameters = this.parameters.filter(param => param.initializer !== undefined || getTypeFromTypeRef(param.typeRef).isNullable());
 
   public constructor(
-    private readonly interpreter: Interpreter,
-    private readonly closure: Scope,
-    public readonly definition: FunctionDeclarationStatement
-  ) {
-    super();
-    this.name = this.definition.name.lexeme;
-  }
+    public readonly definition: FunctionDeclarationStatement,
+    private readonly closure: Scope
+  ) { super(); }
 
-  public call(...args: A): R | undefined {
-    this.interpreter.scope = new Scope(this.closure);
+  public call(interpreter: Interpreter, ...args: A): R | undefined {
+    const scope = new Scope(this.closure);
     for (const param of this.parameters) {
-      const defaultValue = param.initializer ? this.interpreter.evaluate(param.initializer) : undefined;
+      const defaultValue = param.initializer ? interpreter.evaluate(param.initializer) : undefined;
       const value = args[this.parameters.indexOf(param)] ?? defaultValue;
-      this.interpreter.scope.define(param.identifier.name, value, {
+      scope.define(param.identifier.name, value, {
         mutable: param.mutable
       });
     }
 
-    this.interpreter.startRecursion(this.definition.token);
+    interpreter.startRecursion(this.definition.token);
     try {
-      this.interpreter.execute(this.definition.body);
-    } catch(e) {
+      interpreter.executeBlock(this.definition.body, scope);
+    } catch(e: any) {
       if (e instanceof HookedExceptions.Return)
         return <R>e.value;
 
       throw e;
     }
 
-    this.interpreter.endRecursion();
-    this.interpreter.scope = this.interpreter.scope.enclosing ?? this.interpreter.scope;
+    interpreter.endRecursion();
   }
 
   public get arity(): number | Range {
-    const start = this.nonNullableParameters.length;
+    const start = this.parameters.length - this.nullableParameters.length;
     const finish = this.parameters.length;
     return start === finish ? start : new Range(start, finish);
   }
