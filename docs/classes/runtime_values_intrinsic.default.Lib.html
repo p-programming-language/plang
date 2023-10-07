@@ -20,12 +20,14 @@
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
+<li><span class="tsd-signature-type ">Collection</span>
+<ul class="tsd-hierarchy">
 <li><span class="target">Lib</span>
 <ul class="tsd-hierarchy">
 <li><a href="runtime_intrinsics_libs_std.default.html" class="tsd-signature-type tsd-kind-class">default</a></li>
-<li><a href="runtime_intrinsics_libs_std_io.default.html" class="tsd-signature-type tsd-kind-class">default</a></li></ul></li></ul></section><aside class="tsd-sources">
+<li><a href="runtime_intrinsics_libs_std_io.default.html" class="tsd-signature-type tsd-kind-class">default</a></li></ul></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/values/intrinsic.ts#L19">runtime/values/intrinsic.ts:19</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/3888976/src/runtime/values/intrinsic.ts#L32">runtime/values/intrinsic.ts:32</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -37,11 +39,19 @@
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Properties</h3>
-<div class="tsd-index-list"><a href="runtime_values_intrinsic.default.Lib.html#intrinsics" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>intrinsics</span></a>
+<div class="tsd-index-list"><a href="runtime_values_intrinsic.default.Lib.html#address" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>address</span></a>
+<a href="runtime_values_intrinsic.default.Lib.html#intrinsics" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>intrinsics</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Accessors</h3>
+<div class="tsd-index-list"><a href="runtime_values_intrinsic.default.Lib.html#members" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>members</span></a>
+<a href="runtime_values_intrinsic.default.Lib.html#propertyTypes" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>property<wbr/>Types</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Methods</h3>
-<div class="tsd-index-list"><a href="runtime_values_intrinsic.default.Lib.html#inject" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>inject</span></a>
+<div class="tsd-index-list"><a href="runtime_values_intrinsic.default.Lib.html#_custom_" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>[custom]</span></a>
+<a href="runtime_values_intrinsic.default.Lib.html#inject" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>inject</span></a>
+<a href="runtime_values_intrinsic.default.Lib.html#toString" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>to<wbr/>String</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Constructors</h2>
@@ -56,25 +66,67 @@
 <li>
 <h5><span class="tsd-kind-parameter">intrinsics</span>: <a href="runtime_intrinsics.default.html" class="tsd-signature-type tsd-kind-class">default</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="runtime_values_intrinsic.default.Lib.html" class="tsd-signature-type tsd-kind-class">Lib</a></h4><aside class="tsd-sources">
+<p>Overrides Collection.constructor</p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/values/intrinsic.ts#L20">runtime/values/intrinsic.ts:20</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/3888976/src/runtime/values/intrinsic.ts#L35">runtime/values/intrinsic.ts:35</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
+<section class="tsd-panel tsd-member"><a id="address" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>address</span><a href="#address" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">address</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/3888976/src/runtime/values/intrinsic.ts#L33">runtime/values/intrinsic.ts:33</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-protected"><a id="intrinsics" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagProtected">Protected</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>intrinsics</span><a href="#intrinsics" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">intrinsics</span><span class="tsd-signature-symbol">:</span> <a href="runtime_intrinsics.default.html" class="tsd-signature-type tsd-kind-class">default</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/values/intrinsic.ts#L21">runtime/values/intrinsic.ts:21</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/3888976/src/runtime/values/intrinsic.ts#L36">runtime/values/intrinsic.ts:36</a></li></ul></aside></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Accessors</h2>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="members" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <span>members</span><a href="#members" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature" id="members.members-1"><span class="tsd-signature-symbol">get</span> members<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a><span class="tsd-signature-symbol">&gt;</span></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from Collection.members</p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/3888976/src/runtime/values/intrinsic.ts#L22">runtime/values/intrinsic.ts:22</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="propertyTypes" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <span>property<wbr/>Types</span><a href="#propertyTypes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature" id="propertyTypes.propertyTypes-1"><span class="tsd-signature-symbol">get</span> propertyTypes<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="code_analysis_type_checker_types_type.Type.html" class="tsd-signature-type tsd-kind-class">Type</a><span class="tsd-signature-symbol">&gt;</span></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="code_analysis_type_checker_types_type.Type.html" class="tsd-signature-type tsd-kind-class">Type</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from Collection.propertyTypes</p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/3888976/src/runtime/values/intrinsic.ts#L23">runtime/values/intrinsic.ts:23</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
+<section class="tsd-panel tsd-member"><a id="_custom_" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>[custom]</span><a href="#_custom_" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="_custom_._custom_-1"><span class="tsd-kind-call-signature">[custom]</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_custom_._custom_-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/3888976/src/runtime/values/intrinsic.ts#L59">runtime/values/intrinsic.ts:59</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="inject" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagAbstract">Abstract</code> <span>inject</span><a href="#inject" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<h3 class="tsd-anchor-link"><span>inject</span><a href="#inject" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="tsd-signature tsd-anchor-link" id="inject.inject-1"><span class="tsd-kind-call-signature">inject</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#inject.inject-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/51e7319/src/runtime/values/intrinsic.ts#L24">runtime/values/intrinsic.ts:24</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/3888976/src/runtime/values/intrinsic.ts#L39">runtime/values/intrinsic.ts:39</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="toString" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>to<wbr/>String</span><a href="#toString" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="toString.toString-1"><span class="tsd-kind-call-signature">to<wbr/>String</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#toString.toString-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/3888976/src/runtime/values/intrinsic.ts#L63">runtime/values/intrinsic.ts:63</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -95,16 +147,20 @@
 <div class="tsd-accordion-details">
 <ul>
 <li><a href="#constructor" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a></li>
+<li><a href="#address" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>address</span></a></li>
 <li><a href="#intrinsics" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>intrinsics</span></a></li>
-<li><a href="#inject" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>inject</span></a></li></ul></div></details></div>
+<li><a href="#members" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>members</span></a></li>
+<li><a href="#propertyTypes" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>property<wbr/>Types</span></a></li>
+<li><a href="#_custom_" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>[custom]</span></a></li>
+<li><a href="#inject" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>inject</span></a></li>
+<li><a href="#toString" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>to<wbr/>String</span></a></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1"></use></svg><span>P API Reference</span></a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container" data-base="..">
 <li><a href="../modules/code_analysis_array_stepper.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/array-stepper</a></li>
 <li><a href="../modules/code_analysis_binder.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder</a></li>
 <li><a href="../modules/code_analysis_binder-1.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder</a></li>
-<li><a href="../modules/code_analysis_binder_bound_expressions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions</a></li>
-<li><a href="../modules/code_analysis_binder_bound_expressions-1.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions</a></li>
+<li><a href="../modules/code_analysis_binder_bound_expressions_access.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions/access</a></li>
 <li><a href="../modules/code_analysis_binder_bound_expressions_array_literal.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions/array-literal</a></li>
 <li><a href="../modules/code_analysis_binder_bound_expressions_binary.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions/binary</a></li>
 <li><a href="../modules/code_analysis_binder_bound_expressions_call.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions/call</a></li>
@@ -121,6 +177,7 @@
 <li><a href="../modules/code_analysis_binder_bound_expressions_variable_assignment.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-expressions/variable-assignment</a></li>
 <li><a href="../modules/code_analysis_binder_bound_node.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-node</a></li>
 <li><a href="../modules/code_analysis_binder_bound_operators_binary.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-operators/binary</a></li>
+<li><a href="../modules/code_analysis_binder_bound_operators_unary.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2"></use></svg>code-analysis/binder/bound-operators/unary</a></li>
 <li>Loading...</li></ul></nav></div></div></div>
 <div class="tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" rel="noopener" target="_blank">TypeDoc</a></p></div>
