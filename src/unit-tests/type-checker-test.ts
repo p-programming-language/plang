@@ -4,7 +4,8 @@ import path from "path";
 import "should";
 
 import { PError } from "../../src/errors";
-import { TypeChecker } from "../../src/code-analysis/type-checker";import P from "../p";
+import { TypeChecker } from "../../src/code-analysis/type-checker";
+import P from "../../tools/p";
 
 PError.testing = true;
 
