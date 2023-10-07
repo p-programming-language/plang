@@ -16,7 +16,7 @@ import BoundBinaryExpression from "../code-analysis/binder/bound-expressions/bin
 import BoundArrayLiteralExpression from "../code-analysis/binder/bound-expressions/array-literal";
 import BoundExpressionStatement from "../code-analysis/binder/bound-statements/expression";
 import BoundVariableDeclarationStatement from "../code-analysis/binder/bound-statements/variable-declaration";
-import BoundIndexExpression from "../code-analysis/binder/bound-expressions";
+import BoundAccessExpression from "../code-analysis/binder/bound-expressions";
 import BoundIdentifierExpression from "../code-analysis/binder/bound-expressions/identifier";
 import BoundCallExpression from "../code-analysis/binder/bound-expressions/call";
 
@@ -150,8 +150,8 @@ describe(Binder.name, () => {
       const [_, node] = bind("int[] myArr = [1,2,3,4]; myArr[3]");
       node.should.be.an.instanceof(BoundExpressionStatement);
       const expr = (<BoundExpressionStatement>node).expression;
-      expr.should.be.an.instanceof(BoundIndexExpression);
-      const indexing = <BoundIndexExpression>expr;
+      expr.should.be.an.instanceof(BoundAccessExpression);
+      const indexing = <BoundAccessExpression>expr;
       indexing.object.should.be.an.instanceof(BoundIdentifierExpression);
       indexing.object.type.isSingular().should.be.true();
       const objectType = <SingularType>indexing.object.type;

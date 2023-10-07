@@ -1,13 +1,13 @@
 import { BoundExpression } from "../bound-node";
 import type { Token } from "../../tokenization/token";
-import BoundIndexExpression from ".";
+import BoundAccessExpression from ".";
 import AST from "../../parser/ast";
 
 export default class BoundPropertyAssignmentExpression extends BoundExpression {
   public override readonly type = this.value.type;
 
   public constructor(
-    public readonly access: BoundIndexExpression,
+    public readonly access: BoundAccessExpression,
     public readonly value: BoundExpression
   ) { super(); }
 

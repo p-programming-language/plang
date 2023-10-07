@@ -1,7 +1,7 @@
 import { Token } from "../../../tokenization/token";
 import AST from "..";
 
-export class IndexExpression extends AST.Expression {
+export class AccessExpression extends AST.Expression {
   public constructor(
     public readonly token: Token<undefined>,
     public readonly object: AST.Expression,

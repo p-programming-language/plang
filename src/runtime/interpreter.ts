@@ -27,7 +27,7 @@ import { CompoundAssignmentExpression } from "../code-analysis/parser/ast/expres
 import { VariableAssignmentExpression } from "../code-analysis/parser/ast/expressions/variable-assignment";
 import { PropertyAssignmentExpression } from "../code-analysis/parser/ast/expressions/property-assignment";
 import type { CallExpression } from "../code-analysis/parser/ast/expressions/call";
-import type { IndexExpression } from "../code-analysis/parser/ast/expressions";
+import type { AccessExpression } from "../code-analysis/parser/ast/expressions";
 import type { ExpressionStatement } from "../code-analysis/parser/ast/statements/expression";
 import type { PrintlnStatement } from "../code-analysis/parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../code-analysis/parser/ast/statements/variable-assignment";
@@ -122,7 +122,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     return this.evaluate(stmt.expression);
   }
 
-  public visitIndexExpression(expr: IndexExpression): ValueType {
+  public visitIndexExpression(expr: AccessExpression): ValueType {
     const object = this.evaluate(expr.object);
     const index = this.evaluate(expr.index);
     const realValue = (<ValueType[] | ObjectType>object)[<any>index];

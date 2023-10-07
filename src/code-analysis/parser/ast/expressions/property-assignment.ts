@@ -1,10 +1,10 @@
 import { Token } from "../../../tokenization/token";
-import { IndexExpression } from ".";
+import { AccessExpression } from ".";
 import AST from "..";
 
 export class PropertyAssignmentExpression extends AST.Expression {
   public constructor(
-    public readonly access: IndexExpression,
+    public readonly access: AccessExpression,
     public readonly value: AST.Expression
   ) { super(); }
 

@@ -1,12 +1,12 @@
 import { Type, TypeKind } from "./type";
-import type { IndexType } from "..";
+import type { IndexType, InterfacePropertySignature } from "..";
 import SingularType from "./singular-type";
 
 export default class InterfaceType extends SingularType {
   public override readonly kind = TypeKind.Interface;
 
   public constructor(
-    public readonly properties: Map<string, Type>,
+    public readonly properties: Map<string, InterfacePropertySignature<Type>>,
     public readonly indexSignatures: Map<IndexType, Type>,
     // public readonly typeParameters?: TypeParameter[],
     name = "object"
@@ -26,7 +26,7 @@ export default class InterfaceType extends SingularType {
     for (const [key, value] of this.properties) {
       result += "\n";
       result += "  ".repeat(indent);
-      result += `${key}: ${value instanceof InterfaceType ? value.toString(indent + 1) : value.toString()};`;
+      result += `${value instanceof InterfaceType ? value.toString(indent + 1) : (value instanceof Type ? value.toString() : value.valueType.toString())} ${key};`;
     }
 
     return result + "\n}";

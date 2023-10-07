@@ -1,11 +1,11 @@
 import { Token } from "../../../tokenization/token";
 import { IdentifierExpression } from "./identifier";
-import { IndexExpression } from ".";
+import { AccessExpression } from ".";
 import AST from "..";
 
 export class CompoundAssignmentExpression extends AST.Expression {
   public constructor(
-    public readonly left: IdentifierExpression | IndexExpression,
+    public readonly left: IdentifierExpression | AccessExpression,
     public readonly right: AST.Expression,
     public readonly operator: Token<undefined>
   ) { super(); }

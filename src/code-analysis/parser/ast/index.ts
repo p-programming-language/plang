@@ -14,7 +14,7 @@ import type { CompoundAssignmentExpression } from "./expressions/compound-assign
 import type { VariableAssignmentExpression } from "./expressions/variable-assignment";
 import type { PropertyAssignmentExpression } from "./expressions/property-assignment";
 import type { CallExpression } from "./expressions/call";
-import type { IndexExpression } from "./expressions";
+import type { AccessExpression } from "./expressions";
 import type { ExpressionStatement } from "./statements/expression";
 import type { PrintlnStatement } from "./statements/println";
 import type { VariableAssignmentStatement } from "./statements/variable-assignment";
@@ -38,7 +38,7 @@ import type BoundCompoundAssignmentExpression from "../../binder/bound-expressio
 import type BoundVariableAssignmentExpression from "../../binder/bound-expressions/variable-assignment";
 import type BoundPropertyAssignmentExpression from "../../binder/bound-expressions/property-assignment";
 import type BoundCallExpression from "../../binder/bound-expressions/call";
-import type BoundIndexExpression from "../../binder/bound-expressions";
+import type BoundAccessExpression from "../../binder/bound-expressions";
 import type BoundExpressionStatement from "../../binder/bound-statements/expression";
 import type BoundPrintlnStatement from "../../binder/bound-statements/println";
 import type BoundVariableAssignmentStatement from "../../binder/bound-statements/variable-assignment";
@@ -69,7 +69,7 @@ namespace AST {
 
   export namespace Visitor {
     export abstract class Expression<R> {
-      public abstract visitIndexExpression(expr: IndexExpression): R
+      public abstract visitIndexExpression(expr: AccessExpression): R
       public abstract visitCallExpression(expr: CallExpression): R
       public abstract visitPropertyAssignmentExpression(expr: PropertyAssignmentExpression): R
       public abstract visitVariableAssignmentExpression(expr: VariableAssignmentExpression): R
@@ -99,7 +99,7 @@ namespace AST {
     }
 
     export abstract class BoundExpression<R> {
-      public abstract visitIndexExpression(expr: BoundIndexExpression): R
+      public abstract visitIndexExpression(expr: BoundAccessExpression): R
       public abstract visitCallExpression(expr: BoundCallExpression): R
       public abstract visitPropertyAssignmentExpression(expr: BoundPropertyAssignmentExpression): R
       public abstract visitVariableAssignmentExpression(expr: BoundVariableAssignmentExpression): R

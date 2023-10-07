@@ -25,7 +25,7 @@ import type BoundCompoundAssignmentExpression from "../binder/bound-expressions/
 import type BoundVariableAssignmentExpression from "../binder/bound-expressions/variable-assignment";
 import type BoundPropertyAssignmentExpression from "../binder/bound-expressions/property-assignment";
 import type BoundCallExpression from "../binder/bound-expressions/call";
-import type BoundIndexExpression from "../binder/bound-expressions";
+import type BoundAccessExpression from "../binder/bound-expressions";
 import type BoundExpressionStatement from "../binder/bound-statements/expression";
 import type BoundPrintlnStatement from "../binder/bound-statements/println";
 import type BoundVariableAssignmentStatement from "../binder/bound-statements/variable-assignment";
@@ -44,6 +44,10 @@ export interface ObjectType {
 };
 
 export type IndexType = SingularType<"string"> | SingularType<"int">;
+export interface InterfacePropertySignature<T> {
+  readonly valueType: T;
+  readonly mutable: boolean;
+}
 
 // NOTE: always call check() before assert()
 
@@ -106,7 +110,7 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
     this.check(stmt.expression);
   }
 
-  public visitIndexExpression(expr: BoundIndexExpression): void {
+  public visitIndexExpression(expr: BoundAccessExpression): void {
     this.check(expr.object);
     this.check(expr.index);
 
@@ -188,12 +192,12 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
       this.check(value);
       if (key instanceof BoundIdentifierExpression) {
         const propertyName = key.name.lexeme;
-        const valueType = this.getValueType(expr.type, propertyName, key.name);
-        this.assert(value, value.type, valueType);
+        const signature = this.getInterfacePropertySignature(expr.type, propertyName, key.name);
+        this.assert(value, value.type, signature.valueType);
       } else if (key instanceof BoundLiteralExpression && key.token.syntax === Syntax.String) {
         const propertyName: string = key.token.value;
-        const valueType = this.getValueType(expr.type, propertyName, key.token);
-        this.assert(value, value.type, valueType);
+        const signature = this.getInterfacePropertySignature(expr.type, propertyName, key.token);
+        this.assert(value, value.type, signature.valueType);
       } else {
         const valueType = key.type.isAssignableTo(INDEX_TYPE) && expr.type.indexSignatures.get(<SingularType<"string"> | SingularType<"int">>key.type);
         if (!valueType)
@@ -204,7 +208,7 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
     }
   }
 
-  private getValueType(interfaceType: InterfaceType, propertyName: string, token: Token): Type {
+  private getInterfacePropertySignature(interfaceType: InterfaceType, propertyName: string, token: Token): InterfacePropertySignature<Type> {
     const valueType = interfaceType.properties.get(propertyName);
     if (!valueType)
       throw new TypeError(`Property '${propertyName}' does not exist on '${interfaceType.name}'`, token);

@@ -65,7 +65,7 @@ export abstract class Type {
       if (!other.isInterface()) return false;
 
       const propertiesAreAssignable = Array.from(this.properties.entries())
-        .every(([key, valueType]) => (other.properties.has(key) && other.properties.get(key)!.isAssignableTo(valueType))
+        .every(([key, { valueType }]) => (other.properties.has(key) && other.properties.get(key)!.valueType.isAssignableTo(valueType))
           || Array.from(other.indexSignatures.values()).some(type => type.isAssignableTo(valueType)));
 
       const indexSignaturesAreAssignable = Array.from(this.indexSignatures.entries())

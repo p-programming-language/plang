@@ -1,6 +1,6 @@
 import reader from "readline-sync";
 
-import { BoundNode } from "../code-analysis/binder/bound-node";
+import { BoundNode } from "../../src/code-analysis/binder/bound-node";
 import { Type } from "../../src/code-analysis/type-checker/types/type";
 import type P from "../../src/p";
 import AST from "../../src/code-analysis/parser/ast";

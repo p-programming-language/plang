@@ -6,7 +6,7 @@ import type AST from "../../parser/ast";
 import BoundLiteralExpression from "./literal";
 import SingularType from "../../type-checker/types/singular-type";
 
-export default class BoundIndexExpression extends BoundExpression {
+export default class BoundAccessExpression extends BoundExpression {
   public override readonly type: Type;
 
   public constructor(
@@ -24,7 +24,7 @@ export default class BoundIndexExpression extends BoundExpression {
     else if (object.type.isSingular() && object.type.name === "Array")
       this.type = object.type.typeArguments![0];
     else if (object.type.isInterface() && index instanceof BoundLiteralExpression && index.type.isSingular() && (index.type.name === "string" || index.type.name === "int")) {
-      const type = object.type.properties.get(index.token.value!.toString())
+      const type = object.type.properties.get(index.token.value!.toString())?.valueType
         ?? object.type.indexSignatures.get(<IndexType>index.type);
 
       if (!type) return;

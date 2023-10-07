@@ -15,7 +15,7 @@ import type { CompoundAssignmentExpression } from "./parser/ast/expressions/comp
 import type { VariableAssignmentExpression } from "./parser/ast/expressions/variable-assignment";
 import type { PropertyAssignmentExpression } from "./parser/ast/expressions/property-assignment";
 import type { CallExpression } from "./parser/ast/expressions/call";
-import type { IndexExpression } from "./parser/ast/expressions";
+import type { AccessExpression } from "./parser/ast/expressions";
 import type { ExpressionStatement } from "./parser/ast/statements/expression";
 import type { PrintlnStatement } from "./parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "./parser/ast/statements/variable-assignment";
@@ -90,7 +90,7 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
     this.resolve(stmt.expression);
   }
 
-  public visitIndexExpression(expr: IndexExpression): void {
+  public visitIndexExpression(expr: AccessExpression): void {
     this.resolve(expr.object);
     this.resolve(expr.index);
   }

@@ -3,7 +3,7 @@ import { BoundExpression, BoundStatement } from "./bound-node";
 import { INDEX_TYPE, INTRINSIC_EXTENDED_LITERAL_TYPES } from "../type-checker/types/type-sets";
 import type { Token } from "../tokenization/token";
 import type { Type } from "../type-checker/types/type";
-import type { ValueType } from "../type-checker";
+import type { InterfacePropertySignature, ValueType } from "../type-checker";
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
 import { getFakeIntrinsicExtension } from "../../utility";
@@ -33,7 +33,7 @@ import { UnionTypeExpression } from "../parser/ast/type-nodes/union-type";
 import { ArrayTypeExpression } from "../parser/ast/type-nodes/array-type";
 import { InterfaceTypeExpression } from "../parser/ast/type-nodes/interface-type";
 import type { CallExpression } from "../parser/ast/expressions/call";
-import { IndexExpression } from "../parser/ast/expressions";
+import { AccessExpression } from "../parser/ast/expressions";
 import type { ExpressionStatement } from "../parser/ast/statements/expression";
 import type { PrintlnStatement } from "../parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../parser/ast/statements/variable-assignment";
@@ -58,7 +58,7 @@ import BoundCompoundAssignmentExpression from "./bound-expressions/compound-assi
 import BoundVariableAssignmentExpression from "./bound-expressions/variable-assignment";
 import BoundPropertyAssignmentExpression from "./bound-expressions/property-assignment";
 import BoundCallExpression from "./bound-expressions/call";
-import BoundIndexExpression from "./bound-expressions";
+import BoundAccessExpression from "./bound-expressions";
 import BoundExpressionStatement from "./bound-statements/expression";
 import BoundPrintlnStatement from "./bound-statements/println";
 import BoundVariableAssignmentStatement from "./bound-statements/variable-assignment";
@@ -144,7 +144,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     return new BoundExpressionStatement(this.bind(stmt.expression));
   }
 
-  public visitIndexExpression(expr: IndexExpression): BoundExpression {
+  public visitIndexExpression(expr: AccessExpression): BoundExpression {
     const object = this.bind(expr.object);
     const index = this.bind(expr.index);
     if (
@@ -160,10 +160,10 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       else
         type = this.getSingularTypeFromValue(member);
 
-      return new BoundIndexExpression(expr.token, object, index, type);
+      return new BoundAccessExpression(expr.token, object, index, type);
     }
 
-    return new BoundIndexExpression(expr.token, object, index);
+    return new BoundAccessExpression(expr.token, object, index);
   }
 
   public visitCallExpression(expr: CallExpression): BoundCallExpression {
@@ -172,7 +172,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     const message = `Attempt to call '${callee.type.toString()}'`;
 
     // if we add lambdas we put that here too
-    if (!(callee instanceof BoundIdentifierExpression || callee instanceof BoundIndexExpression))
+    if (!(callee instanceof BoundIdentifierExpression || callee instanceof BoundAccessExpression))
       throw new TypeError(message, callee.token);
 
     if (!callee.type.isFunction() && (!callee.type.isSingular() || callee.type.name !== "any"))
@@ -182,8 +182,18 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   }
 
   public visitPropertyAssignmentExpression(expr: PropertyAssignmentExpression): BoundPropertyAssignmentExpression {
-    const access = this.bind<IndexExpression, BoundIndexExpression>(expr.access);
+    const access = this.bind<AccessExpression, BoundAccessExpression>(expr.access);
     const value = this.bind(expr.value);
+
+    if (
+      access.object.type.isInterface()
+      && access.index instanceof BoundLiteralExpression
+      && access.object.type.properties.get(access.index.token.value)?.mutable === false
+    ) {
+      // TODO: have keys of interfaces be literal types so we can get the exact property name
+      throw new TypeError(`Attempt to assign to immutable property '${access.index.token.value}'`, expr.access.index.token)
+    }
+
     return new BoundPropertyAssignmentExpression(access, value);
   }
 
@@ -195,7 +205,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   }
 
   public visitCompoundAssignmentExpression(expr: CompoundAssignmentExpression): BoundCompoundAssignmentExpression {
-    const left = this.bind<IdentifierExpression | IndexExpression, BoundIdentifierExpression | BoundIndexExpression>(expr.left); // | BoundAccessExpression
+    const left = this.bind<IdentifierExpression | AccessExpression, BoundIdentifierExpression | BoundAccessExpression>(expr.left); // | BoundAccessExpression
     const right = this.bind(expr.right);
     const boundOperator = BoundBinaryOperator.get(expr.operator, left.type, right.type);
     return new BoundCompoundAssignmentExpression(left, right, boundOperator);
@@ -242,21 +252,27 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     // inferring interface type
     const indexSignatures = new Map<IndexType, Type>();
     const typeProperties = Array.from(properties.entries())
-      .map<[string | number, Type] | undefined>(([key, value]) => {
+      .map<[string | number, InterfacePropertySignature<Type>] | undefined>(([key, value]) => {
         if (key instanceof BoundIdentifierExpression)
-          return [key.name.lexeme, value.type];
+          return [key.name.lexeme, {
+            valueType: value.type,
+            mutable: true
+          }];
         else if (key instanceof BoundLiteralExpression && key.token.syntax === Syntax.String)
-          return [key.token.value, value.type];
+          return [key.token.value, {
+            valueType: value.type,
+            mutable: true
+          }];
         else {
           if (!key.type.isAssignableTo(INDEX_TYPE))
-            throw new BindingError("An index signature parameter type must be 'string' or 'int'", key.token);
+            throw new BindingError("An index signature type must be 'string' or 'int'", key.token);
 
           indexSignatures.set(<IndexType>key.type, value.type);
         }
       })
-      .filter((props): props is [string, Type] => props !== undefined);
+      .filter((props): props is [string, InterfacePropertySignature<Type>] => props !== undefined);
 
-    const type = new InterfaceType(new Map<string, Type>(typeProperties), indexSignatures);
+    const type = new InterfaceType(new Map<string, InterfacePropertySignature<Type>>(typeProperties), indexSignatures);
     return new BoundObjectLiteralExpression(expr.token, properties, type);
   }
 
@@ -353,10 +369,13 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     else if (node instanceof ArrayTypeExpression)
       return <T><unknown>new ArrayType(this.getTypeFromTypeRef(node.elementType));
     else if (node instanceof InterfaceTypeExpression) {
-      const properties = new Map<string, Type>();
+      const properties = new Map<string, InterfacePropertySignature<Type>>();
       const indexSignatures = new Map<IndexType, Type>();
-      for (const [key, valueType] of node.properties)
-        properties.set(key.token.value, this.getTypeFromTypeRef(valueType));
+      for (const [key, { mutable, valueType }] of node.properties)
+        properties.set(key.token.value, {
+          valueType: this.getTypeFromTypeRef(valueType),
+          mutable
+        });
 
       for (const [keyType, valueType] of node.indexSignatures)
         indexSignatures.set(this.getTypeFromTypeRef<IndexType>(keyType), this.getTypeFromTypeRef(valueType))

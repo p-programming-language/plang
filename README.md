@@ -84,5 +84,6 @@ yarn run <tool>
     - Function declarations and calls
 
 ## Planned Features
+- Type aliases (e.x. `type number = int | float`)
 - Range literals
 - Classes

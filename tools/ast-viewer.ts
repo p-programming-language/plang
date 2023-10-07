@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import ASTViewer from "./classes/ast-viewer";
 import P from "./p";
 

@@ -24,7 +24,7 @@ import { VariableAssignmentExpression } from "./ast/expressions/variable-assignm
 import { CompoundAssignmentExpression } from "./ast/expressions/compound-assignment";
 import { PropertyAssignmentExpression } from "./ast/expressions/property-assignment";
 import { CallExpression } from "./ast/expressions/call";
-import { IndexExpression } from "./ast/expressions";
+import { AccessExpression } from "./ast/expressions";
 import { ExpressionStatement } from "./ast/statements/expression";
 import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
@@ -238,7 +238,7 @@ export default class Parser extends TypeParser {
         return isStatement ?
           new VariableAssignmentStatement(left, value)
           : new VariableAssignmentExpression(left, value);
-      else if (left instanceof IndexExpression)
+      else if (left instanceof AccessExpression)
         return new PropertyAssignmentExpression(left, value);
     }
 
@@ -254,7 +254,7 @@ export default class Parser extends TypeParser {
       if (!this.isAssignmentTarget(left))
         throw new ParserSyntaxError("Invalid compound assignment target", this.current);
 
-      left = new CompoundAssignmentExpression(<IdentifierExpression | IndexExpression>left, right, operator);
+      left = new CompoundAssignmentExpression(<IdentifierExpression | AccessExpression>left, right, operator);
     }
 
     return left;
@@ -403,7 +403,7 @@ export default class Parser extends TypeParser {
       indexIdentifier.lexeme = `"${indexIdentifier.lexeme}"`;
 
       const index = new LiteralExpression(indexIdentifier);
-      object = new IndexExpression(accessToken, object, index);
+      object = new AccessExpression(accessToken, object, index);
     }
 
     return object;
@@ -420,7 +420,7 @@ export default class Parser extends TypeParser {
       const bracket = this.previous<undefined>();
       const index = this.parseExpression();
       this.consume(Syntax.RBracket, "']'");
-      object = new IndexExpression(bracket, object, index);
+      object = new AccessExpression(bracket, object, index);
     }
 
     return object;
@@ -570,7 +570,7 @@ export default class Parser extends TypeParser {
    */
   private isAssignmentTarget(operand: AST.Expression): boolean {
     return operand instanceof IdentifierExpression
-      || operand instanceof IndexExpression;
+      || operand instanceof AccessExpression;
   }
 
   /**

@@ -13,7 +13,7 @@ import { UnionTypeExpression } from "../../src/code-analysis/parser/ast/type-nod
 import { ArrayTypeExpression } from "../../src/code-analysis/parser/ast/type-nodes/array-type";
 import { ExpressionStatement } from "../../src/code-analysis/parser/ast/statements/expression";
 import { CallExpression } from "../../src/code-analysis/parser/ast/expressions/call";
-import { IndexExpression } from "../../src/code-analysis/parser/ast/expressions/index";
+import { AccessExpression } from "../../src/code-analysis/parser/ast/expressions/index";
 import { PropertyAssignmentExpression } from "../../src/code-analysis/parser/ast/expressions/property-assignment";
 import { VariableAssignmentStatement } from "../../src/code-analysis/parser/ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "../../src/code-analysis/parser/ast/statements/variable-declaration";
@@ -296,8 +296,8 @@ describe(Parser.name, () => {
     const [node] = parse("myStuff[69]");
     node.should.be.an.instanceof(ExpressionStatement);
     const expr = (<ExpressionStatement>node).expression;
-    expr.should.be.an.instanceof(IndexExpression);
-    const indexing = <IndexExpression>expr;
+    expr.should.be.an.instanceof(AccessExpression);
+    const indexing = <AccessExpression>expr;
     indexing.object.should.be.an.instanceof(IdentifierExpression);
     (<IdentifierExpression>indexing.object).name.lexeme.should.equal("myStuff");
     indexing.index.should.be.an.instanceof(LiteralExpression);

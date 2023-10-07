@@ -1,5 +1,7 @@
 import { ParserSyntaxError } from "../../errors";
 import { fakeToken } from "../../utility";
+
+import type { InterfacePropertySignature } from "../type-checker";
 import { LiteralExpression } from "./ast/expressions/literal";
 import { SingularTypeExpression } from "./ast/type-nodes/singular-type";
 import { UnionTypeExpression } from "./ast/type-nodes/union-type";
@@ -21,16 +23,16 @@ export default abstract class TypeParser extends TokenStepper {
   protected parseInterfaceType(): InterfaceTypeExpression {
     const name = this.consume<undefined>(Syntax.Identifier);
     this.consume<undefined>(Syntax.LBrace, "'{'");
-    const properties = new Map<LiteralExpression<string, Syntax>, AST.TypeRef>();
+    const properties = new Map<LiteralExpression<string, Syntax>, InterfacePropertySignature<AST.TypeRef>>();
     const indexSignatures = new Map<AST.TypeRef, AST.TypeRef>();
 
     if (!this.match(Syntax.RBrace)) {
       const contents = this.parseInterfaceContents();
-      for (const [key, value] of contents)
+      for (const [key, prop] of contents)
         if (key instanceof LiteralExpression)
-          properties.set(key, value);
+          properties.set(key, prop);
         else
-          indexSignatures.set(key, value);
+          indexSignatures.set(key, prop.valueType);
 
       this.consume<undefined>(Syntax.RBrace, "'}'");
     }
@@ -39,7 +41,7 @@ export default abstract class TypeParser extends TokenStepper {
     return typeRef;
   }
 
-  protected parseInterfaceContents(): Map<LiteralExpression<string, Syntax> | AST.TypeRef, AST.TypeRef> {
+  protected parseInterfaceContents(): Map<LiteralExpression<string, Syntax> | AST.TypeRef, InterfacePropertySignature<AST.TypeRef>> {
     const keyValuePairs = [ this.parseInterfaceKeyValuePair() ];
     while (this.match(Syntax.Comma, Syntax.Semicolon) && !this.check(Syntax.RBrace))
       keyValuePairs.push(this.parseInterfaceKeyValuePair());
@@ -47,21 +49,26 @@ export default abstract class TypeParser extends TokenStepper {
     return new Map(keyValuePairs);
   }
 
-  protected parseInterfaceKeyValuePair(): [LiteralExpression<string, Syntax> | AST.TypeRef, AST.TypeRef] {
+  protected parseInterfaceKeyValuePair(): [LiteralExpression<string, Syntax> | AST.TypeRef, InterfacePropertySignature<AST.TypeRef>] {
     let key;
     let value;
+    let isMutable = false;
     if (this.match(Syntax.LBracket)) {
       key = this.parseType();
       this.consume(Syntax.RBracket, "']'");
       this.consume(Syntax.Colon, "':'");
       value = this.parseType();
     } else {
+      isMutable = this.match(Syntax.Mut);
       value = this.parseType();
       const identifier = this.consume<undefined>(Syntax.Identifier);
       key = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
     }
 
-    return [key, value];
+    return [key, {
+      valueType: value,
+      mutable: isMutable
+    }];
   }
 
   /**

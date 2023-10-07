@@ -14,7 +14,7 @@
     "start": "npm run -s pint",
     "pint": "node dist/tools/pint.js",
     "repl": "node dist/tools/repl.js",
-    "ast-viewer": "dist/tools/ast-viewer.js",
+    "ast-viewer": "node dist/tools/ast-viewer.js",
     "path": "tsc --skipLibCheck && npm link",
     "docs": "npx typedoc",
     "push": "npm run docs -s && git add . && git commit -m 'docs: (autogenerate)' && git push -u"
