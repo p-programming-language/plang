@@ -142,7 +142,7 @@ export default class Parser extends TypeParser {
     let offsetToFnKeyword = 0;
     let passedClosingParen = false;
     if (this.checkType() && this.check(Syntax.LParen))
-      while (!this.check(Syntax.Function, offsetToFnKeyword)) {
+      while (!this.check(Syntax.EOF, offsetToFnKeyword) && !this.check(Syntax.Function, offsetToFnKeyword)) {
         if (this.check(Syntax.RParen, offsetToFnKeyword))
           passedClosingParen = true;
 
@@ -171,7 +171,7 @@ export default class Parser extends TypeParser {
 
     if (soFarSoGood) {
       let offset = 1;
-      while (!this.check(Syntax.Equal, offset)) {
+      while (!this.check(Syntax.EOF, offset) && (!this.check(Syntax.Equal, offset) || (this.check(Syntax.Identifier, offset) && !this.checkType(offset)))) {
         if (this.check(Syntax.Function, offset))
           return false;
 
@@ -194,7 +194,7 @@ export default class Parser extends TypeParser {
         while (this.match(Syntax.Comma))
           parameters.push(this.parseVariableDeclaration());
       }
-      this.consume(Syntax.RParen);
+      this.consume(Syntax.RParen, "')'");
     }
 
 
