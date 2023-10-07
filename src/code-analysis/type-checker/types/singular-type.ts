@@ -26,7 +26,7 @@ export default class SingularType<Name extends string = string> extends Type {
     }
   }
 
-  public toString(): string {
-    return this.name + (this.typeArguments ? `<${this.typeArguments.map(t => t.toString()).join(", ")}>` : "");
+  public toString(colors?: boolean): string {
+    return this.name + (this.typeArguments ? `<${this.typeArguments.map(t => t.toString(colors)).join(", ")}>` : "");
   }
 }

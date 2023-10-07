@@ -138,7 +138,7 @@ export abstract class Type {
     return false;
   }
 
-  public toString(): string {
-    return util.inspect(this)
+  public toString(colors = false): string {
+    return util.inspect(this, { colors });
   }
 }

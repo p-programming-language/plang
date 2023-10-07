@@ -11,7 +11,7 @@ export default class LiteralType<V extends TypeLiteralValueType = TypeLiteralVal
     public readonly value: V
   ) { super(util.inspect(value, { colors: false }).replace(/'/g, '"')); }
 
-  public toString(): string {
-    return util.inspect(this.value).replace(/'/g, '"');
+  public toString(colors?: boolean): string {
+    return util.inspect(this.value, { colors }).replace(/'/g, '"');
   }
 }

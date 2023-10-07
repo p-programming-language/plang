@@ -87,5 +87,4 @@ yarn run <tool>
 - Type aliases (e.x. `type number = int | float`)
 - `typeof`, `is`
 - `value is in array`
-- Range literals
 - Classes

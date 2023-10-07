@@ -10,11 +10,11 @@ export default class FunctionType extends SingularType {
     // public readonly typeParameters?: TypeParameter[]
   ) { super("Function"); }
 
-  public toString(): string {
+  public toString(colors?: boolean): string {
     const parameterList = Array.from(this.parameterTypes.entries())
-      .map(([name, type]) => `${type.toString()} ${name}`)
+      .map(([name, type]) => `${type.toString(colors)} ${name}`)
       .join(", ");
 
-    return `(${parameterList}) => ${this.returnType.toString()}`;
+    return `(${parameterList}) => ${this.returnType.toString(colors)}`;
   }
 }

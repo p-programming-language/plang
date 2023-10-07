@@ -8,9 +8,9 @@ export default class UnionType extends Type {
     public readonly types: SingularType[]
   ) { super(); }
 
-  public toString(): string {
+  public toString(colors?: boolean): string {
     return this.types
-      .map(t => t.toString())
+      .map(t => t.toString(colors))
       .join(" | ")
       .replace(/ \| undefined/g, "?");
   }

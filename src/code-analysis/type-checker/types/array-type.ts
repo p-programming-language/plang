@@ -8,7 +8,7 @@ export default class ArrayType extends SingularType {
     public readonly elementType: Type
   ) { super("Array"); }
 
-  public toString(): string {
-    return `Array<${this.elementType.toString()}>`;
+  public toString(colors?: boolean): string {
+    return `Array<${this.elementType.toString(colors)}>`;
   }
 }

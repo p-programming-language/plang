@@ -13,7 +13,7 @@ export default class VariableSymbol<T extends Type = Type> {
     return this.toString();
   }
 
-  public toString(): string {
-    return `${this.type.toString()} ${this.name.lexeme}`;
+  public toString(colors?: boolean): string {
+    return `${this.type.toString(colors)} ${this.name.lexeme}`;
   }
 }

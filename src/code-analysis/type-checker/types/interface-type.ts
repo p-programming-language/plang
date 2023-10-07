@@ -13,7 +13,7 @@ export default class InterfaceType extends SingularType {
     name = "object"
   ) { super(name); }
 
-  public toString(indent = 0): string {
+  public toString(colors?: boolean, indent = 0): string {
     let result = (this.name === "object" ? "" : this.name + " ") + "{";
     if (this.indexSignatures.size > 0 || this.properties.size > 0)
       indent += 1;
@@ -21,13 +21,13 @@ export default class InterfaceType extends SingularType {
     for (const [key, value] of this.indexSignatures) {
       result += "\n";
       result += "  ".repeat(indent);
-      result += `[${key.toString()}]: ${value instanceof InterfaceType ? value.toString(indent + 1) : value.toString()};`;
+      result += `[${key.toString()}]: ${value instanceof InterfaceType ? value.toString(colors, indent + 1) : value.toString()};`;
     }
 
     for (const [key, value] of this.properties) {
       result += "\n";
       result += "  ".repeat(indent);
-      result += `${value instanceof InterfaceType ? value.toString(indent + 1) : (value instanceof Type ? value.toString().replace(/\"/g, "") : value.valueType.toString())} ${key};`;
+      result += `${value instanceof InterfaceType ? value.toString(colors, indent + 1) : (value instanceof Type ? value.toString().replace(/\"/g, "") : value.valueType.toString())} ${key};`;
     }
 
     return result + "\n}";
