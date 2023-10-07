@@ -29,6 +29,7 @@ import type { CompoundAssignmentExpression } from "../parser/ast/expressions/com
 import type { VariableAssignmentExpression } from "../parser/ast/expressions/variable-assignment";
 import type { PropertyAssignmentExpression } from "../parser/ast/expressions/property-assignment";
 import { SingularTypeExpression } from "../parser/ast/type-nodes/singular-type";
+import { LiteralTypeExpression } from "../parser/ast/type-nodes/literal-type";
 import { UnionTypeExpression } from "../parser/ast/type-nodes/union-type";
 import { ArrayTypeExpression } from "../parser/ast/type-nodes/array-type";
 import { InterfaceTypeExpression } from "../parser/ast/type-nodes/interface-type";
@@ -70,10 +71,10 @@ import BoundFunctionDeclarationStatement from "./bound-statements/function-decla
 import BoundReturnStatement from "./bound-statements/return";
 import BoundTypeDeclarationStatement from "./bound-statements/type-declaration";
 import Intrinsic from "../../runtime/values/intrinsic";
-import { LiteralTypeExpression } from "../parser/ast/type-nodes/literal-type";
 import LiteralType from "../type-checker/types/literal-type";
 
 type IndexType = SingularType<"string"> | SingularType<"int">;
+type PropertyPair = [LiteralType<string>, InterfacePropertySignature<Type>];
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variableScopes: VariableSymbol[][] = [];
@@ -247,21 +248,25 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   }
 
   public visitObjectLiteralExpression(expr: ObjectLiteralExpression): BoundObjectLiteralExpression {
-    const properties = new Map<BoundExpression, BoundExpression>();
-    for (const [key, value] of expr.properties)
-      properties.set(this.bind(key), this.bind(value));
+    const properties = new Map<LiteralType<string> | BoundExpression, BoundExpression>();
+    for (const [key, value] of expr.properties) {
+      const boundKey = this.bind(key);
+      let keyLiteral: LiteralType<string> | BoundExpression = boundKey;
+      if (boundKey instanceof BoundIdentifierExpression)
+        keyLiteral = new LiteralType(boundKey.name.lexeme)
+      else if (boundKey instanceof BoundLiteralExpression && key.token.syntax === Syntax.String)
+        keyLiteral = new LiteralType<string>(boundKey.token.value)
+
+      properties.set(keyLiteral, this.bind(value));
+    }
 
     // inferring interface type
     const indexSignatures = new Map<IndexType, Type>();
+
     const typeProperties = Array.from(properties.entries())
-      .map<[string | number, InterfacePropertySignature<Type>] | undefined>(([key, value]) => {
-        if (key instanceof BoundIdentifierExpression)
-          return [key.name.lexeme, {
-            valueType: value.type,
-            mutable: true
-          }];
-        else if (key instanceof BoundLiteralExpression && key.token.syntax === Syntax.String)
-          return [key.token.value, {
+      .map(([key, value]): PropertyPair | undefined => {
+        if (key instanceof LiteralType)
+          return [key, {
             valueType: value.type,
             mutable: true
           }];
@@ -272,9 +277,9 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
           indexSignatures.set(<IndexType>key.type, value.type);
         }
       })
-      .filter((props): props is [string, InterfacePropertySignature<Type>] => props !== undefined);
+      .filter((props): props is PropertyPair => props !== undefined);
 
-    const type = new InterfaceType(new Map<string, InterfacePropertySignature<Type>>(typeProperties), indexSignatures);
+    const type = new InterfaceType(new Map<LiteralType<string>, InterfacePropertySignature<Type>>(typeProperties), indexSignatures);
     return new BoundObjectLiteralExpression(expr.token, properties, type);
   }
 
@@ -356,10 +361,10 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     else if (node instanceof UnionTypeExpression)
       return <T><unknown>new UnionType(node.types.map(singular => this.getTypeFromTypeRef<SingularType>(singular)));
     else if (node instanceof InterfaceTypeExpression) {
-      const properties = new Map<string, InterfacePropertySignature<Type>>();
+      const properties = new Map<LiteralType<string>, InterfacePropertySignature<Type>>();
       const indexSignatures = new Map<IndexType, Type>();
       for (const [key, { mutable, valueType }] of node.properties)
-        properties.set(key.token.value, {
+        properties.set(new LiteralType(key.token.value), {
           valueType: this.getTypeFromTypeRef(valueType),
           mutable
         });

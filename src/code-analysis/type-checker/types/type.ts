@@ -1,11 +1,12 @@
 import util from "util";
 
 import SingularType from "./singular-type";
-import type LiteralType from "./literal-type";
+import LiteralType from "./literal-type";
 import type UnionType from "./union-type";
 import type ArrayType from "./array-type";
 import type FunctionType from "./function-type";
 import type InterfaceType from "./interface-type";
+import { InterfacePropertySignature } from "..";
 
 export enum TypeKind {
   Singular,
@@ -74,17 +75,33 @@ export abstract class Type {
       return other.isNullish();
 
     if (this.isInterface()) {
+      if (other.isUnion())
+        return other.isAssignableTo(this);
+
       if (!other.isInterface()) return false;
+      const otherProperties = new Map(Array.from(this.properties.entries())
+        .map<[string, InterfacePropertySignature<Type>]>(([key, signature]) => [key.value, signature]));
 
       const propertiesAreAssignable = Array.from(this.properties.entries())
-        .every(([key, { valueType }]) => (other.properties.has(key) && other.properties.get(key)!.valueType.isAssignableTo(valueType))
+        .map<[string, InterfacePropertySignature<Type>]>(([key, signature]) => [key.value, signature])
+        .every(([key, { valueType }]) => (otherProperties.has(key) && otherProperties.get(key)!.valueType.isAssignableTo(valueType))
           || Array.from(other.indexSignatures.values()).some(type => type.isAssignableTo(valueType)));
 
       const indexSignaturesAreAssignable = Array.from(this.indexSignatures.entries())
         .every(([keyType, valueType]) => other.indexSignatures.has(keyType) && valueType.isAssignableTo(other.indexSignatures.get(keyType)!));
 
       return propertiesAreAssignable && indexSignaturesAreAssignable;
-    } else if (this.isSingular())
+    }
+
+    if (this.isArray()) {
+      if (other.isUnion())
+        return other.isAssignableTo(this);
+
+      if (!other.isArray()) return false;
+      return this.elementType.isAssignableTo(other.elementType);
+    }
+
+    if (this.isSingular())
       if (this.name === "Array") {
         if (other.isSingular() ? other.name !== "Array" : !other.isArray()) return false;
         if (other.isSingular() ? (other.typeArguments !== undefined && other.typeArguments.length < 1) : false) return false;
@@ -108,11 +125,6 @@ export abstract class Type {
         return this.name === other.name;
       } else
         return other.isAssignableTo(this);
-
-    if (this.isArray()) {
-      if (!other.isArray()) return false;
-      return this.elementType.isAssignableTo(other.elementType);
-    }
 
     if (this.isFunction()) {
       if (!other.isFunction()) return false;

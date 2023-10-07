@@ -35,6 +35,7 @@ import type BoundIfStatement from "../binder/bound-statements/if";
 import type BoundWhileStatement from "../binder/bound-statements/while";
 import type BoundFunctionDeclarationStatement from "../binder/bound-statements/function-declaration";
 import type BoundReturnStatement from "../binder/bound-statements/return";
+import LiteralType from "./types/literal-type";
 
 export type ValueType = SingularValueType | ValueType[] | ObjectType;
 export type TypeLiteralValueType = string | boolean | number;
@@ -190,15 +191,12 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
 
   public visitObjectLiteralExpression(expr: BoundObjectLiteralExpression): void {
     for (const [key, value] of expr.properties) {
-      this.check(key);
+      if (key instanceof BoundExpression)
+        this.check(key);
+
       this.check(value);
-      if (key instanceof BoundIdentifierExpression) {
-        const propertyName = key.name.lexeme;
-        const signature = this.getInterfacePropertySignature(expr.type, propertyName, key.name);
-        this.assert(value, value.type, signature.valueType);
-      } else if (key instanceof BoundLiteralExpression && key.token.syntax === Syntax.String) {
-        const propertyName: string = key.token.value;
-        const signature = this.getInterfacePropertySignature(expr.type, propertyName, key.token);
+      if (key instanceof LiteralType) {
+        const signature = this.getInterfacePropertySignature(expr.type, key, expr.token);
         this.assert(value, value.type, signature.valueType);
       } else {
         const valueType = key.type.isAssignableTo(INDEX_TYPE) && expr.type.indexSignatures.get(<SingularType<"string"> | SingularType<"int">>key.type);
@@ -210,10 +208,10 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
     }
   }
 
-  private getInterfacePropertySignature(interfaceType: InterfaceType, propertyName: string, token: Token): InterfacePropertySignature<Type> {
+  private getInterfacePropertySignature(interfaceType: InterfaceType, propertyName: LiteralType<string>, token: Token): InterfacePropertySignature<Type> {
     const valueType = interfaceType.properties.get(propertyName);
     if (!valueType)
-      throw new TypeError(`Property '${propertyName}' does not exist on '${interfaceType.name}'`, token);
+      throw new TypeError(`Property '${propertyName.value}' does not exist on '${interfaceType.name}'`, token);
 
     return valueType;
   }

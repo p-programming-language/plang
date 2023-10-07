@@ -5,7 +5,7 @@ import { TypeKind } from "./type";
 import SingularType from "./singular-type";
 
 export default class LiteralType<V extends TypeLiteralValueType = TypeLiteralValueType> extends SingularType {
-  public override readonly kind = TypeKind.Array;
+  public override readonly kind = TypeKind.Literal;
 
   public constructor(
     public readonly value: V

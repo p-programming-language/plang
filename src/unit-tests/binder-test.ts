@@ -19,6 +19,8 @@ import BoundVariableDeclarationStatement from "../code-analysis/binder/bound-sta
 import BoundAccessExpression from "../code-analysis/binder/bound-expressions";
 import BoundIdentifierExpression from "../code-analysis/binder/bound-expressions/identifier";
 import BoundCallExpression from "../code-analysis/binder/bound-expressions/call";
+import ArrayType from "../code-analysis/type-checker/types/array-type";
+import LiteralType from "../code-analysis/type-checker/types/literal-type";
 
 function bind(source: string): BoundStatement[] {
   const p = new P("test");
@@ -102,7 +104,7 @@ describe(Binder.name, () => {
       const unary = <BoundUnaryExpression>expr;
       unary.operator.syntax.should.equal(Syntax.Bang);
       (<SingularType>unary.operator.resultType).name.should.equal("bool");
-      (<SingularType>unary.operand.type).name.should.equal("int");
+      (<LiteralType>unary.operand.type).name.should.equal("123");
       unary.operand.token.syntax.should.equal(Syntax.Int)
       unary.operand.token.lexeme.should.equal("123");
       unary.operand.token.value?.should.equal(123);
@@ -121,12 +123,12 @@ describe(Binder.name, () => {
       (<SingularType>binary.operator.resultType).name.should.equal("bool");
 
       binary.left.should.be.an.instanceof(BoundLiteralExpression);
-      (<SingularType>binary.left.type).name.should.equal("bool");
+      (<LiteralType>binary.left.type).name.should.equal("false");
       binary.left.token.syntax.should.equal(Syntax.Boolean)
       binary.left.token.lexeme.should.equal("false");
       binary.left.token.value?.should.equal(false);
       binary.right.should.be.an.instanceof(BoundLiteralExpression);
-      (<SingularType>binary.right.type).name.should.equal("bool");
+      (<LiteralType>binary.right.type).name.should.equal("true");
       binary.right.token.syntax.should.equal(Syntax.Boolean)
       binary.right.token.lexeme.should.equal("true");
       binary.right.token.value?.should.equal(true);
@@ -153,11 +155,11 @@ describe(Binder.name, () => {
       expr.should.be.an.instanceof(BoundAccessExpression);
       const indexing = <BoundAccessExpression>expr;
       indexing.object.should.be.an.instanceof(BoundIdentifierExpression);
-      indexing.object.type.isSingular().should.be.true();
-      const objectType = <SingularType>indexing.object.type;
+      indexing.object.type.isArray().should.be.true();
+      const objectType = <ArrayType>indexing.object.type;
       objectType.name.should.equal("Array");
-      objectType.typeArguments![0].isSingular().should.be.true();
-      (<SingularType>objectType.typeArguments![0]).name.should.equal("int");
+      objectType.elementType.isSingular().should.be.true();
+      (<SingularType>objectType.elementType).name.should.equal("int");
       indexing.type.isSingular().should.be.true();
       (<SingularType>indexing.type).name.should.equal("int");
       (<BoundIdentifierExpression>indexing.object).name.lexeme.should.equal("myArr");
@@ -184,8 +186,8 @@ describe(Binder.name, () => {
       arg.should.be.an.instanceof(BoundLiteralExpression);
       const argLiteral = <BoundLiteralExpression>arg;
       argLiteral.token.value?.should.equal("1 + 1");
-      argLiteral.type.isSingular().should.be.true();
-      (<SingularType>argLiteral.type).name.should.equal("string");
+      argLiteral.type.isLiteral().should.be.true();
+      (<LiteralType>argLiteral.type).name.should.equal('"1 + 1"');
     }
   });
   describe("binds general tests (tests/)", () => {

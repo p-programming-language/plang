@@ -13,9 +13,9 @@ export default class SingularType<Name extends string = string> extends Type {
     switch(typeof value) {
       case "number": {
         if (value !== Math.floor(value))
-          new SingularType("float");
+          return new SingularType("float");
         else
-          new SingularType("int");
+          return  new SingularType("int");
       }
 
       case "boolean":
