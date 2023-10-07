@@ -3,22 +3,22 @@ import { readFileSync, readdirSync } from "fs";
 import path from "path";
 import "should";
 
-import { BoundStatement } from "../../src/code-analysis/type-checker/binder/bound-node";
+import { BoundStatement } from "../code-analysis/binder/bound-node";
 import Syntax from "../../src/code-analysis/tokenization/syntax-type";
-import Binder from "../../src/code-analysis/type-checker/binder";
+import Binder from "../code-analysis/binder";
 import SingularType from "../../src/code-analysis/type-checker/types/singular-type";
 import FunctionType from "../../src/code-analysis/type-checker/types/function-type";
 import P from "../../tools/p";
 
-import BoundLiteralExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/literal";
-import BoundUnaryExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/unary";
-import BoundBinaryExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/binary";
-import BoundArrayLiteralExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/array-literal";
-import BoundExpressionStatement from "../../src/code-analysis/type-checker/binder/bound-statements/expression";
-import BoundVariableDeclarationStatement from "../../src/code-analysis/type-checker/binder/bound-statements/variable-declaration";
-import BoundIndexExpression from "../../src/code-analysis/type-checker/binder/bound-expressions";
-import BoundIdentifierExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/identifier";
-import BoundCallExpression from "../../src/code-analysis/type-checker/binder/bound-expressions/call";
+import BoundLiteralExpression from "../code-analysis/binder/bound-expressions/literal";
+import BoundUnaryExpression from "../code-analysis/binder/bound-expressions/unary";
+import BoundBinaryExpression from "../code-analysis/binder/bound-expressions/binary";
+import BoundArrayLiteralExpression from "../code-analysis/binder/bound-expressions/array-literal";
+import BoundExpressionStatement from "../code-analysis/binder/bound-statements/expression";
+import BoundVariableDeclarationStatement from "../code-analysis/binder/bound-statements/variable-declaration";
+import BoundIndexExpression from "../code-analysis/binder/bound-expressions";
+import BoundIdentifierExpression from "../code-analysis/binder/bound-expressions/identifier";
+import BoundCallExpression from "../code-analysis/binder/bound-expressions/call";
 
 function bind(source: string): BoundStatement[] {
   const p = new P("test");

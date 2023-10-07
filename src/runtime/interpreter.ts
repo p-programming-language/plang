@@ -4,7 +4,7 @@ import type { Callable } from "./values/callable";
 import { Token } from "../code-analysis/tokenization/token";
 import { fakeToken, getIntrinsicExtension } from "../utility";
 import { INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES } from "../code-analysis/type-checker/types/type-sets";
-import type Binder from "../code-analysis/type-checker/binder";
+import type Binder from "../code-analysis/binder";
 import type Resolver from "../code-analysis/resolver";
 import type P from "../../tools/p";
 import Syntax from "../code-analysis/tokenization/syntax-type";
@@ -201,7 +201,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
       case Syntax.Minus:
         return -<number>operand;
       case Syntax.Hashtag:
-        return (<Array<any>>operand).length;
+        return (<ArrayLike<any>>operand).length;
       case Syntax.PlusPlus: {
         const compoundOperator = fakeToken<undefined>(Syntax.PlusEqual, "+=");
         const compoundAssignment = new CompoundAssignmentExpression(<IdentifierExpression>expr.operand, one, compoundOperator);
