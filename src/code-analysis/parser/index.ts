@@ -371,17 +371,29 @@ export default class Parser extends TypeParser {
   }
 
   private parseExponential(): AST.Expression {
-    let left = this.parseCall();
+    let left = this.parseUnary();
 
     while (this.match(Syntax.Carat, Syntax.StarStar, Syntax.DotDot)) {
       const operator = this.previous<undefined>();
-      const right = this.parseCall();
+      const right = this.parseUnary();
       left = operator.syntax === Syntax.DotDot ?
         new RangeLiteralExpression(left, right, operator)
         : new BinaryExpression(left, right, operator);
     }
 
     return left;
+  }
+
+  private parseUnary(): AST.Expression {
+    if (this.matchSet(UNARY_SYNTAXES)) {
+      const operator = this.previous<undefined>();
+      const operand = this.parseCall();
+      if (!this.isAssignmentTarget(operand) && (operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus))
+        throw new ParserSyntaxError("Invalid increment/decrement target", operand.token);
+
+      return new UnaryExpression(operator, operand);
+    } else
+      return this.parseCall();
   }
 
   private parseCall(): AST.Expression {
@@ -414,7 +426,7 @@ export default class Parser extends TypeParser {
   }
 
   private parseIndex(): AST.Expression {
-    let object = this.parseUnary();
+    let object = this.parsePrimary();
 
     while (this.check(Syntax.LBracket)) {
       this.consume(Syntax.LBracket);
@@ -428,18 +440,6 @@ export default class Parser extends TypeParser {
     }
 
     return object;
-  }
-
-  private parseUnary(): AST.Expression {
-    if (this.matchSet(UNARY_SYNTAXES)) {
-      const operator = this.previous<undefined>();
-      const operand = this.parseUnary();
-      if (!this.isAssignmentTarget(operand) && (operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus))
-        throw new ParserSyntaxError("Invalid increment/decrement target", operand.token);
-
-      return new UnaryExpression(operator, operand);
-    } else
-      return this.parsePrimary();
   }
 
   /**
