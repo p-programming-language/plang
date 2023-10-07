@@ -6,10 +6,10 @@ This can be anything as long as it is clear what the commit chnaged.
 Examples:
 - `fix: Fixed issue #12 (Fixed compiler issue)`
 - `feat: create os() intrinsic function`
-## Docs and guides
+## Docs/Guides
 We currently don't have any documentation or guides for P. Feel free to create some yourself using the **docs/** folder!
 
-## File guides
+## Project Hierarchy Guide
 ### src/
 #### Files
 - code-analysis/

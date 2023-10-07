@@ -22,6 +22,8 @@ Check out **[tests/](https://github.com/p-programming-language/plang/tree/main/t
     - The P interpreter CLI
 - prepl
     - A read-eval-print loop to run P interactively inside of your terminal
+- ast-viewer
+    - This is an interactive terminal where you can inspect the AST of a provided source code node-by-node
 
 ### Developer only tools
 - test
