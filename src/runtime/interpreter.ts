@@ -2,7 +2,7 @@ import { RuntimeError } from "../errors";
 import type { IndexValueType, ObjectType, TypeLiteralValueType, ValueType } from "../code-analysis/type-checker";
 import type { Callable } from "./values/callable";
 import { Token } from "../code-analysis/tokenization/token";
-import { fakeToken, getIntrinsicExtension } from "../utility";
+import { fakeToken } from "../utility";
 import { Range } from "./values/range";
 import { INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES } from "../code-analysis/type-checker/types/type-sets";
 import type Binder from "../code-analysis/binder";
@@ -12,6 +12,7 @@ import Syntax from "../code-analysis/tokenization/syntax-type";
 import Scope from "./scope";
 import HookedException from "./hooked-exceptions";
 import Intrinsics from "./intrinsics";
+import IntrinsicExtension from "./intrinsics/literal-extensions";
 import PFunction from "./values/function";
 import AST from "../code-analysis/parser/ast";
 
@@ -129,7 +130,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     const index = this.evaluate(expr.index);
     const realValue = (<ValueType[] | ObjectType>object)[<any>index];
     if (INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES.includes(typeof object)) {
-      const extension = getIntrinsicExtension(object);
+      const extension = IntrinsicExtension.get(object);
       return extension.members[<any>index] ?? realValue;
     }
 

@@ -6,8 +6,8 @@ import type { Type } from "../type-checker/types/type";
 import type { InterfacePropertySignature, TypeLiteralValueType } from "../type-checker";
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
-import { getFakeIntrinsicExtension } from "../../utility";
 import Intrinsic from "../../runtime/values/intrinsic";
+import IntrinsicExtension from "../../runtime/intrinsics/literal-extensions";
 import VariableSymbol from "./variable-symbol";
 import SingularType from "../type-checker/types/singular-type";
 import LiteralType from "../type-checker/types/literal-type";
@@ -157,7 +157,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       && index instanceof BoundLiteralExpression
     ) {
 
-      const extension = getFakeIntrinsicExtension((<SingularType>object.type).name);
+      const extension = IntrinsicExtension.getFake((<SingularType>object.type).name);
       const member = extension.members[index.token.value];
       let type: Type;
       if (member instanceof Intrinsic.Function)

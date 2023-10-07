@@ -7,11 +7,12 @@ export const INDEX_TYPE = new UnionType([
 ]);
 
 export const INDEXABLE_LITERAL_TYPES = [
-  new SingularType("string")
+  new SingularType("string"),
+  new SingularType("Range")
 ];
 
-export const INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES = [
-  "string"
+export const INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES: string[] = [
+  ...INDEXABLE_LITERAL_TYPES.map(t => t.name)
 ];
 
 export const INTRINSIC_EXTENDED_LITERAL_TYPES = INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES

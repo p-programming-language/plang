@@ -38,7 +38,7 @@ import BoundRangeLiteralExpression from "../binder/bound-expressions/range-liter
 
 export type ValueType = SingularValueType | ValueType[] | ObjectType;
 export type TypeLiteralValueType = string | boolean | number;
-export type SingularValueType = PValue | TypeLiteralValueType | null | undefined | void;
+export type SingularValueType = PValue | TypeLiteralValueType | Range | null | undefined | void;
 export type IndexValueType = string | number;
 export interface ObjectType {
   [key: IndexValueType]: ValueType;

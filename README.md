@@ -85,5 +85,7 @@ yarn run <tool>
 
 ## Planned Features
 - Type aliases (e.x. `type number = int | float`)
+- `typeof`, `is`
+- `value is in array`
 - Range literals
 - Classes

@@ -20,27 +20,3 @@ export function fakeToken<V extends ValueType = ValueType, S extends Syntax = Sy
   const pseudoLocation = new LocationSpan(new Location(-1, -1), new Location(-1, -1));
   return new Token<V, S>(syntax, lexeme, <V>value, pseudoLocation);
 }
-
-export function getIntrinsicExtension<V extends ValueType = ValueType>(value: V): Intrinsic.ValueExtension<V> {
-  let extension;
-  switch(typeof value) {
-    case "string": {
-      extension = new StringExtension(value);
-      break;
-    }
-  }
-
-  return <Intrinsic.ValueExtension<V>>extension;
-}
-
-export function getFakeIntrinsicExtension<V extends ValueType = ValueType>(type: string): Intrinsic.ValueExtension<V> {
-  let extension;
-  switch(type) {
-    case "string": {
-      extension = new StringExtension("");
-      break;
-    }
-  }
-
-  return <Intrinsic.ValueExtension<V>>extension;
-}
