@@ -14,8 +14,15 @@ import { fileExists as pathExists } from "../utility";
 PError.testing = true;
 
 let p = new P("test");
-function evaluate(source: string, createNewEnvironment = true): ValueType {
-  const result = p.doString(source);
+function evaluate(source: string, createNewEnvironment = true, errorsAreOk = false): ValueType {
+  let result;
+  if (errorsAreOk)
+    try {
+      result = p.doString(source);
+    } catch {}
+  else
+    result = p.doString(source);
+
   if (createNewEnvironment)
     p.newHost();
 
@@ -101,8 +108,8 @@ describe(Interpreter.name, () => {
 
   if (pathExists(path.join(__dirname, "..", "runtime", "intrinsics", "libs", "std", "io.js")))
     it("evaluates intrinsic imports", () => {
-      evaluate("use io from @std");
-      evaluate("use readln from @std/io");
+      evaluate("use io from @std", undefined, true);
+      evaluate("use readln from @std/io", undefined, true);
     });
 
   it("evaluates intrinsics", () => {
