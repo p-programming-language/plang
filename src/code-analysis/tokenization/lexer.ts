@@ -245,6 +245,7 @@ export default class Lexer extends ArrayStepper<string> {
       this.advance();
 
     consumeEndOfComment();
+    this.currentLexemeCharacters = [];
   }
 
   /**
