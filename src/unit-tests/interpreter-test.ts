@@ -8,6 +8,7 @@ import type { ValueType } from "../../src/code-analysis/type-checker";
 import Interpreter from "../../src/runtime/interpreter";
 import P from "../../tools/p";
 import pkg = require("../../package.json");
+import Intrinsic from "../runtime/values/intrinsic";
 
 PError.testing = true;
 
@@ -91,6 +92,14 @@ describe(Interpreter.name, () => {
   });
   it("evaluates call expressions", () => {
     evaluate("eval('1 + 2')")?.should.equal(3);
+  });
+  it("evaluates function declarations", () => {
+    evaluate("int fn getNum { return 5 }; getNum()")?.should.equal(5);
+    evaluate("int fn getNum(int add = 0) { return 5 + add }; getNum(6)")?.should.equal(11);
+  });
+  it("evaluates intrinsic imports", () => {
+    evaluate("use io from @std");
+    evaluate("use readln from @std/io");
   });
   it("evaluates intrinsics", () => {
     evaluate("version$")?.should.equal("v" + pkg.version);
