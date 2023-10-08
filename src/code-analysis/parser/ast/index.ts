@@ -31,6 +31,7 @@ import type { ReturnStatement } from "./statements/return";
 import type { TypeDeclarationStatement } from "./statements/type-declaration";
 import type { UseStatement } from "./statements/use";
 import type { BreakStatement } from "./statements/break";
+import type { NextStatement } from "./statements/next";
 import type { EveryStatement } from "./statements/every";
 import type BoundLiteralExpression from "../../binder/bound-expressions/literal";
 import type BoundStringInterpolationExpression from "../../binder/bound-expressions/string-interpolation";
@@ -62,6 +63,7 @@ import type BoundTypeDeclarationStatement from "../../binder/bound-statements/ty
 import type BoundUseStatement from "../../binder/bound-statements/use";
 import type BoundBreakStatement from "../../binder/bound-statements/break";
 import type BoundEveryStatement from "../../binder/bound-statements/every";
+import type BoundNextStatement from "../../binder/bound-statements/next";
 
 namespace AST {
   export abstract class Node {
@@ -104,6 +106,7 @@ namespace AST {
 
     export abstract class Statement<R> {
       public abstract visitEveryStatement(stmt: EveryStatement): R
+      public abstract visitNextStatement(stmt: NextStatement): R
       public abstract visitBreakStatement(stmt: BreakStatement): R
       public abstract visitUseStatement(stmt: UseStatement): R
       public abstract visitTypeDeclarationStatement(stmt: TypeDeclarationStatement): R
@@ -141,6 +144,7 @@ namespace AST {
 
     export abstract class BoundStatement<R> {
       public abstract visitEveryStatement(stmt: BoundEveryStatement): R
+      public abstract visitNextStatement(stmt: BoundNextStatement): R
       public abstract visitBreakStatement(stmt: BoundBreakStatement): R
       public abstract visitUseStatement(stmt: BoundUseStatement): R
       public abstract visitTypeDeclarationStatement(stmt: BoundTypeDeclarationStatement): R

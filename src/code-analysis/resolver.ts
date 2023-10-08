@@ -47,6 +47,10 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
     this.endScope();
   }
 
+  public visitNextStatement(): void {
+    // do nothing
+  }
+
   public visitBreakStatement(): void {
     // do nothing
   }

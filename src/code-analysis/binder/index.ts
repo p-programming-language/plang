@@ -49,6 +49,7 @@ import type { ReturnStatement } from "../parser/ast/statements/return";
 import type { TypeDeclarationStatement } from "../parser/ast/statements/type-declaration";
 import type { UseStatement } from "../parser/ast/statements/use";
 import type { BreakStatement } from "../parser/ast/statements/break";
+import type { NextStatement } from "../parser/ast/statements/next";
 import type { EveryStatement } from "../parser/ast/statements/every";
 
 import BoundLiteralExpression from "./bound-expressions/literal";
@@ -82,6 +83,7 @@ import BoundTypeDeclarationStatement from "./bound-statements/type-declaration";
 import BoundUseStatement from "./bound-statements/use";
 import BoundEveryStatement from "./bound-statements/every";
 import BoundBreakStatement from "./bound-statements/break";
+import BoundNextStatement from "./bound-statements/next";
 
 type IndexType = SingularType<"string"> | SingularType<"int">;
 type PropertyPair = [LiteralType<string>, InterfacePropertySignature<Type>];
@@ -101,6 +103,10 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     const iterator = this.bind(stmt.iterable);
     const body = this.bind(stmt.body);
     return new BoundEveryStatement(stmt.token, elementDeclarations, iterator, body);
+  }
+
+  public visitNextStatement(stmt: NextStatement): BoundStatement {
+    return new BoundNextStatement(stmt.token);
   }
 
   public visitBreakStatement(stmt: BreakStatement): BoundBreakStatement {

@@ -26,6 +26,9 @@ import type BoundVariableAssignmentExpression from "../binder/bound-expressions/
 import type BoundPropertyAssignmentExpression from "../binder/bound-expressions/property-assignment";
 import type BoundCallExpression from "../binder/bound-expressions/call";
 import type BoundAccessExpression from "../binder/bound-expressions/access";
+import type BoundIsExpression from "../binder/bound-expressions/is";
+import type BoundTypeOfExpression from "../binder/bound-expressions/typeof";
+import type BoundIsInExpression from "../binder/bound-expressions/is-in";
 import type BoundExpressionStatement from "../binder/bound-statements/expression";
 import type BoundPrintlnStatement from "../binder/bound-statements/println";
 import type BoundVariableAssignmentStatement from "../binder/bound-statements/variable-assignment";
@@ -35,10 +38,7 @@ import type BoundIfStatement from "../binder/bound-statements/if";
 import type BoundWhileStatement from "../binder/bound-statements/while";
 import type BoundFunctionDeclarationStatement from "../binder/bound-statements/function-declaration";
 import type BoundReturnStatement from "../binder/bound-statements/return";
-import BoundIsExpression from "../binder/bound-expressions/is";
-import BoundTypeOfExpression from "../binder/bound-expressions/typeof";
-import BoundIsInExpression from "../binder/bound-expressions/is-in";
-import BoundEveryStatement from "../binder/bound-statements/every";
+import type BoundEveryStatement from "../binder/bound-statements/every";
 
 export type ValueType = SingularValueType | ValueType[] | ObjectType;
 export type TypeLiteralValueType = string | boolean | number;
@@ -111,6 +111,10 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
         }
       }
     }
+  }
+
+  public visitNextStatement(): void {
+    // do nothing
   }
 
   public visitBreakStatement(): void {

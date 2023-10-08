@@ -56,6 +56,7 @@ import type { ReturnStatement } from "../code-analysis/parser/ast/statements/ret
 import type { UseStatement } from "../code-analysis/parser/ast/statements/use";
 import { BreakStatement } from "../code-analysis/parser/ast/statements/break";
 import { EveryStatement } from "../code-analysis/parser/ast/statements/every";
+import { NextStatement } from "../code-analysis/parser/ast/statements/next";
 
 const MAX_RECURSION_DEPTH = 1200;
 
@@ -185,6 +186,10 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     this.loopLevel--;
     this.endRecursion(level);
     this.scope = enclosing;
+  }
+
+  public visitNextStatement(stmt: NextStatement): void {
+    throw new HookedException.Next(stmt.token, this.loopLevel);
   }
 
   public visitBreakStatement(stmt: BreakStatement): void {

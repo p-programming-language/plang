@@ -42,6 +42,7 @@ import { ReturnStatement } from "./ast/statements/return";
 import { TypeDeclarationStatement } from "./ast/statements/type-declaration";
 import { UseStatement } from "./ast/statements/use";
 import { BreakStatement } from "./ast/statements/break";
+import { NextStatement } from "./ast/statements/next";
 import { EveryStatement } from "./ast/statements/every";
 
 export default class Parser extends TypeParser {
@@ -115,6 +116,11 @@ export default class Parser extends TypeParser {
     if (this.match(Syntax.Break)) {
       const keyword = this.previous<undefined>();
       return new BreakStatement(keyword);
+    }
+
+    if (this.match(Syntax.Next)) {
+      const keyword = this.previous<undefined>();
+      return new NextStatement(keyword);
     }
 
     if (this.match(Syntax.Return)) {
