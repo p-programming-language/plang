@@ -15,9 +15,16 @@ import type AST from "./ast";
 import TokenStepper from "./token-stepper";
 import Syntax from "../tokenization/syntax-type";
 
-
 export default abstract class TypeParser extends TokenStepper {
   protected abstract readonly typeAnalyzer: TypeAnalyzer;
+
+  protected parseTypeAlias(): [Token<undefined, Syntax.Identifier>, AST.TypeRef] {
+    this.consume<undefined>(Syntax.Identifier, "'type' keyword");
+    const identifier = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier, "identifier");
+    this.consume(Syntax.Equal, "'='");
+    const aliasedType = this.parseType();
+    return [identifier, aliasedType];
+  }
 
   /**
    * This has no precedence, since it's a declaration

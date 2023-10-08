@@ -133,6 +133,12 @@ export default class Parser extends TypeParser {
       return new TypeDeclarationStatement(declaration.name, declaration);
     }
 
+    if (this.check(Syntax.Identifier) && this.current.lexeme === "type") {
+      const [name, aliasedType] = this.parseTypeAlias();
+      this.consumeSemicolons();
+      return new TypeDeclarationStatement(name, aliasedType);
+    }
+
     const stmt = this.parseStatement();
     this.consumeSemicolons();
     return stmt;

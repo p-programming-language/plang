@@ -12,12 +12,15 @@ export default class TypeAnalyzer extends TypeParser {
   ) { super(tokens); }
 
   public analyze(): void {
-    // TODO: add type aliases here
     while (!this.isFinished)
       if (this.match(Syntax.Interface)) {
         const declaration = this.parseInterfaceType();
         this.consumeSemicolons();
         this.typeTracker.defineType(declaration.name.lexeme, declaration);
+      } else if (this.check(Syntax.Identifier) && this.current.lexeme === "type") {
+        const [name, aliasedType] = this.parseTypeAlias();
+        this.consumeSemicolons();
+        this.typeTracker.defineType(name.lexeme, aliasedType);
       } else
         this.advance();
   }
