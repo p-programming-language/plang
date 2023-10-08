@@ -17,7 +17,7 @@ import { AccessExpression } from "../code-analysis/parser/ast/expressions/access
 import { PropertyAssignmentExpression } from "../../src/code-analysis/parser/ast/expressions/property-assignment";
 import { VariableAssignmentStatement } from "../../src/code-analysis/parser/ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "../../src/code-analysis/parser/ast/statements/variable-declaration";
-import Syntax from "../../src/code-analysis/tokenization/syntax-type";
+import Syntax from "../code-analysis/tokenization/syntax-type";
 import Parser from "../../src/code-analysis/parser";
 import AST from "../../src/code-analysis/parser/ast";
 import P from "../../tools/p";

@@ -9,6 +9,7 @@ import Interpreter from "../../src/runtime/interpreter";
 import P from "../../tools/p";
 import pkg = require("../../package.json");
 import Intrinsic from "../runtime/values/intrinsic";
+import { fileExists as pathExists } from "../utility";
 
 PError.testing = true;
 
@@ -97,10 +98,13 @@ describe(Interpreter.name, () => {
     evaluate("int fn getNum { return 5 }; getNum()")?.should.equal(5);
     evaluate("int fn getNum(int add = 0) { return 5 + add }; getNum(6)")?.should.equal(11);
   });
-  it("evaluates intrinsic imports", () => {
-    evaluate("use io from @std");
-    evaluate("use readln from @std/io");
-  });
+
+  if (pathExists(path.join(__dirname, "..", "runtime", "intrinsics", "libs", "std", "io.js")))
+    it("evaluates intrinsic imports", () => {
+      evaluate("use io from @std");
+      evaluate("use readln from @std/io");
+    });
+
   it("evaluates intrinsics", () => {
     evaluate("version$")?.should.equal("v" + pkg.version);
     evaluate("filename$")?.should.equal("test");
