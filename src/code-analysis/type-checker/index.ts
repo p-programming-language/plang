@@ -5,7 +5,7 @@ import type { Token } from "../tokenization/token";
 import type { Type } from "./types/type";
 import type PValue from "../../runtime/values/value";
 import FunctionType from "./types/function-type";
-import type InterfaceType from "./types/interface-type";
+import InterfaceType from "./types/interface-type";
 import SingularType from "./types/singular-type";
 import LiteralType from "./types/literal-type";
 import UnionType from "./types/union-type";
@@ -38,7 +38,7 @@ import type BoundReturnStatement from "../binder/bound-statements/return";
 import BoundIsExpression from "../binder/bound-expressions/is";
 import BoundTypeOfExpression from "../binder/bound-expressions/typeof";
 import BoundIsInExpression from "../binder/bound-expressions/is-in";
-import BoundUseStatement from "../binder/bound-statements/use";
+import BoundEveryStatement from "../binder/bound-statements/every";
 
 export type ValueType = SingularValueType | ValueType[] | ObjectType;
 export type TypeLiteralValueType = string | boolean | number;
@@ -58,6 +58,65 @@ export interface InterfacePropertySignature<T> {
 // NOTE: always call check() before assert()
 
 export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
+  public visitEveryStatement(stmt: BoundEveryStatement): void {
+    this.check(stmt.elementDeclarations);
+    this.check(stmt.iterable);
+    this.check(stmt.body);
+
+    const iterableType = stmt.iterable.type;
+    if (iterableType instanceof InterfaceType) {
+      const [keyDecl, valueDecl] = stmt.elementDeclarations;
+      const keyAssignable = Array.from<Type>(iterableType.properties.keys())
+        .concat(Array.from(iterableType.indexSignatures.keys()))
+        .every(type => type.isAssignableTo(keyDecl.type));
+
+      if (!keyAssignable)
+        throw new TypeError(`Iterable key type is not assignable to '${keyDecl.type.toString()}'`, keyDecl.token);
+
+      const valueAssignable = Array.from(iterableType.properties.values())
+        .map(sig => sig.valueType)
+        .concat(Array.from(iterableType.indexSignatures.values()))
+        .every(type => type.isAssignableTo(valueDecl.type));
+
+      if (!valueAssignable)
+        throw new TypeError(`Iterable value type is not assignable to '${valueDecl.type.toString()}'`, valueDecl.token);
+    } else if (iterableType instanceof ArrayType) {
+      const [valueDecl, indexDecl] = stmt.elementDeclarations;
+      const indexAssignable = indexDecl.type.isAssignableTo(new SingularType("int"));
+      if (!indexAssignable)
+        throw new TypeError(`'${indexDecl.type.toString()}' is not assignable to array index type, 'int'`, valueDecl.token);
+
+      const valueAssignable = valueDecl.type.isAssignableTo(iterableType.elementType);
+      if (!valueAssignable)
+        throw new TypeError(`Array value type is not assignable to '${valueDecl.type.toString()}'`, indexDecl.token);
+    } else {
+      const [declaration] = stmt.elementDeclarations;
+      if (iterableType instanceof FunctionType) {
+        const nextFunctionType = iterableType.returnType;
+        const invalidIteratorMessage = `Invalid iterator function '${nextFunctionType.toString()}'`;
+        if (!(nextFunctionType instanceof FunctionType))
+          throw new TypeError(`${invalidIteratorMessage}: Iterators must return a function`, stmt.iterable.token);
+
+        if (!new SingularType("undefined").isAssignableTo(nextFunctionType.returnType))
+          throw new TypeError(`${invalidIteratorMessage}: Iterator next functions must have a nullable return type`, stmt.iterable.token);
+
+        this.assert(declaration, declaration.type, nextFunctionType.returnType);
+      } else {
+        if (!iterableType.isAssignableTo(new UnionType([
+          new SingularType("Range"),
+          new SingularType("int"),
+          new SingularType("string")
+        ]))) {
+          throw new TypeError(`'${iterableType.toString()}' is not a valid iterable type`, stmt.iterable.token);
+        }
+      }
+    }
+  }
+
+  public visitBreakStatement(): void {
+    // do nothing
+  }
+
   public visitUseStatement(): void {
     // do nothing
   }

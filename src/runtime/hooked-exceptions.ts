@@ -17,13 +17,19 @@ namespace HookedException {
   }
 
   export class Break extends HookedException {
-    public constructor(token: Token) {
+    public constructor(
+      token: Token,
+      public readonly loopLevel: number
+    ) {
       super(token);
     }
   }
 
   export class Next extends HookedException {
-    public constructor(token: Token) {
+    public constructor(
+      token: Token,
+      public readonly loopLevel: number
+    ) {
       super(token);
     }
   }

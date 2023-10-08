@@ -15,7 +15,7 @@ export default class TokenStepper extends ArrayStepper<Token> {
    *
    * Advances the parser if it does
    */
-  protected expect<V extends ValueType = ValueType, S extends Syntax = Syntax>(syntax: Syntax, expectedOverride?: string): Token<V, S> {
+  protected consume<V extends ValueType = ValueType, S extends Syntax = Syntax>(syntax: Syntax, expectedOverride?: string): Token<V, S> {
     const gotSyntax = this.current ? Syntax[this.current.syntax] : "EOF";
     if (!this.match(syntax))
       throw new ParserSyntaxError(`Expected ${expectedOverride ?? `'${Syntax[syntax]}'`}, got ${gotSyntax}`, this.current);

@@ -30,6 +30,8 @@ import type { FunctionDeclarationStatement } from "./statements/function-declara
 import type { ReturnStatement } from "./statements/return";
 import type { TypeDeclarationStatement } from "./statements/type-declaration";
 import type { UseStatement } from "./statements/use";
+import type { BreakStatement } from "./statements/break";
+import type { EveryStatement } from "./statements/every";
 import type BoundLiteralExpression from "../../binder/bound-expressions/literal";
 import type BoundStringInterpolationExpression from "../../binder/bound-expressions/string-interpolation";
 import type BoundRangeLiteralExpression from "../../binder/bound-expressions/range-literal";
@@ -58,6 +60,8 @@ import type BoundFunctionDeclarationStatement from "../../binder/bound-statement
 import type BoundReturnStatement from "../../binder/bound-statements/return";
 import type BoundTypeDeclarationStatement from "../../binder/bound-statements/type-declaration";
 import type BoundUseStatement from "../../binder/bound-statements/use";
+import type BoundBreakStatement from "../../binder/bound-statements/break";
+import type BoundEveryStatement from "../../binder/bound-statements/every";
 
 namespace AST {
   export abstract class Node {
@@ -99,6 +103,8 @@ namespace AST {
     }
 
     export abstract class Statement<R> {
+      public abstract visitEveryStatement(stmt: EveryStatement): R
+      public abstract visitBreakStatement(stmt: BreakStatement): R
       public abstract visitUseStatement(stmt: UseStatement): R
       public abstract visitTypeDeclarationStatement(stmt: TypeDeclarationStatement): R
       public abstract visitReturnStatement(stmt: ReturnStatement): R
@@ -134,6 +140,8 @@ namespace AST {
     }
 
     export abstract class BoundStatement<R> {
+      public abstract visitEveryStatement(stmt: BoundEveryStatement): R
+      public abstract visitBreakStatement(stmt: BoundBreakStatement): R
       public abstract visitUseStatement(stmt: BoundUseStatement): R
       public abstract visitTypeDeclarationStatement(stmt: BoundTypeDeclarationStatement): R
       public abstract visitReturnStatement(stmt: BoundReturnStatement): R

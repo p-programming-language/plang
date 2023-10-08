@@ -16,6 +16,9 @@ import type { VariableAssignmentExpression } from "./parser/ast/expressions/vari
 import type { PropertyAssignmentExpression } from "./parser/ast/expressions/property-assignment";
 import type { CallExpression } from "./parser/ast/expressions/call";
 import type { AccessExpression } from "./parser/ast/expressions/access";
+import type { IsExpression } from "./parser/ast/expressions/is";
+import type { TypeOfExpression } from "./parser/ast/expressions/typeof";
+import type { IsInExpression } from "./parser/ast/expressions/is-in";
 import type { ExpressionStatement } from "./parser/ast/statements/expression";
 import type { PrintlnStatement } from "./parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "./parser/ast/statements/variable-assignment";
@@ -25,10 +28,8 @@ import type { IfStatement } from "./parser/ast/statements/if";
 import type { WhileStatement } from "./parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "./parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "./parser/ast/statements/return";
-import { IsExpression } from "./parser/ast/expressions/is";
-import { TypeOfExpression } from "./parser/ast/expressions/typeof";
-import { IsInExpression } from "./parser/ast/expressions/is-in";
-import { UseStatement } from "./parser/ast/statements/use";
+import type { UseStatement } from "./parser/ast/statements/use";
+import type { EveryStatement } from "./parser/ast/statements/every";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   public context = ScopeContext.Global;
@@ -36,6 +37,18 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
   public constructor() {
     this.beginScope();
+  }
+
+  public visitEveryStatement(stmt: EveryStatement): void {
+    this.beginScope();
+    this.resolve(stmt.elementDeclarations);
+    this.resolve(stmt.iterable);
+    this.resolve(stmt.body);
+    this.endScope();
+  }
+
+  public visitBreakStatement(): void {
+    // do nothing
   }
 
   public visitUseStatement(stmt: UseStatement): void {

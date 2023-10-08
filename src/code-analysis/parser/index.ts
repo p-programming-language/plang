@@ -41,6 +41,8 @@ import { FunctionDeclarationStatement } from "./ast/statements/function-declarat
 import { ReturnStatement } from "./ast/statements/return";
 import { TypeDeclarationStatement } from "./ast/statements/type-declaration";
 import { UseStatement } from "./ast/statements/use";
+import { BreakStatement } from "./ast/statements/break";
+import { EveryStatement } from "./ast/statements/every";
 
 export default class Parser extends TypeParser {
   public constructor(
@@ -88,6 +90,31 @@ export default class Parser extends TypeParser {
       const condition = this.parseExpression();
       const body = this.parseStatement();
       return new WhileStatement(keyword, condition, body);
+    }
+
+    if (this.match(Syntax.Every)) {
+      const parser = this;
+      const keyword = this.previous<undefined>();
+      function parseElementDeclaration(): VariableDeclarationStatement {
+        const elementType = parser.parseType();
+        const elementName = parser.consume<undefined, Syntax.Identifier>(Syntax.Identifier);
+        const elementIdentifier = new IdentifierExpression(elementName);
+        return new VariableDeclarationStatement(elementType, elementIdentifier, false);
+      }
+
+      const elementDeclarations = [ parseElementDeclaration() ];
+      while (this.match(Syntax.Comma))
+        elementDeclarations.push(parseElementDeclaration());
+
+      this.consume(Syntax.In, "'in'");
+      const iterator = this.parseExpression();
+      const body = this.parseStatement();
+      return new EveryStatement(keyword, elementDeclarations, iterator, body);
+    }
+
+    if (this.match(Syntax.Break)) {
+      const keyword = this.previous<undefined>();
+      return new BreakStatement(keyword);
     }
 
     if (this.match(Syntax.Return)) {
@@ -182,7 +209,7 @@ export default class Parser extends TypeParser {
   private parseImportMember(): Token<undefined> {
     let importedSpecifics = false;
     let consumedStar = false;
-    const matchedStar = this.match(Syntax.Star) || this.expect(Syntax.Identifier, "import member");
+    const matchedStar = this.match(Syntax.Star) || this.consume(Syntax.Identifier, "import member");
     const token = this.previous<undefined>();
     if (matchedStar === true) {
       if (importedSpecifics)
@@ -225,7 +252,7 @@ export default class Parser extends TypeParser {
         members.push(this.parseImportMember());
 
     this.match(Syntax.RBrace);
-    this.expect(Syntax.From, "'from'");
+    this.consume(Syntax.From, "'from'");
     const intrinsic = this.match(Syntax.At);
     const path = this.parseImportPath();
 
@@ -237,9 +264,9 @@ export default class Parser extends TypeParser {
 
   private parseFunctionDeclaration(): AST.Statement {
     const returnType = this.parseType();
-    const keyword = this.expect<undefined>(Syntax.Function);
+    const keyword = this.consume<undefined>(Syntax.Function);
 
-    const identifierToken = this.expect<undefined>(Syntax.Identifier, "identifier");
+    const identifierToken = this.consume<undefined>(Syntax.Identifier, "identifier");
     const parameters: VariableDeclarationStatement[] = [];
     if (this.match(Syntax.LParen)) {
       if (this.atVariableDeclaration) {
@@ -247,11 +274,11 @@ export default class Parser extends TypeParser {
         while (this.match(Syntax.Comma))
           parameters.push(this.parseVariableDeclaration());
       }
-      this.expect(Syntax.RParen, "')'");
+      this.consume(Syntax.RParen, "')'");
     }
 
 
-    this.expect(Syntax.LBrace);
+    this.consume(Syntax.LBrace);
     const body = this.parseBlock();
     const declaration = new FunctionDeclarationStatement(keyword, identifierToken, returnType, parameters, body);
     this.consumeSemicolons();
@@ -261,7 +288,7 @@ export default class Parser extends TypeParser {
   private parseVariableDeclaration(): VariableDeclarationStatement {
     const isMutable = this.match(Syntax.Mut);
     const type = this.parseType();
-    const identifierToken = this.expect<undefined>(Syntax.Identifier, "identifier");
+    const identifierToken = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier, "identifier");
     const initializer = this.match(Syntax.Equal) ?
       this.parseExpression()
       : undefined;
@@ -301,7 +328,7 @@ export default class Parser extends TypeParser {
     while (this.match(Syntax.Question)) {
       const operator = this.previous<undefined>();
       const body = this.parseExpression();
-      this.expect(Syntax.Colon, "':'");
+      this.consume(Syntax.Colon, "':'");
       const elseBranch = this.parseExpression();
       left = new TernaryExpression(operator, <AST.Expression>left, body, elseBranch);
     }
@@ -498,7 +525,7 @@ export default class Parser extends TypeParser {
 
     while (this.match(Syntax.LParen)) {
       const args = this.parseExpressionList(Syntax.RParen);
-      this.expect(Syntax.RParen, "')'");
+      this.consume(Syntax.RParen, "')'");
       callee = new CallExpression(callee, args);
     }
 
@@ -510,7 +537,7 @@ export default class Parser extends TypeParser {
 
     while (this.match(Syntax.Dot)) {
       const accessToken = this.previous<undefined>();
-      const indexIdentifier = this.expect<string>(Syntax.Identifier);
+      const indexIdentifier = this.consume<string>(Syntax.Identifier);
       indexIdentifier.syntax = Syntax.String;
       indexIdentifier.value = indexIdentifier.lexeme;
       indexIdentifier.lexeme = `"${indexIdentifier.lexeme}"`;
@@ -526,13 +553,13 @@ export default class Parser extends TypeParser {
     let object = this.parsePrimary();
 
     while (this.check(Syntax.LBracket)) {
-      this.expect(Syntax.LBracket);
+      this.consume(Syntax.LBracket);
       if (!this.checkSet([Syntax.RBracket, Syntax.RBrace, Syntax.RParen, Syntax.Identifier], -2))
         continue;
 
       const bracket = this.previous<undefined>();
       const index = this.parseExpression();
-      this.expect(Syntax.RBracket, "']'");
+      this.consume(Syntax.RBracket, "']'");
       object = new AccessExpression(bracket, object, index);
     }
 
@@ -545,7 +572,7 @@ export default class Parser extends TypeParser {
   private parsePrimary(): AST.Expression {
     if (this.match(Syntax.LParen)) {
       const expr = this.parseExpression();
-      this.expect(Syntax.RParen, "')'");
+      this.consume(Syntax.RParen, "')'");
       return new ParenthesizedExpression(expr);
     }
 
@@ -592,7 +619,7 @@ export default class Parser extends TypeParser {
     if (this.match(Syntax.LBracket)) {
       const bracket = this.previous<undefined>();
       const elements = this.parseExpressionList(Syntax.RBracket);
-      this.expect(Syntax.RBracket, "']'");
+      this.consume(Syntax.RBracket, "']'");
       return new ArrayLiteralExpression(bracket, elements);
     }
 
@@ -630,7 +657,7 @@ export default class Parser extends TypeParser {
     while (this.match(Syntax.Comma) && !this.check(Syntax.RBrace))
       keyValuePairs.push(this.parseObjectKeyValuePair());
 
-    this.expect(Syntax.RBrace, "'}'");
+    this.consume(Syntax.RBrace, "'}'");
     return new ObjectLiteralExpression(brace, new Map(keyValuePairs));
   }
 
@@ -640,12 +667,12 @@ export default class Parser extends TypeParser {
       const identifier = this.previous<undefined, Syntax.Identifier>();
       key = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
     } else {
-      this.expect(Syntax.LBracket, "'['");
+      this.consume(Syntax.LBracket, "'['");
       key = this.parseExpression();
-      this.expect(Syntax.RBracket, "']'");
+      this.consume(Syntax.RBracket, "']'");
     }
 
-    this.expect(Syntax.Colon, "':'");
+    this.consume(Syntax.Colon, "':'");
     const value = this.parseExpression();
     return [key, value];
   }

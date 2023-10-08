@@ -1,8 +1,9 @@
 import util from "util";
+import path from "path";
 
 import { RuntimeError } from "../errors";
 import type { IndexValueType, ObjectType, TypeLiteralValueType, ValueType } from "../code-analysis/type-checker";
-import type { Callable } from "./values/callable";
+import { Callable } from "./values/callable";
 import type { Type } from "../code-analysis/type-checker/types/type";
 import { INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES } from "../code-analysis/type-checker/types/type-sets";
 import { Token } from "../code-analysis/tokenization/token";
@@ -47,14 +48,14 @@ import type { ExpressionStatement } from "../code-analysis/parser/ast/statements
 import type { PrintlnStatement } from "../code-analysis/parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../code-analysis/parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
-import type { BlockStatement } from "../code-analysis/parser/ast/statements/block";
+import { BlockStatement } from "../code-analysis/parser/ast/statements/block";
 import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 import type { WhileStatement } from "../code-analysis/parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "../code-analysis/parser/ast/statements/return";
 import type { UseStatement } from "../code-analysis/parser/ast/statements/use";
-import path from "path";
-import { readFileSync } from "fs";
+import { BreakStatement } from "../code-analysis/parser/ast/statements/break";
+import { EveryStatement } from "../code-analysis/parser/ast/statements/every";
 
 const MAX_RECURSION_DEPTH = 1200;
 
@@ -73,6 +74,118 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     public fileName = "unnamed"
   ) {
     this.intrinsics.inject();
+  }
+
+  public visitEveryStatement(stmt: EveryStatement): void {
+    const enclosing = this.scope;
+    this.scope = new Scope(this.scope);
+
+    let iterable = this.evaluate(stmt.iterable);
+    for (const declaration of stmt.elementDeclarations)
+      this.scope.define(declaration.identifier.name, undefined, {
+        mutable: true
+      });
+
+    if (typeof iterable === "number")
+      iterable = new Range(1, iterable);
+
+    if (iterable instanceof Range)
+      iterable = Array.from({ length: iterable.maximum - iterable.minimum + 1 }, (_, i) => (<Range>iterable).minimum + i);
+
+    if (typeof iterable === "string")
+      iterable = iterable.split("");
+
+    let level = 0;
+    this.loopLevel++;
+    if (iterable instanceof Array) {
+      for (const value of iterable) {
+        const index = iterable.indexOf(value);
+        const [valueDecl, indexDecl] = stmt.elementDeclarations;
+        this.startRecursion(stmt.token);
+        level++;
+
+        this.scope.assign(valueDecl.identifier.name, value);
+        if (indexDecl)
+          this.scope.assign(indexDecl.identifier.name, index);
+
+        try {
+          let block = stmt.body;
+          if (!(block instanceof BlockStatement))
+            block = new BlockStatement(block.token, [block]);
+
+          this.executeBlock(<BlockStatement>block, this.scope);
+        } catch(e: any) {
+          if (e instanceof HookedException.Break)
+            if (this.loopLevel === e.loopLevel)
+              break;
+          else if (e instanceof HookedException.Next)
+            if (this.loopLevel === e.loopLevel)
+              continue;
+          else
+            throw e;
+        }
+      }
+    } else if (iterable instanceof Callable) {
+      let value;
+      while (value = iterable.call() !== undefined) {
+        const [valueDecl] = stmt.elementDeclarations;
+        this.startRecursion(stmt.token);
+        level++;
+
+        this.scope.assign(valueDecl.identifier.name, value);
+        try {
+          let block = stmt.body;
+          if (!(block instanceof BlockStatement))
+            block = new BlockStatement(block.token, [block]);
+
+          this.executeBlock(<BlockStatement>block, this.scope);
+        } catch(e: any) {
+          if (e instanceof HookedException.Break)
+            if (this.loopLevel === e.loopLevel)
+              break;
+          else if (e instanceof HookedException.Next)
+            if (this.loopLevel === e.loopLevel)
+              continue;
+          else
+            throw e;
+        }
+      }
+    } else if (iterable instanceof Object) {
+      for (const [key, value] of Object.entries(iterable)) {
+        const [keyDecl, valueDecl] = stmt.elementDeclarations;
+        this.startRecursion(stmt.token);
+        level++;
+
+        this.scope.assign(keyDecl.identifier.name, key);
+        if (valueDecl)
+          this.scope.assign(valueDecl.identifier.name, value);
+
+        try {
+          let block = stmt.body;
+          if (!(block instanceof BlockStatement))
+            block = new BlockStatement(block.token, [block]);
+
+          this.executeBlock(<BlockStatement>block, this.scope);
+        } catch(e: any) {
+          if (e instanceof HookedException.Break)
+            if (this.loopLevel === e.loopLevel)
+              break;
+          else if (e instanceof HookedException.Next)
+            if (this.loopLevel === e.loopLevel)
+              continue;
+          else
+            throw e;
+        }
+      }
+    }
+
+    this.loopLevel--;
+    this.endRecursion(level);
+    this.scope = enclosing;
+  }
+
+  public visitBreakStatement(stmt: BreakStatement): void {
+    throw new HookedException.Break(stmt.token, this.loopLevel);
   }
 
   public visitUseStatement(stmt: UseStatement): void {
@@ -132,15 +245,26 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public visitWhileStatement(stmt: WhileStatement): void {
     this.loopLevel++;
     const inverted = stmt.token.syntax === Syntax.Until;
-    let depth = 0;
+    let level = 0;
 
     while (inverted ? !this.evaluate(stmt.condition) : this.evaluate(stmt.condition)) {
       this.startRecursion(stmt.token);
-      this.execute(stmt.body);
-      depth++;
+      try {
+        this.execute(stmt.body);
+      } catch(e: any) {
+        if (e instanceof HookedException.Break)
+          if (this.loopLevel === e.loopLevel)
+            break;
+        else if (e instanceof HookedException.Next)
+          if (this.loopLevel === e.loopLevel)
+            continue;
+        else
+          throw e;
+      }
+      level++;
     }
 
-    this.endRecursion(depth);
+    this.endRecursion(level);
     this.loopLevel--;
   }
 

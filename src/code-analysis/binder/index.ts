@@ -48,6 +48,8 @@ import type { FunctionDeclarationStatement } from "../parser/ast/statements/func
 import type { ReturnStatement } from "../parser/ast/statements/return";
 import type { TypeDeclarationStatement } from "../parser/ast/statements/type-declaration";
 import type { UseStatement } from "../parser/ast/statements/use";
+import type { BreakStatement } from "../parser/ast/statements/break";
+import type { EveryStatement } from "../parser/ast/statements/every";
 
 import BoundLiteralExpression from "./bound-expressions/literal";
 import BoundStringInterpolationExpression from "./bound-expressions/string-interpolation";
@@ -78,6 +80,8 @@ import BoundFunctionDeclarationStatement from "./bound-statements/function-decla
 import BoundReturnStatement from "./bound-statements/return";
 import BoundTypeDeclarationStatement from "./bound-statements/type-declaration";
 import BoundUseStatement from "./bound-statements/use";
+import BoundEveryStatement from "./bound-statements/every";
+import BoundBreakStatement from "./bound-statements/break";
 
 type IndexType = SingularType<"string"> | SingularType<"int">;
 type PropertyPair = [LiteralType<string>, InterfacePropertySignature<Type>];
@@ -88,6 +92,19 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public constructor() {
     this.beginScope();
+  }
+
+  public visitEveryStatement(stmt: EveryStatement): BoundEveryStatement {
+    const elementDeclarations = stmt.elementDeclarations
+      .map(elementDeclaration => this.bind<VariableDeclarationStatement, BoundVariableDeclarationStatement>(elementDeclaration));
+
+    const iterator = this.bind(stmt.iterable);
+    const body = this.bind(stmt.body);
+    return new BoundEveryStatement(stmt.token, elementDeclarations, iterator, body);
+  }
+
+  public visitBreakStatement(stmt: BreakStatement): BoundBreakStatement {
+    return new BoundBreakStatement(stmt.token);
   }
 
   public visitUseStatement(stmt: UseStatement): BoundUseStatement {
