@@ -1,3 +1,5 @@
+import util from "util";
+
 import { RuntimeError } from "../errors";
 import type { IndexValueType, ObjectType, TypeLiteralValueType, ValueType } from "../code-analysis/type-checker";
 import type { Callable } from "./values/callable";
@@ -128,7 +130,10 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   }
 
   public visitPrintlnStatement(stmt: PrintlnStatement): void {
-    console.log(...stmt.expressions.map(expr => this.evaluate(expr)).map(value => value?.toString()));
+    const values = stmt.expressions
+      .map(expr => this.evaluate(expr))
+      .map(value => util.inspect(value, { colors: true }));
+    console.log(...values);
   }
 
   public visitExpressionStatement(stmt: ExpressionStatement): ValueType {
