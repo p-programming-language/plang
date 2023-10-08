@@ -19,11 +19,10 @@ export const LITERAL_SYNTAXES = [
 ];
 
 export const UNARY_SYNTAXES = [
-  Syntax.PlusPlus,
-  Syntax.MinusMinus,
-  Syntax.Plus,
-  Syntax.Minus,
+  Syntax.Plus, Syntax.Minus,
   Syntax.Bang,
+  Syntax.Tilde,
+  Syntax.PlusPlus, Syntax.MinusMinus,
   Syntax.Hashtag,
-  Syntax.Tilde
+  Syntax.TypeOf
 ];

@@ -25,6 +25,8 @@ import type { IfStatement } from "./parser/ast/statements/if";
 import type { WhileStatement } from "./parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "./parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "./parser/ast/statements/return";
+import { IsExpression } from "./parser/ast/expressions/is";
+import { TypeOfExpression } from "./parser/ast/expressions/typeof";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   public context = ScopeContext.Global;
@@ -87,6 +89,14 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
   public visitExpressionStatement(stmt: ExpressionStatement): void {
     this.resolve(stmt.expression);
+  }
+
+  public visitIsExpression(expr: IsExpression): void {
+    this.resolve(expr.value);
+  }
+
+  public visitTypeOfExpression(expr: TypeOfExpression): void {
+    this.resolve(expr.operand);
   }
 
   public visitIndexExpression(expr: AccessExpression): void {

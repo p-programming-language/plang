@@ -1,5 +1,6 @@
 import type { ValueType } from "..";
 import { Type, TypeKind } from "./type";
+import type LiteralType from "./literal-type";
 
 export default class SingularType<Name extends string = string> extends Type {
   public override readonly kind: TypeKind = TypeKind.Singular;
@@ -24,6 +25,10 @@ export default class SingularType<Name extends string = string> extends Type {
       default:
         return new SingularType(typeof value);
     }
+  }
+
+  public static fromLiteral(literal: LiteralType): SingularType {
+    return SingularType.fromValue(literal.value);
   }
 
   public toString(colors?: boolean): string {

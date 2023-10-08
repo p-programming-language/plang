@@ -17,3 +17,9 @@ export const INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES: string[] = [
 
 export const INTRINSIC_EXTENDED_LITERAL_TYPES = INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES
   .map(name => new SingularType(name));
+
+export const INTRINSIC_TYPES = new Set<string>([
+  "int", "float", "string", "bool",
+  "undefined", "null", "void",
+  "any", "Array", "Range"
+]);

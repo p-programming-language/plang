@@ -16,6 +16,8 @@ import type { VariableAssignmentExpression } from "./expressions/variable-assign
 import type { PropertyAssignmentExpression } from "./expressions/property-assignment";
 import type { CallExpression } from "./expressions/call";
 import type { AccessExpression } from "./expressions/access";
+import type { TypeOfExpression } from "./expressions/typeof";
+import type { IsExpression } from "./expressions/is";
 import type { ExpressionStatement } from "./statements/expression";
 import type { PrintlnStatement } from "./statements/println";
 import type { VariableAssignmentStatement } from "./statements/variable-assignment";
@@ -51,6 +53,8 @@ import type BoundWhileStatement from "../../binder/bound-statements/if";
 import type BoundFunctionDeclarationStatement from "../../binder/bound-statements/function-declaration";
 import type BoundReturnStatement from "../../binder/bound-statements/return";
 import type BoundTypeDeclarationStatement from "../../binder/bound-statements/type-declaration";
+import type BoundIsExpression from "../../binder/bound-expressions/is";
+import type BoundTypeOfExpression from "../../binder/bound-expressions/typeof";
 
 namespace AST {
   export abstract class Node {
@@ -71,6 +75,8 @@ namespace AST {
 
   export namespace Visitor {
     export abstract class Expression<R> {
+      public abstract visitIsExpression(expr: IsExpression): R
+      public abstract visitTypeOfExpression(expr: TypeOfExpression): R
       public abstract visitIndexExpression(expr: AccessExpression): R
       public abstract visitCallExpression(expr: CallExpression): R
       public abstract visitPropertyAssignmentExpression(expr: PropertyAssignmentExpression): R
@@ -102,6 +108,8 @@ namespace AST {
     }
 
     export abstract class BoundExpression<R> {
+      public abstract visitIsExpression(expr: BoundIsExpression): R
+      public abstract visitTypeOfExpression(expr: BoundTypeOfExpression): R
       public abstract visitIndexExpression(expr: BoundAccessExpression): R
       public abstract visitCallExpression(expr: BoundCallExpression): R
       public abstract visitPropertyAssignmentExpression(expr: BoundPropertyAssignmentExpression): R

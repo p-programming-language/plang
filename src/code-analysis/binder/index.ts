@@ -1,11 +1,11 @@
 import { BindingError, TypeError } from "../../errors";
-import { BoundExpression, BoundStatement } from "./bound-node";
 import { INDEX_TYPE, INTRINSIC_EXTENDED_LITERAL_TYPES } from "../type-checker/types/type-sets";
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
 import { getTypeFromTypeRef } from "../../utility";
 import type { Token } from "../tokenization/token";
 import type { Type } from "../type-checker/types/type";
+import type { BoundExpression, BoundNode, BoundStatement } from "./bound-node";
 import type { InterfacePropertySignature, TypeLiteralValueType } from "../type-checker";
 import Intrinsic from "../../runtime/values/intrinsic";
 import IntrinsicExtension from "../../runtime/intrinsics/literal-extensions";
@@ -34,6 +34,8 @@ import type { VariableAssignmentExpression } from "../parser/ast/expressions/var
 import type { PropertyAssignmentExpression } from "../parser/ast/expressions/property-assignment";
 import type { CallExpression } from "../parser/ast/expressions/call";
 import { AccessExpression } from "../parser/ast/expressions/access";
+import type { IsExpression } from "../parser/ast/expressions/is";
+import type { TypeOfExpression } from "../parser/ast/expressions/typeof";
 import type { ExpressionStatement } from "../parser/ast/statements/expression";
 import type { PrintlnStatement } from "../parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../parser/ast/statements/variable-assignment";
@@ -60,6 +62,8 @@ import BoundVariableAssignmentExpression from "./bound-expressions/variable-assi
 import BoundPropertyAssignmentExpression from "./bound-expressions/property-assignment";
 import BoundCallExpression from "./bound-expressions/call";
 import BoundAccessExpression from "./bound-expressions/access";
+import BoundIsExpression from "./bound-expressions/is";
+import BoundTypeOfExpression from "./bound-expressions/typeof";
 import BoundExpressionStatement from "./bound-statements/expression";
 import BoundPrintlnStatement from "./bound-statements/println";
 import BoundVariableAssignmentStatement from "./bound-statements/variable-assignment";
@@ -76,6 +80,7 @@ type PropertyPair = [LiteralType<string>, InterfacePropertySignature<Type>];
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variableScopes: VariableSymbol[][] = [];
+  private readonly boundNodes = new Map<AST.Node, BoundNode>;
 
   public constructor() {
     this.beginScope();
@@ -180,6 +185,17 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     }
 
     return new BoundAccessExpression(expr.token, object, index);
+  }
+
+  public visitIsExpression(expr: IsExpression): BoundIsExpression {
+    const value = this.bind(expr.value);
+    const type = getTypeFromTypeRef(expr.typeRef);
+    return new BoundIsExpression(value, type, expr.operator);
+  }
+
+  public visitTypeOfExpression(expr: TypeOfExpression): BoundTypeOfExpression {
+    const value = this.bind(expr.operand);
+    return new BoundTypeOfExpression(expr.operator, value);
   }
 
   public visitCallExpression(expr: CallExpression): BoundCallExpression {
@@ -350,14 +366,21 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     return variableSymbol;
   }
 
+  public getBoundNode<BNode extends BoundNode = BoundNode, Node extends AST.Node = AST.Node>(node: Node): BNode {
+    return <BNode>this.boundNodes.get(node)!;
+  }
+
   public bindStatements(statements: AST.Statement[]): BoundStatement[] {
     return statements.map(statement => this.bind(statement));
   }
 
   private bind<T extends AST.Expression | AST.Statement = AST.Expression | AST.Statement, R extends BoundExpression | BoundStatement = T extends AST.Expression ? BoundExpression : BoundStatement>(node: T): R {
-    return <R>(node instanceof AST.Expression ?
+    const boundNode = <R>(node instanceof AST.Expression ?
       node.accept<BoundExpression>(this)
       : node.accept<BoundStatement>(this));
+
+    this.boundNodes.set(node, boundNode);
+    return boundNode;
   }
 
   private beginScope(): void {

@@ -10,11 +10,11 @@ export default class InterfaceType extends SingularType {
     public readonly properties: Map<LiteralType<string>, InterfacePropertySignature<Type>>,
     public readonly indexSignatures: Map<IndexType, Type>,
     // public readonly typeParameters?: TypeParameter[],
-    name = "object"
+    name = "Object"
   ) { super(name); }
 
   public toString(colors?: boolean, indent = 0): string {
-    let result = (this.name === "object" ? "" : this.name + " ") + "{";
+    let result = (this.name === "Object" ? "" : this.name + " ") + "{";
     if (this.indexSignatures.size > 0 || this.properties.size > 0)
       indent += 1;
 

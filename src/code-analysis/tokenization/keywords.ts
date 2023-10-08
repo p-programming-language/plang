@@ -1,6 +1,9 @@
 import Syntax from "./syntax-type";
 
 export const KEYWORDS = {
+  in: Syntax.In,
+  is: Syntax.Is,
+  typeof: Syntax.TypeOf,
   interface: Syntax.Interface,
   return: Syntax.Return,
   break: Syntax.Break,
@@ -10,6 +13,7 @@ export const KEYWORDS = {
   not: Syntax.Bang,
   fn: Syntax.Function,
   if: Syntax.If,
+  every: Syntax.Every,
   while: Syntax.While,
   unless: Syntax.Unless,
   until: Syntax.Until,

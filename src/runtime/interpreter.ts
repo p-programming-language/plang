@@ -8,12 +8,14 @@ import { INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES } from "../code-analysis/type-ch
 import type Binder from "../code-analysis/binder";
 import type Resolver from "../code-analysis/resolver";
 import type P from "../../tools/p";
+import type BoundIsExpression from "../code-analysis/binder/bound-expressions/is";
 import Syntax from "../code-analysis/tokenization/syntax-type";
 import Scope from "./scope";
 import HookedException from "./hooked-exceptions";
 import Intrinsics from "./intrinsics";
-import IntrinsicExtension from "./intrinsics/literal-extensions";
 import PFunction from "./values/function";
+import Intrinsic from "./values/intrinsic";
+import IntrinsicExtension from "./intrinsics/literal-extensions";
 import AST from "../code-analysis/parser/ast";
 
 import { LiteralExpression } from "../code-analysis/parser/ast/expressions/literal";
@@ -31,6 +33,8 @@ import { VariableAssignmentExpression } from "../code-analysis/parser/ast/expres
 import { PropertyAssignmentExpression } from "../code-analysis/parser/ast/expressions/property-assignment";
 import type { CallExpression } from "../code-analysis/parser/ast/expressions/call";
 import type { AccessExpression } from "../code-analysis/parser/ast/expressions/access";
+import { IsExpression } from "../code-analysis/parser/ast/expressions/is";
+import { TypeOfExpression } from "../code-analysis/parser/ast/expressions/typeof";
 import type { ExpressionStatement } from "../code-analysis/parser/ast/statements/expression";
 import type { PrintlnStatement } from "../code-analysis/parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../code-analysis/parser/ast/statements/variable-assignment";
@@ -40,7 +44,9 @@ import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 import type { WhileStatement } from "../code-analysis/parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "../code-analysis/parser/ast/statements/return";
-import Intrinsic from "./values/intrinsic";
+import BoundTypeOfExpression from "../code-analysis/binder/bound-expressions/typeof";
+import SingularType from "../code-analysis/type-checker/types/singular-type";
+import LiteralType from "../code-analysis/type-checker/types/literal-type";
 
 const MAX_RECURSION_DEPTH = 1200;
 
@@ -124,6 +130,19 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitExpressionStatement(stmt: ExpressionStatement): ValueType {
     return this.evaluate(stmt.expression);
+  }
+
+  public visitIsExpression(expr: IsExpression): ValueType {
+    const boundIsExpr = this.binder.getBoundNode<BoundIsExpression>(expr);
+    return boundIsExpr.value.type.isAssignableTo(boundIsExpr.typeToCheck);
+  }
+
+  public visitTypeOfExpression(expr: TypeOfExpression): ValueType {
+    const boundTypeOfExpr = this.binder.getBoundNode<BoundTypeOfExpression>(expr);
+    if (boundTypeOfExpr.value.type instanceof LiteralType)
+      return SingularType.fromLiteral(boundTypeOfExpr.value.type).name;
+    else
+      return (<SingularType>boundTypeOfExpr.value.type).name;
   }
 
   public visitIndexExpression(expr: AccessExpression): ValueType {

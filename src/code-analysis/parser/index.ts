@@ -37,6 +37,8 @@ import { ReturnStatement } from "./ast/statements/return";
 import { TypeDeclarationStatement } from "./ast/statements/type-declaration";
 import { TypeLiteralValueType } from "../type-checker";
 import { RangeLiteralExpression } from "./ast/expressions/range-literal";
+import { IsExpression } from "./ast/expressions/is";
+import { TypeOfExpression } from "./ast/expressions/typeof";
 
 export default class Parser extends TypeParser {
   public constructor(
@@ -331,10 +333,21 @@ export default class Parser extends TypeParser {
   private parseEquality(): AST.Expression {
     let left = this.parseBitwiseOr();
 
-    while (this.match(Syntax.EqualEqual, Syntax.BangEqual)) {
+    while (this.match(Syntax.EqualEqual, Syntax.BangEqual, Syntax.Is)) {
       const operator = this.previous<undefined>();
-      const right = this.parseBitwiseOr();
-      left = new BinaryExpression(left, right, operator);
+      if (operator.syntax === Syntax.Is) {
+        const inversed = this.match(Syntax.Bang);
+        // if (this.match(Syntax.In)) {
+        //   const object = this.parseExpression();
+        //   left = new IsInExpression(left, object, inversed, operator);
+        // } else {
+          const typeRef = this.parseType();
+          left = new IsExpression(left, typeRef, inversed, operator)
+        // }
+      } else {
+        const right = this.parseBitwiseOr();
+        left = new BinaryExpression(left, right, operator);
+      }
     }
 
     return left;
@@ -418,7 +431,10 @@ export default class Parser extends TypeParser {
     if (this.matchSet(UNARY_SYNTAXES)) {
       const operator = this.previous<undefined>();
       const operand = this.parseCall();
-      if (!this.isAssignmentTarget(operand) && (operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus))
+      if (operator.syntax === Syntax.TypeOf)
+        return new TypeOfExpression(operator, operand);
+
+      if ((operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus) && !this.isAssignmentTarget(operand))
         throw new ParserSyntaxError("Invalid increment/decrement target", operand.token);
 
       return new UnaryExpression(operator, operand);

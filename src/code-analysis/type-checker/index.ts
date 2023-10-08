@@ -35,6 +35,8 @@ import type BoundIfStatement from "../binder/bound-statements/if";
 import type BoundWhileStatement from "../binder/bound-statements/while";
 import type BoundFunctionDeclarationStatement from "../binder/bound-statements/function-declaration";
 import type BoundReturnStatement from "../binder/bound-statements/return";
+import BoundIsExpression from "../binder/bound-expressions/is";
+import BoundTypeOfExpression from "../binder/bound-expressions/typeof";
 
 export type ValueType = SingularValueType | ValueType[] | ObjectType;
 export type TypeLiteralValueType = string | boolean | number;
@@ -110,6 +112,14 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
 
   public visitExpressionStatement(stmt: BoundExpressionStatement): void {
     this.check(stmt.expression);
+  }
+
+  public visitIsExpression(expr: BoundIsExpression): void {
+    this.check(expr.value);
+  }
+
+  public visitTypeOfExpression(expr: BoundTypeOfExpression): void {
+    this.check(expr.value);
   }
 
   public visitIndexExpression(expr: BoundAccessExpression): void {
