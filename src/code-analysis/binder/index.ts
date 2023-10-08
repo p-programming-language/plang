@@ -34,8 +34,9 @@ import type { VariableAssignmentExpression } from "../parser/ast/expressions/var
 import type { PropertyAssignmentExpression } from "../parser/ast/expressions/property-assignment";
 import type { CallExpression } from "../parser/ast/expressions/call";
 import { AccessExpression } from "../parser/ast/expressions/access";
-import type { IsExpression } from "../parser/ast/expressions/is";
 import type { TypeOfExpression } from "../parser/ast/expressions/typeof";
+import type { IsExpression } from "../parser/ast/expressions/is";
+import type { IsInExpression } from "../parser/ast/expressions/is-in";
 import type { ExpressionStatement } from "../parser/ast/statements/expression";
 import type { PrintlnStatement } from "../parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../parser/ast/statements/variable-assignment";
@@ -62,8 +63,9 @@ import BoundVariableAssignmentExpression from "./bound-expressions/variable-assi
 import BoundPropertyAssignmentExpression from "./bound-expressions/property-assignment";
 import BoundCallExpression from "./bound-expressions/call";
 import BoundAccessExpression from "./bound-expressions/access";
-import BoundIsExpression from "./bound-expressions/is";
 import BoundTypeOfExpression from "./bound-expressions/typeof";
+import BoundIsExpression from "./bound-expressions/is";
+import BoundIsInExpression from "./bound-expressions/is-in";
 import BoundExpressionStatement from "./bound-statements/expression";
 import BoundPrintlnStatement from "./bound-statements/println";
 import BoundVariableAssignmentStatement from "./bound-statements/variable-assignment";
@@ -165,6 +167,23 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     return new BoundExpressionStatement(this.bind(stmt.expression));
   }
 
+  public visitIsInExpression(expr: IsInExpression): BoundIsInExpression {
+    const value = this.bind(expr.value);
+    const object = this.bind(expr.object);
+    return new BoundIsInExpression(value, object, expr.operator);
+  }
+
+  public visitIsExpression(expr: IsExpression): BoundIsExpression {
+    const value = this.bind(expr.value);
+    const type = getTypeFromTypeRef(expr.typeRef);
+    return new BoundIsExpression(value, type, expr.operator);
+  }
+
+  public visitTypeOfExpression(expr: TypeOfExpression): BoundTypeOfExpression {
+    const value = this.bind(expr.operand);
+    return new BoundTypeOfExpression(expr.operator, value);
+  }
+
   public visitIndexExpression(expr: AccessExpression): BoundExpression {
     const object = this.bind(expr.object);
     const index = this.bind(expr.index);
@@ -185,17 +204,6 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     }
 
     return new BoundAccessExpression(expr.token, object, index);
-  }
-
-  public visitIsExpression(expr: IsExpression): BoundIsExpression {
-    const value = this.bind(expr.value);
-    const type = getTypeFromTypeRef(expr.typeRef);
-    return new BoundIsExpression(value, type, expr.operator);
-  }
-
-  public visitTypeOfExpression(expr: TypeOfExpression): BoundTypeOfExpression {
-    const value = this.bind(expr.operand);
-    return new BoundTypeOfExpression(expr.operator, value);
   }
 
   public visitCallExpression(expr: CallExpression): BoundCallExpression {

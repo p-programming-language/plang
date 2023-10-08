@@ -87,6 +87,5 @@ yarn run <tool>
 
 ## Planned Features
 - Type aliases (e.x. `type number = int | float`)
-- `value is in array`
-- Type guards (`value is T`, `"property" is in object`)
+- Type guards (`value is T`, `T extends U`)
 - Classes

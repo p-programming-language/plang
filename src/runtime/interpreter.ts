@@ -47,6 +47,7 @@ import type { ReturnStatement } from "../code-analysis/parser/ast/statements/ret
 import BoundTypeOfExpression from "../code-analysis/binder/bound-expressions/typeof";
 import SingularType from "../code-analysis/type-checker/types/singular-type";
 import LiteralType from "../code-analysis/type-checker/types/literal-type";
+import { IsInExpression } from "../code-analysis/parser/ast/expressions/is-in";
 
 const MAX_RECURSION_DEPTH = 1200;
 
@@ -130,6 +131,12 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitExpressionStatement(stmt: ExpressionStatement): ValueType {
     return this.evaluate(stmt.expression);
+  }
+
+  public visitIsInExpression(expr: IsInExpression): ValueType {
+    const value = this.evaluate(expr.value);
+    const object = this.evaluate(expr.object);
+    return <any>value in <any>object || Object.values(<any>object).includes(value);
   }
 
   public visitIsExpression(expr: IsExpression): ValueType {

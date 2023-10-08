@@ -27,6 +27,7 @@ import type { FunctionDeclarationStatement } from "./parser/ast/statements/funct
 import type { ReturnStatement } from "./parser/ast/statements/return";
 import { IsExpression } from "./parser/ast/expressions/is";
 import { TypeOfExpression } from "./parser/ast/expressions/typeof";
+import { IsInExpression } from "./parser/ast/expressions/is-in";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   public context = ScopeContext.Global;
@@ -89,6 +90,11 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
   public visitExpressionStatement(stmt: ExpressionStatement): void {
     this.resolve(stmt.expression);
+  }
+
+  public visitIsInExpression(expr: IsInExpression): void {
+    this.resolve(expr.value);
+    this.resolve(expr.object);
   }
 
   public visitIsExpression(expr: IsExpression): void {

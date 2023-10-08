@@ -28,6 +28,7 @@ import type { WhileStatement } from "./statements/while";
 import type { FunctionDeclarationStatement } from "./statements/function-declaration";
 import type { ReturnStatement } from "./statements/return";
 import type { TypeDeclarationStatement } from "./statements/type-declaration";
+import type { IsInExpression } from "./expressions/is-in";
 import type BoundLiteralExpression from "../../binder/bound-expressions/literal";
 import type BoundStringInterpolationExpression from "../../binder/bound-expressions/string-interpolation";
 import type BoundRangeLiteralExpression from "../../binder/bound-expressions/range-literal";
@@ -55,6 +56,7 @@ import type BoundReturnStatement from "../../binder/bound-statements/return";
 import type BoundTypeDeclarationStatement from "../../binder/bound-statements/type-declaration";
 import type BoundIsExpression from "../../binder/bound-expressions/is";
 import type BoundTypeOfExpression from "../../binder/bound-expressions/typeof";
+import type BoundIsInExpression from "../../binder/bound-expressions/is-in";
 
 namespace AST {
   export abstract class Node {
@@ -75,6 +77,7 @@ namespace AST {
 
   export namespace Visitor {
     export abstract class Expression<R> {
+      public abstract visitIsInExpression(expr: IsInExpression): R
       public abstract visitIsExpression(expr: IsExpression): R
       public abstract visitTypeOfExpression(expr: TypeOfExpression): R
       public abstract visitIndexExpression(expr: AccessExpression): R
@@ -108,6 +111,7 @@ namespace AST {
     }
 
     export abstract class BoundExpression<R> {
+      public abstract visitIsInExpression(expr: BoundIsInExpression): R
       public abstract visitIsExpression(expr: BoundIsExpression): R
       public abstract visitTypeOfExpression(expr: BoundTypeOfExpression): R
       public abstract visitIndexExpression(expr: BoundAccessExpression): R

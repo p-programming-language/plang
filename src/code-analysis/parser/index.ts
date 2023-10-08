@@ -2,6 +2,7 @@
 import { Token } from "../tokenization/token";
 import { ParserSyntaxError } from "../../errors";
 import { fakeToken } from "../../utility";
+import type { TypeLiteralValueType } from "../type-checker";
 import type P from "../../p";
 import type TypeAnalyzer from "./type-analyzer";
 import TypeParser from "./type-parser";
@@ -13,6 +14,7 @@ const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = Synta
 
 import { LiteralExpression } from "./ast/expressions/literal";
 import { StringInterpolationExpression } from "./ast/expressions/string-interpolation";
+import { RangeLiteralExpression } from "./ast/expressions/range-literal";
 import { ArrayLiteralExpression } from "./ast/expressions/array-literal";
 import { ObjectLiteralExpression } from "./ast/expressions/object-literal";
 import { ParenthesizedExpression } from "./ast/expressions/parenthesized";
@@ -25,6 +27,9 @@ import { CompoundAssignmentExpression } from "./ast/expressions/compound-assignm
 import { PropertyAssignmentExpression } from "./ast/expressions/property-assignment";
 import { CallExpression } from "./ast/expressions/call";
 import { AccessExpression } from "./ast/expressions/access";
+import { TypeOfExpression } from "./ast/expressions/typeof";
+import { IsExpression } from "./ast/expressions/is";
+import { IsInExpression } from "./ast/expressions/is-in";
 import { ExpressionStatement } from "./ast/statements/expression";
 import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
@@ -35,10 +40,6 @@ import { WhileStatement } from "./ast/statements/while";
 import { FunctionDeclarationStatement } from "./ast/statements/function-declaration";
 import { ReturnStatement } from "./ast/statements/return";
 import { TypeDeclarationStatement } from "./ast/statements/type-declaration";
-import { TypeLiteralValueType } from "../type-checker";
-import { RangeLiteralExpression } from "./ast/expressions/range-literal";
-import { IsExpression } from "./ast/expressions/is";
-import { TypeOfExpression } from "./ast/expressions/typeof";
 
 export default class Parser extends TypeParser {
   public constructor(
@@ -337,13 +338,13 @@ export default class Parser extends TypeParser {
       const operator = this.previous<undefined>();
       if (operator.syntax === Syntax.Is) {
         const inversed = this.match(Syntax.Bang);
-        // if (this.match(Syntax.In)) {
-        //   const object = this.parseExpression();
-        //   left = new IsInExpression(left, object, inversed, operator);
-        // } else {
+        if (this.match(Syntax.In)) {
+          const object = this.parseExpression();
+          left = new IsInExpression(left, object, inversed, operator);
+        } else {
           const typeRef = this.parseType();
           left = new IsExpression(left, typeRef, inversed, operator)
-        // }
+        }
       } else {
         const right = this.parseBitwiseOr();
         left = new BinaryExpression(left, right, operator);
