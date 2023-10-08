@@ -16,7 +16,8 @@ import PFunction from "./function";
 import FunctionType from "../../code-analysis/type-checker/types/function-type";
 
 namespace Intrinsic {
-  type IFunctionCtor = new (interpreter?: Interpreter | undefined) => Function<ValueType[], ValueType>;
+  export type FunctionCtor = new (interpreter?: Interpreter | undefined) => Intrinsic.Function;
+  export type LibCtor = new (intrinsics: Intrinsics) => Intrinsic.Lib;
 
   abstract class Collection extends PValue {
     public abstract get members(): Record<string, ValueType>;
@@ -40,14 +41,14 @@ namespace Intrinsic {
       const members = Object.entries(this.members);
       for (const [name, value] of members)
         if (value instanceof Intrinsic.Function.constructor)
-          this.intrinsics.defineFunction(name, <IFunctionCtor><unknown>value);
+          this.intrinsics.defineFunction(name, <FunctionCtor><unknown>value);
         else if (value instanceof Intrinsic.Lib) {
-          const libType = getLibType(new Map(Object.entries(value.members)), value);
+          const libType = getLibType(value);
           const mappedLib = new Map(Object.entries(value.members)
             .map(([ memberName, memberValue ]) => [
               memberName,
               memberValue instanceof Intrinsic.Function.constructor ?
-                new (<IFunctionCtor>memberValue)()
+                new (<FunctionCtor>memberValue)()
                 : memberValue
             ]));
 
@@ -95,23 +96,22 @@ namespace Intrinsic {
     }
   }
 
-  const getLibType = (parentMembers: Map<string, ValueType>, lib: Lib): InterfaceType =>
+  export const getLibType = (lib: Lib): InterfaceType =>
     new InterfaceType(
-      new Map(Array.from(parentMembers.entries()).map(([propName, propValue]) => {
+      new Map(Array.from(Object.entries(lib.members)).map(([propName, propValue]) => {
         let valueType: Type;
         if (propValue instanceof PFunction)
           valueType = new FunctionType(
             new Map<string, Type>(propValue.definition.parameters.map(param => [param.identifier.name.lexeme, getTypeFromTypeRef(param.typeRef)])),
             getTypeFromTypeRef(propValue.definition.returnType)
           );
-        else if (propValue instanceof Intrinsic.Function.constructor) {
-          const fn = new (<IFunctionCtor>propValue)();
+        else if (propValue instanceof Intrinsic.Function) {
           valueType = new FunctionType(
-            new Map(Object.entries(fn.argumentTypes)),
-            fn.returnType
+            new Map(Object.entries(propValue.argumentTypes)),
+            propValue.returnType
           );
         } else if (propValue instanceof Intrinsic.Lib)
-          valueType = getLibType(new Map(Object.entries(propValue.members)), propValue);
+          valueType = getLibType(propValue);
         else
           valueType = SingularType.fromValue(propValue);
 

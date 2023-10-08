@@ -19,6 +19,7 @@ import UnionType from "./code-analysis/type-checker/types/union-type";
 import InterfaceType from "./code-analysis/type-checker/types/interface-type";
 import { FunctionTypeExpression } from "./code-analysis/parser/ast/type-nodes/function-type";
 import FunctionType from "./code-analysis/type-checker/types/function-type";
+import { statSync } from "fs";
 
 export function clearTerminal(): void {
   const os = platform();
@@ -27,6 +28,19 @@ export function clearTerminal(): void {
     spawnSync("cmd", ["/c", "cls"], { stdio: "inherit" });
   else
     spawnSync("clear", [], { stdio: "inherit" });
+}
+
+export function fileExists(path: string) {
+  try {
+    const stats = statSync(path);
+    return stats.isFile() || stats.isDirectory();
+  } catch(e) {
+    return false;
+  }
+}
+
+export function isDirectory(path: string) {
+  return fileExists(path) && statSync(path).isDirectory();
 }
 
 export function fakeToken<V extends ValueType = ValueType, S extends Syntax = Syntax>(syntax: S, lexeme: string, value?: V): Token<V, S> {

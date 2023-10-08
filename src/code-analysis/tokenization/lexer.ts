@@ -48,6 +48,8 @@ export default class Lexer extends ArrayStepper<string> {
         return this.addToken(Syntax.Semicolon, undefined, true);
       case ",":
         return this.addToken(Syntax.Comma, undefined, true);
+      case "@":
+        return this.addToken(Syntax.At, undefined, true);
       case "(":
         return this.addToken(Syntax.LParen, undefined, true);
       case ")":

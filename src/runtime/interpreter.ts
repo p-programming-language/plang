@@ -7,7 +7,7 @@ import type { Type } from "../code-analysis/type-checker/types/type";
 import { INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES } from "../code-analysis/type-checker/types/type-sets";
 import { Token } from "../code-analysis/tokenization/token";
 import { Range } from "./values/range";
-import { fakeToken } from "../utility";
+import { fakeToken, fileExists, isDirectory } from "../utility";
 import type Binder from "../code-analysis/binder";
 import type Resolver from "../code-analysis/resolver";
 import type P from "../../tools/p";
@@ -52,6 +52,9 @@ import type { IfStatement } from "../code-analysis/parser/ast/statements/if";
 import type { WhileStatement } from "../code-analysis/parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "../code-analysis/parser/ast/statements/return";
+import type { UseStatement } from "../code-analysis/parser/ast/statements/use";
+import path from "path";
+import { readFileSync } from "fs";
 
 const MAX_RECURSION_DEPTH = 1200;
 
@@ -70,6 +73,44 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     public fileName = "unnamed"
   ) {
     this.intrinsics.inject();
+  }
+
+  public visitUseStatement(stmt: UseStatement): void {
+    if (stmt.location.intrinsic) {
+      const lib = this.resolveIntrinsicLib(stmt.keyword, stmt.location.path);
+      if (stmt.members === true)
+        lib.inject();
+      else
+        for (const member of stmt.members) {
+          const libMember = lib.members[member.lexeme];
+          if (!libMember)
+            throw new RuntimeError(`Import '${member.lexeme}' does not exist for '${stmt.location.path}'`, member);
+
+          if (lib.propertyTypes[member.lexeme])
+            this.intrinsics.define(member.lexeme, lib.members[member.lexeme], lib.propertyTypes[member.lexeme]);
+          else if (libMember instanceof Intrinsic.Lib)
+            this.intrinsics.define(member.lexeme, lib.members[member.lexeme], Intrinsic.getLibType(libMember));
+          else if (libMember instanceof Intrinsic.Function.constructor)
+            this.intrinsics.defineFunction(member.lexeme, <Intrinsic.FunctionCtor>libMember);
+          else
+            this.intrinsics.defineFunctionFromInstance(member.lexeme, <Intrinsic.Function>libMember);
+        }
+    } else
+      throw new RuntimeError("Module imports are not supported yet", stmt.keyword);
+  }
+
+  private resolveIntrinsicLib(token: Token<undefined>, filePath: string): Intrinsic.Lib {
+    const libsFolder = path.join(__dirname, "intrinsics", "libs");
+    const libPath = path.join(libsFolder, filePath.slice(1));
+    if (!fileExists(libPath))
+      throw new RuntimeError(`Invalid import: Intrinsic path '${filePath}' does not exist`, token);
+
+    let libFile = libPath;
+    if (isDirectory(libPath))
+      libFile = path.join(libPath, "index.js");
+
+    const Lib = <Intrinsic.LibCtor>require(libFile).default;
+    return new Lib(this.intrinsics);
   }
 
   public visitTypeDeclarationStatement(): void {

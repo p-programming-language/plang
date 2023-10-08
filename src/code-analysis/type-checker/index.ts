@@ -38,6 +38,7 @@ import type BoundReturnStatement from "../binder/bound-statements/return";
 import BoundIsExpression from "../binder/bound-expressions/is";
 import BoundTypeOfExpression from "../binder/bound-expressions/typeof";
 import BoundIsInExpression from "../binder/bound-expressions/is-in";
+import BoundUseStatement from "../binder/bound-statements/use";
 
 export type ValueType = SingularValueType | ValueType[] | ObjectType;
 export type TypeLiteralValueType = string | boolean | number;
@@ -57,6 +58,10 @@ export interface InterfacePropertySignature<T> {
 // NOTE: always call check() before assert()
 
 export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
+  public visitUseStatement(): void {
+    // do nothing
+  }
+
   public visitTypeDeclarationStatement(): void {
     // do nothing
   }

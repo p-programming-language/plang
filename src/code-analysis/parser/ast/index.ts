@@ -18,6 +18,7 @@ import type { CallExpression } from "./expressions/call";
 import type { AccessExpression } from "./expressions/access";
 import type { TypeOfExpression } from "./expressions/typeof";
 import type { IsExpression } from "./expressions/is";
+import type { IsInExpression } from "./expressions/is-in";
 import type { ExpressionStatement } from "./statements/expression";
 import type { PrintlnStatement } from "./statements/println";
 import type { VariableAssignmentStatement } from "./statements/variable-assignment";
@@ -28,7 +29,7 @@ import type { WhileStatement } from "./statements/while";
 import type { FunctionDeclarationStatement } from "./statements/function-declaration";
 import type { ReturnStatement } from "./statements/return";
 import type { TypeDeclarationStatement } from "./statements/type-declaration";
-import type { IsInExpression } from "./expressions/is-in";
+import type { UseStatement } from "./statements/use";
 import type BoundLiteralExpression from "../../binder/bound-expressions/literal";
 import type BoundStringInterpolationExpression from "../../binder/bound-expressions/string-interpolation";
 import type BoundRangeLiteralExpression from "../../binder/bound-expressions/range-literal";
@@ -44,7 +45,9 @@ import type BoundVariableAssignmentExpression from "../../binder/bound-expressio
 import type BoundPropertyAssignmentExpression from "../../binder/bound-expressions/property-assignment";
 import type BoundCallExpression from "../../binder/bound-expressions/call";
 import type BoundAccessExpression from "../../binder/bound-expressions/access";
-import type BoundExpressionStatement from "../../binder/bound-statements/expression";
+import type BoundIsExpression from "../../binder/bound-expressions/is";
+import type BoundTypeOfExpression from "../../binder/bound-expressions/typeof";
+import type BoundIsInExpression from "../../binder/bound-expressions/is-in";import type BoundExpressionStatement from "../../binder/bound-statements/expression";
 import type BoundPrintlnStatement from "../../binder/bound-statements/println";
 import type BoundVariableAssignmentStatement from "../../binder/bound-statements/variable-assignment";
 import type BoundVariableDeclarationStatement from "../../binder/bound-statements/variable-declaration";
@@ -54,9 +57,7 @@ import type BoundWhileStatement from "../../binder/bound-statements/if";
 import type BoundFunctionDeclarationStatement from "../../binder/bound-statements/function-declaration";
 import type BoundReturnStatement from "../../binder/bound-statements/return";
 import type BoundTypeDeclarationStatement from "../../binder/bound-statements/type-declaration";
-import type BoundIsExpression from "../../binder/bound-expressions/is";
-import type BoundTypeOfExpression from "../../binder/bound-expressions/typeof";
-import type BoundIsInExpression from "../../binder/bound-expressions/is-in";
+import type BoundUseStatement from "../../binder/bound-statements/use";
 
 namespace AST {
   export abstract class Node {
@@ -98,6 +99,7 @@ namespace AST {
     }
 
     export abstract class Statement<R> {
+      public abstract visitUseStatement(stmt: UseStatement): R
       public abstract visitTypeDeclarationStatement(stmt: TypeDeclarationStatement): R
       public abstract visitReturnStatement(stmt: ReturnStatement): R
       public abstract visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): R
@@ -132,6 +134,7 @@ namespace AST {
     }
 
     export abstract class BoundStatement<R> {
+      public abstract visitUseStatement(stmt: BoundUseStatement): R
       public abstract visitTypeDeclarationStatement(stmt: BoundTypeDeclarationStatement): R
       public abstract visitReturnStatement(stmt: BoundReturnStatement): R
       public abstract visitFunctionDeclarationStatement(stmt: BoundFunctionDeclarationStatement): R

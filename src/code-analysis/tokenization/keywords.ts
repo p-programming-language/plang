@@ -1,6 +1,8 @@
 import Syntax from "./syntax-type";
 
 export const KEYWORDS = {
+  use: Syntax.Use,
+  from: Syntax.From,
   in: Syntax.In,
   is: Syntax.Is,
   typeof: Syntax.TypeOf,

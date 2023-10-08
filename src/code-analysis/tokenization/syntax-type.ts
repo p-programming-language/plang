@@ -16,8 +16,10 @@ enum Syntax {
   Interface,
   TypeOf,
   Is, In,
+  Use, From,
 
   Semicolon, Comma,
+  At,
   DotDot,
   LParen, RParen,
   LBracket, RBracket,

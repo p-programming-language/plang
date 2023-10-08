@@ -28,6 +28,7 @@ import type { ReturnStatement } from "./parser/ast/statements/return";
 import { IsExpression } from "./parser/ast/expressions/is";
 import { TypeOfExpression } from "./parser/ast/expressions/typeof";
 import { IsInExpression } from "./parser/ast/expressions/is-in";
+import { UseStatement } from "./parser/ast/statements/use";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   public context = ScopeContext.Global;
@@ -35,6 +36,14 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
   public constructor() {
     this.beginScope();
+  }
+
+  public visitUseStatement(stmt: UseStatement): void {
+    if (typeof stmt.members === "boolean") return;
+    for (const member of stmt.members) {
+      this.declare(member);
+      this.define(member);
+    }
   }
 
   public visitTypeDeclarationStatement(): void {

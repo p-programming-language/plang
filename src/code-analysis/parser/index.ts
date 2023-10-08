@@ -40,6 +40,7 @@ import { WhileStatement } from "./ast/statements/while";
 import { FunctionDeclarationStatement } from "./ast/statements/function-declaration";
 import { ReturnStatement } from "./ast/statements/return";
 import { TypeDeclarationStatement } from "./ast/statements/type-declaration";
+import { UseStatement } from "./ast/statements/use";
 
 export default class Parser extends TypeParser {
   public constructor(
@@ -65,6 +66,9 @@ export default class Parser extends TypeParser {
    * Parse a non-declaration statement
    */
   private parseStatement(): AST.Statement {
+    if (this.match(Syntax.Use))
+      return this.parseImport();
+
     if (this.match(Syntax.Println)) {
       const keyword = this.previous<undefined>();
       const expressions = this.parseExpressionList();
@@ -88,31 +92,15 @@ export default class Parser extends TypeParser {
 
     if (this.match(Syntax.Return)) {
       const keyword = this.previous<undefined>();
-      const expr = this.checkMultiple([Syntax.Semicolon, Syntax.RBrace, Syntax.EOF]) ?
+      const expr = this.checkSet([Syntax.Semicolon, Syntax.RBrace, Syntax.EOF]) ?
         new LiteralExpression(fakeToken<undefined>(Syntax.Undefined, "undefined"))
         : this.parseExpression();
 
       return new ReturnStatement(keyword, expr);
     }
 
-    if (this.match(Syntax.LBrace)) {
-      const brace = this.previous<undefined>();
-      if (this.match(Syntax.RBrace))
-        return new ExpressionStatement(new ObjectLiteralExpression(brace, new Map));
-
-      if (this.check(Syntax.Identifier) && this.check(Syntax.Colon, 1))
-        return new ExpressionStatement(this.parseObjectContents(brace));
-      else if (this.check(Syntax.LBracket)) {
-        let offset = 1;
-        while (!this.check(Syntax.RBracket, offset))
-          ++offset;
-
-        if (this.check(Syntax.Colon, offset + 1))
-          return new ExpressionStatement(this.parseObjectContents(brace));
-      }
-
-      return this.parseBlock();
-    }
+    if (this.match(Syntax.LBrace))
+      return this.parseBlockOrObject();
 
     return this.parseExpressionStatement();
   }
@@ -168,7 +156,7 @@ export default class Parser extends TypeParser {
 
   private get atVariableDeclaration(): boolean {
     const isVariableDeclarationSyntax = (offset = 1) =>
-      this.checkMultiple([
+      this.checkSet([
         Syntax.Identifier, Syntax.Pipe,
         Syntax.LBracket, Syntax.RBracket,
         Syntax.RParen, Syntax.ColonColon,
@@ -181,7 +169,7 @@ export default class Parser extends TypeParser {
     if (soFarSoGood) {
       let offset = 1;
       while (!this.check(Syntax.EOF, offset) && (!this.check(Syntax.Equal, offset) || (this.check(Syntax.Identifier, offset) && !this.checkType(offset)))) {
-        if (this.checkMultiple([Syntax.Function, Syntax.Is], offset))
+        if (this.checkSet([Syntax.Function, Syntax.Is], offset))
           return false;
 
         offset++
@@ -191,11 +179,67 @@ export default class Parser extends TypeParser {
     return soFarSoGood;
   }
 
+  private parseImportMember(): Token<undefined> {
+    let importedSpecifics = false;
+    let consumedStar = false;
+    const matchedStar = this.match(Syntax.Star) || this.expect(Syntax.Identifier, "import member");
+    const token = this.previous<undefined>();
+    if (matchedStar === true) {
+      if (importedSpecifics)
+        throw new ParserSyntaxError("You can import specific members or all members, but not both", token);
+      else if (consumedStar)
+        throw new ParserSyntaxError(`'*' was imported more than once`, token);
+
+      consumedStar = true;
+    }
+
+    return token;
+  }
+
+  private parseImportPath(): string {
+    let path = "";
+    const validFirstTokens = [Syntax.DotDot, Syntax.Dot, Syntax.Identifier];
+    if (!this.matchSet(validFirstTokens))
+      throw new ParserSyntaxError(`Expected import path, got '${this.current.lexeme}'`, this.current);
+
+    path += this.previous<undefined>().lexeme;
+    while (this.match(Syntax.Slash)) {
+      path += this.previous<undefined>().lexeme;
+      if (!this.matchSet(validFirstTokens))
+        break;
+      else
+        path += this.previous<undefined>().lexeme;
+    }
+
+    return path;
+  }
+
+  private parseImport(): UseStatement {
+    const keyword = this.previous<undefined>();
+    this.match(Syntax.LBrace);
+
+    const members = [ this.parseImportMember() ];
+    const importAll = members[0].syntax === Syntax.Star;
+    if (!importAll)
+      while (this.match(Syntax.Comma))
+        members.push(this.parseImportMember());
+
+    this.match(Syntax.RBrace);
+    this.expect(Syntax.From, "'from'");
+    const intrinsic = this.match(Syntax.At);
+    const path = this.parseImportPath();
+
+    return new UseStatement(keyword, importAll || members, {
+      intrinsic,
+      path: intrinsic ? "@" + path : path
+    });
+  }
+
   private parseFunctionDeclaration(): AST.Statement {
     const returnType = this.parseType();
-    const keyword = this.consume<undefined>(Syntax.Function);
+    const keyword = this.expect<undefined>(Syntax.Function);
 
-    const identifierToken = this.consume<undefined>(Syntax.Identifier, "identifier");
+    const identifierToken = this.expect<undefined>(Syntax.Identifier, "identifier");
     const parameters: VariableDeclarationStatement[] = [];
     if (this.match(Syntax.LParen)) {
       if (this.atVariableDeclaration) {
@@ -203,11 +247,11 @@ export default class Parser extends TypeParser {
         while (this.match(Syntax.Comma))
           parameters.push(this.parseVariableDeclaration());
       }
-      this.consume(Syntax.RParen, "')'");
+      this.expect(Syntax.RParen, "')'");
     }
 
 
-    this.consume(Syntax.LBrace);
+    this.expect(Syntax.LBrace);
     const body = this.parseBlock();
     const declaration = new FunctionDeclarationStatement(keyword, identifierToken, returnType, parameters, body);
     this.consumeSemicolons();
@@ -217,7 +261,7 @@ export default class Parser extends TypeParser {
   private parseVariableDeclaration(): VariableDeclarationStatement {
     const isMutable = this.match(Syntax.Mut);
     const type = this.parseType();
-    const identifierToken = this.consume<undefined>(Syntax.Identifier, "identifier");
+    const identifierToken = this.expect<undefined>(Syntax.Identifier, "identifier");
     const initializer = this.match(Syntax.Equal) ?
       this.parseExpression()
       : undefined;
@@ -257,7 +301,7 @@ export default class Parser extends TypeParser {
     while (this.match(Syntax.Question)) {
       const operator = this.previous<undefined>();
       const body = this.parseExpression();
-      this.consume(Syntax.Colon, "':'");
+      this.expect(Syntax.Colon, "':'");
       const elseBranch = this.parseExpression();
       left = new TernaryExpression(operator, <AST.Expression>left, body, elseBranch);
     }
@@ -454,7 +498,7 @@ export default class Parser extends TypeParser {
 
     while (this.match(Syntax.LParen)) {
       const args = this.parseExpressionList(Syntax.RParen);
-      this.consume(Syntax.RParen, "')'");
+      this.expect(Syntax.RParen, "')'");
       callee = new CallExpression(callee, args);
     }
 
@@ -466,7 +510,7 @@ export default class Parser extends TypeParser {
 
     while (this.match(Syntax.Dot)) {
       const accessToken = this.previous<undefined>();
-      const indexIdentifier = this.consume<string>(Syntax.Identifier);
+      const indexIdentifier = this.expect<string>(Syntax.Identifier);
       indexIdentifier.syntax = Syntax.String;
       indexIdentifier.value = indexIdentifier.lexeme;
       indexIdentifier.lexeme = `"${indexIdentifier.lexeme}"`;
@@ -482,13 +526,13 @@ export default class Parser extends TypeParser {
     let object = this.parsePrimary();
 
     while (this.check(Syntax.LBracket)) {
-      this.consume(Syntax.LBracket);
-      if (!this.checkMultiple([Syntax.RBracket, Syntax.RBrace, Syntax.RParen, Syntax.Identifier], -2))
+      this.expect(Syntax.LBracket);
+      if (!this.checkSet([Syntax.RBracket, Syntax.RBrace, Syntax.RParen, Syntax.Identifier], -2))
         continue;
 
       const bracket = this.previous<undefined>();
       const index = this.parseExpression();
-      this.consume(Syntax.RBracket, "']'");
+      this.expect(Syntax.RBracket, "']'");
       object = new AccessExpression(bracket, object, index);
     }
 
@@ -501,13 +545,13 @@ export default class Parser extends TypeParser {
   private parsePrimary(): AST.Expression {
     if (this.match(Syntax.LParen)) {
       const expr = this.parseExpression();
-      this.consume(Syntax.RParen, "')'");
+      this.expect(Syntax.RParen, "')'");
       return new ParenthesizedExpression(expr);
     }
 
     if (this.matchSet(LITERAL_SYNTAXES)) {
       const token = this.previous<TypeLiteralValueType | null | undefined>();
-      if (this.checkMultiple(LITERAL_SYNTAXES, -2)) {
+      if (this.checkSet(LITERAL_SYNTAXES, -2)) {
         let message = "Unexpected ";
         switch(token.syntax) {
           case Syntax.Float:
@@ -548,7 +592,7 @@ export default class Parser extends TypeParser {
     if (this.match(Syntax.LBracket)) {
       const bracket = this.previous<undefined>();
       const elements = this.parseExpressionList(Syntax.RBracket);
-      this.consume(Syntax.RBracket, "']'");
+      this.expect(Syntax.RBracket, "']'");
       return new ArrayLiteralExpression(bracket, elements);
     }
 
@@ -556,6 +600,25 @@ export default class Parser extends TypeParser {
       return new IdentifierExpression(this.previous());
 
     throw new ParserSyntaxError(`Expected expression, got '${this.current.syntax === Syntax.EOF ? "EOF" : this.current.lexeme}'`, this.current);
+  }
+
+  private parseBlockOrObject(): AST.Statement {
+    const brace = this.previous<undefined>();
+    if (this.match(Syntax.RBrace))
+      return new ExpressionStatement(new ObjectLiteralExpression(brace, new Map));
+
+    if (this.check(Syntax.Identifier) && this.check(Syntax.Colon, 1))
+      return new ExpressionStatement(this.parseObjectContents(brace));
+    else if (this.check(Syntax.LBracket)) {
+      let offset = 1;
+      while (!this.check(Syntax.RBracket, offset))
+        ++offset;
+
+      if (this.check(Syntax.Colon, offset + 1))
+        return new ExpressionStatement(this.parseObjectContents(brace));
+    }
+
+    return this.parseBlock();
   }
 
   /**
@@ -567,7 +630,7 @@ export default class Parser extends TypeParser {
     while (this.match(Syntax.Comma) && !this.check(Syntax.RBrace))
       keyValuePairs.push(this.parseObjectKeyValuePair());
 
-    this.consume(Syntax.RBrace, "'}'");
+    this.expect(Syntax.RBrace, "'}'");
     return new ObjectLiteralExpression(brace, new Map(keyValuePairs));
   }
 
@@ -577,12 +640,12 @@ export default class Parser extends TypeParser {
       const identifier = this.previous<undefined, Syntax.Identifier>();
       key = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
     } else {
-      this.consume(Syntax.LBracket, "'['");
+      this.expect(Syntax.LBracket, "'['");
       key = this.parseExpression();
-      this.consume(Syntax.RBracket, "']'");
+      this.expect(Syntax.RBracket, "']'");
     }
 
-    this.consume(Syntax.Colon, "':'");
+    this.expect(Syntax.Colon, "':'");
     const value = this.parseExpression();
     return [key, value];
   }

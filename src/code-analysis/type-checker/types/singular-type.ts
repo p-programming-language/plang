@@ -1,3 +1,4 @@
+import util from "util"
 import type { ValueType } from "..";
 import { Type, TypeKind } from "./type";
 import type LiteralType from "./literal-type";

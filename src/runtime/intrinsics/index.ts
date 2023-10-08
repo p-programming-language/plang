@@ -10,9 +10,7 @@ import ArrayType from "../../code-analysis/type-checker/types/array-type";
 import FunctionType from "../../code-analysis/type-checker/types/function-type";
 import Intrinsic from "../values/intrinsic";
 import type Interpreter from "../interpreter";
-import type P from "../../p";
 
-import StdLib from "./libs/std";
 import Eval from "./eval";
 
 export default class Intrinsics {
@@ -26,7 +24,6 @@ export default class Intrinsics {
     this.define("dirname$", path.dirname(this.interpreter.fileName), new SingularType("string"));
     this.define("argv", argv.slice(3), new ArrayType(new SingularType("string")));
     this.defineFunction("eval", Eval);
-    (new StdLib(this)).inject();
   }
 
   public define<V extends ValueType = ValueType>(name: string, value: V, type: Type): void {
@@ -38,8 +35,12 @@ export default class Intrinsics {
     });
   }
 
-  public defineFunction<F extends Intrinsic.Function>(name: string, IntrinsicFunction: { new(interpreter?: Interpreter): F }): void {
+  public defineFunction(name: string, IntrinsicFunction: Intrinsic.FunctionCtor): void {
     const fn = new IntrinsicFunction(this.interpreter);
+    this.defineFunctionFromInstance(name, fn);
+  }
+
+  public defineFunctionFromInstance(name: string, fn: Intrinsic.Function): void {
     const type = new FunctionType(new Map<string, Type>(Object.entries(fn.argumentTypes)), fn.returnType);
     this.define(name, fn, type);
   }

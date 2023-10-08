@@ -19,9 +19,9 @@ export default abstract class TypeParser extends TokenStepper {
   protected abstract readonly typeAnalyzer: TypeAnalyzer;
 
   protected parseTypeAlias(): [Token<undefined, Syntax.Identifier>, AST.TypeRef] {
-    this.consume<undefined>(Syntax.Identifier, "'type' keyword");
-    const identifier = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier, "identifier");
-    this.consume(Syntax.Equal, "'='");
+    this.expect<undefined>(Syntax.Identifier, "'type' keyword");
+    const identifier = this.expect<undefined, Syntax.Identifier>(Syntax.Identifier, "identifier");
+    this.expect(Syntax.Equal, "'='");
     const aliasedType = this.parseType();
     return [identifier, aliasedType];
   }
@@ -32,8 +32,8 @@ export default abstract class TypeParser extends TokenStepper {
    * This is the reason it's not grouped with the below methods.
    */
   protected parseInterfaceType(): InterfaceTypeExpression {
-    const name = this.consume<undefined>(Syntax.Identifier);
-    this.consume<undefined>(Syntax.LBrace, "'{'");
+    const name = this.expect<undefined>(Syntax.Identifier);
+    this.expect<undefined>(Syntax.LBrace, "'{'");
     const properties = new Map<LiteralExpression<string, Syntax>, InterfacePropertySignature<AST.TypeRef>>();
     const indexSignatures = new Map<AST.TypeRef, AST.TypeRef>();
 
@@ -45,7 +45,7 @@ export default abstract class TypeParser extends TokenStepper {
         else
           indexSignatures.set(key, prop.valueType);
 
-      this.consume<undefined>(Syntax.RBrace, "'}'");
+      this.expect<undefined>(Syntax.RBrace, "'}'");
     }
 
     return new InterfaceTypeExpression(name, properties, indexSignatures);
@@ -65,8 +65,8 @@ export default abstract class TypeParser extends TokenStepper {
     let isMutable = false;
     if (this.match(Syntax.LBracket)) {
       key = this.parseType();
-      this.consume(Syntax.RBracket, "']'");
-      this.consume(Syntax.Colon, "':'");
+      this.expect(Syntax.RBracket, "']'");
+      this.expect(Syntax.Colon, "':'");
       valueType = this.parseType();
     } else {
       ({ isMutable, valueType, key } = this.parseNamedType(true));
@@ -81,7 +81,7 @@ export default abstract class TypeParser extends TokenStepper {
   private parseNamedType(allowMutable = false) {
     const isMutable = allowMutable ? this.match(Syntax.Mut) : false;
     const valueType = this.parseType();
-    const identifier = this.consume<undefined>(Syntax.Identifier);
+    const identifier = this.expect<undefined>(Syntax.Identifier);
     const key = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
     return { isMutable, valueType, key };
   }
@@ -106,11 +106,11 @@ export default abstract class TypeParser extends TokenStepper {
         while (this.match(Syntax.Comma))
           parseParameter();
 
-        this.consume(Syntax.RParen);
+        this.expect(Syntax.RParen);
       }
 
 
-      this.consume(Syntax.ColonColon, "'::'");
+      this.expect(Syntax.ColonColon, "'::'");
       const returnType = this.parseType();
       return new FunctionTypeExpression(parameterTypes, returnType);
     }
@@ -139,7 +139,7 @@ export default abstract class TypeParser extends TokenStepper {
     let left: AST.TypeRef = this.parseSingularType();
 
     while (this.match(Syntax.LBracket)) {
-      this.consume(Syntax.RBracket, "']'");
+      this.expect(Syntax.RBracket, "']'");
       left = new ArrayTypeExpression(left);
     }
 
@@ -164,7 +164,7 @@ export default abstract class TypeParser extends TokenStepper {
     let typeArgs: AST.TypeRef[] | undefined;
     if (this.match(Syntax.LT)) {
       typeArgs = this.parseTypeList();
-      this.consume(Syntax.GT, "'>'");
+      this.expect(Syntax.GT, "'>'");
     }
 
     if (this.typeAnalyzer!.typeTracker.isCustomType(typeName))
@@ -206,9 +206,9 @@ export default abstract class TypeParser extends TokenStepper {
       || (this.check(Syntax.RParen, offset + 1) && this.check(Syntax.ColonColon, offset + 2))
     ))
     || (
-      this.checkMultiple([Syntax.Identifier, Syntax.Undefined, Syntax.Null], offset)
+      this.checkSet([Syntax.Identifier, Syntax.Undefined, Syntax.Null], offset)
       && this.typeAnalyzer!.typeTracker.isTypeDefined(this.peek(offset)!.lexeme)
     )
-    || this.checkMultiple([Syntax.String, Syntax.Boolean, Syntax.Int, Syntax.Float], offset)
+    || this.checkSet([Syntax.String, Syntax.Boolean, Syntax.Int, Syntax.Float], offset)
   }
 }

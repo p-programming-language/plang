@@ -47,6 +47,7 @@ import type { WhileStatement } from "../parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "../parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "../parser/ast/statements/return";
 import type { TypeDeclarationStatement } from "../parser/ast/statements/type-declaration";
+import type { UseStatement } from "../parser/ast/statements/use";
 
 import BoundLiteralExpression from "./bound-expressions/literal";
 import BoundStringInterpolationExpression from "./bound-expressions/string-interpolation";
@@ -76,6 +77,7 @@ import BoundWhileStatement from "./bound-statements/while";
 import BoundFunctionDeclarationStatement from "./bound-statements/function-declaration";
 import BoundReturnStatement from "./bound-statements/return";
 import BoundTypeDeclarationStatement from "./bound-statements/type-declaration";
+import BoundUseStatement from "./bound-statements/use";
 
 type IndexType = SingularType<"string"> | SingularType<"int">;
 type PropertyPair = [LiteralType<string>, InterfacePropertySignature<Type>];
@@ -86,6 +88,10 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public constructor() {
     this.beginScope();
+  }
+
+  public visitUseStatement(stmt: UseStatement): BoundUseStatement {
+    return new BoundUseStatement(stmt.keyword, stmt.members, stmt.location);
   }
 
   public visitTypeDeclarationStatement(stmt: TypeDeclarationStatement): BoundTypeDeclarationStatement {

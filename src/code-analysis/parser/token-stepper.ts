@@ -2,11 +2,8 @@ import type { ValueType } from "../type-checker";
 import type { Token } from "../tokenization/token";
 import { ParserSyntaxError } from "../../errors";
 
-import * as SyntaxSets from "../tokenization/syntax-sets";
 import Syntax from "../tokenization/syntax-type";
 import ArrayStepper from "../array-stepper";
-
-type SyntaxSet = (typeof SyntaxSets)[keyof typeof SyntaxSets];
 
 export default class TokenStepper extends ArrayStepper<Token> {
   protected consumeSemicolons(): void {
@@ -18,7 +15,7 @@ export default class TokenStepper extends ArrayStepper<Token> {
    *
    * Advances the parser if it does
    */
-  protected consume<V extends ValueType = ValueType, S extends Syntax = Syntax>(syntax: Syntax, expectedOverride?: string): Token<V, S> {
+  protected expect<V extends ValueType = ValueType, S extends Syntax = Syntax>(syntax: Syntax, expectedOverride?: string): Token<V, S> {
     const gotSyntax = this.current ? Syntax[this.current.syntax] : "EOF";
     if (!this.match(syntax))
       throw new ParserSyntaxError(`Expected ${expectedOverride ?? `'${Syntax[syntax]}'`}, got ${gotSyntax}`, this.current);
@@ -49,8 +46,8 @@ export default class TokenStepper extends ArrayStepper<Token> {
    * Checks for a set of syntax types, and consumes it if one exists
    * @returns True if the current syntax matches any one syntax in `syntaxSet`
    */
-  protected matchSet(syntaxSet: SyntaxSet): boolean {
-    return this.match(...syntaxSet);
+  protected matchSet(syntaxes: Syntax[]): boolean {
+    return this.match(...syntaxes);
   }
 
   /**
@@ -70,7 +67,7 @@ export default class TokenStepper extends ArrayStepper<Token> {
   /**
    * @returns True if the syntax at `offset` matches any one syntax in `syntaxes`
    */
-  protected checkMultiple(syntaxes: Syntax[], offset = 0): boolean {
+  protected checkSet(syntaxes: Syntax[], offset = 0): boolean {
     for (const syntax of syntaxes)
       if (this.check(syntax, offset))
         return true;
