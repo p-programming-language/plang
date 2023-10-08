@@ -134,7 +134,8 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitIsExpression(expr: IsExpression): ValueType {
     const boundIsExpr = this.binder.getBoundNode<BoundIsExpression>(expr);
-    return boundIsExpr.value.type.isAssignableTo(boundIsExpr.typeToCheck);
+    const matches = boundIsExpr.value.type.isAssignableTo(boundIsExpr.typeToCheck);
+    return expr.inversed ? !matches : matches;
   }
 
   public visitTypeOfExpression(expr: TypeOfExpression): ValueType {

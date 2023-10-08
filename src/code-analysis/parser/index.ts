@@ -174,7 +174,7 @@ export default class Parser extends TypeParser {
     if (soFarSoGood) {
       let offset = 1;
       while (!this.check(Syntax.EOF, offset) && (!this.check(Syntax.Equal, offset) || (this.check(Syntax.Identifier, offset) && !this.checkType(offset)))) {
-        if (this.check(Syntax.Function, offset))
+        if (this.checkMultiple([Syntax.Function, Syntax.Is], offset))
           return false;
 
         offset++
