@@ -89,8 +89,11 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     if (typeof iterable === "number")
       iterable = new Range(1, iterable);
 
-    if (iterable instanceof Range)
-      iterable = Array.from({ length: iterable.maximum - iterable.minimum + 1 }, (_, i) => (<Range>iterable).minimum + i);
+    if (iterable instanceof Range) {
+      iterable = iterable.minimum <= iterable.maximum ?
+        Array.from({ length: iterable.maximum - iterable.minimum + 1 }, (_, i) => (<Range>iterable).minimum + i)
+        : Array.from({ length: iterable.minimum - iterable.maximum + 1 }, (_, i) => (<Range>iterable).minimum - i);
+    }
 
     if (typeof iterable === "string")
       iterable = iterable.split("");
