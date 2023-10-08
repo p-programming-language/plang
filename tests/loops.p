@@ -1,4 +1,7 @@
-every int i in 1..5
+every int i in 5
+  println i
+
+every int i in 5..1
   println i
 
 every string char in "abc"
@@ -12,3 +15,4 @@ while true {
   if i == 5 break
   println ++i
 }
+
