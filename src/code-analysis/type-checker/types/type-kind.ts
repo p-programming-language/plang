@@ -4,7 +4,8 @@ enum TypeKind {
   Union,
   Array,
   Function,
-  Interface
+  Interface,
+  Class
 }
 
 export default TypeKind;

@@ -19,6 +19,7 @@ import type { AccessExpression } from "./expressions/access";
 import type { TypeOfExpression } from "./expressions/typeof";
 import type { IsExpression } from "./expressions/is";
 import type { IsInExpression } from "./expressions/is-in";
+import type { NewExpression } from "./expressions/new";
 import type { ExpressionStatement } from "./statements/expression";
 import type { VariableAssignmentStatement } from "./statements/variable-assignment";
 import type { VariableDeclarationStatement } from "./statements/variable-declaration";
@@ -32,6 +33,9 @@ import type { UseStatement } from "./statements/use";
 import type { BreakStatement } from "./statements/break";
 import type { NextStatement } from "./statements/next";
 import type { EveryStatement } from "./statements/every";
+import type { ClassBodyStatement } from "./statements/class-body";
+import type { ClassStatement } from "./statements/class";
+
 import type BoundLiteralExpression from "../../binder/bound-expressions/literal";
 import type BoundStringInterpolationExpression from "../../binder/bound-expressions/string-interpolation";
 import type BoundRangeLiteralExpression from "../../binder/bound-expressions/range-literal";
@@ -50,6 +54,7 @@ import type BoundAccessExpression from "../../binder/bound-expressions/access";
 import type BoundIsExpression from "../../binder/bound-expressions/is";
 import type BoundTypeOfExpression from "../../binder/bound-expressions/typeof";
 import type BoundIsInExpression from "../../binder/bound-expressions/is-in";
+import type BoundNewExpression from "../../binder/bound-expressions/new";
 import type BoundExpressionStatement from "../../binder/bound-statements/expression";
 import type BoundVariableAssignmentStatement from "../../binder/bound-statements/variable-assignment";
 import type BoundVariableDeclarationStatement from "../../binder/bound-statements/variable-declaration";
@@ -63,6 +68,8 @@ import type BoundUseStatement from "../../binder/bound-statements/use";
 import type BoundBreakStatement from "../../binder/bound-statements/break";
 import type BoundEveryStatement from "../../binder/bound-statements/every";
 import type BoundNextStatement from "../../binder/bound-statements/next";
+import type BoundClassBodyStatement from "../../binder/bound-statements/class-body";
+import type BoundClassStatement from "../../binder/bound-statements/class";
 
 namespace AST {
   export abstract class Node {
@@ -83,6 +90,7 @@ namespace AST {
 
   export namespace Visitor {
     export abstract class Expression<R> {
+      public abstract visitNewExpression(expr: NewExpression): R
       public abstract visitIsInExpression(expr: IsInExpression): R
       public abstract visitIsExpression(expr: IsExpression): R
       public abstract visitTypeOfExpression(expr: TypeOfExpression): R
@@ -104,6 +112,8 @@ namespace AST {
     }
 
     export abstract class Statement<R> {
+      public abstract visitClassBodyStatement(stmt: ClassBodyStatement): R
+      public abstract visitClassStatement(stmt: ClassStatement): R
       public abstract visitEveryStatement(stmt: EveryStatement): R
       public abstract visitNextStatement(stmt: NextStatement): R
       public abstract visitBreakStatement(stmt: BreakStatement): R
@@ -120,6 +130,7 @@ namespace AST {
     }
 
     export abstract class BoundExpression<R> {
+      public abstract visitNewExpression(expr: BoundNewExpression): R
       public abstract visitIsInExpression(expr: BoundIsInExpression): R
       public abstract visitIsExpression(expr: BoundIsExpression): R
       public abstract visitTypeOfExpression(expr: BoundTypeOfExpression): R
@@ -141,6 +152,8 @@ namespace AST {
     }
 
     export abstract class BoundStatement<R> {
+      public abstract visitClassBodyStatement(stmt: BoundClassBodyStatement): R
+      public abstract visitClassStatement(stmt: BoundClassStatement): R
       public abstract visitEveryStatement(stmt: BoundEveryStatement): R
       public abstract visitNextStatement(stmt: BoundNextStatement): R
       public abstract visitBreakStatement(stmt: BoundBreakStatement): R

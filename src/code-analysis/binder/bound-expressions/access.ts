@@ -27,7 +27,7 @@ export default class BoundAccessExpression extends BoundExpression {
     else if (object.type.isSingular() && object.type.name === "Array")
       this.type = object.type.typeArguments![0];
     else if (object.type.isInterface() && index instanceof BoundLiteralExpression && new SingularType("string").isAssignableTo(index.type)) {
-      const propertyType = new Map(Array.from(object.type.properties.entries())
+      const propertyType = new Map(Array.from(object.type.members.entries())
         .map(([key, value]) => [key.value, value]))
         .get(index.token.value!.toString())?.valueType
 

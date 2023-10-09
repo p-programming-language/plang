@@ -6,7 +6,7 @@ import { getTypeFromTypeRef } from "../../utility";
 import type { Token } from "../tokenization/token";
 import type { Type } from "../type-checker/types/type";
 import type { BoundExpression, BoundNode, BoundStatement } from "./bound-node";
-import type { InterfacePropertySignature, TypeLiteralValueType } from "../type-checker";
+import type { InterfaceMemberSignature, TypeLiteralValueType } from "../type-checker";
 import Intrinsic from "../../runtime/values/intrinsic";
 import IntrinsicExtension from "../../runtime/intrinsics/value-extensions";
 import VariableSymbol from "./variable-symbol";
@@ -84,7 +84,7 @@ import BoundBreakStatement from "./bound-statements/break";
 import BoundNextStatement from "./bound-statements/next";
 
 type IndexType = SingularType<"string"> | SingularType<"int">;
-type PropertyPair = [LiteralType<string>, InterfacePropertySignature<Type>];
+type PropertyPair = [LiteralType<string>, InterfaceMemberSignature<Type>];
 
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variableScopes: VariableSymbol[][] = [];
@@ -257,7 +257,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     if (
       access.object.type.isInterface()
       && access.index instanceof BoundLiteralExpression
-      && access.object.type.properties.get(access.index.token.value)?.mutable === false
+      && access.object.type.members.get(access.index.token.value)?.mutable === false
     ) {
       throw new TypeError(`Attempt to assign to immutable property '${access.index.token.value}'`, expr.access.index.token)
     }
@@ -344,7 +344,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       })
       .filter((props): props is PropertyPair => props !== undefined);
 
-    const type = new InterfaceType(new Map<LiteralType<string>, InterfacePropertySignature<Type>>(typeProperties), indexSignatures);
+    const type = new InterfaceType(new Map<LiteralType<string>, InterfaceMemberSignature<Type>>(typeProperties), indexSignatures);
     return new BoundObjectLiteralExpression(expr.token, properties, type);
   }
 

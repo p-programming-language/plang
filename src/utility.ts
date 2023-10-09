@@ -2,7 +2,7 @@ import { spawnSync } from "child_process";
 import { statSync } from "fs";
 import { platform } from "os";
 
-import type { IndexType, InterfacePropertySignature, ValueType } from "./code-analysis/type-checker";
+import type { ClassMemberSignature, IndexType, InterfaceMemberSignature, ValueType } from "./code-analysis/type-checker";
 import type { Type } from "./code-analysis/type-checker/types/type";
 import { BindingError } from "./errors";
 import { LocationSpan, Location, Token } from "./code-analysis/tokenization/token";
@@ -20,6 +20,8 @@ import SingularType from "./code-analysis/type-checker/types/singular-type";
 import UnionType from "./code-analysis/type-checker/types/union-type";
 import FunctionType from "./code-analysis/type-checker/types/function-type";
 import InterfaceType from "./code-analysis/type-checker/types/interface-type";
+import { ClassTypeExpression } from "./code-analysis/parser/ast/type-nodes/class-type";
+import ClassType from "./code-analysis/type-checker/types/class-type";
 
 export function clearTerminal(): void {
   const os = platform();
@@ -67,10 +69,10 @@ export function getTypeFromTypeRef<T extends Type = Type>(node: AST.TypeRef): T 
   else if (node instanceof UnionTypeExpression)
     return <T><unknown>new UnionType(node.types.map(singular => getTypeFromTypeRef<SingularType>(singular)));
   else if (node instanceof InterfaceTypeExpression) {
-    const properties = new Map<LiteralType<string>, InterfacePropertySignature<Type>>();
+    const members = new Map<LiteralType<string>, InterfaceMemberSignature<Type>>();
     const indexSignatures = new Map<IndexType, Type>();
-    for (const [key, { mutable, valueType }] of node.properties)
-      properties.set(new LiteralType(key.token.value), {
+    for (const [key, { mutable, valueType }] of node.members)
+      members.set(new LiteralType(key.token.value), {
         valueType: getTypeFromTypeRef(valueType),
         mutable
       });
@@ -78,7 +80,16 @@ export function getTypeFromTypeRef<T extends Type = Type>(node: AST.TypeRef): T 
     for (const [keyType, valueType] of node.indexSignatures)
       indexSignatures.set(getTypeFromTypeRef<IndexType>(keyType), getTypeFromTypeRef(valueType))
 
-    return <T><unknown>new InterfaceType(properties, indexSignatures, node.name.lexeme);
+    return <T><unknown>new InterfaceType(members, indexSignatures, node.name.lexeme);
+  } else if (node instanceof ClassTypeExpression) {
+    const members = new Map<LiteralType<string>, ClassMemberSignature<Type>>();
+    for (const [key, { modifiers, mutable, valueType }] of node.members)
+      members.set(new LiteralType(key.token.value), {
+        valueType: getTypeFromTypeRef(valueType),
+        modifiers, mutable
+      });
+
+    return <T><unknown>new ClassType(node.name.lexeme, members);
   }
 
   throw new BindingError(`(BUG) Unhandled type expression: ${node}`, node.token);

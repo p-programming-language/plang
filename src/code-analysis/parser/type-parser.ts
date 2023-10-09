@@ -2,7 +2,8 @@ import { ParserSyntaxError } from "../../errors";
 import { fakeToken } from "../../utility";
 
 import type { Token } from "../tokenization/token";
-import type { InterfacePropertySignature, TypeLiteralValueType, TypeNameSyntax } from "../type-checker";
+import type { ClassMemberSignature, InterfaceMemberSignature, TypeLiteralValueType, TypeNameSyntax } from "../type-checker";
+import { ModifierType } from "../type-checker";
 import { LiteralExpression } from "./ast/expressions/literal";
 import { SingularTypeExpression } from "./ast/type-nodes/singular-type";
 import { LiteralTypeExpression } from "./ast/type-nodes/literal-type";
@@ -14,10 +15,13 @@ import type TypeAnalyzer from "./type-analyzer";
 import type AST from "./ast";
 import TokenStepper from "./token-stepper";
 import Syntax from "../tokenization/syntax-type";
+import { ClassTypeExpression } from "./ast/type-nodes/class-type";
 
 export default abstract class TypeParser extends TokenStepper {
   protected abstract readonly typeAnalyzer: TypeAnalyzer;
 
+  // These have no precedence, since they're declarations
+  // This is the reason they're not grouped with the below methods
   protected parseTypeAlias(): [Token<undefined, Syntax.Identifier>, AST.TypeRef] {
     this.consume<undefined>(Syntax.Identifier, "'type' keyword");
     const identifier = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier, "identifier");
@@ -26,32 +30,91 @@ export default abstract class TypeParser extends TokenStepper {
     return [identifier, aliasedType];
   }
 
-  /**
-   * This has no precedence, since it's a declaration
-   *
-   * This is the reason it's not grouped with the below methods.
-   */
+  protected parseClassDeclaration(): ClassTypeExpression {
+    const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier);
+    this.consume<undefined>(Syntax.LBrace, "'{'");
+    let members = new Map<LiteralExpression<string>, ClassMemberSignature<AST.TypeRef>>();
+
+    if (!this.match(Syntax.RBrace)) {
+      members = this.parseClassMembers();
+      this.consume<undefined>(Syntax.RBrace, "'}'");
+    }
+
+    return new ClassTypeExpression(name, members);
+  }
+
+  protected parseClassMembers(): Map<LiteralExpression<string>, ClassMemberSignature<AST.TypeRef>> {
+    const members = new Map<LiteralExpression<string>, ClassMemberSignature<AST.TypeRef>>();
+    while (!this.check(Syntax.RBrace)) {
+      const modifiers = this.parseModifiers();
+      if (this.check(Syntax.Mut)) {
+        const { isMutable, valueType, name } = this.parseNamedType(true);
+        members.set(name, {
+          valueType, modifiers,
+          mutable: isMutable
+        });
+      } else {
+        const type = this.parseType();
+        if (this.match(Syntax.Function)) {
+          const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier);
+          const parameterTypes = new Map<string, AST.TypeRef>();
+          if (this.match(Syntax.LParen) && !this.match(Syntax.RParen)) {
+            const { valueType, name } = this.parseNamedType();
+            parameterTypes.set(name.token.value, valueType);
+            this.consume(Syntax.RParen, "')'");
+          }
+
+          const nameLiteral = new LiteralExpression(fakeToken(Syntax.String, `"${name.lexeme}"`, name.lexeme));
+          members.set(nameLiteral, {
+            modifiers,
+            valueType: new FunctionTypeExpression(parameterTypes, type),
+            mutable: false
+          });
+        } else {
+          const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier);
+          const nameLiteral = new LiteralExpression(fakeToken(Syntax.String, `"${name.lexeme}"`, name.lexeme));
+          members.set(nameLiteral, {
+            modifiers,
+            valueType: this.parseType(),
+            mutable: false
+          });
+        }
+      }
+    }
+    return members;
+  }
+
+  protected parseModifiers(): ModifierType[] {
+    const modifiers: ModifierType[] = [];
+    while (this.match(Syntax.Private, Syntax.Protected, Syntax.Static)) {
+      const modifierToken = this.previous<undefined>();
+      const modifierName = Syntax[modifierToken.syntax];
+      modifiers.push(<ModifierType><unknown>ModifierType[<number><unknown>modifierName])
+    }
+    return modifiers;
+  }
+
   protected parseInterfaceType(): InterfaceTypeExpression {
     const name = this.consume<undefined>(Syntax.Identifier);
     this.consume<undefined>(Syntax.LBrace, "'{'");
-    const properties = new Map<LiteralExpression<string, Syntax>, InterfacePropertySignature<AST.TypeRef>>();
+    const members = new Map<LiteralExpression<string>, InterfaceMemberSignature<AST.TypeRef>>();
     const indexSignatures = new Map<AST.TypeRef, AST.TypeRef>();
 
     if (!this.match(Syntax.RBrace)) {
       const contents = this.parseInterfaceContents();
       for (const [key, prop] of contents)
         if (key instanceof LiteralExpression)
-          properties.set(key, prop);
+          members.set(key, prop);
         else
           indexSignatures.set(key, prop.valueType);
 
       this.consume<undefined>(Syntax.RBrace, "'}'");
     }
 
-    return new InterfaceTypeExpression(name, properties, indexSignatures);
+    return new InterfaceTypeExpression(name, members, indexSignatures);
   }
 
-  protected parseInterfaceContents(): Map<LiteralExpression<string, Syntax> | AST.TypeRef, InterfacePropertySignature<AST.TypeRef>> {
+  protected parseInterfaceContents(): Map<LiteralExpression<string, Syntax> | AST.TypeRef, InterfaceMemberSignature<AST.TypeRef>> {
     const keyValuePairs = [ this.parseInterfaceKeyValuePair() ];
     while ((this.match(Syntax.Comma, Syntax.Semicolon) || this.checkType() || this.check(Syntax.Mut)) && !this.check(Syntax.RBrace))
       keyValuePairs.push(this.parseInterfaceKeyValuePair());
@@ -59,7 +122,7 @@ export default abstract class TypeParser extends TokenStepper {
     return new Map(keyValuePairs);
   }
 
-  protected parseInterfaceKeyValuePair(): [LiteralExpression<string, Syntax> | AST.TypeRef, InterfacePropertySignature<AST.TypeRef>] {
+  protected parseInterfaceKeyValuePair(): [LiteralExpression<string, Syntax> | AST.TypeRef, InterfaceMemberSignature<AST.TypeRef>] {
     let key: AST.TypeRef;
     let valueType: AST.TypeRef;
     let isMutable = false;
@@ -69,7 +132,7 @@ export default abstract class TypeParser extends TokenStepper {
       this.consume(Syntax.Colon, "':'");
       valueType = this.parseType();
     } else {
-      ({ isMutable, valueType, key } = this.parseNamedType(true));
+      ({ isMutable, valueType, name: key } = this.parseNamedType(true));
     }
 
     return [key, {
@@ -82,8 +145,8 @@ export default abstract class TypeParser extends TokenStepper {
     const isMutable = allowMutable ? this.match(Syntax.Mut) : false;
     const valueType = this.parseType();
     const identifier = this.consume<undefined>(Syntax.Identifier);
-    const key = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
-    return { isMutable, valueType, key };
+    const name = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
+    return { isMutable, valueType, name };
   }
 
   /**
@@ -98,8 +161,8 @@ export default abstract class TypeParser extends TokenStepper {
       const parameterTypes = new Map<string, AST.TypeRef>();
       if (!this.match(Syntax.RParen)) {
         const parseParameter = () => {
-          const param = this.parseNamedType();
-          parameterTypes.set(param.key.token.value, param.valueType);
+          const { name, valueType } = this.parseNamedType();
+          parameterTypes.set(name.token.value, valueType);
         }
 
         parseParameter();

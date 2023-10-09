@@ -5,7 +5,7 @@ import type { Type } from "../type-checker/types/type";
 
 export default class VariableSymbol<T extends Type = Type> {
   public constructor(
-    public readonly name: Token,
+    public readonly name: Token<undefined>,
     public readonly type: T
   ) {}
 

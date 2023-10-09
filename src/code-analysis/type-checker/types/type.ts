@@ -1,6 +1,6 @@
 import util from "util";
 
-import type { InterfacePropertySignature } from "..";
+import type { InterfaceMemberSignature } from "..";
 import type LiteralType from "./literal-type";
 import type ArrayType from "./array-type";
 import type FunctionType from "./function-type";
@@ -81,11 +81,11 @@ export abstract class Type {
         return other.isAssignableTo(this);
 
       if (!other.isInterface()) return false;
-      const otherProperties = new Map(Array.from(this.properties.entries())
-        .map<[string, InterfacePropertySignature<Type>]>(([key, signature]) => [key.value, signature]));
+      const otherProperties = new Map(Array.from(this.members.entries())
+        .map<[string, InterfaceMemberSignature<Type>]>(([key, signature]) => [key.value, signature]));
 
-      const propertiesAreAssignable = Array.from(this.properties.entries())
-        .map<[string, InterfacePropertySignature<Type>]>(([key, signature]) => [key.value, signature])
+      const propertiesAreAssignable = Array.from(this.members.entries())
+        .map<[string, InterfaceMemberSignature<Type>]>(([key, signature]) => [key.value, signature])
         .every(([key, { valueType }]) => (otherProperties.has(key) && otherProperties.get(key)!.valueType.isAssignableTo(valueType))
           || Array.from(other.indexSignatures.values()).some(type => type.isAssignableTo(valueType)));
 

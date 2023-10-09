@@ -157,6 +157,12 @@ export class Parser extends TypeParser {
       return new TypeDeclarationStatement(declaration.name, declaration);
     }
 
+    if (this.match(Syntax.Class)) {
+      const declaration = this.parseClassDeclaration();
+      this.consumeSemicolons();
+      return new TypeDeclarationStatement(declaration.name, declaration);
+    }
+
     if (this.check(Syntax.Identifier) && this.current.lexeme === "type") {
       const [name, aliasedType] = this.parseTypeAlias();
       this.consumeSemicolons();

@@ -1,4 +1,4 @@
-import { Token } from "../../../tokenization/token";
+import type { Token } from "../../../tokenization/token";
 import AST from "..";
 
 export class UnaryExpression extends AST.Expression {

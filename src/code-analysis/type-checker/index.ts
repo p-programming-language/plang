@@ -49,7 +49,19 @@ export interface ObjectType {
 
 export type TypeNameSyntax = Syntax.Identifier | Syntax.Undefined | Syntax.Null | Syntax.String | Syntax.Int | Syntax.Float | Syntax.Boolean;
 export type IndexType = SingularType<"string"> | SingularType<"int">;
-export interface InterfacePropertySignature<T> {
+
+export enum ModifierType {
+  Public,
+  Protected,
+  Private,
+  Static
+}
+
+export interface ClassMemberSignature<T> extends InterfaceMemberSignature<T> {
+  readonly modifiers: ModifierType[];
+}
+
+export interface InterfaceMemberSignature<T> {
   readonly valueType: T;
   readonly mutable: boolean;
 }
@@ -65,14 +77,14 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
     const iterableType = stmt.iterable.type;
     if (iterableType instanceof InterfaceType) {
       const [keyDecl, valueDecl] = stmt.elementDeclarations;
-      const keyAssignable = Array.from<Type>(iterableType.properties.keys())
+      const keyAssignable = Array.from<Type>(iterableType.members.keys())
         .concat(Array.from(iterableType.indexSignatures.keys()))
         .every(type => type.isAssignableTo(keyDecl.type));
 
       if (!keyAssignable)
         throw new TypeError(`Iterable key type is not assignable to '${keyDecl.type.toString()}'`, keyDecl.token);
 
-      const valueAssignable = Array.from(iterableType.properties.values())
+      const valueAssignable = Array.from(iterableType.members.values())
         .map(sig => sig.valueType)
         .concat(Array.from(iterableType.indexSignatures.values()))
         .every(type => type.isAssignableTo(valueDecl.type));
@@ -288,8 +300,8 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
     }
   }
 
-  private getInterfacePropertySignature(interfaceType: InterfaceType, propertyName: LiteralType<string>, token: Token): InterfacePropertySignature<Type> {
-    const valueType = interfaceType.properties.get(propertyName);
+  private getInterfacePropertySignature(interfaceType: InterfaceType, propertyName: LiteralType<string>, token: Token): InterfaceMemberSignature<Type> {
+    const valueType = interfaceType.members.get(propertyName);
     if (!valueType)
       throw new TypeError(`Property '${propertyName.value}' does not exist on '${interfaceType.name}'`, token);
 
