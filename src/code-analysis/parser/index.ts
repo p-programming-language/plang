@@ -3,7 +3,7 @@ import { Token } from "../tokenization/token";
 import { ParserSyntaxError } from "../../errors";
 import { fakeToken } from "../../utility";
 import type { TypeLiteralValueType } from "../type-checker";
-import type P from "../../p";
+import type P from "../../../tools/p";
 import type TypeAnalyzer from "./type-analyzer";
 import TypeParser from "./type-parser";
 import Syntax from "../tokenization/syntax-type";
@@ -34,7 +34,6 @@ import { ExpressionStatement } from "./ast/statements/expression";
 import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
 import { BlockStatement } from "./ast/statements/block";
-import { PrintlnStatement } from "./ast/statements/println";
 import { IfStatement } from "./ast/statements/if";
 import { WhileStatement } from "./ast/statements/while";
 import { FunctionDeclarationStatement } from "./ast/statements/function-declaration";
@@ -81,12 +80,6 @@ export class Parser extends TypeParser {
   private parseStatement(): AST.Statement {
     if (this.match(Syntax.Use))
       return this.parseImport();
-
-    if (this.match(Syntax.Println)) {
-      const keyword = this.previous<undefined>();
-      const expressions = this.parseExpressionList();
-      return new PrintlnStatement(keyword, expressions);
-    }
 
     if (this.match(Syntax.If, Syntax.Unless)) {
       const keyword = this.previous<undefined>();

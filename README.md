@@ -86,6 +86,15 @@ yarn run <tool>
     - Function declarations and calls
 
 ## Planned Features
-- Type aliases (e.x. `type number = int | float`)
 - Type guards (`value is T`, `T extends U`)
+- Spread types
+- Parenthesized types
+- Type casting
+- Throw statement
+- Switch statement
+- Array intrinsic extension
+- `System` intrinsic library
+- `HTTP` intrinsic library
+- `setRecursionDepth` macro
+- Better CLI
 - Classes

@@ -3,7 +3,7 @@
     "target": "ES6",
     "module": "CommonJS",
     "outDir": "./dist",
-    "rootDirs": ["./src", "./tests", "./tools"],
+    "rootDirs": ["./src", "./tests", "tests/tools"],
     "strict": true,
     "incremental": true,
     "esModuleInterop": true,

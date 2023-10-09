@@ -45,7 +45,6 @@ import type { IsExpression } from "../code-analysis/parser/ast/expressions/is";
 import type { IsInExpression } from "../code-analysis/parser/ast/expressions/is-in";
 import type { TypeOfExpression } from "../code-analysis/parser/ast/expressions/typeof";
 import type { ExpressionStatement } from "../code-analysis/parser/ast/statements/expression";
-import type { PrintlnStatement } from "../code-analysis/parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../code-analysis/parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
 import { BlockStatement } from "../code-analysis/parser/ast/statements/block";
@@ -227,12 +226,14 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   private resolveIntrinsicLib(token: Token<undefined>, filePath: string): Intrinsic.Lib {
     const libsFolder = path.join(__dirname, "intrinsics", "libs");
     const libPath = path.join(libsFolder, filePath.slice(1));
-    if (!fileExists(libPath))
-      throw new RuntimeError(`Invalid import: Intrinsic path '${filePath}' does not exist`, token);
+    if (!fileExists(libPath) && !fileExists(libPath + ".js"))
+      throw new RuntimeError(`Invalid import: Intrinsic import path '${filePath}' does not exist`, token);
 
     let libFile = libPath;
     if (isDirectory(libPath))
       libFile = path.join(libPath, "index.js");
+    else
+      libFile += ".js";
 
     const Lib = <Intrinsic.LibCtor>require(libFile).default;
     return new Lib(this.intrinsics);
@@ -304,12 +305,6 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): void {
     const value = this.evaluate(stmt.value);
     this.scope.assign(stmt.identifier.name, value);
-  }
-
-  public visitPrintlnStatement(stmt: PrintlnStatement): void {
-    const values = stmt.expressions
-      .map(expr => this.evaluate(expr))
-    console.log(...values);
   }
 
   public visitExpressionStatement(stmt: ExpressionStatement): ValueType {

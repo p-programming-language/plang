@@ -17,6 +17,24 @@ export default class IOLib extends Intrinsic.Lib {
   public get members(): Record<string, ValueType> {
     const libName = this.name;
     return {
+      write: class Write extends Intrinsic.Function {
+        public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = new SingularType("void");
+        public readonly argumentTypes = { message: new SingularType("string") };
+
+        public call(message: string): void {
+          process.stdout.write(message);
+        }
+      },
+      writeln: class Writeln extends Intrinsic.Function {
+        public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = new SingularType("void");
+        public readonly argumentTypes = { message: new SingularType("string") };
+
+        public call(message: string): void {
+          console.log(message);
+        }
+      },
       readln: class Readln extends Intrinsic.Function {
         public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
         public readonly returnType = new UnionType([

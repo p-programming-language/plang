@@ -20,7 +20,6 @@ import type { IsExpression } from "./parser/ast/expressions/is";
 import type { TypeOfExpression } from "./parser/ast/expressions/typeof";
 import type { IsInExpression } from "./parser/ast/expressions/is-in";
 import type { ExpressionStatement } from "./parser/ast/statements/expression";
-import type { PrintlnStatement } from "./parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "./parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
 import type { BlockStatement } from "./parser/ast/statements/block";
@@ -114,11 +113,6 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   public visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): void {
     this.resolve(stmt.identifier);
     this.resolve(stmt.value);
-  }
-
-  public visitPrintlnStatement(stmt: PrintlnStatement): void {
-    for (const expression of stmt.expressions)
-      this.resolve(expression);
   }
 
   public visitExpressionStatement(stmt: ExpressionStatement): void {

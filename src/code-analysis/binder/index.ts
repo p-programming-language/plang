@@ -38,7 +38,6 @@ import type { TypeOfExpression } from "../parser/ast/expressions/typeof";
 import type { IsExpression } from "../parser/ast/expressions/is";
 import type { IsInExpression } from "../parser/ast/expressions/is-in";
 import type { ExpressionStatement } from "../parser/ast/statements/expression";
-import type { PrintlnStatement } from "../parser/ast/statements/println";
 import type { VariableAssignmentStatement } from "../parser/ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "../parser/ast/statements/variable-declaration";
 import type { BlockStatement } from "../parser/ast/statements/block";
@@ -71,7 +70,6 @@ import BoundTypeOfExpression from "./bound-expressions/typeof";
 import BoundIsExpression from "./bound-expressions/is";
 import BoundIsInExpression from "./bound-expressions/is-in";
 import BoundExpressionStatement from "./bound-statements/expression";
-import BoundPrintlnStatement from "./bound-statements/println";
 import BoundVariableAssignmentStatement from "./bound-statements/variable-assignment";
 import BoundVariableDeclarationStatement from "./bound-statements/variable-declaration";
 import BoundBlockStatement from "./bound-statements/block";
@@ -186,10 +184,6 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     const variableSymbol = new VariableSymbol(identifier.token, identifier.type);
     const value = this.bind(stmt.value);
     return new BoundVariableAssignmentStatement(variableSymbol, value);
-  }
-
-  public visitPrintlnStatement(stmt: PrintlnStatement): BoundPrintlnStatement {
-    return new BoundPrintlnStatement(stmt.token, stmt.expressions.map(expr => this.bind(expr)));
   }
 
   public visitExpressionStatement(stmt: ExpressionStatement): BoundExpressionStatement {

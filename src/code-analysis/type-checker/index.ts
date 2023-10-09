@@ -30,7 +30,6 @@ import type BoundIsExpression from "../binder/bound-expressions/is";
 import type BoundTypeOfExpression from "../binder/bound-expressions/typeof";
 import type BoundIsInExpression from "../binder/bound-expressions/is-in";
 import type BoundExpressionStatement from "../binder/bound-statements/expression";
-import type BoundPrintlnStatement from "../binder/bound-statements/println";
 import type BoundVariableAssignmentStatement from "../binder/bound-statements/variable-assignment";
 import type BoundVariableDeclarationStatement from "../binder/bound-statements/variable-declaration";
 import type BoundBlockStatement from "../binder/bound-statements/block";
@@ -172,11 +171,6 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
   public visitVariableAssignmentStatement(stmt: BoundVariableAssignmentStatement): void {
     this.check(stmt.value);
     this.assert(stmt.value, stmt.value.type, stmt.symbol.type);
-  }
-
-  public visitPrintlnStatement(stmt: BoundPrintlnStatement): void {
-    for (const expression of stmt.expressions)
-      this.check(expression);
   }
 
   public visitExpressionStatement(stmt: BoundExpressionStatement): void {

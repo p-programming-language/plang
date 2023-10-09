@@ -3,13 +3,13 @@ import util from "util";
 import "colors.ts";
 
 import type { ValueType } from "../src/code-analysis/type-checker";
-import { Parser } from "../src/code-analysis/parser";
-import type AST from "./code-analysis/parser/ast";
+import type { BoundStatement } from "../src/code-analysis/binder/bound-node";
+import type { Parser } from "../src/code-analysis/parser";
+import type AST from "../src/code-analysis/parser/ast";
 import PValue from "../src/runtime/values/value";
 import PHost from "./p-host";
 import REPL from "./repl";
 import pkg = require("../package.json");
-import { BoundStatement } from "./code-analysis/binder/bound-node";
 
 interface PExecutionOptions {
   outputTokens: boolean;
