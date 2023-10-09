@@ -1,8 +1,8 @@
 import toCamelCase from "to-camel-case";
 
-import type { ValueType } from "../../code-analysis/type-checker";
-import SingularType from "../../code-analysis/type-checker/types/singular-type";
-import Intrinsic from "../values/intrinsic";
+import type { ValueType } from "../../../../code-analysis/type-checker";
+import SingularType from "../../../../code-analysis/type-checker/types/singular-type";
+import Intrinsic from "../../../values/intrinsic";
 
 export default class Eval extends Intrinsic.Function {
   public readonly name = toCamelCase(this.constructor.name);
