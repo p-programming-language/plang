@@ -4,7 +4,7 @@ import { Callable, CallableType } from "./callable";
 import type { ValueType } from "../../code-analysis/type-checker";
 import type { Type } from "../../code-analysis/type-checker/types/type";
 import { Range } from "./range";
-import { generateAddress, getTypeFromTypeRef } from "../../utility";
+import { generateAddress, getSingularTypeFromValue, getTypeFromTypeRef } from "../../utility";
 
 import type Intrinsics from "../intrinsics";
 import type Interpreter from "../interpreter";
@@ -115,7 +115,7 @@ namespace Intrinsic {
         } else if (propValue instanceof Intrinsic.Lib)
           valueType = getLibType(propValue);
         else
-          valueType = SingularType.fromValue(propValue);
+          valueType = getSingularTypeFromValue(propValue);
 
         return [new LiteralType(propName), {
           valueType,

@@ -83,3 +83,24 @@ export function getTypeFromTypeRef<T extends Type = Type>(node: AST.TypeRef): T 
 
   throw new BindingError(`(BUG) Unhandled type expression: ${node}`, node.token);
 }
+
+export function getSingularTypeFromValue(value: ValueType): SingularType {
+  switch(typeof value) {
+    case "number": {
+      if (value !== Math.floor(value))
+        return new SingularType("float");
+      else
+        return  new SingularType("int");
+    }
+
+    case "boolean":
+      return new SingularType("bool");
+
+    default:
+      return new SingularType(typeof value);
+  }
+}
+
+export function getSingularTypeFromLiteral(literal: LiteralType): SingularType {
+  return getSingularTypeFromValue(literal.value);
+}

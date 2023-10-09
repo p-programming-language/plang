@@ -1,3 +1,4 @@
 use readln from @std/io
 
-readln("am i cool? ")
+string answer = readln("am i cool? ")
+println(answer)

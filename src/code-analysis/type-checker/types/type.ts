@@ -1,12 +1,13 @@
 import util from "util";
 
 import type { InterfacePropertySignature } from "..";
-import SingularType from "./singular-type";
+import type SingularType from "./singular-type";
 import type LiteralType from "./literal-type";
 import type UnionType from "./union-type";
 import type ArrayType from "./array-type";
 import type FunctionType from "./function-type";
 import type InterfaceType from "./interface-type";
+import { getSingularTypeFromValue } from "../../../utility";
 
 export enum TypeKind {
   Singular,
@@ -73,7 +74,7 @@ export abstract class Type {
       return true;
 
     if (this.isLiteral())
-      return other.isLiteral() ? other.value === this.value : other.isAssignableTo(SingularType.fromValue(this.value));
+      return other.isLiteral() ? other.value === this.value : other.isAssignableTo(getSingularTypeFromValue(this.value));
 
     if (this.isUnion())
       return this.types.some(type => type.isAssignableTo(other));

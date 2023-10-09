@@ -4,10 +4,12 @@ import "colors.ts";
 
 import type { ValueType } from "../src/code-analysis/type-checker";
 import { Parser } from "../src/code-analysis/parser";
+import type AST from "./code-analysis/parser/ast";
 import PValue from "../src/runtime/values/value";
 import PHost from "./p-host";
 import REPL from "./repl";
 import pkg = require("../package.json");
+import { BoundStatement } from "./code-analysis/binder/bound-node";
 
 interface PExecutionOptions {
   outputTokens: boolean;
@@ -36,14 +38,19 @@ export default class P {
     if (this.executionOptions.outputTokens)
       console.log(parser.input!.toString());
 
-    const { program: ast } = parser.parse();
+    const { imports, program: ast } = parser.parse();
     if (this.executionOptions.outputAST)
-      console.log(ast.toString());
+      console.log((<AST.Statement[]>imports).concat(...ast).toString());
+
+    this.host.resolver.resolve(imports);
+    const boundImports = this.host.binder.bindStatements(imports);
+    this.host.typeChecker.check(boundImports);
+    this.host.interpreter.evaluate(imports);
 
     this.host.resolver.resolve(ast);
     const boundAST = this.host.binder.bindStatements(ast);
     if (this.executionOptions.outputBoundAST)
-      console.log(boundAST.toString());
+      console.log((<BoundStatement[]>boundImports).concat(...boundAST).toString());
 
     this.host.typeChecker.check(boundAST);
     const result = this.host.interpreter.evaluate(ast);
@@ -61,7 +68,6 @@ export default class P {
 
   public doFile(filePath: string): ValueType {
     const fileContents = readFileSync(filePath, "utf-8");
-    console.log(this.hosts)
     const result = this.doString(fileContents);
     this.newHost(filePath);
     return result;

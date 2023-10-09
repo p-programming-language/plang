@@ -2,7 +2,7 @@ import { BindingError, TypeError } from "../../errors";
 import { INDEX_TYPE, INTRINSIC_EXTENDED_LITERAL_TYPES } from "../type-checker/types/type-sets";
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
-import { getTypeFromTypeRef } from "../../utility";
+import { getSingularTypeFromValue, getTypeFromTypeRef } from "../../utility";
 import type { Token } from "../tokenization/token";
 import type { Type } from "../type-checker/types/type";
 import type { BoundExpression, BoundNode, BoundStatement } from "./bound-node";
@@ -93,7 +93,6 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   private readonly boundNodes = new Map<AST.Node, BoundNode>;
 
   public constructor() {
-    console.log("new binder");
     this.beginScope();
   }
 
@@ -228,7 +227,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       if (member instanceof Intrinsic.Function)
         type = new FunctionType(new Map(Object.entries(member.argumentTypes)), member.returnType);
       else
-        type = SingularType.fromValue(member);
+        type = getSingularTypeFromValue(member);
 
       return new BoundAccessExpression(expr.token, object, index, type);
     }

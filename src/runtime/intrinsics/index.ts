@@ -34,7 +34,6 @@ export default class Intrinsics {
     this.interpreter.globals.define(identifier, value, {
       mutable: false
     });
-    console.log(`define intrinsic '${name}': ${util.inspect(value, { customInspect: false })}`)
   }
 
   public defineFunction(name: string, IntrinsicFunction: Intrinsic.FunctionCtor): void {
