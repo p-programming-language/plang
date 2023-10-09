@@ -5,6 +5,7 @@ import type { IndexType } from "../../type-checker";
 import type AST from "../../parser/ast";
 import BoundLiteralExpression from "./literal";
 import SingularType from "../../type-checker/types/singular-type";
+import IntrinsicExtension from "../../../runtime/intrinsics/value-extensions";
 
 export default class BoundAccessExpression extends BoundExpression {
   public override readonly type: Type;
@@ -19,7 +20,9 @@ export default class BoundAccessExpression extends BoundExpression {
     super();
     this.type = new SingularType("undefined");
 
-    if (object.type.isArray())
+    if (typeOverride)
+      this.type = typeOverride;
+    else if (object.type.isArray())
       this.type = object.type.elementType;
     else if (object.type.isSingular() && object.type.name === "Array")
       this.type = object.type.typeArguments![0];
@@ -31,8 +34,7 @@ export default class BoundAccessExpression extends BoundExpression {
       const type = propertyType ?? object.type.indexSignatures.get(<IndexType>index.type);
       if (!type) return;
       this.type = type;
-    } else if (typeOverride)
-      this.type = typeOverride;
+    }
   }
 
   public accept<R>(visitor: AST.Visitor.BoundExpression<R>): R {

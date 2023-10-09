@@ -24,7 +24,7 @@ import HookedException from "./hooked-exceptions";
 import Intrinsics from "./intrinsics";
 import PFunction from "./values/function";
 import Intrinsic from "./values/intrinsic";
-import IntrinsicExtension from "./intrinsics/literal-extensions";
+import IntrinsicExtension from "./intrinsics/value-extensions";
 import AST from "../code-analysis/parser/ast";
 
 import { LiteralExpression } from "../code-analysis/parser/ast/expressions/literal";
@@ -350,9 +350,18 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
       return object.members[<any>index];
 
     const realValue = (<ValueType[] | ObjectType>object)[<any>index];
-    if (INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES.includes(typeof object)) {
+    if (
+      INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES.includes(typeof object)
+      || object instanceof Array
+      || object instanceof Range
+    ) {
+
       const extension = IntrinsicExtension.get(object);
-      return extension.members[<any>index] ?? realValue;
+      let member = extension.members[<any>index];
+      if (member instanceof Intrinsic.Function.constructor)
+        member = new (<Intrinsic.FunctionCtor>member)(this);
+
+      return member ?? realValue;
     }
 
     return realValue;

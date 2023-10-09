@@ -3,6 +3,7 @@ import type { Range } from "../../values/range";
 import Intrinsic from "../../values/intrinsic";
 import { Type } from "../../../code-analysis/type-checker/types/type";
 
+const extensionName = "Range";
 export default class RangeExtension extends Intrinsic.ValueExtension<Range> {
   public get propertyTypes(): Record<string, Type> {
     return {};

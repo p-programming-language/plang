@@ -3,6 +3,7 @@ import { Range } from "../../values/range";
 import type Intrinsic from "../../values/intrinsic";
 import StringExtension from "./string";
 import RangeExtension from "./range";
+import ArrayExtension from "./array";
 
 namespace IntrinsicExtension {
   export function get<V extends ValueType = ValueType>(value: V): Intrinsic.ValueExtension<V> {
@@ -15,6 +16,8 @@ namespace IntrinsicExtension {
       default: {
         if (value instanceof Range)
           extension = new RangeExtension(value);
+        else if (value instanceof Array)
+          extension = new ArrayExtension(value);
 
         break;
       }
@@ -32,6 +35,10 @@ namespace IntrinsicExtension {
       }
       case "Range": {
         extension = new RangeExtension(new Range(0, 0));
+        break;
+      }
+      case "Array": {
+        extension = new ArrayExtension([]);
         break;
       }
     }

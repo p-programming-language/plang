@@ -200,6 +200,7 @@ export class Parser extends TypeParser {
       ], offset);
 
     const soFarSoGood = (this.check(Syntax.Mut) ? this.checkType(1) : this.checkType())
+      && !this.checkSet([Syntax.Dot], 1) && !this.checkSet([Syntax.Dot], 2)
       && (isVariableDeclarationSyntax() || isVariableDeclarationSyntax(2));
 
     if (soFarSoGood) {

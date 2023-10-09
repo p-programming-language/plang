@@ -8,7 +8,7 @@ import type { Type } from "../type-checker/types/type";
 import type { BoundExpression, BoundNode, BoundStatement } from "./bound-node";
 import type { InterfacePropertySignature, TypeLiteralValueType } from "../type-checker";
 import Intrinsic from "../../runtime/values/intrinsic";
-import IntrinsicExtension from "../../runtime/intrinsics/literal-extensions";
+import IntrinsicExtension from "../../runtime/intrinsics/value-extensions";
 import VariableSymbol from "./variable-symbol";
 import SingularType from "../type-checker/types/singular-type";
 import LiteralType from "../type-checker/types/literal-type";
@@ -215,13 +215,23 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       && index instanceof BoundLiteralExpression
     ) {
 
-      const extension = IntrinsicExtension.getFake((<SingularType>object.type).name);
-      const member = extension.members[index.token.value];
+      let extendedType = <SingularType>object.type;
+      if (extendedType instanceof LiteralType)
+        extendedType = SingularType.fromLiteral(extendedType);
+
+      const extension = IntrinsicExtension.getFake(extendedType.name);
+      const memberName = index.token.value;
+      const member = extension.members[memberName];
       let type: Type;
-      if (member instanceof Intrinsic.Function)
-        type = new FunctionType(new Map(Object.entries(member.argumentTypes)), member.returnType);
-      else
-        type = SingularType.fromValue(member);
+      if (member instanceof Intrinsic.Function.constructor) {
+        const fn = new (<Intrinsic.FunctionCtor>member)();
+        type = new FunctionType(new Map(Object.entries(fn.argumentTypes)), fn.returnType);
+      } else {
+        if (!extension.propertyTypes[memberName])
+          throw new BindingError(`${extension.constructor.name} member '${memberName}' is not an Intrinsic.Function, yet has no value in 'propertyTypes'`, expr.index.token);
+
+        type = extension.propertyTypes[memberName];
+      }
 
       return new BoundAccessExpression(expr.token, object, index, type);
     }

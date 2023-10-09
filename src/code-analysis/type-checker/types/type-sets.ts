@@ -1,6 +1,6 @@
+import ArrayType from "./array-type";
 import SingularType from "./singular-type";
 import UnionType from "./union-type";
-
 
 export const INDEX_TYPE = new UnionType([
   new SingularType("string"),
@@ -13,11 +13,13 @@ export const INDEXABLE_LITERAL_TYPES = [
 ];
 
 export const INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES: string[] = [
-  ...INDEXABLE_LITERAL_TYPES.map(t => t.name)
+  ...INDEXABLE_LITERAL_TYPES.map(t => t.name),
+  "Array"
 ];
 
 export const INTRINSIC_EXTENDED_LITERAL_TYPES = INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES
-  .map(name => new SingularType(name));
+  .map(name => new SingularType(name))
+  .concat(new ArrayType(new SingularType("any")));
 
 export const INTRINSIC_TYPES = new Set<string>([
   "int", "float", "string", "bool",
