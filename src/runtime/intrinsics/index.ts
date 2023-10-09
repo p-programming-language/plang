@@ -10,6 +10,7 @@ import FunctionType from "../../code-analysis/type-checker/types/function-type";
 import Intrinsic from "../values/intrinsic";
 
 import Eval from "./eval";
+import SetRecursionDepth from "./set-recursion-depth";
 
 export default class Intrinsics {
   public constructor(
@@ -21,6 +22,7 @@ export default class Intrinsics {
     this.define("filename$", this.interpreter.fileName, new SingularType("string"));
     this.define("dirname$", path.dirname(this.interpreter.fileName), new SingularType("string"));
     this.defineFunction("eval", Eval);
+    this.defineFunction("setRecursionDepth", SetRecursionDepth);
   }
 
   public define<V extends ValueType = ValueType>(name: string, value: V, type: Type): void {

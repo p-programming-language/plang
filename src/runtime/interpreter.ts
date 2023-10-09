@@ -58,15 +58,14 @@ import type { BreakStatement } from "../code-analysis/parser/ast/statements/brea
 import type { EveryStatement } from "../code-analysis/parser/ast/statements/every";
 import type { NextStatement } from "../code-analysis/parser/ast/statements/next";
 
-const MAX_RECURSION_DEPTH = 1200;
-
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public readonly globals = new Scope;
   public scope = this.globals;
+  public maxRecursionDepth = 1200;
   public definedArgv = false;
 
-  private loopLevel = 0;
   private recursionDepth = 1;
+  private loopLevel = 0;
   private readonly intrinsics = new Intrinsics(this);
 
   public constructor(
@@ -561,8 +560,8 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public startRecursion(token: Token<undefined>): void {
     this.recursionDepth++;
-    if (this.recursionDepth < MAX_RECURSION_DEPTH) return;
-    throw new RuntimeError(`Stack overflow: Recursion depth of ${MAX_RECURSION_DEPTH} exceeded`, token);
+    if (this.recursionDepth < this.maxRecursionDepth) return;
+    throw new RuntimeError(`Stack overflow: Recursion depth of ${this.maxRecursionDepth} exceeded`, token);
   }
 
   public endRecursion(level = 1): void {
