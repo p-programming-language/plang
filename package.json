@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.2",
-    "@types/node": "^20.8.0",
+    "@types/node": "^20.8.3",
     "@types/readline-sync": "^1.4.5"
   }
 }
