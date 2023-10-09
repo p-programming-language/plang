@@ -15,9 +15,9 @@
     "pint": "node dist/tools/binaries/pint.js",
     "repl": "node dist/tools/binaries/repl.js",
     "ast-viewer": "node dist/tools/binaries/ast-viewer.js",
-    "path": "tsc --skipLibCheck && npm link",
+    "add-to-path": "npm run build -s && npm link",
     "docs": "npx typedoc",
-    "push": "npm run docs -s && git add . && git commit -m 'docs: (autogenerate)' && git push -u"
+    "push": "npm run build -s && npm run test -s && npm run docs -s && git add . && git commit -m 'docs: (autogenerate)' && git push -u"
   },
   "keywords": [
     "p",
