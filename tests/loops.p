@@ -1,23 +1,27 @@
+use writeln from @std/io
+
 every int i in 5
-  println i
+  writeln(i)
 
 every int i in 5..1
-  println i
+  writeln(i)
 
 every string char in "abc"
-  println char
+  writeln(char)
 
-every string k, bool v in { epic: true }
-  println k, v
+every string k, bool v in { epic: true } {
+  writeln(k)
+  writeln(v)
+}
 
 mut int i = 0
 while true {
   if i == 5 break
-  println ++i
+  writeln(++i)
 }
 
 i = 0
 while i < 10 {
   if ++i % 2 == 0 next
-  println i
+  writeln(i)
 }

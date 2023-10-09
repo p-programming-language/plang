@@ -1,4 +1,5 @@
-import { Type, TypeKind } from "./type";
+import { Type } from "./type";
+import TypeKind from "./type-kind";
 import SingularType from "./singular-type";
 
 export default class FunctionType extends SingularType {

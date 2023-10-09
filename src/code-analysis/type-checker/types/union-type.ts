@@ -1,5 +1,6 @@
-import { Type, TypeKind } from "./type";
+import { Type } from "./type";
 import type SingularType from "./singular-type";
+import TypeKind from "./type-kind";
 
 export default class UnionType extends Type {
   public override readonly kind = TypeKind.Union;

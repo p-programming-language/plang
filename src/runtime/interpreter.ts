@@ -8,7 +8,7 @@ import type { Type } from "../code-analysis/type-checker/types/type";
 import { INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES } from "../code-analysis/type-checker/types/type-sets";
 import { Token } from "../code-analysis/tokenization/token";
 import { Range } from "./values/range";
-import { fakeToken, fileExists, getSingularTypeFromLiteral, isDirectory } from "../utility";
+import { fakeToken, fileExists, isDirectory } from "../utility";
 import type Binder from "../code-analysis/binder";
 import type Resolver from "../code-analysis/resolver";
 import type P from "../../tools/p";
@@ -334,7 +334,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   private getTypeName(type: Type): string {
     if (type instanceof LiteralType)
-      return getSingularTypeFromLiteral(type).name;
+      return SingularType.fromLiteral(type).name;
     else if (type instanceof UnionType)
       return type.types.map(t => this.getTypeName(t)).join(" | ");
     else

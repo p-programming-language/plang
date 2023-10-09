@@ -1,25 +1,25 @@
-import { platform } from "os";
 import { spawnSync } from "child_process";
+import { statSync } from "fs";
+import { platform } from "os";
 
+import type { IndexType, InterfacePropertySignature, ValueType } from "./code-analysis/type-checker";
+import type { Type } from "./code-analysis/type-checker/types/type";
 import { BindingError } from "./errors";
 import { LocationSpan, Location, Token } from "./code-analysis/tokenization/token";
 import { SingularTypeExpression } from "./code-analysis/parser/ast/type-nodes/singular-type";
 import { LiteralTypeExpression } from "./code-analysis/parser/ast/type-nodes/literal-type";
 import { UnionTypeExpression } from "./code-analysis/parser/ast/type-nodes/union-type";
 import { ArrayTypeExpression } from "./code-analysis/parser/ast/type-nodes/array-type";
+import { FunctionTypeExpression } from "./code-analysis/parser/ast/type-nodes/function-type";
 import { InterfaceTypeExpression } from "./code-analysis/parser/ast/type-nodes/interface-type";
-import type { IndexType, InterfacePropertySignature, ValueType } from "./code-analysis/type-checker";
-import type { Type } from "./code-analysis/type-checker/types/type";
 import type Syntax from "./code-analysis/tokenization/syntax-type";
 import type AST from "./code-analysis/parser/ast";
 import ArrayType from "./code-analysis/type-checker/types/array-type";
 import LiteralType from "./code-analysis/type-checker/types/literal-type";
 import SingularType from "./code-analysis/type-checker/types/singular-type";
 import UnionType from "./code-analysis/type-checker/types/union-type";
-import InterfaceType from "./code-analysis/type-checker/types/interface-type";
-import { FunctionTypeExpression } from "./code-analysis/parser/ast/type-nodes/function-type";
 import FunctionType from "./code-analysis/type-checker/types/function-type";
-import { statSync } from "fs";
+import InterfaceType from "./code-analysis/type-checker/types/interface-type";
 
 export function clearTerminal(): void {
   const os = platform();
@@ -82,25 +82,4 @@ export function getTypeFromTypeRef<T extends Type = Type>(node: AST.TypeRef): T 
   }
 
   throw new BindingError(`(BUG) Unhandled type expression: ${node}`, node.token);
-}
-
-export function getSingularTypeFromValue(value: ValueType): SingularType {
-  switch(typeof value) {
-    case "number": {
-      if (value !== Math.floor(value))
-        return new SingularType("float");
-      else
-        return  new SingularType("int");
-    }
-
-    case "boolean":
-      return new SingularType("bool");
-
-    default:
-      return new SingularType(typeof value);
-  }
-}
-
-export function getSingularTypeFromLiteral(literal: LiteralType): SingularType {
-  return getSingularTypeFromValue(literal.value);
 }

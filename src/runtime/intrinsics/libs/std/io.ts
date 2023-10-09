@@ -20,18 +20,18 @@ export default class IOLib extends Intrinsic.Lib {
       write: class Write extends Intrinsic.Function {
         public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
         public readonly returnType = new SingularType("void");
-        public readonly argumentTypes = { message: new SingularType("string") };
+        public readonly argumentTypes = { message: new SingularType("any") };
 
-        public call(message: string): void {
+        public call(message: any): void {
           process.stdout.write(message);
         }
       },
       writeln: class Writeln extends Intrinsic.Function {
         public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
         public readonly returnType = new SingularType("void");
-        public readonly argumentTypes = { message: new SingularType("string") };
+        public readonly argumentTypes = { message: new SingularType("any") };
 
-        public call(message: string): void {
+        public call(message: any): void {
           console.log(message);
         }
       },

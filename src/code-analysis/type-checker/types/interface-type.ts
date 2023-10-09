@@ -1,6 +1,7 @@
-import { Type, TypeKind } from "./type";
+import { Type } from "./type";
 import type { IndexType, InterfacePropertySignature } from "..";
 import type LiteralType from "./literal-type";
+import TypeKind from "./type-kind";
 import SingularType from "./singular-type";
 
 export default class InterfaceType extends SingularType {

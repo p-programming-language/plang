@@ -1,7 +1,7 @@
 import util from "util";
 
 import type { TypeLiteralValueType } from "..";
-import { TypeKind } from "./type";
+import TypeKind from "./type-kind";
 import SingularType from "./singular-type";
 
 export default class LiteralType<V extends TypeLiteralValueType = TypeLiteralValueType> extends SingularType {

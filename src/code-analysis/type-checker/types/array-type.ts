@@ -1,4 +1,5 @@
-import { type Type, TypeKind } from "./type";
+import type { Type } from "./type";
+import TypeKind from "./type-kind";
 import SingularType from "./singular-type";
 
 export default class ArrayType extends SingularType {

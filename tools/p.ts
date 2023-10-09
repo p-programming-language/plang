@@ -19,7 +19,7 @@ interface PExecutionOptions {
 }
 
 export default class P {
-  private readonly hosts: PHost[] = [ new PHost(this, this.fileName) ];
+  private readonly hosts: PHost[] = [];
   public readonly repl = new REPL(this);
   public readonly version = "v" + pkg.version;
   public readonly executionOptions: PExecutionOptions = {
@@ -31,7 +31,9 @@ export default class P {
 
   public constructor(
     private readonly fileName?: string
-  ) {}
+  ) {
+    this.hosts.push(new PHost(this, fileName));
+  }
 
   public doString(source: string): ValueType {
     const parser = this.createParser(source);
@@ -78,7 +80,7 @@ export default class P {
   }
 
   public newHost(fileName?: string): void {
-    this.hosts.push(new PHost(this, fileName));
+    this.hosts.push(new PHost(this, fileName ?? this.fileName));
   }
 
   public get host(): PHost {

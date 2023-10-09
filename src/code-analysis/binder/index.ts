@@ -2,7 +2,7 @@ import { BindingError, TypeError } from "../../errors";
 import { INDEX_TYPE, INTRINSIC_EXTENDED_LITERAL_TYPES } from "../type-checker/types/type-sets";
 import { BoundBinaryOperator } from "./bound-operators/binary";
 import { BoundUnaryOperator } from "./bound-operators/unary";
-import { getSingularTypeFromValue, getTypeFromTypeRef } from "../../utility";
+import { getTypeFromTypeRef } from "../../utility";
 import type { Token } from "../tokenization/token";
 import type { Type } from "../type-checker/types/type";
 import type { BoundExpression, BoundNode, BoundStatement } from "./bound-node";
@@ -14,8 +14,8 @@ import SingularType from "../type-checker/types/singular-type";
 import LiteralType from "../type-checker/types/literal-type";
 import UnionType from "../type-checker/types/union-type";
 import FunctionType from "../type-checker/types/function-type";
-import InterfaceType from "../type-checker/types/interface-type";
 import ArrayType from "../type-checker/types/array-type";
+import InterfaceType from "../type-checker/types/interface-type";
 import Syntax from "../tokenization/syntax-type";
 import AST from "../parser/ast";
 
@@ -221,7 +221,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       if (member instanceof Intrinsic.Function)
         type = new FunctionType(new Map(Object.entries(member.argumentTypes)), member.returnType);
       else
-        type = getSingularTypeFromValue(member);
+        type = SingularType.fromValue(member);
 
       return new BoundAccessExpression(expr.token, object, index, type);
     }
