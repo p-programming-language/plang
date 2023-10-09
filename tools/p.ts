@@ -35,7 +35,10 @@ export default class P {
     this.hosts.push(new PHost(this, fileName));
   }
 
-  public doString(source: string): ValueType {
+  public doString(source: string, args: string[] = []): ValueType {
+    if (!this.host.interpreter.definedArgv)
+      this.host.interpreter.defineArgv(args);
+
     const parser = this.createParser(source);
     if (this.executionOptions.outputTokens)
       console.log(parser.input!.toString());
@@ -68,9 +71,9 @@ export default class P {
     return result;
   }
 
-  public doFile(filePath: string): ValueType {
+  public doFile(filePath: string, args: string[] = []): ValueType {
     const fileContents = readFileSync(filePath, "utf-8");
-    const result = this.doString(fileContents);
+    const result = this.doString(fileContents, args);
     this.newHost(filePath);
     return result;
   }

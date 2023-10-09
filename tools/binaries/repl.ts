@@ -1,4 +1,3 @@
-import P from "../p";
+import { runPint } from "../cli/pint";
 
-const p = new P("repl");
-p.repl.start();
+runPint([]);

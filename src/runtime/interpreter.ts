@@ -17,6 +17,7 @@ import type BoundTypeOfExpression from "../code-analysis/binder/bound-expression
 import SingularType from "../code-analysis/type-checker/types/singular-type";
 import LiteralType from "../code-analysis/type-checker/types/literal-type";
 import UnionType from "../code-analysis/type-checker/types/union-type";
+import ArrayType from "../code-analysis/type-checker/types/array-type";
 import Syntax from "../code-analysis/tokenization/syntax-type";
 import Scope from "./scope";
 import HookedException from "./hooked-exceptions";
@@ -62,6 +63,7 @@ const MAX_RECURSION_DEPTH = 1200;
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public readonly globals = new Scope;
   public scope = this.globals;
+  public definedArgv = false;
 
   private loopLevel = 0;
   private recursionDepth = 1;
@@ -541,6 +543,11 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
   public visitLiteralExpression<V extends TypeLiteralValueType | null | undefined = TypeLiteralValueType | null | undefined>(expr: LiteralExpression<V>): V {
     return expr.token.value;
+  }
+
+  public defineArgv(argv: string[]): void {
+    this.intrinsics.define("argv", argv, new ArrayType(new SingularType("string")));
+    this.definedArgv = true;
   }
 
   public startRecursion(token: Token<undefined>): void {

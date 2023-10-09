@@ -15,7 +15,7 @@ export default class REPL {
     private readonly p: P
   ) {}
 
-  public start(): void {
+  public start(args: string[]): void {
     this.outputVersion();
     const enclosingOutputEnabled = this.p.executionOptions.outputResult;
     this.p.executionOptions.outputResult = true;
@@ -28,9 +28,9 @@ export default class REPL {
 
       if (!this.active) break;
       if (line.endsWith("{"))
-        this.p.doString(this.readBlock(line));
+        this.p.doString(this.readBlock(line), args);
       else
-        this.p.doString(line);
+        this.p.doString(line, args);
     }
 
     this.p.executionOptions.outputResult = enclosingOutputEnabled;

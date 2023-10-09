@@ -11,7 +11,7 @@
   "scripts": {
     "test": "mocha dist/src/unit-tests -j 4 --extension js",
     "build": "tsc --skipLibCheck",
-    "start": "npm run -s pint",
+    "start": "node dist/src/main.js",
     "pint": "node dist/tools/binaries/pint.js",
     "repl": "node dist/tools/binaries/repl.js",
     "ast-viewer": "node dist/tools/binaries/ast-viewer.js",
@@ -36,6 +36,7 @@
   "license": "LGPL-2.1-or-later",
   "dependencies": {
     "@types/to-camel-case": "^1.0.0",
+    "cmd-ts": "^0.13.0",
     "colors.ts": "^1.0.20",
     "mocha": "^10.2.0",
     "os": "^0.1.2",
