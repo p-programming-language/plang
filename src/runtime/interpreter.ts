@@ -305,7 +305,6 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   public visitPrintlnStatement(stmt: PrintlnStatement): void {
     const values = stmt.expressions
       .map(expr => this.evaluate(expr))
-      .map(value => util.inspect(value, { colors: true }));
     console.log(...values);
   }
 
