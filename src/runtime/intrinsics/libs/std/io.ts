@@ -1,4 +1,5 @@
 import reader from "readline-sync";
+import toCamelCase from "to-camel-case";
 
 import type { ValueType } from "../../../../code-analysis/type-checker";
 import type { Type } from "../../../../code-analysis/type-checker/types/type";
@@ -7,14 +8,17 @@ import UnionType from "../../../../code-analysis/type-checker/types/union-type";
 import Intrinsic from "../../../values/intrinsic";
 
 export default class IOLib extends Intrinsic.Lib {
+  public readonly name = `${this.parentName}.${toCamelCase(this.constructor.name.replace(/Lib/g, ""))}`;
+
   public get propertyTypes(): Record<string, Type> {
     return {};
   }
 
   public get members(): Record<string, ValueType> {
+    const libName = this.name;
     return {
-      readln: new (class Readln extends Intrinsic.Function {
-        public readonly name = "std::io.readln";
+      readln: class Readln extends Intrinsic.Function {
+        public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
         public readonly returnType = new UnionType([
           new SingularType("string"),
           new SingularType("undefined")
@@ -30,7 +34,7 @@ export default class IOLib extends Intrinsic.Lib {
         public call(prompt: string, hideEchoBack = false): string {
           return reader.question(prompt, { hideEchoBack });
         }
-      })()
+      }
     };
   }
 }

@@ -93,6 +93,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   private readonly boundNodes = new Map<AST.Node, BoundNode>;
 
   public constructor() {
+    console.log("new binder");
     this.beginScope();
   }
 

@@ -12,7 +12,7 @@ PError.testing = true;
 function getResolveFunction(source: string): () => void {
   const p = new P("test");
   const parser = p.createParser(source);
-  const ast = parser.parse();
+  const { program: ast } = parser.parse();
   return () => p.host.resolver.resolve(ast);
 }
 

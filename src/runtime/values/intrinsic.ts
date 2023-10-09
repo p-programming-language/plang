@@ -17,7 +17,7 @@ import FunctionType from "../../code-analysis/type-checker/types/function-type";
 
 namespace Intrinsic {
   export type FunctionCtor = new (interpreter?: Interpreter | undefined) => Intrinsic.Function;
-  export type LibCtor = new (intrinsics: Intrinsics) => Intrinsic.Lib;
+  export type LibCtor = new (intrinsics: Intrinsics, parentName?: string) => Intrinsic.Lib;
 
   abstract class Collection extends PValue {
     public abstract get members(): Record<string, ValueType>;
@@ -31,10 +31,12 @@ namespace Intrinsic {
   }
 
   export abstract class Lib extends Collection {
+    public abstract readonly name: string;
     public readonly address = generateAddress();
 
     public constructor(
-      protected readonly intrinsics: Intrinsics
+      protected readonly intrinsics: Intrinsics,
+      protected readonly parentName?: string
     ) { super(); }
 
     public inject(): void {
@@ -68,7 +70,7 @@ namespace Intrinsic {
 
   export abstract class Function<A extends ValueType[] = ValueType[], R extends ValueType = ValueType> extends Callable<A, R> {
     public override readonly type = CallableType.IntrinsicFunction;
-    public abstract readonly name: string
+    public abstract readonly name: string;
     public abstract readonly returnType: Type;
     public abstract readonly argumentTypes: Record<string, Type>;
 

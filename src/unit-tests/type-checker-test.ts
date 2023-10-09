@@ -12,7 +12,7 @@ PError.testing = true;
 function getCheckFunction(source: string): () => void {
   const p = new P("test");
   const parser = p.createParser(source);
-  const ast = parser.parse();
+  const { program: ast } = parser.parse();
   p.host.resolver.resolve(ast);
   const boundAST = p.host.binder.bindStatements(ast);
   return () => p.host.typeChecker.check(boundAST);

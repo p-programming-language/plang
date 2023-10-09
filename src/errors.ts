@@ -65,3 +65,9 @@ export class RuntimeError extends PError {
     super(RuntimeError.name, message, token.locationSpan.start.line, token.locationSpan.start.column);
   }
 }
+
+export class IntrinsicRegistrationError extends PError {
+  public constructor(message: string, token: Token) {
+    super(IntrinsicRegistrationError.name, message, token.locationSpan.start.line, token.locationSpan.start.column);
+  }
+}

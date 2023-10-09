@@ -1,5 +1,5 @@
+import { type Type, TypeKind } from "./type";
 import SingularType from "./singular-type";
-import { Type, TypeKind } from "./type";
 
 export default class ArrayType extends SingularType {
   public override readonly kind = TypeKind.Array;
@@ -9,6 +9,6 @@ export default class ArrayType extends SingularType {
   ) { super("Array"); }
 
   public toString(colors?: boolean): string {
-    return `Array<${this.elementType.toString(colors)}>`;
+    return this.elementType.toString(colors) + "[]";
   }
 }

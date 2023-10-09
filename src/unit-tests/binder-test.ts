@@ -7,6 +7,8 @@ import { BoundStatement } from "../code-analysis/binder/bound-node";
 import Syntax from "../code-analysis/tokenization/syntax-type";
 import Binder from "../code-analysis/binder";
 import SingularType from "../../src/code-analysis/type-checker/types/singular-type";
+import LiteralType from "../code-analysis/type-checker/types/literal-type";
+import ArrayType from "../code-analysis/type-checker/types/array-type";
 import FunctionType from "../../src/code-analysis/type-checker/types/function-type";
 import P from "../../tools/p";
 
@@ -19,13 +21,11 @@ import BoundVariableDeclarationStatement from "../code-analysis/binder/bound-sta
 import BoundAccessExpression from "../code-analysis/binder/bound-expressions/access";
 import BoundIdentifierExpression from "../code-analysis/binder/bound-expressions/identifier";
 import BoundCallExpression from "../code-analysis/binder/bound-expressions/call";
-import ArrayType from "../code-analysis/type-checker/types/array-type";
-import LiteralType from "../code-analysis/type-checker/types/literal-type";
 
 function bind(source: string): BoundStatement[] {
   const p = new P("test");
   const parser = p.createParser(source);
-  const ast = parser.parse();
+  const { program: ast } = parser.parse();
   return p.host.binder.bindStatements(ast);
 }
 

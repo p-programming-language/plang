@@ -14,7 +14,7 @@ namespace ASTViewer {
     console.log(`Entering ${option === "bound" ? option : ""} AST viewer`.green.gray_bg(6));
     const source = reader.question("Input the source code you want to view the AST of: ").trim();
     const parser = p.createParser(source);
-    const ast = parser.parse();
+    const { program: ast } = parser.parse();
     if (option === "bound") {
       const boundAST = p.host.binder.bindStatements(ast);
       viewNodeList(boundAST);

@@ -1,6 +1,6 @@
 import { ReferenceError, ResolutionError } from "../errors";
 import type { Token } from "./tokenization/token";
-import ScopeContext from "./scope-context";
+import { MethodType, ScopeContext } from "./resolver-contexts";
 import AST from "../code-analysis/parser/ast";
 
 import type { ArrayLiteralExpression } from "./parser/ast/expressions/array-literal";
@@ -32,7 +32,8 @@ import type { UseStatement } from "./parser/ast/statements/use";
 import type { EveryStatement } from "./parser/ast/statements/every";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
-  public context = ScopeContext.Global;
+  public methodType = MethodType.None;
+  public scopeContext = ScopeContext.Global;
   private scopes: Map<string, boolean>[] = []; // the boolean represents whether the variable is defined or not. a variable can be declared without being defined
 
   public constructor() {
@@ -56,6 +57,9 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   }
 
   public visitUseStatement(stmt: UseStatement): void {
+    if (this.scopeContext !== ScopeContext.Global)
+      throw new ResolutionError(`Imports cannot be used outside of the global scope`, stmt.keyword);
+
     if (typeof stmt.members === "boolean") return;
     for (const member of stmt.members) {
       this.declare(member);
@@ -68,7 +72,7 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   }
 
   public visitReturnStatement(stmt: ReturnStatement): void {
-    if (this.context !== ScopeContext.Function)
+    if (this.methodType !== MethodType.Function)
       throw new ResolutionError("Invalid return statement: Can only use 'return' within a function body", stmt.token);
 
     this.resolve(stmt.expression);
@@ -77,7 +81,7 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   public visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): void {
     this.declare(stmt.name);
     this.define(stmt.name);
-    this.resolveFunction(stmt, ScopeContext.Function);
+    this.resolveFunction(stmt, MethodType.Function);
   }
 
   public visitWhileStatement(stmt: WhileStatement): void {
@@ -93,7 +97,10 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
   }
 
   public visitBlockStatement(stmt: BlockStatement): void {
+    const enclosingContext = this.scopeContext;
+    this.scopeContext = ScopeContext.Block;
     this.resolve(stmt.statements);
+    this.scopeContext = enclosingContext;
   }
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): void {
@@ -237,9 +244,9 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
     scope?.set(identifier.lexeme, false);
   }
 
-  private resolveFunction(fn: FunctionDeclarationStatement, context: ScopeContext): void {
-    const enclosingContext = this.context;
-    this.context = context;
+  private resolveFunction(fn: FunctionDeclarationStatement, context: MethodType): void {
+    const enclosingContext = this.methodType;
+    this.methodType = context;
     this.beginScope();
 
     for (const param of fn.parameters) {
@@ -249,7 +256,7 @@ export default class Resolver implements AST.Visitor.Expression<void>, AST.Visit
 
     this.resolve(fn.body);
     this.endScope();
-    this.context = enclosingContext;
+    this.methodType = enclosingContext;
   }
 
   private isDefined(identifier: Token): boolean {

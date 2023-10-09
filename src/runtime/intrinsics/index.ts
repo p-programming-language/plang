@@ -1,5 +1,6 @@
 import { argv } from "process";
 import path from "path";
+import util from "util";
 
 import type { ValueType } from "../../code-analysis/type-checker";
 import type { Type } from "../../code-analysis/type-checker/types/type";
@@ -33,6 +34,7 @@ export default class Intrinsics {
     this.interpreter.globals.define(identifier, value, {
       mutable: false
     });
+    console.log(`define intrinsic '${name}': ${util.inspect(value, { customInspect: false })}`)
   }
 
   public defineFunction(name: string, IntrinsicFunction: Intrinsic.FunctionCtor): void {

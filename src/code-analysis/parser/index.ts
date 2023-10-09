@@ -45,7 +45,15 @@ import { BreakStatement } from "./ast/statements/break";
 import { NextStatement } from "./ast/statements/next";
 import { EveryStatement } from "./ast/statements/every";
 
-export default class Parser extends TypeParser {
+const negate = <T, U>(a: T[], b: U[]): T[] =>
+  a.filter(item => !b.includes(<any>item));
+
+export interface ParseResult {
+  readonly imports: UseStatement[];
+  readonly program: AST.Statement[];
+}
+
+export class Parser extends TypeParser {
   public constructor(
     tokens: Token[],
     protected readonly typeAnalyzer: TypeAnalyzer,
@@ -57,12 +65,14 @@ export default class Parser extends TypeParser {
    *
    * Predicate returns whether or not the parser is finished by default
    */
-  public parse(until = () => this.isFinished): AST.Statement[] {
+  public parse(until = () => this.isFinished): ParseResult {
     const statements: AST.Statement[] = [];
     while (!until())
       statements.push(this.declaration());
 
-     return statements;
+    const imports = statements.filter((stmt): stmt is UseStatement => stmt instanceof UseStatement);
+    const program = negate(statements, imports);
+    return { imports, program };
   }
 
   /**
@@ -308,9 +318,9 @@ export default class Parser extends TypeParser {
   private parseBlock(): BlockStatement {
     const brace = this.previous<undefined>();
     this.typeAnalyzer!.typeTracker.beginTypeScope();
-    const statements = this.parse(() => this.match(Syntax.RBrace));
+    const result = this.parse(() => this.match(Syntax.RBrace));
     this.typeAnalyzer!.typeTracker.endTypeScope();
-    return new BlockStatement(brace, statements);
+    return new BlockStatement(brace, result.program);
   }
 
   /**

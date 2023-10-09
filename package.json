@@ -35,11 +35,13 @@
   ],
   "license": "LGPL-2.1-or-later",
   "dependencies": {
+    "@types/to-camel-case": "^1.0.0",
     "colors.ts": "^1.0.20",
     "mocha": "^10.2.0",
     "os": "^0.1.2",
     "readline-sync": "^1.4.10",
     "should": "^13.2.3",
+    "to-camel-case": "^1.0.0",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
   },

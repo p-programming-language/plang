@@ -4,13 +4,15 @@ import Intrinsic from "../../../values/intrinsic";
 import IOLib from "./io";
 
 export default class StdLib extends Intrinsic.Lib {
+  public readonly name = "std";
+
   public get propertyTypes(): Record<string, Type> {
     return {};
   }
 
   public get members(): Record<string, ValueType> {
     return {
-      io: new IOLib(this.intrinsics)
+      io: new IOLib(this.intrinsics, this.name)
     };
   }
 }

@@ -1,7 +1,7 @@
 import util from "util";
 import path from "path";
 
-import { RuntimeError } from "../errors";
+import { IntrinsicRegistrationError, RuntimeError } from "../errors";
 import type { IndexValueType, ObjectType, TypeLiteralValueType, ValueType } from "../code-analysis/type-checker";
 import { Callable } from "./values/callable";
 import type { Type } from "../code-analysis/type-checker/types/type";
@@ -54,9 +54,9 @@ import type { WhileStatement } from "../code-analysis/parser/ast/statements/whil
 import type { FunctionDeclarationStatement } from "../code-analysis/parser/ast/statements/function-declaration";
 import type { ReturnStatement } from "../code-analysis/parser/ast/statements/return";
 import type { UseStatement } from "../code-analysis/parser/ast/statements/use";
-import { BreakStatement } from "../code-analysis/parser/ast/statements/break";
-import { EveryStatement } from "../code-analysis/parser/ast/statements/every";
-import { NextStatement } from "../code-analysis/parser/ast/statements/next";
+import type { BreakStatement } from "../code-analysis/parser/ast/statements/break";
+import type { EveryStatement } from "../code-analysis/parser/ast/statements/every";
+import type { NextStatement } from "../code-analysis/parser/ast/statements/next";
 
 const MAX_RECURSION_DEPTH = 1200;
 
@@ -213,8 +213,12 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
             this.intrinsics.define(member.lexeme, lib.members[member.lexeme], Intrinsic.getLibType(libMember));
           else if (libMember instanceof Intrinsic.Function.constructor)
             this.intrinsics.defineFunction(member.lexeme, <Intrinsic.FunctionCtor>libMember);
-          else
-            this.intrinsics.defineFunctionFromInstance(member.lexeme, <Intrinsic.Function>libMember);
+          else {
+            if (!(libMember instanceof Intrinsic.Function) && !lib.propertyTypes[member.lexeme])
+              throw new IntrinsicRegistrationError(`Failed to register intrinsic lib '${lib.name}': '${member.lexeme}' is not an Intrinsic.Function or Intrinsic.Lib, yet it has no value in 'propertyTypes'`, member)
+            else
+              this.intrinsics.defineFunctionFromInstance(member.lexeme, <Intrinsic.Function>libMember);
+          }
         }
     } else
       throw new RuntimeError("Module imports are not supported yet", stmt.keyword);

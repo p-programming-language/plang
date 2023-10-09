@@ -4,12 +4,11 @@ import path from "path";
 import "should";
 
 import { PError } from "../../src/errors";
+import { fileExists as pathExists } from "../utility";
 import type { ValueType } from "../../src/code-analysis/type-checker";
 import Interpreter from "../../src/runtime/interpreter";
 import P from "../../tools/p";
 import pkg = require("../../package.json");
-import Intrinsic from "../runtime/values/intrinsic";
-import { fileExists as pathExists } from "../utility";
 
 PError.testing = true;
 
