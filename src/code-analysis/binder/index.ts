@@ -222,16 +222,12 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       const extension = IntrinsicExtension.getFake(extendedType.name);
       const memberName = index.token.value;
       const member = extension.members[memberName];
-      let type: Type;
+      let type = extension.propertyTypes[memberName];
       if (member instanceof Intrinsic.Function.constructor) {
         const fn = new (<Intrinsic.FunctionCtor>member)();
         type = new FunctionType(new Map(Object.entries(fn.argumentTypes)), fn.returnType);
-      } else {
-        if (!extension.propertyTypes[memberName])
-          throw new BindingError(`${extension.constructor.name} member '${memberName}' is not an Intrinsic.Function, yet has no value in 'propertyTypes'`, expr.index.token);
-
-        type = extension.propertyTypes[memberName];
-      }
+      } else if (member && !extension.propertyTypes[memberName])
+        throw new BindingError(`${extension.constructor.name} member '${memberName}' is not an Intrinsic.Function, yet has no value in 'propertyTypes'`, expr.index.token);
 
       return new BoundAccessExpression(expr.token, object, index, type);
     }
