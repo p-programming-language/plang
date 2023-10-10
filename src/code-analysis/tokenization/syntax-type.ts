@@ -13,7 +13,7 @@ enum Syntax {
   Function,
   Return,
   Break, Next, Throw,
-  Interface, Class, New, Super,
+  Interface, Class, New, Super, Mixin,
   Private, Protected, Static,
   TypeOf,
   Is, In,

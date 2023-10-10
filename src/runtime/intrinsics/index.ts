@@ -20,7 +20,7 @@ export default class Intrinsics {
   }
 
   public define<V extends ValueType = ValueType>(name: string, value: V, type: Type): void {
-    const identifier = fakeToken<undefined>(Syntax.Identifier, name);
+    const identifier = fakeToken(Syntax.Identifier, name, undefined);
     this.interpreter.resolver.define(identifier);
     this.interpreter.binder.defineSymbol(identifier, type);
     this.interpreter.globals.define(identifier, value, {

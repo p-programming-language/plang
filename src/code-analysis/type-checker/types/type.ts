@@ -1,10 +1,11 @@
 import util from "util";
 
-import type { InterfaceMemberSignature } from "..";
+import type { ClassMemberSignature, InterfaceMemberSignature } from "..";
 import type LiteralType from "./literal-type";
 import type ArrayType from "./array-type";
 import type FunctionType from "./function-type";
 import type InterfaceType from "./interface-type";
+import type ClassType from "./class-type";
 import TypeKind from "./type-kind";
 import SingularType from "./singular-type";
 import UnionType from "./union-type";
@@ -37,6 +38,10 @@ export abstract class Type {
 
   public isInterface(): this is InterfaceType {
     return this.kind === TypeKind.Interface;
+  }
+
+  public isClass(): this is ClassType {
+    return this.kind === TypeKind.Class;
   }
 
   public isUndefined(): this is SingularType<"undefined" | "void"> {
@@ -80,7 +85,12 @@ export abstract class Type {
       if (other.isUnion())
         return other.isAssignableTo(this);
 
-      if (!other.isInterface()) return false;
+      if (!other.isInterface() && !other.isClass())
+        return false;
+
+      if (!other.isInterface())
+        return other.getInstanceType().isAssignableTo(this);
+
       const otherProperties = new Map(Array.from(this.members.entries())
         .map<[string, InterfaceMemberSignature<Type>]>(([key, signature]) => [key.value, signature]));
 
@@ -93,6 +103,24 @@ export abstract class Type {
         .every(([keyType, valueType]) => other.indexSignatures.has(keyType) && valueType.isAssignableTo(other.indexSignatures.get(keyType)!));
 
       return propertiesAreAssignable && indexSignaturesAreAssignable;
+    }
+
+    if (this.isClass()) {
+      if (other.isUnion())
+        return other.isAssignableTo(this);
+
+      if (!other.isClass() && !other.isInterface())
+        return false;
+
+      if (!other.isClass())
+        return other.isAssignableTo(this.getInstanceType());
+
+      const otherProperties = new Map(Array.from(this.members.entries())
+        .map<[string, ClassMemberSignature<Type>]>(([key, signature]) => [key.value, signature]));
+
+      return Array.from(this.members.entries())
+        .map<[string, ClassMemberSignature<Type>]>(([key, signature]) => [key.value, signature])
+        .every(([key, { valueType }]) => (otherProperties.has(key) && otherProperties.get(key)!.valueType.isAssignableTo(valueType)));
     }
 
     if (this.isArray()) {

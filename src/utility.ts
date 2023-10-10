@@ -22,6 +22,7 @@ import FunctionType from "./code-analysis/type-checker/types/function-type";
 import InterfaceType from "./code-analysis/type-checker/types/interface-type";
 import { ClassTypeExpression } from "./code-analysis/parser/ast/type-nodes/class-type";
 import ClassType from "./code-analysis/type-checker/types/class-type";
+import TypeTracker from "./code-analysis/parser/type-tracker";
 
 export function clearTerminal(): void {
   const os = platform();
@@ -54,42 +55,49 @@ export function generateAddress() {
   return `0x${Math.random().toString(16).slice(2, 12)}`;
 }
 
-export function getTypeFromTypeRef<T extends Type = Type>(node: AST.TypeRef): T {
+export function getTypeFromTypeRef<T extends Type = Type>(typeTracker: TypeTracker, node: AST.TypeRef): T {
   if (node instanceof FunctionTypeExpression)
     return <T><unknown>new FunctionType(
-      new Map(Array.from(node.parameterTypes.entries()).map(([name, type]) => [name, getTypeFromTypeRef(type)])),
-      getTypeFromTypeRef(node.returnType)
+      new Map(Array.from(node.parameterTypes.entries()).map(([name, type]) => [name, getTypeFromTypeRef(typeTracker, type)])),
+      getTypeFromTypeRef(typeTracker, node.returnType)
     );
   else if (node instanceof ArrayTypeExpression)
-    return <T><unknown>new ArrayType(getTypeFromTypeRef(node.elementType));
+    return <T><unknown>new ArrayType(getTypeFromTypeRef(typeTracker, node.elementType));
   else if (node instanceof LiteralTypeExpression)
     return <T><unknown>new LiteralType(node.literalToken.value);
   else if (node instanceof SingularTypeExpression)
-    return <T><unknown>new SingularType(node.token.lexeme, node.typeArguments?.map(arg => getTypeFromTypeRef(arg)));
+    return <T><unknown>new SingularType(node.token.lexeme, node.typeArguments?.map(arg => getTypeFromTypeRef(typeTracker, arg)));
   else if (node instanceof UnionTypeExpression)
-    return <T><unknown>new UnionType(node.types.map(singular => getTypeFromTypeRef<SingularType>(singular)));
+    return <T><unknown>new UnionType(node.types.map(singular => getTypeFromTypeRef<SingularType>(typeTracker, singular)));
   else if (node instanceof InterfaceTypeExpression) {
     const members = new Map<LiteralType<string>, InterfaceMemberSignature<Type>>();
     const indexSignatures = new Map<IndexType, Type>();
     for (const [key, { mutable, valueType }] of node.members)
       members.set(new LiteralType(key.token.value), {
-        valueType: getTypeFromTypeRef(valueType),
+        valueType: getTypeFromTypeRef(typeTracker, valueType),
         mutable
       });
 
     for (const [keyType, valueType] of node.indexSignatures)
-      indexSignatures.set(getTypeFromTypeRef<IndexType>(keyType), getTypeFromTypeRef(valueType))
+      indexSignatures.set(getTypeFromTypeRef<IndexType>(typeTracker, keyType), getTypeFromTypeRef(typeTracker, valueType))
 
     return <T><unknown>new InterfaceType(members, indexSignatures, node.name.lexeme);
   } else if (node instanceof ClassTypeExpression) {
     const members = new Map<LiteralType<string>, ClassMemberSignature<Type>>();
     for (const [key, { modifiers, mutable, valueType }] of node.members)
-      members.set(new LiteralType(key.token.value), {
-        valueType: getTypeFromTypeRef(valueType),
+      members.set(new LiteralType(key), {
+        valueType: getTypeFromTypeRef(typeTracker, valueType),
         modifiers, mutable
       });
 
-    return <T><unknown>new ClassType(node.name.lexeme, members);
+    const mixinTypes = node.mixinTypes
+      .map(typeIdent => typeTracker.getRef(typeIdent.name.lexeme))
+      .filter((typeRef): typeRef is AST.TypeRef => typeRef !== undefined)
+      .map(typeRef => getTypeFromTypeRef(typeTracker, typeRef));
+
+    const superclassTypeRef = node.superclassType ? typeTracker.getRef(node.superclassType.name.lexeme) : undefined;
+    const superclassType = superclassTypeRef ? getTypeFromTypeRef(typeTracker, superclassTypeRef) : undefined;
+    return <T><unknown>new ClassType(node.name.lexeme, members, mixinTypes, superclassType);
   }
 
   throw new BindingError(`(BUG) Unhandled type expression: ${node}`, node.token);

@@ -45,6 +45,7 @@ import type { AccessExpression } from "../code-analysis/parser/ast/expressions/a
 import type { IsExpression } from "../code-analysis/parser/ast/expressions/is";
 import type { IsInExpression } from "../code-analysis/parser/ast/expressions/is-in";
 import type { TypeOfExpression } from "../code-analysis/parser/ast/expressions/typeof";
+import type { NewExpression } from "../code-analysis/parser/ast/expressions/new";
 import type { ExpressionStatement } from "../code-analysis/parser/ast/statements/expression";
 import type { VariableAssignmentStatement } from "../code-analysis/parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
@@ -57,6 +58,17 @@ import type { UseStatement } from "../code-analysis/parser/ast/statements/use";
 import type { BreakStatement } from "../code-analysis/parser/ast/statements/break";
 import type { EveryStatement } from "../code-analysis/parser/ast/statements/every";
 import type { NextStatement } from "../code-analysis/parser/ast/statements/next";
+import type { ClassBodyStatement } from "../code-analysis/parser/ast/statements/class-body";
+import type { ClassDeclarationStatement } from "../code-analysis/parser/ast/statements/class-declaration";
+import type { MethodDeclarationStatement } from "../code-analysis/parser/ast/statements/method-declaration";
+import type { PropertyDeclarationStatement } from "../code-analysis/parser/ast/statements/property-declaration";
+import PClass from "./values/class";
+import PClassInstance from "./values/class-instance";
+
+enum Context {
+  Global,
+  Class
+}
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public readonly globals = new Scope;
@@ -75,6 +87,34 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     public fileName = "unnamed"
   ) {
     this.intrinsics.inject();
+  }
+
+  public visitMethodDeclarationStatement(stmt: MethodDeclarationStatement): void {
+    // do nothing, logic handled in PClass
+  }
+
+  public visitPropertyDeclarationStatement(stmt: PropertyDeclarationStatement): void {
+    // do nothing, logic handled in PClass
+  }
+
+  public visitClassBodyStatement(stmt: ClassBodyStatement): void {
+    // do nothing, logic handled in PClass
+  }
+
+  public visitClassDeclarationStatement(stmt: ClassDeclarationStatement): void {
+    this.scope.define(stmt.name, new PClass(stmt, this.scope, this.runner.host.typeTracker), {
+      mutable: false
+    });
+  }
+
+  public visitNewExpression(expr: NewExpression): PClassInstance {
+    const _class = <PClass>this.evaluate(expr.classRef);
+    const fitsArity = typeof _class.constructorArity === "number" ? expr.constructorArgs.length === _class.constructorArity : _class.constructorArity.doesFit(expr.constructorArgs.length);
+    if (!fitsArity)
+      throw new RuntimeError(`Expected call to '${_class.name}()' to have ${_class.constructorArity.toString()} arguments, got ${expr.constructorArgs.length}`, expr.token);
+
+    const constructorArgs = expr.constructorArgs.map(arg => this.evaluate(arg));
+    return _class.construct(this, constructorArgs);
   }
 
   public visitEveryStatement(stmt: EveryStatement): void {
@@ -210,7 +250,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
           if (lib.propertyTypes[member.lexeme])
             this.intrinsics.define(member.lexeme, lib.members[member.lexeme], lib.propertyTypes[member.lexeme]);
           else if (libMember instanceof Intrinsic.Lib)
-            this.intrinsics.define(member.lexeme, lib.members[member.lexeme], Intrinsic.getLibType(libMember));
+            this.intrinsics.define(member.lexeme, lib.members[member.lexeme], Intrinsic.getLibType(this.runner.host.typeTracker, libMember));
           else if (libMember instanceof Intrinsic.Function.constructor)
             this.intrinsics.defineFunction(member.lexeme, <Intrinsic.FunctionCtor>libMember);
           else {
@@ -250,7 +290,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   }
 
   public visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): void {
-    const fn = new PFunction(stmt, this.scope);
+    const fn = new PFunction(stmt, this.scope, this.runner.host.typeTracker);
     this.scope.define(stmt.name, fn, {
       mutable: false
     });
@@ -293,7 +333,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
   }
 
   public visitBlockStatement(stmt: BlockStatement): void {
-    this.evaluate(stmt.statements);
+    this.evaluate(stmt.members);
   }
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): void {
@@ -370,7 +410,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     const fn = <Callable>this.evaluate(expr.callee);
     const fitsArity = typeof fn.arity === "number" ? expr.args.length === fn.arity : fn.arity.doesFit(expr.args.length);
     if (!fitsArity)
-      throw new RuntimeError(`Expected call to '${fn.name}()' to have ${fn.arity.toString()} arguments, got ${expr.args.length}`, expr.callee.token)
+      throw new RuntimeError(`Expected call to '${fn.name}()' to have ${fn.arity.toString()} arguments, got ${expr.args.length}`, expr.callee.token);
 
     const args = expr.args.map(arg => this.evaluate(arg));
     if (fn instanceof PFunction)
@@ -572,7 +612,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     const enclosing = this.scope;
     try {
       this.scope = scope;
-      for (const statement of block.statements)
+      for (const statement of block.members)
         this.execute(statement);
     } finally {
       this.scope = enclosing;

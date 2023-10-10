@@ -46,11 +46,11 @@ const pint = command({
     p.executionOptions.outputAST = ast;
     p.executionOptions.outputBoundAST = boundAST;
     p.executionOptions.outputResult = results;
+    PError.showTrace = trace;
 
     if (!filePath || !filePath.endsWith(".p") || !filePath.includes("/"))
       return p.repl.start(filePath ? [filePath].concat(...args) : args);
 
-    PError.showTrace = trace;
     p.doFile(filePath, args);
   }
 })

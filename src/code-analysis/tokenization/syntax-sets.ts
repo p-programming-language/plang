@@ -24,5 +24,6 @@ export const UNARY_SYNTAXES = [
   Syntax.Tilde,
   Syntax.PlusPlus, Syntax.MinusMinus,
   Syntax.Hashtag,
-  Syntax.TypeOf
+  Syntax.TypeOf,
+  Syntax.New
 ];

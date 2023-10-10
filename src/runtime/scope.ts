@@ -1,6 +1,7 @@
+import { RuntimeError } from "../errors";
 import type { Token } from "../code-analysis/tokenization/token";
 import type { ValueType } from "../code-analysis/type-checker";
-import { RuntimeError } from "../errors";
+import type Syntax from "../code-analysis/tokenization/syntax-type";
 
 interface VariableOptions {
   readonly mutable: boolean;
@@ -53,7 +54,7 @@ export default class Scope {
     return <V>this.ancestor(distance)?.variableValues.get(name.lexeme);
   }
 
-  public define<V extends ValueType = ValueType>(name: Token<undefined>, value: V, options: VariableOptions): void {
+  public define<V extends ValueType = ValueType>(name: Token<undefined, Syntax.Identifier>, value: V, options: VariableOptions): void {
     this.variableValues.set(name.lexeme, value);
     this.variableOptions.set(name.lexeme, options);
     this.variablesDefined.set(name.lexeme, typeof value !== "undefined");

@@ -7,6 +7,7 @@ import type { Token } from "../tokenization/token";
 import type { Type } from "../type-checker/types/type";
 import type { BoundExpression, BoundNode, BoundStatement } from "./bound-node";
 import type { InterfaceMemberSignature, TypeLiteralValueType } from "../type-checker";
+import type TypeTracker from "../parser/type-tracker";
 import Intrinsic from "../../runtime/values/intrinsic";
 import IntrinsicExtension from "../../runtime/intrinsics/value-extensions";
 import VariableSymbol from "./variable-symbol";
@@ -16,6 +17,7 @@ import UnionType from "../type-checker/types/union-type";
 import FunctionType from "../type-checker/types/function-type";
 import ArrayType from "../type-checker/types/array-type";
 import InterfaceType from "../type-checker/types/interface-type";
+import ClassType from "../type-checker/types/class-type";
 import Syntax from "../tokenization/syntax-type";
 import AST from "../parser/ast";
 
@@ -37,10 +39,11 @@ import { AccessExpression } from "../parser/ast/expressions/access";
 import type { TypeOfExpression } from "../parser/ast/expressions/typeof";
 import type { IsExpression } from "../parser/ast/expressions/is";
 import type { IsInExpression } from "../parser/ast/expressions/is-in";
+import type { NewExpression } from "../parser/ast/expressions/new";
 import type { ExpressionStatement } from "../parser/ast/statements/expression";
 import type { VariableAssignmentStatement } from "../parser/ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "../parser/ast/statements/variable-declaration";
-import type { BlockStatement } from "../parser/ast/statements/block";
+import { BlockStatement } from "../parser/ast/statements/block";
 import type { IfStatement } from "../parser/ast/statements/if";
 import type { WhileStatement } from "../parser/ast/statements/while";
 import type { FunctionDeclarationStatement } from "../parser/ast/statements/function-declaration";
@@ -50,7 +53,12 @@ import type { UseStatement } from "../parser/ast/statements/use";
 import type { BreakStatement } from "../parser/ast/statements/break";
 import type { NextStatement } from "../parser/ast/statements/next";
 import type { EveryStatement } from "../parser/ast/statements/every";
+import type { ClassDeclarationStatement } from "../parser/ast/statements/class-declaration";
+import type { ClassBodyStatement } from "../parser/ast/statements/class-body";
+import type { MethodDeclarationStatement } from "../parser/ast/statements/method-declaration";
+import type { PropertyDeclarationStatement } from "../parser/ast/statements/property-declaration";
 
+import type { BoundClassMember } from "../parser/ast/classifications/class-member";
 import BoundLiteralExpression from "./bound-expressions/literal";
 import BoundStringInterpolationExpression from "./bound-expressions/string-interpolation";
 import BoundRangeLiteralExpression from "./bound-expressions/range-literal";
@@ -69,6 +77,7 @@ import BoundAccessExpression from "./bound-expressions/access";
 import BoundTypeOfExpression from "./bound-expressions/typeof";
 import BoundIsExpression from "./bound-expressions/is";
 import BoundIsInExpression from "./bound-expressions/is-in";
+import BoundNewExpression from "./bound-expressions/new";
 import BoundExpressionStatement from "./bound-statements/expression";
 import BoundVariableAssignmentStatement from "./bound-statements/variable-assignment";
 import BoundVariableDeclarationStatement from "./bound-statements/variable-declaration";
@@ -82,6 +91,10 @@ import BoundUseStatement from "./bound-statements/use";
 import BoundEveryStatement from "./bound-statements/every";
 import BoundBreakStatement from "./bound-statements/break";
 import BoundNextStatement from "./bound-statements/next";
+import BoundClassBodyStatement from "./bound-statements/class-body";
+import BoundClassDeclarationStatement from "./bound-statements/class-declaration";
+import BoundPropertyDeclarationStatement from "./bound-statements/property-declaration";
+import BoundMethodDeclarationStatement from "./bound-statements/method-declaration";
 
 type IndexType = SingularType<"string"> | SingularType<"int">;
 type PropertyPair = [LiteralType<string>, InterfaceMemberSignature<Type>];
@@ -90,8 +103,55 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   private readonly variableScopes: VariableSymbol[][] = [];
   private readonly boundNodes = new Map<AST.Node, BoundNode>;
 
-  public constructor() {
+  public constructor(
+    private readonly typeTracker: TypeTracker
+  ) {
     this.beginScope();
+  }
+
+  public visitMethodDeclarationStatement(stmt: MethodDeclarationStatement): BoundMethodDeclarationStatement {
+    const parameters = stmt.parameters.map(param => this.bind<VariableDeclarationStatement, BoundVariableDeclarationStatement>(param));
+    const body = this.bind<BlockStatement, BoundBlockStatement>(stmt.body);
+    const type = new FunctionType(
+      new Map(parameters.map(decl => [decl.symbol.name.lexeme, decl.type])),
+      getTypeFromTypeRef(this.typeTracker, stmt.returnType)
+    );
+
+    return new BoundMethodDeclarationStatement(stmt.modifiers, stmt.name, type, parameters, body);
+  }
+
+  public visitPropertyDeclarationStatement(stmt: PropertyDeclarationStatement): BoundPropertyDeclarationStatement {
+    const name = stmt.identifier.name;
+    const type = getTypeFromTypeRef(this.typeTracker, stmt.typeRef);
+    const initializer = stmt.initializer ? this.bind(stmt.initializer) : undefined;
+    return new BoundPropertyDeclarationStatement(stmt.modifiers, name, type, stmt.mutable, initializer);
+  }
+
+  public visitClassBodyStatement(stmt: ClassBodyStatement): BoundClassBodyStatement {
+    const boundStatements = this.bindStatements<BoundClassMember>(stmt.members);
+    return new BoundClassBodyStatement(stmt.token, boundStatements);
+  }
+
+  public visitClassDeclarationStatement(stmt: ClassDeclarationStatement): BoundClassDeclarationStatement {
+    const superclassType = (stmt.superclass ? this.findSymbol(stmt.superclass.name) : undefined)?.type;
+    const mixinTypes = stmt.mixins
+      ?.map(mixin => this.findSymbol(mixin.name))
+      ?.map(symbol => symbol.type);
+
+    const body = this.bind<ClassBodyStatement, BoundClassBodyStatement>(stmt.body);
+    const type = new ClassType(
+      stmt.name.lexeme,
+      new Map(body.members.map(stmt => [new LiteralType<string>(stmt.name.lexeme), {
+        modifiers: stmt.modifiers,
+        valueType: stmt.type,
+        mutable: stmt instanceof BoundPropertyDeclarationStatement ? stmt.mutable : false
+      }])),
+      mixinTypes,
+      superclassType
+    )
+
+    const symbol = this.defineSymbol(stmt.name, type);
+    return new BoundClassDeclarationStatement(stmt.keyword, symbol, body, mixinTypes);
   }
 
   public visitEveryStatement(stmt: EveryStatement): BoundEveryStatement {
@@ -116,7 +176,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   }
 
   public visitTypeDeclarationStatement(stmt: TypeDeclarationStatement): BoundTypeDeclarationStatement {
-    const symbol = this.defineSymbol(stmt.name, getTypeFromTypeRef(stmt.typeRef));
+    const symbol = this.defineSymbol(stmt.name, getTypeFromTypeRef(this.typeTracker, stmt.typeRef));
     return new BoundTypeDeclarationStatement(symbol);
   }
 
@@ -127,8 +187,8 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitFunctionDeclarationStatement(stmt: FunctionDeclarationStatement): BoundFunctionDeclarationStatement {
     const type = new FunctionType(
-      new Map<string, Type>(stmt.parameters.map(param => [param.identifier.name.lexeme, getTypeFromTypeRef(param.typeRef)])),
-      getTypeFromTypeRef(stmt.returnType)
+      new Map<string, Type>(stmt.parameters.map(param => [param.identifier.name.lexeme, getTypeFromTypeRef(this.typeTracker, param.typeRef)])),
+      getTypeFromTypeRef(this.typeTracker, stmt.returnType)
     );
 
     const variableSymbol = this.defineSymbol(stmt.name, type);
@@ -152,14 +212,14 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitBlockStatement(stmt: BlockStatement): BoundBlockStatement {
     this.beginScope();
-    const boundStatements = this.bindStatements(stmt.statements);
+    const boundStatements = this.bindStatements(stmt.members);
     this.endScope();
     return new BoundBlockStatement(stmt.token, boundStatements);
   }
 
   public visitVariableDeclarationStatement(stmt: VariableDeclarationStatement): BoundVariableDeclarationStatement {
     const initializer = stmt.initializer ? this.bind(stmt.initializer) : undefined;
-    const variableType = getTypeFromTypeRef(stmt.typeRef);
+    const variableType = getTypeFromTypeRef(this.typeTracker, stmt.typeRef);
     let type: Type;
 
     const valueIsUndefined = (initializer?.type ?? new SingularType("undefined")).isUndefined();
@@ -190,6 +250,12 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     return new BoundExpressionStatement(this.bind(stmt.expression));
   }
 
+  public visitNewExpression(expr: NewExpression): BoundNewExpression {
+    const classRef = this.bind<IdentifierExpression, BoundIdentifierExpression>(expr.classRef);
+    const args = expr.constructorArgs.map(arg => this.bind(arg));
+    return new BoundNewExpression(expr.token, classRef, args);
+  }
+
   public visitIsInExpression(expr: IsInExpression): BoundIsInExpression {
     const value = this.bind(expr.value);
     const object = this.bind(expr.object);
@@ -198,7 +264,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitIsExpression(expr: IsExpression): BoundIsExpression {
     const value = this.bind(expr.value);
-    const type = getTypeFromTypeRef(expr.typeRef);
+    const type = getTypeFromTypeRef(this.typeTracker, expr.typeRef);
     return new BoundIsExpression(value, type, expr.operator);
   }
 
@@ -396,7 +462,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     return new BoundLiteralExpression(expr.token, type);
   }
 
-  public defineSymbol<T extends Type = Type>(name: Token, type: T): VariableSymbol<T> {
+  public defineSymbol<T extends Type = Type>(name: Token<undefined, Syntax.Identifier>, type: T): VariableSymbol<T> {
     const variableSymbol = new VariableSymbol<T>(name, type);
     const scope = this.variableScopes.at(-1);
     scope?.push(variableSymbol);
@@ -407,7 +473,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     return <BNode>this.boundNodes.get(node)!;
   }
 
-  public bindStatements(statements: AST.Statement[]): BoundStatement[] {
+  public bindStatements<T extends BoundStatement = BoundStatement>(statements: AST.Statement[]): T[] {
     return statements.map(statement => this.bind(statement));
   }
 
@@ -428,9 +494,10 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     return <VariableSymbol<T>[]>this.variableScopes.pop();
   }
 
-  private findSymbol(name: Token): VariableSymbol {
+  private findSymbol<T extends Type = Type>(name: Token<undefined, Syntax.Identifier>): VariableSymbol<T> {
     const symbol = this.variableScopes.flat().find(symbol => symbol.name.lexeme === name.lexeme);
-    if (symbol) return symbol;
+    if (symbol)
+      return <VariableSymbol<T>>symbol;
 
     throw new BindingError(`Failed to find variable symbol for '${name.lexeme}'`, name)
   }

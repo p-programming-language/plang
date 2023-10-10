@@ -1,15 +1,20 @@
 import type { Token } from "../tokenization/token";
 import type TypeTracker from "./type-tracker";
-import TypeParser from "./type-parser";
+import type P from "../../../tools/p";
+import { Parser } from ".";
 import Syntax from "../tokenization/syntax-type";
 
-export default class TypeAnalyzer extends TypeParser {
-  protected readonly typeAnalyzer = this;
-
+export default class TypeAnalyzer extends Parser {
   public constructor(
     tokens: Token[],
-    public readonly typeTracker: TypeTracker
-  ) { super(tokens); }
+    runner: P,
+    public readonly typeTracker: TypeTracker,
+
+  ) {
+
+    super(tokens, runner);
+    this.typeAnalyzer = this;
+  }
 
   public analyze(): void {
     while (!this.isFinished)
@@ -20,7 +25,7 @@ export default class TypeAnalyzer extends TypeParser {
       } else if (this.match(Syntax.Class)) {
         const declaration = this.parseClassDeclaration();
         this.consumeSemicolons();
-        this.typeTracker.defineType(declaration.name.lexeme, declaration);
+        this.typeTracker.defineType(declaration.name.lexeme, declaration.typeRef);
       } else if (this.check(Syntax.Identifier) && this.current.lexeme === "type") {
         const [name, aliasedType] = this.parseTypeAlias();
         this.consumeSemicolons();

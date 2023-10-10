@@ -2,15 +2,25 @@
 import { Token } from "../tokenization/token";
 import { ParserSyntaxError } from "../../errors";
 import { fakeToken } from "../../utility";
-import type { TypeLiteralValueType } from "../type-checker";
+import type { ClassMember } from "./ast/classifications/class-member";
 import type P from "../../../tools/p";
 import type TypeAnalyzer from "./type-analyzer";
-import TypeParser from "./type-parser";
+
+import { ClassMemberSignature, InterfaceMemberSignature, ModifierType, TypeLiteralValueType, TypeNameSyntax } from "../type-checker";
+import TokenStepper from "./token-stepper";
 import Syntax from "../tokenization/syntax-type";
 import AST from "./ast";
 
 import * as SyntaxSets from "../tokenization/syntax-sets";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
+
+import { SingularTypeExpression } from "./ast/type-nodes/singular-type";
+import { LiteralTypeExpression } from "./ast/type-nodes/literal-type";
+import { UnionTypeExpression } from "./ast/type-nodes/union-type";
+import { ArrayTypeExpression } from "./ast/type-nodes/array-type";
+import { FunctionTypeExpression } from "./ast/type-nodes/function-type";
+import { InterfaceTypeExpression } from "./ast/type-nodes/interface-type";
+import { ClassTypeExpression } from "./ast/type-nodes/class-type";
 
 import { LiteralExpression } from "./ast/expressions/literal";
 import { StringInterpolationExpression } from "./ast/expressions/string-interpolation";
@@ -43,6 +53,11 @@ import { UseStatement } from "./ast/statements/use";
 import { BreakStatement } from "./ast/statements/break";
 import { NextStatement } from "./ast/statements/next";
 import { EveryStatement } from "./ast/statements/every";
+import { ClassBodyStatement } from "./ast/statements/class-body";
+import { ClassDeclarationStatement } from "./ast/statements/class-declaration";
+import { PropertyDeclarationStatement } from "./ast/statements/property-declaration";
+import { MethodDeclarationStatement } from "./ast/statements/method-declaration";
+import { NewExpression } from "./ast/expressions/new";
 
 const negate = <T, U>(a: T[], b: U[]): T[] =>
   a.filter(item => !b.includes(<any>item));
@@ -52,11 +67,11 @@ export interface ParseResult {
   readonly program: AST.Statement[];
 }
 
-export class Parser extends TypeParser {
+export class Parser extends TokenStepper {
   public constructor(
     tokens: Token[],
-    protected readonly typeAnalyzer: TypeAnalyzer,
-    private readonly runner: P
+    private readonly runner: P,
+    protected typeAnalyzer?: TypeAnalyzer
   ) { super(tokens); }
 
   /**
@@ -160,7 +175,7 @@ export class Parser extends TypeParser {
     if (this.match(Syntax.Class)) {
       const declaration = this.parseClassDeclaration();
       this.consumeSemicolons();
-      return new TypeDeclarationStatement(declaration.name, declaration);
+      return declaration;
     }
 
     if (this.check(Syntax.Identifier) && this.current.lexeme === "type") {
@@ -280,9 +295,9 @@ export class Parser extends TypeParser {
 
   private parseFunctionDeclaration(): AST.Statement {
     const returnType = this.parseType();
-    const keyword = this.consume<undefined>(Syntax.Function);
+    const keyword = this.consume<undefined, Syntax.Function>(Syntax.Function);
 
-    const identifierToken = this.consume<undefined>(Syntax.Identifier, "identifier");
+    const identifierToken = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier, "identifier");
     const parameters: VariableDeclarationStatement[] = [];
     if (this.match(Syntax.LParen)) {
       if (this.atVariableDeclaration) {
@@ -294,7 +309,7 @@ export class Parser extends TypeParser {
     }
 
 
-    this.consume(Syntax.LBrace);
+    this.consume(Syntax.LBrace, "'{'");
     const body = this.parseBlock();
     const declaration = new FunctionDeclarationStatement(keyword, identifierToken, returnType, parameters, body);
     this.consumeSemicolons();
@@ -527,8 +542,18 @@ export class Parser extends TypeParser {
       const operand = this.parseCall();
       if (operator.syntax === Syntax.TypeOf)
         return new TypeOfExpression(operator, operand);
+      else if (operator.syntax === Syntax.New) {
+        if (!(operand instanceof IdentifierExpression))
+          throw new ParserSyntaxError("Can only use 'new' on an identifier", operator);
 
-      if ((operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus) && !this.isAssignmentTarget(operand))
+        const args: AST.Expression[] = [];
+        if (this.match(Syntax.LParen) && !this.match(Syntax.RParen)) {
+          args.concat(this.parseExpressionList());
+          this.consume(Syntax.RParen, "')'");
+        }
+
+        return new NewExpression(<Token<undefined, Syntax.New>>operator, operand, args);
+      } else if ((operator.syntax === Syntax.PlusPlus || operator.syntax === Syntax.MinusMinus) && !this.isAssignmentTarget(operand))
         throw new ParserSyntaxError("Invalid increment/decrement target", operand.token);
 
       return new UnaryExpression(operator, operand);
@@ -748,5 +773,292 @@ export class Parser extends TypeParser {
       expressions.push(this.parseExpression());
 
     return expressions;
+  }
+
+  // These have no precedence, since they're declarations
+  // This is the reason they're not grouped with the below methods
+  protected parseTypeAlias(): [Token<undefined, Syntax.Identifier>, AST.TypeRef] {
+    this.consume<undefined>(Syntax.Identifier, "'type' keyword");
+    const identifier = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier, "identifier");
+    this.consume(Syntax.Equal, "'='");
+    const aliasedType = this.parseType();
+    return [identifier, aliasedType];
+  }
+
+  protected parseClassDeclaration(): ClassDeclarationStatement {
+    const keyword = this.previous<undefined, Syntax.Class>();
+    const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier);
+    let superclass: IdentifierExpression | undefined;
+    if (this.match(Syntax.LT))
+      superclass = new IdentifierExpression(this.consume(Syntax.Identifier));
+
+    const mixins: IdentifierExpression[] = [];
+    if (this.match(Syntax.Mixin)) {
+      mixins.push(new IdentifierExpression(this.consume(Syntax.Identifier)));
+      while (this.match(Syntax.Comma))
+        mixins.push(new IdentifierExpression(this.consume(Syntax.Identifier)));
+    }
+
+    const brace = this.consume<undefined>(Syntax.LBrace, "'{'");
+    let members: ClassMember[] = [];
+    if (!this.match(Syntax.RBrace))
+      members = this.parseClassMembers();
+
+    const body = new ClassBodyStatement(brace, members);
+    const memberSignatures = members.map<[string, ClassMemberSignature<AST.TypeRef>]>(member => {
+      const mutable = member instanceof PropertyDeclarationStatement ? member.mutable : false;
+      const [name, valueType] = member instanceof PropertyDeclarationStatement ?
+        [member.identifier.name.lexeme, member.typeRef]
+        : [member.name.lexeme, new FunctionTypeExpression(
+          new Map(member.parameters.map(param => [param.identifier.name.lexeme, param.typeRef])),
+          member.returnType
+        )];
+
+      return [name, {
+        modifiers: member.modifiers,
+        valueType, mutable
+      }];
+    });
+
+    const typeRef = new ClassTypeExpression(name, new Map(memberSignatures), mixins, superclass);
+    return new ClassDeclarationStatement(
+      keyword, name,
+      body, typeRef,
+      mixins, superclass
+    );
+  }
+
+  protected parseClassBody(): ClassBodyStatement {
+    throw new Error("Method not implemented.");
+  }
+
+  protected parseClassMembers(): ClassMember[] {
+    const members: ClassMember[] = [];
+    while (!this.match(Syntax.RBrace)) {
+      const modifiers = this.parseModifiers();
+      if (this.check(Syntax.Mut)) {
+        const { isMutable, valueType, name } = this.parseNamedType(true);
+        const nameIdentifier = new IdentifierExpression(fakeToken(Syntax.Identifier, name.token.value, undefined));
+        const initializer = this.match(Syntax.Equal) ? this.parseExpression() : undefined;
+        this.consumeSemicolons();
+        members.push(new PropertyDeclarationStatement(modifiers, valueType, nameIdentifier, isMutable, initializer));
+      } else {
+        const type = this.parseType();
+        if (this.match(Syntax.Function)) {
+          const keyword = this.previous<undefined, Syntax.Function>();
+          const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier);
+          const parameters: VariableDeclarationStatement[] = [];
+
+          if (this.match(Syntax.LParen) && !this.match(Syntax.RParen)) {
+            parameters.push(this.parseVariableDeclaration());
+            while (this.match(Syntax.Comma))
+              parameters.push(this.parseVariableDeclaration());
+
+            this.consume(Syntax.RParen, "')'");
+          }
+
+          this.consume(Syntax.LBrace, "'{'")
+          const body = this.parseBlock();
+          members.push(new MethodDeclarationStatement(modifiers, keyword, name, type, parameters, body));
+        } else {
+          const valueType = this.parseType();
+          const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier);
+          const initializer = this.match(Syntax.Equal) ? this.parseExpression() : undefined;
+          this.consumeSemicolons();
+          members.push(new PropertyDeclarationStatement(modifiers, valueType, new IdentifierExpression(name), false, initializer));
+        }
+      }
+    }
+    return members;
+  }
+
+  protected parseModifiers(): ModifierType[] {
+    const modifiers: ModifierType[] = [];
+    while (this.match(Syntax.Private, Syntax.Protected, Syntax.Static)) {
+      const modifierToken = this.previous<undefined>();
+      const modifierName = Syntax[modifierToken.syntax];
+      modifiers.push(<ModifierType><unknown>ModifierType[<number><unknown>modifierName]);
+    }
+    return modifiers;
+  }
+
+  protected parseInterfaceType(): InterfaceTypeExpression {
+    const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier);
+    this.consume<undefined>(Syntax.LBrace, "'{'");
+    const members = new Map<LiteralExpression<string>, InterfaceMemberSignature<AST.TypeRef>>();
+    const indexSignatures = new Map<AST.TypeRef, AST.TypeRef>();
+
+    if (!this.match(Syntax.RBrace)) {
+      const contents = this.parseInterfaceContents();
+      for (const [key, prop] of contents)
+        if (key instanceof LiteralExpression)
+          members.set(key, prop);
+        else
+          indexSignatures.set(key, prop.valueType);
+
+      this.consume<undefined>(Syntax.RBrace, "'}'");
+    }
+
+    return new InterfaceTypeExpression(name, members, indexSignatures);
+  }
+
+  protected parseInterfaceContents(): Map<LiteralExpression<string, Syntax> | AST.TypeRef, InterfaceMemberSignature<AST.TypeRef>> {
+    const keyValuePairs = [ this.parseInterfaceKeyValuePair() ];
+    while ((this.match(Syntax.Comma, Syntax.Semicolon) || this.checkType() || this.check(Syntax.Mut)) && !this.check(Syntax.RBrace))
+      keyValuePairs.push(this.parseInterfaceKeyValuePair());
+
+    return new Map(keyValuePairs);
+  }
+
+  protected parseInterfaceKeyValuePair(): [LiteralExpression<string, Syntax> | AST.TypeRef, InterfaceMemberSignature<AST.TypeRef>] {
+    let key: AST.TypeRef;
+    let valueType: AST.TypeRef;
+    let isMutable = false;
+    if (this.match(Syntax.LBracket)) {
+      key = this.parseType();
+      this.consume(Syntax.RBracket, "']'");
+      this.consume(Syntax.Colon, "':'");
+      valueType = this.parseType();
+    } else
+      ({ isMutable, valueType, name: key } = this.parseNamedType(true));
+
+    return [key, {
+      valueType,
+      mutable: isMutable
+    }];
+  }
+
+  private parseNamedType(allowMutable = false) {
+    const isMutable = allowMutable ? this.match(Syntax.Mut) : false;
+    const valueType = this.parseType();
+    const identifier = this.consume<undefined>(Syntax.Identifier);
+    const name = new LiteralExpression(fakeToken(Syntax.String, `"${identifier.lexeme}"`, identifier.lexeme));
+    return { isMutable, valueType, name };
+  }
+
+  /**
+   * Parses a type reference
+   */
+  protected parseType(): AST.TypeRef {
+    return this.parseFunctionType();
+  }
+
+  protected parseFunctionType(): AST.TypeRef {
+    if (this.match(Syntax.LParen)) {
+      const parameterTypes = new Map<string, AST.TypeRef>();
+      if (!this.match(Syntax.RParen)) {
+        const parseParameter = () => {
+          const { name, valueType } = this.parseNamedType();
+          parameterTypes.set(name.token.value, valueType);
+        }
+
+        parseParameter();
+        while (this.match(Syntax.Comma))
+          parseParameter();
+
+        this.consume(Syntax.RParen);
+      }
+
+
+      this.consume(Syntax.ColonColon, "'::'");
+      const returnType = this.parseType();
+      return new FunctionTypeExpression(parameterTypes, returnType);
+    }
+
+    return this.parseUnionType();
+  }
+
+  protected parseUnionType(): AST.TypeRef {
+    let left = this.parseArrayType();
+
+    while (this.match(Syntax.Pipe)) {
+      const singularTypes: (SingularTypeExpression | ArrayTypeExpression)[] = [];
+      if (left instanceof UnionTypeExpression)
+        singularTypes.push(...left.types);
+      else if (left instanceof SingularTypeExpression || left instanceof ArrayTypeExpression)
+        singularTypes.push(left);
+
+      singularTypes.push(this.parseSingularType());
+      left = new UnionTypeExpression(singularTypes);
+    }
+
+    return left;
+  }
+
+  protected parseArrayType(): AST.TypeRef {
+    let left: AST.TypeRef = this.parseSingularType();
+
+    while (this.match(Syntax.LBracket)) {
+      this.consume(Syntax.RBracket, "']'");
+      left = new ArrayTypeExpression(left);
+    }
+
+    if (this.match(Syntax.Question))
+      left = new UnionTypeExpression([
+        <SingularTypeExpression>left,
+        new SingularTypeExpression(fakeToken(Syntax.Undefined, "undefined"))
+      ]);
+
+    return left;
+  }
+
+  protected parseSingularType(): SingularTypeExpression {
+    if (!this.checkType())
+      throw new ParserSyntaxError(`Expected type, got '${this.current.lexeme}'`, this.current);
+
+    const typeKeyword = this.advance<TypeLiteralValueType | undefined, TypeNameSyntax>();
+    if (typeKeyword.value !== undefined)
+      return new LiteralTypeExpression(<Token<TypeLiteralValueType, TypeNameSyntax>>typeKeyword);
+
+    const typeName = typeKeyword.lexeme;
+    let typeArgs: AST.TypeRef[] | undefined;
+    if (this.match(Syntax.LT)) {
+      typeArgs = this.parseTypeList();
+      this.consume(Syntax.GT, "'>'");
+    }
+
+    if (this.typeAnalyzer!.typeTracker.isCustomType(typeName))
+      return this.typeAnalyzer!.typeTracker.getRef(typeName)!;
+
+    return new SingularTypeExpression(typeKeyword, typeArgs);
+  }
+
+  /**
+   * Parses a list of type references separated by commas
+   *
+   * Must have at least one type
+   */
+  protected parseTypeList(): AST.TypeRef[] {
+    const types = [ this.parseType() ];
+    while (this.match(Syntax.Comma))
+      types.push(this.parseType());
+
+    return types;
+  }
+
+  /**
+   * @returns Whether or not we matched a type reference
+   */
+  protected matchType(offset = 0): boolean {
+    if (this.checkType(offset)) {
+      this.advance();
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * @returns Whether or not we're currently at a type reference
+   */
+  protected checkType(offset = 0): boolean {
+    return (this.check(Syntax.LParen, offset) && (
+      this.checkType(offset + 1)
+      || (this.check(Syntax.RParen, offset + 1) && this.check(Syntax.ColonColon, offset + 2))
+    ))
+    || (
+      this.checkSet([Syntax.Identifier, Syntax.Undefined, Syntax.Null], offset)
+      && this.typeAnalyzer!.typeTracker.isTypeDefined(this.peek(offset)!.lexeme)
+    )
+    || this.checkSet([Syntax.String, Syntax.Boolean, Syntax.Int, Syntax.Float], offset)
   }
 }

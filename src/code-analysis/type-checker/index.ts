@@ -29,6 +29,7 @@ import type BoundAccessExpression from "../binder/bound-expressions/access";
 import type BoundIsExpression from "../binder/bound-expressions/is";
 import type BoundTypeOfExpression from "../binder/bound-expressions/typeof";
 import type BoundIsInExpression from "../binder/bound-expressions/is-in";
+import type BoundNewExpression from "../binder/bound-expressions/new";
 import type BoundExpressionStatement from "../binder/bound-statements/expression";
 import type BoundVariableAssignmentStatement from "../binder/bound-statements/variable-assignment";
 import type BoundVariableDeclarationStatement from "../binder/bound-statements/variable-declaration";
@@ -38,6 +39,10 @@ import type BoundWhileStatement from "../binder/bound-statements/while";
 import type BoundFunctionDeclarationStatement from "../binder/bound-statements/function-declaration";
 import type BoundReturnStatement from "../binder/bound-statements/return";
 import type BoundEveryStatement from "../binder/bound-statements/every";
+import type BoundClassBodyStatement from "../binder/bound-statements/class-body";
+import type BoundClassDeclarationStatement from "../binder/bound-statements/class-declaration";
+import type BoundMethodDeclarationStatement from "../binder/bound-statements/method-declaration";
+import type BoundPropertyDeclarationStatement from "../binder/bound-statements/property-declaration";
 
 export type ValueType = SingularValueType | ValueType[] | ObjectType;
 export type TypeLiteralValueType = string | boolean | number;
@@ -69,6 +74,46 @@ export interface InterfaceMemberSignature<T> {
 // NOTE: always call check() before assert()
 
 export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
+  public visitMethodDeclarationStatement(stmt: BoundMethodDeclarationStatement): void {
+    this.check(stmt.parameters);
+    this.check(stmt.body);
+    if (stmt.body.type)
+      this.assert(stmt.body, stmt.body.type, stmt.type.returnType);
+    else if (!this.isUndefined(stmt.type.returnType))
+      throw new TypeError(`Method '${stmt.name.lexeme}' is expected to return type '${stmt.type.returnType.toString()}', got 'void'`, stmt.name);
+  }
+
+  public visitPropertyDeclarationStatement(stmt: BoundPropertyDeclarationStatement): void {
+    if (!stmt.initializer) return;
+    this.check(stmt.initializer);
+
+    if (stmt.initializer instanceof BoundArrayLiteralExpression && stmt.initializer.type.elementType.toString() === "undefined")
+      return; // simply forgo the assertion if the array is empty, because an empty array will always be a Array<undefined>
+
+    this.assert(stmt.initializer, stmt.initializer.type, stmt.type);
+  }
+
+  public visitClassBodyStatement(stmt: BoundClassBodyStatement): void {
+    this.check(stmt.members);
+  }
+
+  public visitClassStatement(stmt: BoundClassDeclarationStatement): void {
+    if (stmt.superclass)
+      if (!stmt.superclass.isClass())
+        throw new TypeError(`Cannot extend a class with value of type '${stmt.superclass.toString()}'`, stmt.keyword)
+      else if (stmt.superclass === stmt.type)
+        throw new TypeError(`Cannot extend class with itself`, stmt.keyword);
+
+    if (stmt.mixins)
+      for (const mixin of stmt.mixins)
+        if (!mixin.isClass())
+          throw new TypeError(`Cannot mixin a class with value of type '${mixin.toString()}'`, stmt.keyword)
+        else if (mixin === stmt.type)
+          throw new TypeError(`Cannot mixin class with itself`, stmt.keyword);
+
+    this.check(stmt.body);
+  }
+
   public visitEveryStatement(stmt: BoundEveryStatement): void {
     this.check(stmt.elementDeclarations);
     this.check(stmt.iterable);
@@ -149,7 +194,6 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
     this.check(stmt.body);
     if (stmt.body.type)
       this.assert(stmt.body, stmt.body.type, stmt.symbol.type.returnType);
-
     else if (!this.isUndefined(stmt.symbol.type.returnType))
       throw new TypeError(`Function '${stmt.symbol.name.lexeme}' is expected to return type '${stmt.symbol.type.returnType.toString()}', got 'void'`, stmt.symbol.name);
   }
@@ -187,6 +231,30 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
 
   public visitExpressionStatement(stmt: BoundExpressionStatement): void {
     this.check(stmt.expression);
+  }
+
+  public visitNewExpression(expr: BoundNewExpression): void {
+    this.check(expr.classRef);
+    for (const arg of expr.constructorArgs)
+      this.check(arg);
+
+    const classType = expr.classRef.type;
+    if (!classType.isClass())
+      throw new TypeError("Cannot call 'new' on anything except a class", expr.token);
+
+    const constructorType = Array.from(classType.getInstanceType().members.values())
+      .map(sig => sig.valueType)
+      .find((type): type is FunctionType => type.isFunction());
+
+
+    if (constructorType) {
+      const expectedTypes = Array.from(constructorType.parameterTypes.entries());
+      for (const arg of expr.constructorArgs) {
+        const [parameterName, expectedType] = expectedTypes[expr.constructorArgs.indexOf(arg)];
+        this.check(arg);
+        this.assert(arg, arg.type, expectedType, `Constructor argument type '${arg.type.toString()}' is not assignable to type '${expectedType.toString()}' of parameter '${parameterName}'`);
+      }
+    }
   }
 
   public visitIsInExpression(expr: BoundIsInExpression): void {
@@ -324,7 +392,7 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
     // do nothing
   }
 
-  public check<T extends BoundExpression | BoundStatement = BoundExpression | BoundStatement>(statements: T | BoundStatement[]): void {
+  public check<T extends BoundExpression | BoundStatement = BoundExpression | BoundStatement>(statements: T | (T extends BoundStatement ? T : BoundStatement)[]): void {
     if (statements instanceof Array)
       for (const statement of statements)
         this.check(statement);

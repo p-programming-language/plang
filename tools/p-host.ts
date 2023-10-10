@@ -9,9 +9,9 @@ import Binder from "../src/code-analysis/binder";
 import Interpreter from "../src/runtime/interpreter";
 
 export default class PHost {
-  private typeTracker = new TypeTracker;
+  public typeTracker = new TypeTracker;
   public resolver = new Resolver;
-  public binder = new Binder;
+  public binder = new Binder(this.typeTracker);
   public typeChecker = new TypeChecker;
   public interpreter: Interpreter;
 
@@ -25,8 +25,8 @@ export default class PHost {
   public createParser(source: string): Parser {
     const lexer = new Lexer(source);
     const tokens = lexer.tokenize();
-    const typeAnalyzer = new TypeAnalyzer(tokens, this.typeTracker);
+    const typeAnalyzer = new TypeAnalyzer(tokens, this.runner, this.typeTracker);
     typeAnalyzer.analyze();
-    return new Parser(tokens, typeAnalyzer, this.runner);
+    return new Parser(tokens, this.runner, typeAnalyzer);
   }
 }

@@ -34,7 +34,9 @@ import type { BreakStatement } from "./statements/break";
 import type { NextStatement } from "./statements/next";
 import type { EveryStatement } from "./statements/every";
 import type { ClassBodyStatement } from "./statements/class-body";
-import type { ClassStatement } from "./statements/class";
+import type { ClassDeclarationStatement } from "./statements/class-declaration";
+import type { PropertyDeclarationStatement } from "./statements/property-declaration";
+import type { MethodDeclarationStatement } from "./statements/method-declaration";
 
 import type BoundLiteralExpression from "../../binder/bound-expressions/literal";
 import type BoundStringInterpolationExpression from "../../binder/bound-expressions/string-interpolation";
@@ -69,7 +71,9 @@ import type BoundBreakStatement from "../../binder/bound-statements/break";
 import type BoundEveryStatement from "../../binder/bound-statements/every";
 import type BoundNextStatement from "../../binder/bound-statements/next";
 import type BoundClassBodyStatement from "../../binder/bound-statements/class-body";
-import type BoundClassStatement from "../../binder/bound-statements/class";
+import type BoundClassDeclarationStatement from "../../binder/bound-statements/class-declaration";
+import type BoundPropertyDeclarationStatement from "../../binder/bound-statements/property-declaration";
+import type BoundMethodDeclarationStatement from "../../binder/bound-statements/method-declaration";
 
 namespace AST {
   export abstract class Node {
@@ -112,8 +116,10 @@ namespace AST {
     }
 
     export abstract class Statement<R> {
+      public abstract visitMethodDeclarationStatement(stmt: MethodDeclarationStatement): R
+      public abstract visitPropertyDeclarationStatement(stmt: PropertyDeclarationStatement): R
       public abstract visitClassBodyStatement(stmt: ClassBodyStatement): R
-      public abstract visitClassStatement(stmt: ClassStatement): R
+      public abstract visitClassDeclarationStatement(stmt: ClassDeclarationStatement): R
       public abstract visitEveryStatement(stmt: EveryStatement): R
       public abstract visitNextStatement(stmt: NextStatement): R
       public abstract visitBreakStatement(stmt: BreakStatement): R
@@ -152,8 +158,10 @@ namespace AST {
     }
 
     export abstract class BoundStatement<R> {
+      public abstract visitMethodDeclarationStatement(stmt: BoundMethodDeclarationStatement): R
+      public abstract visitPropertyDeclarationStatement(stmt: BoundPropertyDeclarationStatement): R
       public abstract visitClassBodyStatement(stmt: BoundClassBodyStatement): R
-      public abstract visitClassStatement(stmt: BoundClassStatement): R
+      public abstract visitClassStatement(stmt: BoundClassDeclarationStatement): R
       public abstract visitEveryStatement(stmt: BoundEveryStatement): R
       public abstract visitNextStatement(stmt: BoundNextStatement): R
       public abstract visitBreakStatement(stmt: BoundBreakStatement): R

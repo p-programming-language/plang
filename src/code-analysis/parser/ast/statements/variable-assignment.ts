@@ -1,5 +1,5 @@
-import { Token } from "../../../tokenization/token";
-import { IdentifierExpression } from "../expressions/identifier";
+import type { Token } from "../../../tokenization/token";
+import type { IdentifierExpression } from "../expressions/identifier";
 import AST from "..";
 
 export class VariableAssignmentStatement extends AST.Statement {
@@ -12,7 +12,7 @@ export class VariableAssignmentStatement extends AST.Statement {
     return visitor.visitVariableAssignmentStatement(this);
   }
 
-  public get token(): Token {
+  public get token(): Token<undefined> {
     return this.identifier.token;
   }
 }

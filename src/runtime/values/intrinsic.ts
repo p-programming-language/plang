@@ -8,6 +8,7 @@ import { generateAddress, getTypeFromTypeRef } from "../../utility";
 
 import type Intrinsics from "../intrinsics";
 import type Interpreter from "../interpreter";
+import type TypeTracker from "../../code-analysis/parser/type-tracker";
 import SingularType from "../../code-analysis/type-checker/types/singular-type";
 import InterfaceType from "../../code-analysis/type-checker/types/interface-type";
 import LiteralType from "../../code-analysis/type-checker/types/literal-type";
@@ -45,7 +46,7 @@ namespace Intrinsic {
         if (value instanceof Intrinsic.Function.constructor)
           this.intrinsics.defineFunction(name, <FunctionCtor><unknown>value);
         else if (value instanceof Intrinsic.Lib) {
-          const libType = getLibType(value);
+          const libType = getLibType(this.intrinsics.interpreter.runner.host.typeTracker, value);
           const mappedLib = new Map(Object.entries(value.members)
             .map(([ memberName, memberValue ]) => [
               memberName,
@@ -98,14 +99,14 @@ namespace Intrinsic {
     }
   }
 
-  export const getLibType = (lib: Lib): InterfaceType =>
+  export const getLibType = (typeTracker: TypeTracker, lib: Lib): InterfaceType =>
     new InterfaceType(
       new Map(Array.from(Object.entries(lib.members)).map(([propName, propValue]) => {
         let valueType: Type;
         if (propValue instanceof PFunction)
           valueType = new FunctionType(
-            new Map<string, Type>(propValue.definition.parameters.map(param => [param.identifier.name.lexeme, getTypeFromTypeRef(param.typeRef)])),
-            getTypeFromTypeRef(propValue.definition.returnType)
+            new Map<string, Type>(propValue.definition.parameters.map(param => [param.identifier.name.lexeme, getTypeFromTypeRef(typeTracker, param.typeRef)])),
+            getTypeFromTypeRef(typeTracker, propValue.definition.returnType)
           );
         else if (propValue instanceof Intrinsic.Function) {
           valueType = new FunctionType(
@@ -113,7 +114,7 @@ namespace Intrinsic {
             propValue.returnType
           );
         } else if (propValue instanceof Intrinsic.Lib)
-          valueType = getLibType(propValue);
+          valueType = getLibType(typeTracker, propValue);
         else
           valueType = SingularType.fromValue(propValue);
 

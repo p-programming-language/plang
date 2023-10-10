@@ -1,23 +1,25 @@
 import { Range } from "./range";
 import { Callable, CallableType } from "./callable";
+import { getTypeFromTypeRef } from "../../utility";
 import type { ValueType } from "../../code-analysis/type-checker";
 import type { VariableDeclarationStatement } from "../../code-analysis/parser/ast/statements/variable-declaration";
 import type { FunctionDeclarationStatement } from "../../code-analysis/parser/ast/statements/function-declaration";
 import type Interpreter from "../interpreter";
+import type TypeTracker from "../../code-analysis/parser/type-tracker";
 import HookedExceptions from "../hooked-exceptions";
 import Scope from "../scope";
-import { getTypeFromTypeRef } from "../../utility";
 
 const MAX_FN_PARAMS = 255;
 
 export default class PFunction<A extends ValueType[] = ValueType[], R extends ValueType = ValueType> extends Callable<[Interpreter, ...A], R> {
   public readonly name = this.definition.name.lexeme;
   public override readonly type = CallableType.Function;
-  private nullableParameters = this.parameters.filter(param => param.initializer !== undefined || getTypeFromTypeRef(param.typeRef).isNullable());
+  private nullableParameters = this.parameters.filter(param => param.initializer !== undefined || getTypeFromTypeRef(this.typeTracker, param.typeRef).isNullable());
 
   public constructor(
     public readonly definition: FunctionDeclarationStatement,
-    private readonly closure: Scope
+    private readonly closure: Scope,
+    private readonly typeTracker: TypeTracker
   ) { super(); }
 
   public call(interpreter: Interpreter, ...args: A): R | undefined {

@@ -11,7 +11,7 @@ export class IdentifierExpression extends AST.Expression {
     return visitor.visitIdentifierExpression(this);
   }
 
-  public get token(): Token {
+  public get token(): Token<undefined, Syntax.Identifier> {
     return this.name;
   }
 }
