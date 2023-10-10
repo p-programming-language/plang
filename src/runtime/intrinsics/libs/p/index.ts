@@ -7,8 +7,6 @@ import Eval from "./eval";
 import SetRecursionDepth from "./set-recursion-depth";
 
 export default class PLib extends Intrinsic.Lib {
-  public readonly name = "p";
-
   public get propertyTypes(): Record<string, Type> {
     return {
       version: new SingularType("int")

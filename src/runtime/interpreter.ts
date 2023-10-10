@@ -280,7 +280,8 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
       libFile += ".js";
 
     const Lib = <Intrinsic.LibCtor>require(libFile).default;
-    return new Lib(this.intrinsics);
+    const parentName = libFile.split(path.sep).at(-2);
+    return new Lib(this.intrinsics, parentName === "libs" ? undefined : parentName);
   }
 
   public visitTypeDeclarationStatement(): void {
@@ -390,6 +391,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     const index = this.evaluate(expr.index);
     if (object instanceof Intrinsic.Lib)
       return object.members[<any>index];
+
 
     const realValue = (<ValueType[] | ObjectType>object)[<any>index];
     if (

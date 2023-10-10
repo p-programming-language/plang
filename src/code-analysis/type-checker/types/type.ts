@@ -54,11 +54,18 @@ export abstract class Type {
     return this.isSingular() && this.name === "null";
   }
 
-  public isNullable(): boolean {
+  public isNullable(): this is SingularType {
     return this.isNull() || this.isUndefined() || (this.isUnion() && this.types.some(t => t.isNullable()));
   }
 
+  public isAny(): this is SingularType {
+    return this.isSingular() && this.name === "any";
+  }
+
   public is(other: Type): boolean {
+    if (this.isAny())
+      return other.isAny();
+
     if (this.isUnion())
       return this.types.every(type => type.is(other));
 

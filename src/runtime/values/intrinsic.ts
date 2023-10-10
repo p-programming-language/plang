@@ -1,15 +1,15 @@
+import toCamelCase from "to-camel-case";
 import util from "util";
 
 import { Callable, CallableType } from "./callable";
 import type { ClassMemberSignature, ObjectType, ValueType } from "../../code-analysis/type-checker";
 import type { Type } from "../../code-analysis/type-checker/types/type";
-import { Constructable } from "./constructable";
+import { Constructable, ConstructableType } from "./constructable";
 import { Range } from "./range";
 import { generateAddress, getTypeFromTypeRef } from "../../utility";
 
 import type Intrinsics from "../intrinsics";
 import type Interpreter from "../interpreter";
-import type TypeTracker from "../../code-analysis/parser/type-tracker";
 import SingularType from "../../code-analysis/type-checker/types/singular-type";
 import InterfaceType from "../../code-analysis/type-checker/types/interface-type";
 import LiteralType from "../../code-analysis/type-checker/types/literal-type";
@@ -29,10 +29,12 @@ namespace Intrinsic {
   }
 
   export abstract class Class<A extends ValueType[] = ValueType[]> extends Constructable<A, ObjectType> {
+    public override readonly type = ConstructableType.IntrinsicClass;
     public abstract readonly name: string;
     public abstract readonly constructorArgumentTypes: Record<string, Type>;
     public abstract readonly memberSignatures: Record<string, ClassMemberSignature<Type>>;
     public readonly superclass?: Intrinsic.Class;
+    public readonly mixins?: Intrinsic.Class[];
     public readonly address = generateAddress();
 
     public constructor(
@@ -44,7 +46,28 @@ namespace Intrinsic {
       const members = new Map(Object.entries(this.memberSignatures)
         .map<[LiteralType<string>, ClassMemberSignature<Type>]>(([name, sig]) => [new LiteralType(name), sig]));
 
-      return new ClassType(this.name.split(".").at(-1)!, members, [], undefined);
+      members.set(new LiteralType("construct"), {
+        modifiers: [],
+        valueType: new FunctionType(new Map(Object.entries(this.constructorArgumentTypes)), new InterfaceType(
+          new Map(
+            Array.from(members.entries())
+              .filter(([_, sig]) => sig.modifiers.length === 0) // all public instance-level signatures (not private, non protected, not static)
+              .map(([name, sig]) => [name, {
+                valueType: sig.valueType,
+                mutable: sig.mutable
+              }])
+          ),
+          new Map
+        )),
+        mutable: false
+      });
+
+      return new ClassType(
+        this.name.split(".").at(-1)!,
+        members,
+        (this.mixins ?? []).map(mixin => mixin.typeSignature),
+        this.superclass?.typeSignature
+      );
     }
 
     public [util.inspect.custom](): string {
@@ -72,7 +95,7 @@ namespace Intrinsic {
   }
 
   export abstract class Lib extends Collection {
-    public abstract readonly name: string;
+    public readonly name = `${this.parentName}.${toCamelCase(this.constructor.name.replace(/Lib/g, ""))}`;
     public readonly address = generateAddress();
 
     public constructor(

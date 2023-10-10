@@ -246,7 +246,6 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
       .map(sig => sig.valueType)
       .find((type): type is FunctionType => type.isFunction());
 
-
     if (constructorType) {
       const expectedTypes = Array.from(constructorType.parameterTypes.entries());
       for (const arg of expr.constructorArgs) {
@@ -293,7 +292,9 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
 
     const expectedTypes = Array.from(expr.callee.type.parameterTypes.entries());
     for (const arg of expr.args) {
-      const [parameterName, expectedType] = expectedTypes[expr.args.indexOf(arg)];
+      const parameter = expectedTypes[expr.args.indexOf(arg)];
+      if (!parameter) continue;
+      const [parameterName, expectedType] = parameter;
       this.check(arg);
       this.assert(arg, arg.type, expectedType, `Argument type '${arg.type.toString()}' is not assignable to type '${expectedType.toString()}' of parameter '${parameterName}'`);
     }

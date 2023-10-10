@@ -8,8 +8,6 @@ import UnionType from "../../../../code-analysis/type-checker/types/union-type";
 import Intrinsic from "../../../values/intrinsic";
 
 export default class IOLib extends Intrinsic.Lib {
-  public readonly name = `${this.parentName}.${toCamelCase(this.constructor.name.replace(/Lib/g, ""))}`;
-
   public get propertyTypes(): Record<string, Type> {
     return {};
   }

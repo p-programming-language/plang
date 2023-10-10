@@ -99,9 +99,15 @@ import BoundMethodDeclarationStatement from "./bound-statements/method-declarati
 type IndexType = SingularType<"string"> | SingularType<"int">;
 type PropertyPair = [LiteralType<string>, InterfaceMemberSignature<Type>];
 
+enum Context {
+  Global,
+  Parameters
+}
+
 export default class Binder implements AST.Visitor.Expression<BoundExpression>, AST.Visitor.Statement<BoundStatement> {
   private readonly variableScopes: VariableSymbol[][] = [];
   private readonly boundNodes = new Map<AST.Node, BoundNode>;
+  private context = Context.Global;
 
   public constructor(
     private readonly typeTracker: TypeTracker
@@ -110,7 +116,11 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   }
 
   public visitMethodDeclarationStatement(stmt: MethodDeclarationStatement): BoundMethodDeclarationStatement {
+    const enclosingContext = this.context;
+    this.context = Context.Parameters;
     const parameters = stmt.parameters.map(param => this.bind<VariableDeclarationStatement, BoundVariableDeclarationStatement>(param));
+    this.context = enclosingContext;
+
     const body = this.bind<BlockStatement, BoundBlockStatement>(stmt.body);
     const type = new FunctionType(
       new Map(parameters.map(decl => [decl.symbol.name.lexeme, decl.type])),
@@ -192,7 +202,11 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     );
 
     const variableSymbol = this.defineSymbol(stmt.name, type);
+    const enclosingContext = this.context;
+    this.context = Context.Parameters;
     const parameters = stmt.parameters.map(param => this.bind<VariableDeclarationStatement, BoundVariableDeclarationStatement>(param));
+    this.context = enclosingContext;
+
     const body = this.bind<BlockStatement, BoundBlockStatement>(stmt.body);
     return new BoundFunctionDeclarationStatement(variableSymbol, parameters, body);
   }
@@ -222,7 +236,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     const variableType = getTypeFromTypeRef(this.typeTracker, stmt.typeRef);
     let type: Type;
 
-    const valueIsUndefined = (initializer?.type ?? new SingularType("undefined")).isUndefined();
+    const valueIsUndefined = (initializer?.type ?? new SingularType("undefined")).isUndefined() && this.context !== Context.Parameters;
     if (valueIsUndefined)
       type = variableType instanceof UnionType ?
         new UnionType([...variableType.types, new SingularType("undefined")])
@@ -241,7 +255,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitVariableAssignmentStatement(stmt: VariableAssignmentStatement): BoundVariableAssignmentStatement {
     const identifier = this.bind<IdentifierExpression, BoundIdentifierExpression>(stmt.identifier);
-    const variableSymbol = new VariableSymbol(identifier.token, identifier.type);
+    const variableSymbol = this.defineSymbol(identifier.name, identifier.type);
     const value = this.bind(stmt.value);
     return new BoundVariableAssignmentStatement(variableSymbol, value);
   }
@@ -288,6 +302,9 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       const extension = IntrinsicExtension.getFake(extendedType.name);
       const memberName = index.token.value;
       const member = extension.members[memberName];
+      if (!Object.keys(extension.members).includes(memberName))
+        return new BoundAccessExpression(expr.token, object, index, new SingularType("undefined"));
+
       let type = extension.propertyTypes[memberName];
       if (member instanceof Intrinsic.Function.constructor) {
         const fn = new (<Intrinsic.FunctionCtor>member)();
@@ -310,7 +327,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     if (!(callee instanceof BoundIdentifierExpression || callee instanceof BoundAccessExpression))
       throw new TypeError(message, callee.token);
 
-    if (!callee.type.isFunction() && (!callee.type.isSingular() || callee.type.name !== "any"))
+    if (!callee.type.isFunction() && !(callee.type.isSingular() && callee.type.name === "any"))
       throw new TypeError(message, callee.token);
 
     return new BoundCallExpression(callee, args);
@@ -333,7 +350,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
   public visitVariableAssignmentExpression(expr: VariableAssignmentExpression): BoundVariableAssignmentExpression {
     const identifier = this.bind<IdentifierExpression, BoundIdentifierExpression>(expr.identifier);
-    const variableSymbol = new VariableSymbol(identifier.token, identifier.type);
+    const variableSymbol = this.defineSymbol(identifier.name, identifier.type);
     const value = this.bind(expr.value);
     return new BoundVariableAssignmentExpression(variableSymbol, value);
   }
