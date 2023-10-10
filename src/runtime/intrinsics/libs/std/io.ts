@@ -3,8 +3,8 @@ import toCamelCase from "to-camel-case";
 
 import type { ValueType } from "../../../../code-analysis/type-checker";
 import type { Type } from "../../../../code-analysis/type-checker/types/type";
+import { optional } from "../../../../utility";
 import SingularType from "../../../../code-analysis/type-checker/types/singular-type";
-import UnionType from "../../../../code-analysis/type-checker/types/union-type";
 import Intrinsic from "../../../values/intrinsic";
 
 export default class IOLib extends Intrinsic.Lib {
@@ -35,16 +35,10 @@ export default class IOLib extends Intrinsic.Lib {
       },
       readln: class Readln extends Intrinsic.Function {
         public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
-        public readonly returnType = new UnionType([
-          new SingularType("string"),
-          new SingularType("undefined")
-        ]);
+        public readonly returnType = optional(new SingularType("string"));
         public readonly argumentTypes = {
           prompt: new SingularType("string"),
-          hideEchoBack: new UnionType([
-            new SingularType("bool"),
-            new SingularType("undefined")
-          ])
+          hideEchoBack: optional(new SingularType("bool"))
         };
 
         public call(prompt: string, hideEchoBack = false): string {

@@ -250,6 +250,8 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
           if (lib.propertyTypes[member.lexeme])
             this.intrinsics.define(member.lexeme, lib.members[member.lexeme], lib.propertyTypes[member.lexeme]);
+          else if (libMember instanceof Intrinsic.Lib.constructor)
+            this.intrinsics.defineLib(member.lexeme, <Intrinsic.LibCtor>libMember);
           else if (libMember instanceof Intrinsic.Lib)
             this.intrinsics.define(member.lexeme, lib.members[member.lexeme], libMember.typeSignature);
           else if (libMember instanceof Intrinsic.Function.constructor)

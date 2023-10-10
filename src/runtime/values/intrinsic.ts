@@ -101,25 +101,24 @@ namespace Intrinsic {
     public constructor(
       protected readonly intrinsics: Intrinsics,
       protected readonly parentName?: string
-    ) { super(); }
+    ) {
+      super();
+      if (!("interpreter" in intrinsics))
+        throw new Error("you fucked up lol");
+    }
 
     public inject(): void {
       const members = Object.entries(this.members);
       for (const [name, value] of members)
         if (value instanceof Intrinsic.Function.constructor)
           this.intrinsics.defineFunction(name, <FunctionCtor><unknown>value);
-        else if (value instanceof Intrinsic.Lib) {
-          const libType = value.typeSignature;
-          const mappedLib = new Map(Object.entries(value.members)
-            .map(([ memberName, memberValue ]) => [
-              memberName,
-              memberValue instanceof Intrinsic.Function.constructor ?
-                new (<FunctionCtor>memberValue)()
-                : memberValue
-            ]));
-
-          this.intrinsics.define(name, Object.fromEntries(mappedLib.entries()), libType);
-        } else
+        else if (value instanceof Intrinsic.Function)
+          this.intrinsics.defineFunctionFromInstance(name, value);
+        else if (value instanceof Intrinsic.Lib.constructor)
+          this.intrinsics.defineLib(name, <LibCtor><unknown>value);
+        else if (value instanceof Intrinsic.Lib)
+          this.intrinsics.defineLibFromInstance(name, value);
+        else
           this.intrinsics.define(name, value, this.propertyTypes[name]);
     }
 
@@ -135,10 +134,12 @@ namespace Intrinsic {
               )),
               getTypeFromTypeRef(typeTracker, propValue.definition.returnType)
             );
-          else if (propValue instanceof Intrinsic.Function || propValue instanceof Intrinsic.Class) {
+          else if (propValue instanceof Intrinsic.Function || propValue instanceof Intrinsic.Class || propValue instanceof Intrinsic.Lib)
             valueType = propValue.typeSignature;
-          } else if (propValue instanceof Intrinsic.Lib)
-            valueType = propValue.typeSignature;
+          else if (propValue instanceof Intrinsic.Function.constructor)
+            valueType = new (<Intrinsic.FunctionCtor>propValue)(this.intrinsics.interpreter).typeSignature;
+          else if (propValue instanceof Intrinsic.Class.constructor || propValue instanceof Intrinsic.Lib.constructor)
+            valueType = new (<Intrinsic.ClassCtor | Intrinsic.LibCtor>propValue)(this.intrinsics).typeSignature;
           else
             valueType = SingularType.fromValue(propValue);
 

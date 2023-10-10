@@ -36,6 +36,28 @@ export default class Intrinsics {
     this.define(name, fn, fn.typeSignature);
   }
 
+  public defineLib(name: string, IntrinsicLib: Intrinsic.LibCtor): void {
+    const lib = new IntrinsicLib(this);
+    this.defineLibFromInstance(name, lib);
+  }
+
+  public defineLibFromInstance(name: string, lib: Intrinsic.Lib): void {
+    const mappedLib = Object.entries(lib.members)
+      .map(([ memberName, memberValue ]) => {
+        let value;
+        if (memberValue instanceof Intrinsic.Function.constructor)
+          value = new (<Intrinsic.FunctionCtor>memberValue)(this.interpreter);
+        else if (memberValue instanceof Intrinsic.Lib.constructor || memberValue instanceof Intrinsic.Class.constructor)
+          value = new (<Intrinsic.LibCtor | Intrinsic.ClassCtor>memberValue)(this, lib.name);
+        else if (memberValue instanceof Intrinsic.Function || memberValue instanceof Intrinsic.Lib || memberValue instanceof Intrinsic.Class)
+          value = memberValue;
+
+        return [memberName, value];
+      });
+
+    this.define(name, Object.fromEntries(mappedLib), lib.typeSignature);
+  }
+
   public defineClass(name: string, IntrinsicClass: Intrinsic.ClassCtor): void {
     const _class = new IntrinsicClass(this);
     this.defineClassFromInstance(name, _class);

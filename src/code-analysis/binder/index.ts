@@ -321,7 +321,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
   public visitCallExpression(expr: CallExpression): BoundCallExpression {
     const callee = this.bind(expr.callee);
     const args = expr.args.map(arg => this.bind(arg));
-    const message = `Attempt to call '${callee.type.toString()}'`;
+    const message = `Attempt to call '${callee.type.toString(false)}'`;
 
     // if we add lambdas we put that here too
     if (!(callee instanceof BoundIdentifierExpression || callee instanceof BoundAccessExpression))
