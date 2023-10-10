@@ -98,6 +98,7 @@ describe(Interpreter.name, () => {
     evaluate("int[] nums = [1,2,3]; nums[1] = 5; nums[1]")?.should.equal(5);
   });
   it("evaluates call expressions", () => {
+    evaluate("use eval from @p", false);
     evaluate("eval('1 + 2')")?.should.equal(3);
   });
   it("evaluates function declarations", () => {
@@ -112,7 +113,8 @@ describe(Interpreter.name, () => {
     });
 
   it("evaluates intrinsics", () => {
-    evaluate("version$")?.should.equal("v" + pkg.version);
+    evaluate("use version from @p", false);
+    evaluate("version")?.should.equal("v" + pkg.version);
     evaluate("filename$")?.should.equal("test");
   });
   describe("evaluates general tests (tests/)", () => {

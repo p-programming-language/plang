@@ -25,7 +25,9 @@ import BoundCallExpression from "../code-analysis/binder/bound-expressions/call"
 function bind(source: string): BoundStatement[] {
   const p = new P("test");
   const parser = p.createParser(source);
-  const { program: ast } = parser.parse();
+  const { imports, program: ast } = parser.parse();
+
+  p.host.interpreter.evaluate(imports);
   return p.host.binder.bindStatements(ast);
 }
 
@@ -172,7 +174,7 @@ describe(Binder.name, () => {
   it("binds call expressions", () => {
     {
 
-      const [node] = bind("eval('1 + 1')");
+      const [node] = bind("use eval from @p; eval('1 + 1')");
       node.should.be.an.instanceof(BoundExpressionStatement);
       const expr = (<BoundExpressionStatement>node).expression;
       expr.should.be.an.instanceof(BoundCallExpression);
