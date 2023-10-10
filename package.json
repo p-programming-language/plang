@@ -1,6 +1,6 @@
 {
   "name": "plang",
-  "version": "0.2.0a",
+  "version": "0.2.1a",
   "description": "A general purpose, statically-typed, interpreted language.",
   "displayName": "PLang",
   "icon": "https://avatars.githubusercontent.com/u/146694713?s=400&u=4e01b5afefbf7e40641702e5cbdf785ff183fe35&v=4",
