@@ -37,14 +37,14 @@ export default class SystemLib extends Intrinsic.Lib {
 
       env: EnvLib,
 
-      // Time since Unix epoch in MS
+      // Time since Unix epoch in seconds
       time: class Time extends Intrinsic.Function {
         public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
         public readonly returnType = new SingularType("int");
         public readonly argumentTypes = {};
 
         public call(): number {
-          return Date.now();
+          return Date.now() / 1000;
         }
       },
       // Executs a shell command
