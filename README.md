@@ -86,11 +86,12 @@ yarn run <tool>
     - Function declarations and calls
 
 ## Planned Features
-- Type guards (`value is T`, `T extends U`)
+- Type guards (`value is T`, `T extends U`, `asserts T`)
+- Intrinsic types
+- Intrinsic classes
 - Spread types
 - Parenthesized types
 - Type casting
 - Throw statement
 - Switch statement
-- `System` intrinsic library
 - Classes (in progress)
