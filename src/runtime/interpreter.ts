@@ -249,16 +249,16 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
             throw new RuntimeError(`Import '${member.lexeme}' does not exist for '${stmt.location.path}'`, member);
 
           if (lib.propertyTypes[member.lexeme])
-            this.intrinsics.define(member.lexeme, lib.members[member.lexeme], lib.propertyTypes[member.lexeme]);
-          else if (libMember instanceof Intrinsic.Lib.constructor)
-            this.intrinsics.defineLib(member.lexeme, <Intrinsic.LibCtor>libMember);
-          else if (libMember instanceof Intrinsic.Lib)
-            this.intrinsics.define(member.lexeme, lib.members[member.lexeme], libMember.typeSignature);
-          else if (libMember instanceof Intrinsic.Function.constructor)
+            this.intrinsics.define(member.lexeme, libMember, lib.propertyTypes[member.lexeme]);
+          else if ("intrinsicKind" in <object>libMember && (<any>libMember).intrinsicKind === Intrinsic.Kind.Function)
             this.intrinsics.defineFunction(member.lexeme, <Intrinsic.FunctionCtor>libMember);
           else if (libMember instanceof Intrinsic.Function)
             this.intrinsics.defineFunctionFromInstance(member.lexeme, libMember);
-          else if (libMember instanceof Intrinsic.Class.constructor)
+          else if ("intrinsicKind" in <object>libMember && (<any>libMember).intrinsicKind === Intrinsic.Kind.Lib)
+            this.intrinsics.defineLib(member.lexeme, <Intrinsic.LibCtor>libMember);
+          else if (libMember instanceof Intrinsic.Lib)
+            this.intrinsics.defineLibFromInstance(member.lexeme, libMember);
+          else if ("intrinsicKind" in <object>libMember && (<any>libMember).intrinsicKind === Intrinsic.Kind.Class)
             this.intrinsics.defineClass(member.lexeme, <Intrinsic.ClassCtor>libMember);
           else if (libMember instanceof Intrinsic.Class)
             this.intrinsics.defineClassFromInstance(member.lexeme, libMember);
@@ -404,7 +404,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
       const extension = IntrinsicExtension.get(object);
       let member = extension.members[<any>index];
-      if (member instanceof Intrinsic.Function.constructor)
+      if ("intrinsicKind" in <object>member && (<any>member).intrinsicKind === Intrinsic.Kind.Function)
         member = new (<Intrinsic.FunctionCtor>member)(this);
 
       return member ?? realValue;

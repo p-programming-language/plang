@@ -306,7 +306,7 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
         return new BoundAccessExpression(expr.token, object, index);
 
       let type = extension.propertyTypes[memberName];
-      if (member instanceof Intrinsic.Function.constructor) {
+      if ("intrinsicKind" in <object>member && (<any>member).intrinsicKind === Intrinsic.Kind.Function) {
         const fn = new (<Intrinsic.FunctionCtor>member)();
         type = new FunctionType(new Map(Object.entries(fn.argumentTypes)), fn.returnType);
       } else if (member && !type)

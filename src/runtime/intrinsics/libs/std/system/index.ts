@@ -37,6 +37,17 @@ export default class SystemLib extends Intrinsic.Lib {
 
       env: EnvLib,
 
+      // Time since Unix epoch in MS
+      time: class Time extends Intrinsic.Function {
+        public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = new SingularType("int");
+        public readonly argumentTypes = {};
+
+        public call(): number {
+          return Date.now();
+        }
+      },
+      // Executs a shell command
       exec: class Exec extends Intrinsic.Function {
         public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
         public readonly returnType = new SingularType("string");
@@ -50,7 +61,7 @@ export default class SystemLib extends Intrinsic.Lib {
             return error;
           }
         }
-      },
+      }
     };
   }
 }

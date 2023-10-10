@@ -23,12 +23,19 @@ namespace Intrinsic {
   export type FunctionCtor = new (interpreter?: Interpreter | undefined) => Intrinsic.Function;
   export type LibCtor = new (intrinsics: Intrinsics, parentName?: string) => Intrinsic.Lib;
 
+  export const enum Kind {
+    Lib,
+    Function,
+    Class
+  }
+
   abstract class Collection extends PValue {
     public abstract get members(): Record<string, ValueType>;
     public abstract get propertyTypes(): Record<string, Type>;
   }
 
   export abstract class Class<A extends ValueType[] = ValueType[]> extends Constructable<A, ObjectType> {
+    public static readonly intrinsicKind = Kind.Class;
     public override readonly type = ConstructableType.IntrinsicClass;
     public abstract readonly name: string;
     public abstract readonly constructorArgumentTypes: Record<string, Type>;
@@ -95,6 +102,7 @@ namespace Intrinsic {
   }
 
   export abstract class Lib extends Collection {
+    public static readonly intrinsicKind = Kind.Lib;
     public readonly name = `${this.parentName}.${toCamelCase(this.constructor.name.replace(/Lib/g, ""))}`;
     public readonly address = generateAddress();
 
@@ -104,20 +112,24 @@ namespace Intrinsic {
     ) {
       super();
       if (!("interpreter" in intrinsics))
-        throw new Error("you fucked up lol");
+        throw new Error("Somehow we thought this Lib was a Function");
     }
 
     public inject(): void {
       const members = Object.entries(this.members);
       for (const [name, value] of members)
-        if (value instanceof Intrinsic.Function.constructor)
-          this.intrinsics.defineFunction(name, <FunctionCtor><unknown>value);
-        else if (value instanceof Intrinsic.Function)
-          this.intrinsics.defineFunctionFromInstance(name, value);
-        else if (value instanceof Intrinsic.Lib.constructor)
+        if (value instanceof Intrinsic.Lib.constructor)
           this.intrinsics.defineLib(name, <LibCtor><unknown>value);
         else if (value instanceof Intrinsic.Lib)
           this.intrinsics.defineLibFromInstance(name, value);
+        else if (value instanceof Intrinsic.Class.constructor)
+          this.intrinsics.defineClass(name, <ClassCtor><unknown>value);
+        else if (value instanceof Intrinsic.Class)
+          this.intrinsics.defineClassFromInstance(name, value);
+        else if (value instanceof Intrinsic.Function.constructor)
+          this.intrinsics.defineFunction(name, <FunctionCtor><unknown>value);
+        else if (value instanceof Intrinsic.Function)
+          this.intrinsics.defineFunctionFromInstance(name, value);
         else
           this.intrinsics.define(name, value, this.propertyTypes[name]);
     }
@@ -136,9 +148,9 @@ namespace Intrinsic {
             );
           else if (propValue instanceof Intrinsic.Function || propValue instanceof Intrinsic.Class || propValue instanceof Intrinsic.Lib)
             valueType = propValue.typeSignature;
-          else if (propValue instanceof Intrinsic.Function.constructor)
+          else if ("intrinsicKind" in <object>propValue && (<any>propValue).intrinsicKind === Intrinsic.Kind.Function)
             valueType = new (<Intrinsic.FunctionCtor>propValue)(this.intrinsics.interpreter).typeSignature;
-          else if (propValue instanceof Intrinsic.Class.constructor || propValue instanceof Intrinsic.Lib.constructor)
+          else if ("intrinsicKind" in <object>propValue && ((<any>propValue).intrinsicKind === Intrinsic.Kind.Lib || (<any>propValue).intrinsicKind === Intrinsic.Kind.Class))
             valueType = new (<Intrinsic.ClassCtor | Intrinsic.LibCtor>propValue)(this.intrinsics).typeSignature;
           else
             valueType = SingularType.fromValue(propValue);
@@ -163,6 +175,7 @@ namespace Intrinsic {
   }
 
   export abstract class Function<A extends ValueType[] = ValueType[], R extends ValueType = ValueType> extends Callable<A, R> {
+    public static readonly intrinsicKind = Kind.Function;
     public override readonly type = CallableType.IntrinsicFunction;
     public abstract readonly name: string;
     public abstract readonly returnType: Type;
