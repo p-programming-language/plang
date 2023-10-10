@@ -48,7 +48,7 @@ const pint = command({
     p.executionOptions.outputResult = results;
     PError.showTrace = trace;
 
-    if (!filePath || !filePath.endsWith(".p") || !filePath.includes("/"))
+    if (!filePath || !filePath.endsWith(".p"))
       return p.repl.start(filePath ? [filePath].concat(...args) : args);
 
     p.doFile(filePath, args);
