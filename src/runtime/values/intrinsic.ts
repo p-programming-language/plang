@@ -16,6 +16,7 @@ import LiteralType from "../../code-analysis/type-checker/types/literal-type";
 import PValue from "./value";
 import PFunction from "./function";
 import FunctionType from "../../code-analysis/type-checker/types/function-type";
+import ClassType from "../../code-analysis/type-checker/types/class-type";
 
 namespace Intrinsic {
   export type ClassCtor = new (intrinsics: Intrinsics, parentName?: string) => Intrinsic.Class;
@@ -38,6 +39,13 @@ namespace Intrinsic {
       protected readonly intrinsics: Intrinsics,
       protected readonly parentName?: string
     ) { super(); }
+
+    public get typeSignature(): ClassType {
+      const members = new Map(Object.entries(this.memberSignatures)
+        .map<[LiteralType<string>, ClassMemberSignature<Type>]>(([name, sig]) => [new LiteralType(name), sig]));
+
+      return new ClassType(this.name.split(".").at(-1)!, members, [], undefined);
+    }
 
     public [util.inspect.custom](): string {
       return this.toString();
@@ -78,7 +86,7 @@ namespace Intrinsic {
         if (value instanceof Intrinsic.Function.constructor)
           this.intrinsics.defineFunction(name, <FunctionCtor><unknown>value);
         else if (value instanceof Intrinsic.Lib) {
-          const libType = getLibType(this.intrinsics.interpreter.runner.host.typeTracker, value);
+          const libType = value.typeSignature;
           const mappedLib = new Map(Object.entries(value.members)
             .map(([ memberName, memberValue ]) => [
               memberName,
@@ -90,6 +98,35 @@ namespace Intrinsic {
           this.intrinsics.define(name, Object.fromEntries(mappedLib.entries()), libType);
         } else
           this.intrinsics.define(name, value, this.propertyTypes[name]);
+    }
+
+    public get typeSignature(): InterfaceType {
+      const typeTracker = this.intrinsics.interpreter.runner.host.typeTracker;
+      return new InterfaceType(
+        new Map(Array.from(Object.entries(this.members)).map(([propName, propValue]) => {
+          let valueType: Type;
+          if (propValue instanceof PFunction)
+            valueType = new FunctionType(
+              new Map<string, Type>(propValue.definition.parameters.map(param =>
+                [param.identifier.name.lexeme, getTypeFromTypeRef(typeTracker, param.typeRef)]
+              )),
+              getTypeFromTypeRef(typeTracker, propValue.definition.returnType)
+            );
+          else if (propValue instanceof Intrinsic.Function || propValue instanceof Intrinsic.Class) {
+            valueType = propValue.typeSignature;
+          } else if (propValue instanceof Intrinsic.Lib)
+            valueType = propValue.typeSignature;
+          else
+            valueType = SingularType.fromValue(propValue);
+
+          return [new LiteralType(propName), {
+            valueType,
+            mutable: false
+          }]
+        })),
+        new Map,
+        this.constructor.name
+      );
     }
 
     public [util.inspect.custom](): string {
@@ -111,7 +148,9 @@ namespace Intrinsic {
       protected readonly interpreter?: Interpreter
     ) { super(); }
 
-    public abstract call(...args: A): R;
+    public get typeSignature(): FunctionType {
+      return new FunctionType(new Map<string, Type>(Object.entries(this.argumentTypes)), this.returnType)
+    }
 
     public get arity(): number | Range {
       const nonNullableArguments = Array.from(Object.values(this.argumentTypes))
@@ -127,37 +166,9 @@ namespace Intrinsic {
     }
 
     public toString(): string {
-      return `<Intrinsic.Function: ${this.address}>`
+      return `<Intrinsic.Function: ${this.address}>`;
     }
   }
-
-  export const getLibType = (typeTracker: TypeTracker, lib: Lib): InterfaceType =>
-    new InterfaceType(
-      new Map(Array.from(Object.entries(lib.members)).map(([propName, propValue]) => {
-        let valueType: Type;
-        if (propValue instanceof PFunction)
-          valueType = new FunctionType(
-            new Map<string, Type>(propValue.definition.parameters.map(param => [param.identifier.name.lexeme, getTypeFromTypeRef(typeTracker, param.typeRef)])),
-            getTypeFromTypeRef(typeTracker, propValue.definition.returnType)
-          );
-        else if (propValue instanceof Intrinsic.Function) {
-          valueType = new FunctionType(
-            new Map(Object.entries(propValue.argumentTypes)),
-            propValue.returnType
-          );
-        } else if (propValue instanceof Intrinsic.Lib)
-          valueType = getLibType(typeTracker, propValue);
-        else
-          valueType = SingularType.fromValue(propValue);
-
-        return [new LiteralType(propName), {
-          valueType,
-          mutable: false
-        }]
-      })),
-      new Map,
-      lib.constructor.name
-    );
 }
 
 export default Intrinsic;

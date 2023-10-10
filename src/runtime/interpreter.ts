@@ -64,6 +64,7 @@ import type { MethodDeclarationStatement } from "../code-analysis/parser/ast/sta
 import type { PropertyDeclarationStatement } from "../code-analysis/parser/ast/statements/property-declaration";
 import PClass from "./values/class";
 import PClassInstance from "./values/class-instance";
+import { Constructable } from "./values/constructable";
 
 enum Context {
   Global,
@@ -107,8 +108,8 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     });
   }
 
-  public visitNewExpression(expr: NewExpression): PClassInstance {
-    const _class = <PClass>this.evaluate(expr.classRef);
+  public visitNewExpression(expr: NewExpression): ValueType {
+    const _class = <Constructable>this.evaluate(expr.classRef);
     const fitsArity = typeof _class.constructorArity === "number" ? expr.constructorArgs.length === _class.constructorArity : _class.constructorArity.doesFit(expr.constructorArgs.length);
     if (!fitsArity)
       throw new RuntimeError(`Expected call to '${_class.name}()' to have ${_class.constructorArity.toString()} arguments, got ${expr.constructorArgs.length}`, expr.token);
@@ -250,15 +251,17 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
           if (lib.propertyTypes[member.lexeme])
             this.intrinsics.define(member.lexeme, lib.members[member.lexeme], lib.propertyTypes[member.lexeme]);
           else if (libMember instanceof Intrinsic.Lib)
-            this.intrinsics.define(member.lexeme, lib.members[member.lexeme], Intrinsic.getLibType(this.runner.host.typeTracker, libMember));
+            this.intrinsics.define(member.lexeme, lib.members[member.lexeme], libMember.typeSignature);
           else if (libMember instanceof Intrinsic.Function.constructor)
             this.intrinsics.defineFunction(member.lexeme, <Intrinsic.FunctionCtor>libMember);
-          else {
-            if (!(libMember instanceof Intrinsic.Function) && !lib.propertyTypes[member.lexeme])
-              throw new IntrinsicRegistrationError(`Failed to register intrinsic lib '${lib.name}': '${member.lexeme}' is not an Intrinsic.Function or Intrinsic.Lib, yet it has no value in 'propertyTypes'`, member)
-            else
-              this.intrinsics.defineFunctionFromInstance(member.lexeme, <Intrinsic.Function>libMember);
-          }
+          else if (libMember instanceof Intrinsic.Function)
+            this.intrinsics.defineFunctionFromInstance(member.lexeme, libMember);
+          else if (libMember instanceof Intrinsic.Class.constructor)
+            this.intrinsics.defineClass(member.lexeme, <Intrinsic.ClassCtor>libMember);
+          else if (libMember instanceof Intrinsic.Class)
+            this.intrinsics.defineClassFromInstance(member.lexeme, libMember);
+          else if (!lib.propertyTypes[member.lexeme])
+            throw new IntrinsicRegistrationError(`Failed to register intrinsic lib '${lib.name}': '${member.lexeme}' is not an intrinsic function, library, or class, yet it has no value in 'propertyTypes'`, member);
         }
     } else
       throw new RuntimeError("Module imports are not supported yet", stmt.keyword);
