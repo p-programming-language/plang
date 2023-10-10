@@ -10,8 +10,7 @@ export default class UnionType extends Type {
   ) { super(); }
 
   public toString(colors?: boolean): string {
-    return this.types
-      .map(t => t.toString(colors))
+    return [...new Set(this.types.map(t => t.toString(colors)))]
       .join(" | ")
       .replace(/ \| undefined/g, "?");
   }

@@ -377,7 +377,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     if (type instanceof LiteralType)
       return SingularType.fromLiteral(type).name;
     else if (type instanceof UnionType)
-      return type.types.map(t => this.getTypeName(t)).join(" | ");
+      return [...new Set(type.types.map(t => this.getTypeName(t)))].join(" | ");
     else
       return (<SingularType>type).name;
   }
