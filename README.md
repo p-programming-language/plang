@@ -92,9 +92,5 @@ yarn run <tool>
 - Type casting
 - Throw statement
 - Switch statement
-- Array intrinsic extension
 - `System` intrinsic library
-- `HTTP` intrinsic library
-- `setRecursionDepth` macro
-- Better CLI
-- Classes
+- Classes (in progress)
