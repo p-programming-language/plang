@@ -1,8 +1,9 @@
 import util from "util";
 
 import { Callable, CallableType } from "./callable";
-import type { ValueType } from "../../code-analysis/type-checker";
+import type { ClassMemberSignature, ObjectType, ValueType } from "../../code-analysis/type-checker";
 import type { Type } from "../../code-analysis/type-checker/types/type";
+import { Constructable } from "./constructable";
 import { Range } from "./range";
 import { generateAddress, getTypeFromTypeRef } from "../../utility";
 
@@ -17,12 +18,43 @@ import PFunction from "./function";
 import FunctionType from "../../code-analysis/type-checker/types/function-type";
 
 namespace Intrinsic {
+  export type ClassCtor = new (intrinsics: Intrinsics, parentName?: string) => Intrinsic.Class;
   export type FunctionCtor = new (interpreter?: Interpreter | undefined) => Intrinsic.Function;
   export type LibCtor = new (intrinsics: Intrinsics, parentName?: string) => Intrinsic.Lib;
 
   abstract class Collection extends PValue {
     public abstract get members(): Record<string, ValueType>;
     public abstract get propertyTypes(): Record<string, Type>;
+  }
+
+  export abstract class Class<A extends ValueType[] = ValueType[]> extends Constructable<A, ObjectType> {
+    public abstract readonly name: string;
+    public abstract readonly constructorArgumentTypes: Record<string, Type>;
+    public abstract readonly memberSignatures: Record<string, ClassMemberSignature<Type>>;
+    public readonly superclass?: Intrinsic.Class;
+    public readonly address = generateAddress();
+
+    public constructor(
+      protected readonly intrinsics: Intrinsics,
+      protected readonly parentName?: string
+    ) { super(); }
+
+    public [util.inspect.custom](): string {
+      return this.toString();
+    }
+
+    public toString(): string {
+      return `<Intrinsic.Class: ${this.address}>`
+    }
+
+    public get constructorArity(): number | Range {
+      const nonNullableArguments = Array.from(Object.values(this.constructorArgumentTypes))
+        .filter(argumentType => !argumentType.isAssignableTo(new SingularType("undefined")));
+
+      const start = nonNullableArguments.length;
+      const finish = Array.from(Object.values(this.constructorArgumentTypes)).length;
+      return start === finish ? start : new Range(start, finish);
+    }
   }
 
   export abstract class ValueExtension<V extends ValueType = ValueType> extends Collection {

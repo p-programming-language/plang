@@ -1,5 +1,8 @@
+import util from "util";
+
 import { Range } from "./range";
 import { MethodDeclarationStatement } from "../../code-analysis/parser/ast/statements/method-declaration";
+import { Constructable, ConstructableType } from "./constructable";
 import { generateAddress, getTypeFromTypeRef } from "../../utility";
 import type { ValueType } from "../../code-analysis/type-checker";
 import type { Callable } from "./callable";
@@ -7,11 +10,11 @@ import type { VariableDeclarationStatement } from "../../code-analysis/parser/as
 import type { ClassDeclarationStatement } from "../../code-analysis/parser/ast/statements/class-declaration";
 import type Interpreter from "../interpreter";
 import type TypeTracker from "../../code-analysis/parser/type-tracker";
-import Scope from "../scope";
-import PValue from "./value";
 import PClassInstance from "./class-instance";
+import Scope from "../scope";
 
-export default class PClass<A extends ValueType[] = ValueType[]> extends PValue {
+export default class PClass<A extends ValueType[] = ValueType[]> extends Constructable<[Interpreter, ...A], PClassInstance> {
+  public override readonly type = ConstructableType.Class;
   public readonly name = this.definition.name.lexeme;
   public readonly address = generateAddress();
   private nullableCtorParameters = this.ctorParameters.filter(param => param.initializer !== undefined || getTypeFromTypeRef(this.typeTracker, param.typeRef).isNullable());
@@ -40,10 +43,6 @@ export default class PClass<A extends ValueType[] = ValueType[]> extends PValue 
     return start === finish ? start : new Range(start, finish);
   }
 
-  public toString(): string {
-    return `<Class: ${this.address}>`
-  }
-
   private get classConstructor(): MethodDeclarationStatement | undefined {
     return this.definition.body.members
       .find((member): member is MethodDeclarationStatement => member instanceof MethodDeclarationStatement && member.name.lexeme === "construct");
@@ -51,5 +50,13 @@ export default class PClass<A extends ValueType[] = ValueType[]> extends PValue 
 
   private get ctorParameters(): VariableDeclarationStatement[] {
     return this.classConstructor?.parameters ?? [];
+  }
+
+  public [util.inspect.custom](): string {
+    return this.toString();
+  }
+
+  public toString(): string {
+    return `<Class: ${this.address}>`
   }
 }

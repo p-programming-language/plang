@@ -1,6 +1,6 @@
 import path from "path";
 
-import type { ValueType } from "../../code-analysis/type-checker";
+import type { ClassMemberSignature, ValueType } from "../../code-analysis/type-checker";
 import type { Type } from "../../code-analysis/type-checker/types/type";
 import { fakeToken } from "../../utility";
 import type Interpreter from "../interpreter";
@@ -8,6 +8,8 @@ import Syntax from "../../code-analysis/tokenization/syntax-type";
 import SingularType from "../../code-analysis/type-checker/types/singular-type";
 import FunctionType from "../../code-analysis/type-checker/types/function-type";
 import Intrinsic from "../values/intrinsic";
+import ClassType from "../../code-analysis/type-checker/types/class-type";
+import LiteralType from "../../code-analysis/type-checker/types/literal-type";
 
 export default class Intrinsics {
   public constructor(
@@ -36,5 +38,18 @@ export default class Intrinsics {
   public defineFunctionFromInstance(name: string, fn: Intrinsic.Function): void {
     const type = new FunctionType(new Map<string, Type>(Object.entries(fn.argumentTypes)), fn.returnType);
     this.define(name, fn, type);
+  }
+
+  public defineClass(name: string, IntrinsicClass: Intrinsic.ClassCtor): void {
+    const _class = new IntrinsicClass(this);
+    this.defineClassFromInstance(name, _class);
+  }
+
+  public defineClassFromInstance(name: string, _class: Intrinsic.Class): void {
+    const members = new Map(Object.entries(_class.memberSignatures)
+      .map<[LiteralType<string>, ClassMemberSignature<Type>]>(([name, sig]) => [new LiteralType(name), sig]));
+
+    const type = new ClassType(name, members, [], undefined);
+    this.define(name, _class, type);
   }
 }

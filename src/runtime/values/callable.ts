@@ -6,8 +6,7 @@ import { generateAddress } from "../../utility";
 
 export const enum CallableType {
   Function,
-  IntrinsicFunction,
-  ClassConstructor
+  IntrinsicFunction
 }
 
 export abstract class Callable<A extends ValueType[] = ValueType[], R extends ValueType = ValueType> extends PValue {

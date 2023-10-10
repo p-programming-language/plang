@@ -1,3 +1,5 @@
+import util from "util";
+
 import { Range } from "./range";
 import { Callable, CallableType } from "./callable";
 import { getTypeFromTypeRef } from "../../utility";
@@ -50,6 +52,10 @@ export default class PFunction<A extends ValueType[] = ValueType[], R extends Va
     const start = this.parameters.length - this.nullableParameters.length;
     const finish = this.parameters.length;
     return start === finish ? start : new Range(start, finish);
+  }
+
+  public [util.inspect.custom](): string {
+    return this.toString();
   }
 
   public toString(): string {
