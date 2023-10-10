@@ -39,7 +39,7 @@ export default class TypeTracker {
     this.customTypes.set(name, ref);
   }
 
-  private declareType(name: string) {
+  public declareType(name: string) {
     const typeScope = this.typeScopes.at(-1);
     typeScope?.add(name);
   }

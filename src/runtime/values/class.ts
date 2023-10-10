@@ -25,8 +25,8 @@ export default class PClass<A extends ValueType[] = ValueType[]> extends PValue 
   public construct(interpreter: Interpreter, ...args: A): PClassInstance {
     const scope = new Scope(this.closure);
     if (this.classConstructor) {
-      const constructorFn = <Callable<A>>interpreter.evaluate(this.classConstructor);
-      constructorFn.call(...args);
+      const constructorFn = <Callable<[Interpreter, ...A]>>interpreter.evaluate(this.classConstructor);
+      constructorFn.call(interpreter, ...args);
     }
 
     // TODO: extend with superclass and mixins

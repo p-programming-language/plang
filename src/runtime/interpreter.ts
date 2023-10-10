@@ -89,12 +89,12 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     this.intrinsics.inject();
   }
 
-  public visitMethodDeclarationStatement(stmt: MethodDeclarationStatement): void {
-    // do nothing, logic handled in PClass
+  public visitMethodDeclarationStatement(stmt: MethodDeclarationStatement): PFunction {
+    return new PFunction(stmt, this.scope, this.runner.host.typeTracker);
   }
 
-  public visitPropertyDeclarationStatement(stmt: PropertyDeclarationStatement): void {
-    // do nothing, logic handled in PClass
+  public visitPropertyDeclarationStatement(stmt: PropertyDeclarationStatement): ValueType {
+    return stmt.initializer ? this.evaluate(stmt.initializer) : undefined;
   }
 
   public visitClassBodyStatement(stmt: ClassBodyStatement): void {

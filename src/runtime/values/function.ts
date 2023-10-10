@@ -4,6 +4,7 @@ import { getTypeFromTypeRef } from "../../utility";
 import type { ValueType } from "../../code-analysis/type-checker";
 import type { VariableDeclarationStatement } from "../../code-analysis/parser/ast/statements/variable-declaration";
 import type { FunctionDeclarationStatement } from "../../code-analysis/parser/ast/statements/function-declaration";
+import type { MethodDeclarationStatement } from "../../code-analysis/parser/ast/statements/method-declaration";
 import type Interpreter from "../interpreter";
 import type TypeTracker from "../../code-analysis/parser/type-tracker";
 import HookedExceptions from "../hooked-exceptions";
@@ -17,7 +18,7 @@ export default class PFunction<A extends ValueType[] = ValueType[], R extends Va
   private nullableParameters = this.parameters.filter(param => param.initializer !== undefined || getTypeFromTypeRef(this.typeTracker, param.typeRef).isNullable());
 
   public constructor(
-    public readonly definition: FunctionDeclarationStatement,
+    public readonly definition: FunctionDeclarationStatement | MethodDeclarationStatement,
     private readonly closure: Scope,
     private readonly typeTracker: TypeTracker
   ) { super(); }

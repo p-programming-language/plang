@@ -833,7 +833,9 @@ export class Parser extends TokenStepper {
   }
 
   protected parseClassMembers(): ClassMember[] {
+    this.typeAnalyzer!.typeTracker.beginTypeScope();
     const members: ClassMember[] = [];
+
     while (!this.match(Syntax.RBrace)) {
       const modifiers = this.parseModifiers();
       if (this.check(Syntax.Mut)) {
@@ -869,6 +871,8 @@ export class Parser extends TokenStepper {
         }
       }
     }
+
+    this.typeAnalyzer!.typeTracker.endTypeScope();
     return members;
   }
 

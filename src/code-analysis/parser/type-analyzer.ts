@@ -25,7 +25,7 @@ export default class TypeAnalyzer extends Parser {
       } else if (this.match(Syntax.Class)) {
         const declaration = this.parseClassDeclaration();
         this.consumeSemicolons();
-        this.typeTracker.defineType(declaration.name.lexeme, declaration.typeRef);
+        this.typeTracker.defineType(declaration.name.lexeme, declaration);
       } else if (this.check(Syntax.Identifier) && this.current.lexeme === "type") {
         const [name, aliasedType] = this.parseTypeAlias();
         this.consumeSemicolons();
