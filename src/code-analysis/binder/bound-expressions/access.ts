@@ -20,7 +20,6 @@ export default class BoundAccessExpression extends BoundExpression {
     super();
     this.type = new SingularType("undefined");
 
-    console.log(typeOverride)
     if (typeOverride)
       this.type = typeOverride;
     else if (object.type.isArray())
