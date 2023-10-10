@@ -18,6 +18,8 @@ import PFunction from "./function";
 import FunctionType from "../../code-analysis/type-checker/types/function-type";
 import ClassType from "../../code-analysis/type-checker/types/class-type";
 
+const JsFunction = Function;
+
 namespace Intrinsic {
   export type ClassCtor = new (intrinsics: Intrinsics, parentName?: string) => Intrinsic.Class;
   export type FunctionCtor = new (interpreter?: Interpreter | undefined) => Intrinsic.Function;
@@ -58,7 +60,7 @@ namespace Intrinsic {
         valueType: new FunctionType(new Map(Object.entries(this.constructorArgumentTypes)), new InterfaceType(
           new Map(
             Array.from(members.entries())
-              .filter(([_, sig]) => sig.modifiers.length === 0) // all public instance-level signatures (not private, non protected, not static)
+              .filter(([_, sig]) => sig.modifiers.length === 0) // all *public* instance-level signatures (not private, non protected, not static)
               .map(([name, sig]) => [name, {
                 valueType: sig.valueType,
                 mutable: sig.mutable
@@ -103,7 +105,7 @@ namespace Intrinsic {
 
   export abstract class Lib extends Collection {
     public static readonly intrinsicKind = Kind.Lib;
-    public readonly name = `${this.parentName}.${toCamelCase(this.constructor.name.replace(/Lib/g, ""))}`;
+    public readonly name = (this.parentName ? this.parentName + "." : "") + toCamelCase(this.constructor.name.replace(/Lib/g, ""));
     public readonly address = generateAddress();
 
     public constructor(
@@ -148,9 +150,9 @@ namespace Intrinsic {
             );
           else if (propValue instanceof Intrinsic.Function || propValue instanceof Intrinsic.Class || propValue instanceof Intrinsic.Lib)
             valueType = propValue.typeSignature;
-          else if ("intrinsicKind" in <object>propValue && (<any>propValue).intrinsicKind === Intrinsic.Kind.Function)
+          else if (propValue instanceof JsFunction && "intrinsicKind" in <object>propValue && (<any>propValue).intrinsicKind === Intrinsic.Kind.Function)
             valueType = new (<Intrinsic.FunctionCtor>propValue)(this.intrinsics.interpreter).typeSignature;
-          else if ("intrinsicKind" in <object>propValue && ((<any>propValue).intrinsicKind === Intrinsic.Kind.Lib || (<any>propValue).intrinsicKind === Intrinsic.Kind.Class))
+          else if ((propValue instanceof JsFunction && "intrinsicKind" in <object>propValue) && ((<any>propValue).intrinsicKind === Intrinsic.Kind.Lib || (<any>propValue).intrinsicKind === Intrinsic.Kind.Class))
             valueType = new (<Intrinsic.ClassCtor | Intrinsic.LibCtor>propValue)(this.intrinsics).typeSignature;
           else
             valueType = SingularType.fromValue(propValue);

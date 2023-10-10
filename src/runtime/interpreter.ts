@@ -250,15 +250,15 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
           if (lib.propertyTypes[member.lexeme])
             this.intrinsics.define(member.lexeme, libMember, lib.propertyTypes[member.lexeme]);
-          else if ("intrinsicKind" in <object>libMember && (<any>libMember).intrinsicKind === Intrinsic.Kind.Function)
+          else if (libMember instanceof Function && "intrinsicKind" in <object>libMember && (<any>libMember).intrinsicKind === Intrinsic.Kind.Function)
             this.intrinsics.defineFunction(member.lexeme, <Intrinsic.FunctionCtor>libMember);
           else if (libMember instanceof Intrinsic.Function)
             this.intrinsics.defineFunctionFromInstance(member.lexeme, libMember);
-          else if ("intrinsicKind" in <object>libMember && (<any>libMember).intrinsicKind === Intrinsic.Kind.Lib)
+          else if (libMember instanceof Function && "intrinsicKind" in <object>libMember && (<any>libMember).intrinsicKind === Intrinsic.Kind.Lib)
             this.intrinsics.defineLib(member.lexeme, <Intrinsic.LibCtor>libMember);
           else if (libMember instanceof Intrinsic.Lib)
             this.intrinsics.defineLibFromInstance(member.lexeme, libMember);
-          else if ("intrinsicKind" in <object>libMember && (<any>libMember).intrinsicKind === Intrinsic.Kind.Class)
+          else if (libMember instanceof Function && "intrinsicKind" in <object>libMember && (<any>libMember).intrinsicKind === Intrinsic.Kind.Class)
             this.intrinsics.defineClass(member.lexeme, <Intrinsic.ClassCtor>libMember);
           else if (libMember instanceof Intrinsic.Class)
             this.intrinsics.defineClassFromInstance(member.lexeme, libMember);
@@ -283,7 +283,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
     const Lib = <Intrinsic.LibCtor>require(libFile).default;
     const parentName = libFile.split(path.sep).at(-2);
-    return new Lib(this.intrinsics, parentName === "libs" ? undefined : parentName);
+    return new Lib(this.intrinsics, parentName === "libs" || libFile.endsWith("index.js") ? undefined : parentName);
   }
 
   public visitTypeDeclarationStatement(): void {
@@ -404,7 +404,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
 
       const extension = IntrinsicExtension.get(object);
       let member = extension.members[<any>index];
-      if ("intrinsicKind" in <object>member && (<any>member).intrinsicKind === Intrinsic.Kind.Function)
+      if (member instanceof Function && "intrinsicKind" in <object>member && (<any>member).intrinsicKind === Intrinsic.Kind.Function)
         member = new (<Intrinsic.FunctionCtor>member)(this);
 
       return member ?? realValue;

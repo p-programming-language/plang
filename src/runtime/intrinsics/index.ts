@@ -45,11 +45,11 @@ export default class Intrinsics {
     const mappedLib = Object.entries(lib.members)
       .map(([ memberName, memberValue ]) => {
         let value;
-        if ("intrinsicKind" in <object>memberValue && (<any>memberValue).intrinsicKind === Intrinsic.Kind.Function)
+        if (memberValue instanceof Function && "intrinsicKind" in <object>memberValue && (<any>memberValue).intrinsicKind === Intrinsic.Kind.Function)
           value = new (<Intrinsic.FunctionCtor>memberValue)(this.interpreter);
-        else if ("intrinsicKind" in <object>memberValue && (<any>memberValue).intrinsicKind === Intrinsic.Kind.Lib || "intrinsicKind" in <object>memberValue && (<any>memberValue).intrinsicKind === Intrinsic.Kind.Class)
+        else if ((memberValue instanceof Function && "intrinsicKind" in <object>memberValue) && ((<any>memberValue).intrinsicKind === Intrinsic.Kind.Lib || (<any>memberValue).intrinsicKind === Intrinsic.Kind.Class))
           value = new (<Intrinsic.LibCtor | Intrinsic.ClassCtor>memberValue)(this, lib.name);
-        else if (memberValue instanceof Intrinsic.Function || memberValue instanceof Intrinsic.Lib || memberValue instanceof Intrinsic.Class)
+        else
           value = memberValue;
 
         return [memberName, value];
