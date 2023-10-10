@@ -24,11 +24,11 @@
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
-<li><a href="runtime_values_value.default.html" class="tsd-signature-type tsd-kind-class">default</a>
+<li><a href="runtime_values_constructable.Constructable.html" class="tsd-signature-type tsd-kind-class">Constructable</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">[</span><a href="runtime_interpreter.default.html" class="tsd-signature-type tsd-kind-class">default</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">...</span><span class="tsd-signature-type tsd-kind-type-parameter">A</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">, </span><a href="runtime_values_class_instance.default.html" class="tsd-signature-type tsd-kind-class">default</a><span class="tsd-signature-symbol">&gt;</span>
 <ul class="tsd-hierarchy">
 <li><span class="target">default</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/93d66fa/src/runtime/values/class.ts#L14">runtime/values/class.ts:14</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L16">runtime/values/class.ts:16</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -45,6 +45,7 @@
 <a href="runtime_values_class.default.html#definition" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>definition</span></a>
 <a href="runtime_values_class.default.html#name" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>name</span></a>
 <a href="runtime_values_class.default.html#nullableCtorParameters" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>nullable<wbr/>Ctor<wbr/>Parameters</span></a>
+<a href="runtime_values_class.default.html#type" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>type</span></a>
 <a href="runtime_values_class.default.html#typeTracker" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>type<wbr/>Tracker</span></a>
 </div></section>
 <section class="tsd-index-section">
@@ -55,7 +56,9 @@
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Methods</h3>
-<div class="tsd-index-list"><a href="runtime_values_class.default.html#construct" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>construct</span></a>
+<div class="tsd-index-list"><a href="runtime_values_class.default.html#_custom_" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>[custom]</span></a>
+<a href="runtime_values_class.default.html#construct" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>construct</span></a>
+<a href="runtime_values_class.default.html#isIntrinsic" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Intrinsic</span></a>
 <a href="runtime_values_class.default.html#toString" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>to<wbr/>String</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
@@ -80,41 +83,49 @@
 <li>
 <h5><span class="tsd-kind-parameter">typeTracker</span>: <a href="code_analysis_parser_type_tracker.default.html" class="tsd-signature-type tsd-kind-class">default</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="runtime_values_class.default.html" class="tsd-signature-type tsd-kind-class">default</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">A</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
-<p>Overrides <a href="runtime_values_value.default.html">default</a>.<a href="runtime_values_value.default.html#constructor">constructor</a></p>
+<p>Overrides <a href="runtime_values_constructable.Constructable.html">Constructable</a>.<a href="runtime_values_constructable.Constructable.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/93d66fa/src/runtime/values/class.ts#L19">runtime/values/class.ts:19</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L22">runtime/values/class.ts:22</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member"><a id="address" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>address</span><a href="#address" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">address</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<p>Overrides <a href="runtime_values_constructable.Constructable.html">Constructable</a>.<a href="runtime_values_constructable.Constructable.html#address">address</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/93d66fa/src/runtime/values/class.ts#L16">runtime/values/class.ts:16</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L19">runtime/values/class.ts:19</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="closure" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>closure</span><a href="#closure" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">closure</span><span class="tsd-signature-symbol">:</span> <a href="runtime_scope.default.html" class="tsd-signature-type tsd-kind-class">default</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/93d66fa/src/runtime/values/class.ts#L21">runtime/values/class.ts:21</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L24">runtime/values/class.ts:24</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="definition" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>definition</span><a href="#definition" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">definition</span><span class="tsd-signature-symbol">:</span> <a href="code_analysis_parser_ast_statements_class_declaration.ClassDeclarationStatement.html" class="tsd-signature-type tsd-kind-class">ClassDeclarationStatement</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/93d66fa/src/runtime/values/class.ts#L20">runtime/values/class.ts:20</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L23">runtime/values/class.ts:23</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="name" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<p>Overrides <a href="runtime_values_constructable.Constructable.html">Constructable</a>.<a href="runtime_values_constructable.Constructable.html#name">name</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/93d66fa/src/runtime/values/class.ts#L15">runtime/values/class.ts:15</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L18">runtime/values/class.ts:18</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="nullableCtorParameters" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>nullable<wbr/>Ctor<wbr/>Parameters</span><a href="#nullableCtorParameters" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">nullable<wbr/>Ctor<wbr/>Parameters</span><span class="tsd-signature-symbol">:</span> <a href="code_analysis_parser_ast_statements_variable_declaration.VariableDeclarationStatement.html" class="tsd-signature-type tsd-kind-class">VariableDeclarationStatement</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/93d66fa/src/runtime/values/class.ts#L17">runtime/values/class.ts:17</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L20">runtime/values/class.ts:20</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="type" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>type</span><a href="#type" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">:</span> <a href="../enums/runtime_values_constructable.ConstructableType.html#Class" class="tsd-signature-type tsd-kind-enum-member">Class</a><span class="tsd-signature-symbol"> = ConstructableType.Class</span></div><aside class="tsd-sources">
+<p>Overrides <a href="runtime_values_constructable.Constructable.html">Constructable</a>.<a href="runtime_values_constructable.Constructable.html#type">type</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L17">runtime/values/class.ts:17</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="typeTracker" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>type<wbr/>Tracker</span><a href="#typeTracker" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">type<wbr/>Tracker</span><span class="tsd-signature-symbol">:</span> <a href="code_analysis_parser_type_tracker.default.html" class="tsd-signature-type tsd-kind-class">default</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/93d66fa/src/runtime/values/class.ts#L22">runtime/values/class.ts:22</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L25">runtime/values/class.ts:25</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Accessors</h2>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="classConstructor" class="tsd-anchor"></a>
@@ -124,15 +135,16 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="code_analysis_parser_ast_statements_method_declaration.MethodDeclarationStatement.html" class="tsd-signature-type tsd-kind-class">MethodDeclarationStatement</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/93d66fa/src/runtime/values/class.ts#L47">runtime/values/class.ts:47</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L46">runtime/values/class.ts:46</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="constructorArity" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>constructor<wbr/>Arity</span><a href="#constructorArity" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="tsd-signature" id="constructorArity.constructorArity-1"><span class="tsd-signature-symbol">get</span> constructorArity<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><a href="runtime_values_range.Range.html" class="tsd-signature-type tsd-kind-class">Range</a></li>
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><a href="runtime_values_range.Range.html" class="tsd-signature-type tsd-kind-class">Range</a></h4><aside class="tsd-sources">
+<p>Overrides Constructable.constructorArity</p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/93d66fa/src/runtime/values/class.ts#L37">runtime/values/class.ts:37</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L40">runtime/values/class.ts:40</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="ctorParameters" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>ctor<wbr/>Parameters</span><a href="#ctorParameters" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -140,9 +152,17 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <a href="code_analysis_parser_ast_statements_variable_declaration.VariableDeclarationStatement.html" class="tsd-signature-type tsd-kind-class">VariableDeclarationStatement</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/93d66fa/src/runtime/values/class.ts#L52">runtime/values/class.ts:52</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L51">runtime/values/class.ts:51</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
+<section class="tsd-panel tsd-member"><a id="_custom_" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>[custom]</span><a href="#_custom_" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="_custom_._custom_-1"><span class="tsd-kind-call-signature">[custom]</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_custom_._custom_-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L55">runtime/values/class.ts:55</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="construct" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>construct</span><a href="#construct" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -156,8 +176,18 @@
 <li>
 <h5><code class="tsd-tag ts-flagRest">Rest</code> <span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span>: <span class="tsd-signature-type tsd-kind-type-parameter">A</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="runtime_values_class_instance.default.html" class="tsd-signature-type tsd-kind-class">default</a></h4><aside class="tsd-sources">
+<p>Overrides <a href="runtime_values_constructable.Constructable.html">Constructable</a>.<a href="runtime_values_constructable.Constructable.html#construct">construct</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/93d66fa/src/runtime/values/class.ts#L25">runtime/values/class.ts:25</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L28">runtime/values/class.ts:28</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="isIntrinsic" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>is<wbr/>Intrinsic</span><a href="#isIntrinsic" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="isIntrinsic.isIntrinsic-1"><span class="tsd-kind-call-signature">is<wbr/>Intrinsic</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-kind-parameter">this</span><span class="tsd-signature-symbol"> is </span><a href="runtime_values_intrinsic.default.Class.html" class="tsd-signature-type tsd-kind-class">Class</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><a href="#isIntrinsic.isIntrinsic-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-kind-parameter">this</span><span class="tsd-signature-symbol"> is </span><a href="runtime_values_intrinsic.default.Class.html" class="tsd-signature-type tsd-kind-class">Class</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="runtime_values_constructable.Constructable.html">Constructable</a>.<a href="runtime_values_constructable.Constructable.html#isIntrinsic">isIntrinsic</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/constructable.ts#L19">runtime/values/constructable.ts:19</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="toString" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>to<wbr/>String</span><a href="#toString" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -165,7 +195,7 @@
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/93d66fa/src/runtime/values/class.ts#L43">runtime/values/class.ts:43</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/758d273/src/runtime/values/class.ts#L59">runtime/values/class.ts:59</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -191,11 +221,14 @@
 <li><a href="#definition" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>definition</span></a></li>
 <li><a href="#name" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>name</span></a></li>
 <li><a href="#nullableCtorParameters" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>nullable<wbr/>Ctor<wbr/>Parameters</span></a></li>
+<li><a href="#type" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>type</span></a></li>
 <li><a href="#typeTracker" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>type<wbr/>Tracker</span></a></li>
 <li><a href="#classConstructor" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>class<wbr/>Constructor</span></a></li>
 <li><a href="#constructorArity" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>constructor<wbr/>Arity</span></a></li>
 <li><a href="#ctorParameters" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>ctor<wbr/>Parameters</span></a></li>
+<li><a href="#_custom_" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>[custom]</span></a></li>
 <li><a href="#construct" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>construct</span></a></li>
+<li><a href="#isIntrinsic" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>is<wbr/>Intrinsic</span></a></li>
 <li><a href="#toString" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>to<wbr/>String</span></a></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1"></use></svg><span>P API Reference</span></a>
