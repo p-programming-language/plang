@@ -20,10 +20,13 @@ export default class BoundAccessExpression extends BoundExpression {
     super();
     this.type = new SingularType("undefined");
 
+    console.log(typeOverride)
     if (typeOverride)
       this.type = typeOverride;
     else if (object.type.isArray())
       this.type = object.type.elementType;
+    else if (object.type.isSingular() && object.type.name === "Array")
+      this.type = object.type.typeArguments![0];
     else if (object.type.isInterface() && index instanceof BoundLiteralExpression) {
       const propertyType = new Map(Array.from(object.type.members.entries())
         .map(([key, value]) => [key.value, value]))
@@ -32,10 +35,10 @@ export default class BoundAccessExpression extends BoundExpression {
       const type = propertyType ?? object.type.indexSignatures.get(<IndexType>index.type);
       if (!type) return;
       this.type = type;
-    } else if ((object.type.isSingular() && object.type.name === "any") || (object.type.isUnion() && object.type.types.map(t => t.name).includes("any") && !object.type.isNullable()))
+    } else if (object.type.isSingular() && !object.type.isUndefined())
+      this.type = object.type;
+    else if ((object.type.isSingular() && object.type.name === "any") || (object.type.isUnion() && object.type.types.map(t => t.name).includes("any") && !object.type.isNullable()))
       this.type = new SingularType("any");
-    else if (object.type.isSingular() && object.type.name === "Array")
-      this.type = object.type.typeArguments![0];
   }
 
   public accept<R>(visitor: AST.Visitor.BoundExpression<R>): R {
