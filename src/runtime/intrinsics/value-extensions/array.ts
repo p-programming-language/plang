@@ -7,6 +7,11 @@ import Intrinsic from "../../values/intrinsic";
 
 const extensionName = "Array";
 export default class ArrayExtension<T = any> extends Intrinsic.ValueExtension<T[]> {
+  public constructor(
+    value: T[],
+    private readonly elementType: Type
+  ) { super(value); }
+
   public get propertyTypes(): Record<string, Type> {
     return {
       length: new SingularType("int")
@@ -14,7 +19,7 @@ export default class ArrayExtension<T = any> extends Intrinsic.ValueExtension<T[
   }
 
   public get members(): Record<string, ValueType> {
-    const value = this.value;
+    const { value, elementType } = this;
     return {
       length: value.length,
 
@@ -25,6 +30,15 @@ export default class ArrayExtension<T = any> extends Intrinsic.ValueExtension<T[
 
         public call(separator: string): string {
           return value.join(separator);
+        }
+      },
+      push: class Push extends Intrinsic.Function {
+        public readonly name = `${extensionName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = new SingularType("int");
+        public readonly argumentTypes = { element: elementType };
+
+        public call(element: any): number {
+          return value.push(element);
         }
       }
     };

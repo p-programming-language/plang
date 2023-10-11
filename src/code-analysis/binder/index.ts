@@ -299,14 +299,18 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
       if (extendedType instanceof LiteralType)
         extendedType = SingularType.fromLiteral(extendedType);
 
-      const extension = IntrinsicExtension.getFake(extendedType.name);
+      const typeArguments: Type[] = [];
+      if (extendedType instanceof ArrayType)
+        typeArguments.push(extendedType.elementType);
+
+      const extension = IntrinsicExtension.getFake(extendedType.name, ...typeArguments);
       const memberName = index.token.value;
       const member = extension.members[memberName];
       if (!Object.keys(extension.members).includes(memberName))
         return new BoundAccessExpression(expr.token, object, index);
 
       let type = extension.propertyTypes[memberName];
-      if (member instanceof Object && "intrinsicKind" in <object>member && (<any>member).intrinsicKind === Intrinsic.Kind.Function) {
+      if (member instanceof Function && "intrinsicKind" in <object>member && (<any>member).intrinsicKind === Intrinsic.Kind.Function) {
         const fn = new (<Intrinsic.FunctionCtor>member)();
         type = new FunctionType(new Map(Object.entries(fn.argumentTypes)), fn.returnType);
       } else if (member && !type)

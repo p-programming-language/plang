@@ -402,7 +402,12 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
       || object instanceof Range
     ) {
 
-      const extension = IntrinsicExtension.get(object);
+      const extendedType = SingularType.fromValue(object);
+      const typeArguments: Type[] = [];
+      if (extendedType.name === "Array")
+        typeArguments.push(...(extendedType.typeArguments ?? []));
+
+      const extension = IntrinsicExtension.get(object, ...typeArguments);
       let member = extension.members[<any>index];
       if (member instanceof Function && "intrinsicKind" in <object>member && (<any>member).intrinsicKind === Intrinsic.Kind.Function)
         member = new (<Intrinsic.FunctionCtor>member)(this);

@@ -1,4 +1,5 @@
 import type { ValueType } from "../../../code-analysis/type-checker";
+import type { Type } from "../../../code-analysis/type-checker/types/type";
 import { Range } from "../../values/range";
 import type Intrinsic from "../../values/intrinsic";
 import StringExtension from "./string";
@@ -6,7 +7,7 @@ import RangeExtension from "./range";
 import ArrayExtension from "./array";
 
 namespace IntrinsicExtension {
-  export function get<V extends ValueType = ValueType>(value: V): Intrinsic.ValueExtension<V> {
+  export function get(value: ValueType, ...typeParams: Type[]): Intrinsic.ValueExtension {
     let extension;
     switch(typeof value) {
       case "string": {
@@ -17,16 +18,16 @@ namespace IntrinsicExtension {
         if (value instanceof Range)
           extension = new RangeExtension(value);
         else if (value instanceof Array)
-          extension = new ArrayExtension(value);
+          extension = new ArrayExtension(value, typeParams[0]);
 
         break;
       }
     }
 
-    return <Intrinsic.ValueExtension<V>>extension;
+    return <Intrinsic.ValueExtension>extension;
   }
 
-  export function getFake<V extends ValueType = ValueType>(type: string): Intrinsic.ValueExtension<V> {
+  export function getFake(type: string, ...typeParams: Type[]): Intrinsic.ValueExtension {
     let extension;
     switch(type) {
       case "string": {
@@ -38,12 +39,12 @@ namespace IntrinsicExtension {
         break;
       }
       case "Array": {
-        extension = new ArrayExtension([]);
+        extension = new ArrayExtension([], typeParams[0]);
         break;
       }
     }
 
-    return <Intrinsic.ValueExtension<V>>extension;
+    return <Intrinsic.ValueExtension>extension;
   }
 }
 

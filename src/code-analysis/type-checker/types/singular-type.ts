@@ -1,7 +1,9 @@
 import type { ValueType } from "..";
+import { Range } from "../../../runtime/values/range";
 import { Type } from "./type";
 import type LiteralType from "./literal-type";
 import TypeKind from "./type-kind";
+import UnionType from "./union-type";
 
 export default class SingularType<Name extends string = string> extends Type {
   public override readonly kind: TypeKind = TypeKind.Singular;
@@ -23,8 +25,23 @@ export default class SingularType<Name extends string = string> extends Type {
       case "boolean":
         return new SingularType("bool");
 
-      default:
+      default: {
+        if (value instanceof Array) {
+          let elementType: Type = new SingularType("undefined");
+          for (const element of value) {
+            const type = SingularType.fromValue(element);
+            if (elementType.isUnion())
+              elementType = new UnionType([...elementType.types, type]);
+            else
+              elementType = type;
+          }
+
+          return new SingularType("Array", [elementType]);
+        } else if (value instanceof Range)
+          return new SingularType("Range");
+
         return new SingularType(typeof value);
+      }
     }
   }
 
