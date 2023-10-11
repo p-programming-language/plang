@@ -392,7 +392,7 @@ export class Parser extends TokenStepper {
 
     if (this.matchSet(COMPOUND_ASSIGNMENT_SYNTAXES)) {
       const operator = this.previous<undefined>();
-      const right = this.parseIndex();
+      const right = this.parseLogicalOr();
       if (!this.isAssignmentTarget(left))
         throw new ParserSyntaxError("Invalid compound assignment target", this.current);
 
@@ -538,7 +538,7 @@ export class Parser extends TokenStepper {
   private parseUnary(): AST.Expression {
     if (this.matchSet(UNARY_SYNTAXES)) {
       const operator = this.previous<undefined>();
-      const operand = this.parseCall();
+      const operand = this.parsePostfix();
       if (operator.syntax === Syntax.TypeOf)
         return new TypeOfExpression(operator, operand);
       else if (operator.syntax === Syntax.New) {
@@ -557,25 +557,13 @@ export class Parser extends TokenStepper {
 
       return new UnaryExpression(operator, operand);
     } else
-      return this.parseCall();
+      return this.parsePostfix();
   }
 
-  private parseCall(): AST.Expression {
-    let callee = this.parseAccess();
+  private parsePostfix(expr?: AST.Expression): AST.Expression {
+    let callee = expr ?? this.parsePrimary();
 
-    while (this.match(Syntax.LParen)) {
-      const args = this.parseExpressionList(Syntax.RParen);
-      this.consume(Syntax.RParen, "')'");
-      callee = new CallExpression(callee, args);
-    }
-
-    return callee;
-  }
-
-  private parseAccess(): AST.Expression {
-    let object = this.parseIndex();
-
-    while (this.match(Syntax.Dot)) {
+    if (this.match(Syntax.Dot)) {
       const accessToken = this.previous<undefined>();
       const indexIdentifier = this.consume<string>(Syntax.Identifier);
       indexIdentifier.syntax = Syntax.String;
@@ -583,27 +571,26 @@ export class Parser extends TokenStepper {
       indexIdentifier.lexeme = `"${indexIdentifier.lexeme}"`;
 
       const index = new LiteralExpression(indexIdentifier);
-      object = new AccessExpression(accessToken, object, index);
-    }
-
-    return object;
-  }
-
-  private parseIndex(): AST.Expression {
-    let object = this.parsePrimary();
-
-    while (this.check(Syntax.LBracket)) {
+      callee = new AccessExpression(accessToken, callee, index);
+    } else if (this.match(Syntax.LParen)) {
+      const args = this.parseExpressionList(Syntax.RParen);
+      this.consume(Syntax.RParen, "')'");
+      callee = new CallExpression(callee, args);
+    } else if (this.check(Syntax.LBracket)) {
       this.consume(Syntax.LBracket);
       if (!this.checkSet([Syntax.RBracket, Syntax.RBrace, Syntax.RParen, Syntax.Identifier], -2))
-        continue;
+        return callee;
 
       const bracket = this.previous<undefined>();
       const index = this.parseExpression();
       this.consume(Syntax.RBracket, "']'");
-      object = new AccessExpression(bracket, object, index);
+      callee = new AccessExpression(bracket, callee, index);
     }
 
-    return object;
+    if (this.checkSet(SyntaxSets.POSTFIX_SYNTAXES))
+      return this.parsePostfix(callee);
+
+    return callee;
   }
 
   /**

@@ -27,3 +27,9 @@ export const UNARY_SYNTAXES = [
   Syntax.TypeOf,
   Syntax.New
 ];
+
+export const POSTFIX_SYNTAXES = [
+  Syntax.Dot,
+  Syntax.LParen,
+  Syntax.LBracket
+];
