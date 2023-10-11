@@ -4,6 +4,7 @@ import type { ValueType } from "../../../code-analysis/type-checker";
 import type { Type } from "../../../code-analysis/type-checker/types/type";
 import SingularType from "../../../code-analysis/type-checker/types/singular-type";
 import Intrinsic from "../../values/intrinsic";
+import ArrayType from "../../../code-analysis/type-checker/types/array-type";
 
 const extensionName = "Array";
 export default class ArrayExtension<T = any> extends Intrinsic.ValueExtension<T[]> {
@@ -20,6 +21,7 @@ export default class ArrayExtension<T = any> extends Intrinsic.ValueExtension<T[
 
   public get members(): Record<string, ValueType> {
     const { value, elementType } = this;
+    const thisType = new ArrayType(elementType);
     return {
       length: value.length,
 
@@ -32,13 +34,33 @@ export default class ArrayExtension<T = any> extends Intrinsic.ValueExtension<T[
           return value.join(separator);
         }
       },
-      push: class Push extends Intrinsic.Function {
+      append: class Append extends Intrinsic.Function {
         public readonly name = `${extensionName}.${toCamelCase(this.constructor.name)}`;
-        public readonly returnType = new SingularType("int");
+        public readonly returnType = thisType;
         public readonly argumentTypes = { element: elementType };
 
-        public call(element: any): number {
-          return value.push(element);
+        public call(element: any): T[] {
+          value.push(element);
+          return value;
+        }
+      },
+      prepend: class Prepend extends Intrinsic.Function {
+        public readonly name = `${extensionName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = thisType;
+        public readonly argumentTypes = { element: elementType };
+
+        public call(element: any): T[] {
+          value.unshift(element);
+          return value;
+        }
+      },
+      combine: class Combine extends Intrinsic.Function {
+        public readonly name = `${extensionName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = thisType;
+        public readonly argumentTypes = { other: thisType };
+
+        public call(other: any[]): any[] {
+          return value.concat(other);
         }
       }
     };

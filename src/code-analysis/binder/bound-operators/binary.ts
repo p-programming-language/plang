@@ -18,9 +18,8 @@ export enum BoundBinaryOperatorType {
   BitwiseAnd, BitwiseOr, BitwiseXor,
   ShiftLeft, ShiftRight,
   NullishCoalescing,
-  Concatenation,
-  Repetition,
-  Split
+  Concatenation, Repetition, Split,
+  Combination
 }
 
 export class BoundBinaryOperator {
