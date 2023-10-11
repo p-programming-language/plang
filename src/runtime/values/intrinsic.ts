@@ -120,15 +120,15 @@ namespace Intrinsic {
     public inject(): void {
       const members = Object.entries(this.members);
       for (const [name, value] of members)
-        if (value instanceof Intrinsic.Lib.constructor)
+        if (value instanceof JsFunction && "intrinsicKind" in <object>value && (<any>value).intrinsicKind === Intrinsic.Kind.Lib)
           this.intrinsics.defineLib(name, <LibCtor><unknown>value);
         else if (value instanceof Intrinsic.Lib)
           this.intrinsics.defineLibFromInstance(name, value);
-        else if (value instanceof Intrinsic.Class.constructor)
+        else if (value instanceof JsFunction && "intrinsicKind" in <object>value && (<any>value).intrinsicKind === Intrinsic.Kind.Class)
           this.intrinsics.defineClass(name, <ClassCtor><unknown>value);
         else if (value instanceof Intrinsic.Class)
           this.intrinsics.defineClassFromInstance(name, value);
-        else if (value instanceof Intrinsic.Function.constructor)
+        else if (value instanceof JsFunction && "intrinsicKind" in <object>value && (<any>value).intrinsicKind === Intrinsic.Kind.Function)
           this.intrinsics.defineFunction(name, <FunctionCtor><unknown>value);
         else if (value instanceof Intrinsic.Function)
           this.intrinsics.defineFunctionFromInstance(name, value);

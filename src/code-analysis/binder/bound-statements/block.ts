@@ -2,10 +2,14 @@ import { BoundStatement } from "../bound-node";
 import type { Token } from "../../tokenization/token";
 import UnionType from "../../type-checker/types/union-type";
 import BoundReturnStatement from "./return";
+import BoundFunctionDeclarationStatement from "./function-declaration";
 import AST from "../../parser/ast";
 import SingularType from "../../type-checker/types/singular-type";
 
 function containsReturn(stmt: BoundStatement): boolean {
+  if (stmt instanceof BoundFunctionDeclarationStatement)
+    return false;
+
   if ("body" in stmt)
     return containsReturn(<BoundStatement>stmt.body)
   else if ("statements" in stmt) {

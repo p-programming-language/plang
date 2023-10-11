@@ -216,8 +216,7 @@ export class Parser extends TokenStepper {
       this.checkSet([
         Syntax.Identifier, Syntax.Pipe,
         Syntax.LBracket, Syntax.RBracket,
-        Syntax.RParen, Syntax.ColonColon,
-        Syntax.Question
+        Syntax.RParen, Syntax.ColonColon
       ], offset);
 
     const soFarSoGood = (this.check(Syntax.Mut) ? this.checkType(1) : this.checkType())
