@@ -27,12 +27,12 @@
 <li>The P interpreter CLI</li>
 </ul>
 </li>
-<li>prepl<ul>
+<li>repl<ul>
 <li>A read-eval-print loop to run P interactively inside of your terminal</li>
 </ul>
 </li>
 <li>ast-viewer<ul>
-<li>This is an interactive terminal where you can inspect the AST of a provided source code node-by-node</li>
+<li>This is an interactive terminal where you can inspect the AST or bound AST of a provided source code node-by-node</li>
 </ul>
 </li>
 </ul>
@@ -78,13 +78,14 @@
 <li>Literals<ul>
 <li>Basics (numbers, strings, booleans)</li>
 <li>String interpolations</li>
+<li>Ranges</li>
 <li>Array literals/types</li>
 <li>Object literals/types</li>
 </ul>
 </li>
-<li>Array indexing</li>
-<li>Binary expressions (including compound assignment)</li>
-<li>Unary expressions (including <code>++</code> and <code>--</code>)</li>
+<li>Array/object indexing</li>
+<li>Binary expressions (including compound assignment, <code>is</code>, <code>is in</code>, etc.)</li>
+<li>Unary expressions (including <code>++</code>, <code>--</code>, <code>#</code>, <code>typeof</code>, etc.)</li>
 <li>Variable declarations (mutability optional)</li>
 <li>Variable assignment (<code>:=</code> and <code>=</code> operators)</li>
 <li>Property assignment</li>
@@ -93,9 +94,8 @@
 </li>
 </ul>
 <a id="md:planned-features" class="tsd-anchor"></a><h2><a href="#md:planned-features">Planned Features</a></h2><ul>
-<li>Type guards (<code>value is T</code>, <code>T extends U</code>, <code>asserts T</code>)</li>
+<li>Type guards (<code>value is T</code>, <code>T extends U</code>, <code>asserts T</code>, <code>T extends U ? V : Q</code>)</li>
 <li>Intrinsic types</li>
-<li>Intrinsic classes</li>
 <li>Spread types</li>
 <li>Parenthesized types</li>
 <li>Type casting</li>
