@@ -20,10 +20,10 @@ Check out **[examples/](https://github.com/p-programming-language/plang/tree/mai
 ## Tools
 - pint
     - The P interpreter CLI
-- prepl
+- repl
     - A read-eval-print loop to run P interactively inside of your terminal
 - ast-viewer
-    - This is an interactive terminal where you can inspect the AST of a provided source code node-by-node
+    - This is an interactive terminal where you can inspect the AST or bound AST of a provided source code node-by-node
 
 ### Developer only tools
 - test
@@ -75,20 +75,20 @@ yarn run <tool>
     - Literals
         - Basics (numbers, strings, booleans)
         - String interpolations
+        - Ranges
         - Array literals/types
         - Object literals/types
-    - Array indexing
-    - Binary expressions (including compound assignment)
-    - Unary expressions (including `++` and `--`)
+    - Array/object indexing
+    - Binary expressions (including compound assignment, `is`, `is in`, etc.)
+    - Unary expressions (including `++`, `--`, `#`, `typeof`, etc.)
     - Variable declarations (mutability optional)
     - Variable assignment (`:=` and `=` operators)
     - Property assignment
     - Function declarations and calls
 
 ## Planned Features
-- Type guards (`value is T`, `T extends U`, `asserts T`)
+- Type guards (`value is T`, `T extends U`, `asserts T`, `T extends U ? V : Q`)
 - Intrinsic types
-- Intrinsic classes
 - Spread types
 - Parenthesized types
 - Type casting

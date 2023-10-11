@@ -4,10 +4,11 @@ Feel free to contribute! We greatly appreciate it!
 This can be anything as long as it is clear what the commit chnaged.
 
 Examples:
-- `fix: Fixed issue #12 (Fixed compiler issue)`
+- `fix: Fixed issue #12 (type parsing issue)`
 - `feat: create os() intrinsic function`
+- `test: add interpreter test for object indexing`
 ## Docs/Guides
-We currently don't have any documentation or guides for P. Feel free to create some yourself using the **docs/** folder!
+We currently don't have any documentation or guides for P other than [the API reference](https://docs.p-lang.xyz).
 
 ## Project Hierarchy Guide
 ### src/
@@ -45,14 +46,14 @@ We currently don't have any documentation or guides for P. Feel free to create s
     - intrinsics/
         * This is where all intrinsic functions and libraries are defined.
         - index.ts
-            * This is where added functions/libraries are defined in the scope. Every time you create a new intrinsic function/library you will need to define it here.
+            * This is where global intrinsics are defined in the scope. Every time you create a new global intrinsic you will need to define or inject it here.
 
 - utility.ts
     - This is where the utilities used by the **tools/** reside.
 - errors.ts
     - This is where error handling and logging code resides.
 - main.ts
-    - This is a placeholder for testing as of right now.
+    - This is just runs `pint`.
 
 ### tools/
 #### Adding tools
@@ -80,4 +81,4 @@ When adding a private tool: Do everything the same, but don't add it to `package
     - This is where all unit tests reside (via mocha). These tests assure that each aspect of the lexer, parser, binder, resolver, type checker, and interpreter works as expected.
 
 ### tests/
-Here are simple example files written in P that are executed during unit tests. When writing new examples, keep in mind that if any element of P errors during execution, unit tests will fail.
+Here are simple test files written in P that are executed during unit tests. When writing new examples, keep in mind that if any element of P errors during execution, unit tests will fail.
