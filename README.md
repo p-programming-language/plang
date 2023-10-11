@@ -91,7 +91,7 @@ yarn run <tool>
 - Intrinsic types
 - Spread types
 - Parenthesized types
-- Type casting
+- Type casting (`value as T`)
 - Throw statement
 - Switch statement
 - Classes (in progress)

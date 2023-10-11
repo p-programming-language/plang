@@ -77,10 +77,8 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
   public visitMethodDeclarationStatement(stmt: BoundMethodDeclarationStatement): void {
     this.check(stmt.parameters);
     this.check(stmt.body);
-    if (stmt.body.type)
-      this.assert(stmt.body, stmt.body.type, stmt.type.returnType);
-    else if (!this.isUndefined(stmt.type.returnType))
-      throw new TypeError(`Method '${stmt.name.lexeme}' is expected to return type '${stmt.type.returnType.toString()}', got 'void'`, stmt.name);
+    if (!stmt.body.type?.isAssignableTo(stmt.type.returnType))
+      throw new TypeError(`Method '${stmt.name.lexeme}' is expected to return type '${stmt.type.returnType.toString()}', got '${stmt.body.type?.toString() ?? "void"}'`, stmt.name);
   }
 
   public visitPropertyDeclarationStatement(stmt: BoundPropertyDeclarationStatement): void {
@@ -192,10 +190,8 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
   public visitFunctionDeclarationStatement(stmt: BoundFunctionDeclarationStatement): void {
     this.check(stmt.parameters);
     this.check(stmt.body);
-    if (stmt.body.type)
-      this.assert(stmt.body, stmt.body.type, stmt.symbol.type.returnType);
-    else if (!this.isUndefined(stmt.symbol.type.returnType))
-      throw new TypeError(`Function '${stmt.symbol.name.lexeme}' is expected to return type '${stmt.symbol.type.returnType.toString()}', got 'void'`, stmt.symbol.name);
+    if (!stmt.body.type?.isAssignableTo(stmt.type.returnType))
+      throw new TypeError(`Function '${stmt.symbol.name.lexeme}' is expected to return type '${stmt.type.returnType.toString()}', got '${stmt.body.type?.toString() ?? "void"}'`, stmt.symbol.name);
   }
 
   public visitWhileStatement(stmt: BoundWhileStatement): void {
