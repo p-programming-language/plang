@@ -29,7 +29,6 @@ export default class StringExtension extends Intrinsic.ValueExtension<string> {
           return value.repeat(times);
         }
       },
-
       split: class Split extends Intrinsic.Function {
         public readonly name = `${extensionName}.${toCamelCase(this.constructor.name)}`;
         public readonly returnType = new ArrayType(new SingularType("string"));
@@ -43,6 +42,30 @@ export default class StringExtension extends Intrinsic.ValueExtension<string> {
 
         public call(separator: string, limit: number): string[] {
           return value.split(separator, limit);
+        }
+      },
+      replace: class Replace extends Intrinsic.Function {
+        public readonly name = `${extensionName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = new SingularType("string");
+        public readonly argumentTypes = {
+          searchValue: new SingularType("string"),
+          replaceValue: new SingularType("string")
+        };
+
+        public call(searchValue: string, replaceValue: string): string {
+          return value.replace(searchValue, replaceValue);
+        }
+      },
+      replaceAll: class ReplaceAll extends Intrinsic.Function {
+        public readonly name = `${extensionName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = new SingularType("string");
+        public readonly argumentTypes = {
+          searchValue: new SingularType("string"),
+          replaceValue: new SingularType("string")
+        };
+
+        public call(searchValue: string, replaceValue: string): string {
+          return value.replace(new RegExp(searchValue, "g"), replaceValue);
         }
       }
     };
