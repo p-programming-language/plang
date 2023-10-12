@@ -103,6 +103,10 @@ export function getTypeFromTypeRef<T extends Type = Type>(typeTracker: TypeTrack
   throw new BindingError(`(BUG) Unhandled type expression: ${node}`, node.token);
 }
 
-export function optional(type: SingularType): UnionType {
-  return new UnionType([ type, new SingularType("undefined") ]);
+export function maybe(type: Type): UnionType {
+  const undef = new SingularType("undefined");
+  if (type instanceof UnionType)
+    return new UnionType([ ...type.types, undef ]);
+  else
+    return new UnionType([ <SingularType>type, undef ]);
 }

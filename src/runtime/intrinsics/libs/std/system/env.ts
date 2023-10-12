@@ -2,7 +2,7 @@ import toCamelCase from "to-camel-case";
 
 import type { ValueType } from "../../../../../code-analysis/type-checker";
 import type { Type } from "../../../../../code-analysis/type-checker/types/type";
-import { optional } from "../../../../../utility";
+import { maybe } from "../../../../../utility";
 import SingularType from "../../../../../code-analysis/type-checker/types/singular-type";
 import Intrinsic from "../../../../values/intrinsic";
 
@@ -16,7 +16,7 @@ export default class EnvLib extends Intrinsic.Lib {
     return {
       get: class Get extends Intrinsic.Function {
         public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
-        public readonly returnType = optional(new SingularType("string"));
+        public readonly returnType = maybe(new SingularType("string"));
         public readonly argumentTypes = { name: new SingularType("string") };
 
         public call(name: string): string | undefined {
