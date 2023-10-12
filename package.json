@@ -17,7 +17,7 @@
     "ast-viewer": "node dist/tools/binaries/ast-viewer.js",
     "add-to-path": "npm run build -s && npm link",
     "docs": "npx typedoc",
-    "push": "npm run build -s && npm run test -s && npm run docs -s && git add . && git commit -m 'docs: (autogenerate)' && git push -u"
+    "push": "npm run build -s && npm run test -s && npm run docs -s && git add . && git commit -m 'docs: (autogenerate)' && git pull && git push -u"
   },
   "keywords": [
     "p",
