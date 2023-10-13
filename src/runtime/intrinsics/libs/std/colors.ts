@@ -13,14 +13,14 @@ export default class ColorLib extends Intrinsic.Lib {
     "magenta",
     "cyan",
     "white",
-    "bright-black",
-    "bright-red",
-    "bright-green",
-    "bright-yellow",
-    "bright-blue",
-    "bright-magenta",
-    "bright-cyan",
-    "bright-white",
+    "bbblack",
+    "bbred",
+    "bbgreen",
+    "bbyellow",
+    "bbblue",
+    "bbmagenta",
+    "bbcyan",
+    "bbwhite",
   ];
 
   public get propertyTypes(): Record<string, Type> {
