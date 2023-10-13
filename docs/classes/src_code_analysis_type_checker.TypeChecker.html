@@ -26,7 +26,7 @@
 <li><a href="../modules/src_code_analysis_parser_ast.default.html" class="tsd-signature-type tsd-kind-namespace">default</a><span class="tsd-signature-symbol">.</span><a href="../modules/src_code_analysis_parser_ast.default.Visitor.html" class="tsd-signature-type tsd-kind-namespace">Visitor</a><span class="tsd-signature-symbol">.</span><a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html" class="tsd-signature-type tsd-kind-class">BoundExpression</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 <li><a href="../modules/src_code_analysis_parser_ast.default.html" class="tsd-signature-type tsd-kind-namespace">default</a><span class="tsd-signature-symbol">.</span><a href="../modules/src_code_analysis_parser_ast.default.Visitor.html" class="tsd-signature-type tsd-kind-namespace">Visitor</a><span class="tsd-signature-symbol">.</span><a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html" class="tsd-signature-type tsd-kind-class">BoundStatement</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L76">src/code-analysis/type-checker/index.ts:76</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L76">src/code-analysis/type-checker/index.ts:76</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -63,6 +63,7 @@
 <a href="src_code_analysis_type_checker.TypeChecker.html#visitNewExpression" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>New<wbr/>Expression</span></a>
 <a href="src_code_analysis_type_checker.TypeChecker.html#visitNextStatement" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Next<wbr/>Statement</span></a>
 <a href="src_code_analysis_type_checker.TypeChecker.html#visitObjectLiteralExpression" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Object<wbr/>Literal<wbr/>Expression</span></a>
+<a href="src_code_analysis_type_checker.TypeChecker.html#visitPackageStatement" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Package<wbr/>Statement</span></a>
 <a href="src_code_analysis_type_checker.TypeChecker.html#visitParenthesizedExpression" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Parenthesized<wbr/>Expression</span></a>
 <a href="src_code_analysis_type_checker.TypeChecker.html#visitPropertyAssignmentExpression" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Property<wbr/>Assignment<wbr/>Expression</span></a>
 <a href="src_code_analysis_type_checker.TypeChecker.html#visitPropertyDeclarationStatement" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Property<wbr/>Declaration<wbr/>Statement</span></a>
@@ -107,7 +108,7 @@
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">message</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L407">src/code-analysis/type-checker/index.ts:407</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L411">src/code-analysis/type-checker/index.ts:411</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="check" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>check</span><a href="#check" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -125,7 +126,7 @@
 <h5><span class="tsd-kind-parameter">statements</span>: <span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol"> extends </span><a href="src_code_analysis_binder_bound_node.BoundStatement.html" class="tsd-signature-type tsd-kind-class">BoundStatement</a><br/><span>    </span><span class="tsd-signature-symbol">? </span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><br/><span>    </span><span class="tsd-signature-symbol">: </span><a href="src_code_analysis_binder_bound_node.BoundStatement.html" class="tsd-signature-type tsd-kind-class">BoundStatement</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L392">src/code-analysis/type-checker/index.ts:392</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L396">src/code-analysis/type-checker/index.ts:396</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="getInterfacePropertySignature" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>get<wbr/>Interface<wbr/>Property<wbr/>Signature</span><a href="#getInterfacePropertySignature" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -142,7 +143,7 @@
 <h5><span class="tsd-kind-parameter">token</span>: <a href="src_code_analysis_tokenization_token.Token.html" class="tsd-signature-type tsd-kind-class">Token</a><span class="tsd-signature-symbol">&lt;</span><a href="../types/src_code_analysis_type_checker.ValueType.html" class="tsd-signature-type tsd-kind-type-alias">ValueType</a><span class="tsd-signature-symbol">, </span><a href="../enums/src_code_analysis_tokenization_syntax_type.default.html" class="tsd-signature-type tsd-kind-enum">default</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/src_code_analysis_type_checker.InterfaceMemberSignature.html" class="tsd-signature-type tsd-kind-interface">InterfaceMemberSignature</a><span class="tsd-signature-symbol">&lt;</span><a href="src_code_analysis_type_checker_types_type.Type.html" class="tsd-signature-type tsd-kind-class">Type</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L368">src/code-analysis/type-checker/index.ts:368</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L372">src/code-analysis/type-checker/index.ts:372</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="isUndefined" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>is<wbr/>Undefined</span><a href="#isUndefined" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -155,7 +156,7 @@
 <h5><span class="tsd-kind-parameter">type</span>: <a href="src_code_analysis_type_checker_types_type.Type.html" class="tsd-signature-type tsd-kind-class">Type</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L400">src/code-analysis/type-checker/index.ts:400</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L404">src/code-analysis/type-checker/index.ts:404</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitArrayLiteralExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Array<wbr/>Literal<wbr/>Expression</span><a href="#visitArrayLiteralExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -169,7 +170,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitArrayLiteralExpression">visitArrayLiteralExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L376">src/code-analysis/type-checker/index.ts:376</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L380">src/code-analysis/type-checker/index.ts:380</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitBinaryExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Binary<wbr/>Expression</span><a href="#visitBinaryExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -183,7 +184,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitBinaryExpression">visitBinaryExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L333">src/code-analysis/type-checker/index.ts:333</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L337">src/code-analysis/type-checker/index.ts:337</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitBlockStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Block<wbr/>Statement</span><a href="#visitBlockStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -197,7 +198,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitBlockStatement">visitBlockStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L209">src/code-analysis/type-checker/index.ts:209</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L213">src/code-analysis/type-checker/index.ts:213</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitBreakStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Break<wbr/>Statement</span><a href="#visitBreakStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -206,7 +207,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitBreakStatement">visitBreakStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L174">src/code-analysis/type-checker/index.ts:174</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L178">src/code-analysis/type-checker/index.ts:178</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitCallExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Call<wbr/>Expression</span><a href="#visitCallExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -220,7 +221,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitCallExpression">visitCallExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L283">src/code-analysis/type-checker/index.ts:283</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L287">src/code-analysis/type-checker/index.ts:287</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitClassBodyStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Class<wbr/>Body<wbr/>Statement</span><a href="#visitClassBodyStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -234,7 +235,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitClassBodyStatement">visitClassBodyStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L94">src/code-analysis/type-checker/index.ts:94</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L98">src/code-analysis/type-checker/index.ts:98</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitClassStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Class<wbr/>Statement</span><a href="#visitClassStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -248,7 +249,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitClassStatement">visitClassStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L98">src/code-analysis/type-checker/index.ts:98</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L102">src/code-analysis/type-checker/index.ts:102</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitCompoundAssignmentExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Compound<wbr/>Assignment<wbr/>Expression</span><a href="#visitCompoundAssignmentExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -262,7 +263,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitCompoundAssignmentExpression">visitCompoundAssignmentExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L310">src/code-analysis/type-checker/index.ts:310</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L314">src/code-analysis/type-checker/index.ts:314</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitEveryStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Every<wbr/>Statement</span><a href="#visitEveryStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -276,7 +277,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitEveryStatement">visitEveryStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L115">src/code-analysis/type-checker/index.ts:115</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L119">src/code-analysis/type-checker/index.ts:119</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitExpressionStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Expression<wbr/>Statement</span><a href="#visitExpressionStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -290,7 +291,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitExpressionStatement">visitExpressionStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L228">src/code-analysis/type-checker/index.ts:228</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L232">src/code-analysis/type-checker/index.ts:232</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitFunctionDeclarationStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Function<wbr/>Declaration<wbr/>Statement</span><a href="#visitFunctionDeclarationStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -304,7 +305,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitFunctionDeclarationStatement">visitFunctionDeclarationStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L190">src/code-analysis/type-checker/index.ts:190</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L194">src/code-analysis/type-checker/index.ts:194</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitIdentifierExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Identifier<wbr/>Expression</span><a href="#visitIdentifierExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -313,7 +314,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitIdentifierExpression">visitIdentifierExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L318">src/code-analysis/type-checker/index.ts:318</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L322">src/code-analysis/type-checker/index.ts:322</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitIfStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>If<wbr/>Statement</span><a href="#visitIfStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -327,7 +328,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitIfStatement">visitIfStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L202">src/code-analysis/type-checker/index.ts:202</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L206">src/code-analysis/type-checker/index.ts:206</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitIndexExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Index<wbr/>Expression</span><a href="#visitIndexExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -341,7 +342,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitIndexExpression">visitIndexExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L268">src/code-analysis/type-checker/index.ts:268</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L272">src/code-analysis/type-checker/index.ts:272</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitIsExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Is<wbr/>Expression</span><a href="#visitIsExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -355,7 +356,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitIsExpression">visitIsExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L260">src/code-analysis/type-checker/index.ts:260</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L264">src/code-analysis/type-checker/index.ts:264</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitIsInExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Is<wbr/>In<wbr/>Expression</span><a href="#visitIsInExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -369,7 +370,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitIsInExpression">visitIsInExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L255">src/code-analysis/type-checker/index.ts:255</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L259">src/code-analysis/type-checker/index.ts:259</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitLiteralExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Literal<wbr/>Expression</span><a href="#visitLiteralExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -378,7 +379,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitLiteralExpression">visitLiteralExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L388">src/code-analysis/type-checker/index.ts:388</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L392">src/code-analysis/type-checker/index.ts:392</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitMethodDeclarationStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Method<wbr/>Declaration<wbr/>Statement</span><a href="#visitMethodDeclarationStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -392,7 +393,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitMethodDeclarationStatement">visitMethodDeclarationStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L77">src/code-analysis/type-checker/index.ts:77</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L81">src/code-analysis/type-checker/index.ts:81</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitNewExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>New<wbr/>Expression</span><a href="#visitNewExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -406,7 +407,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitNewExpression">visitNewExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L232">src/code-analysis/type-checker/index.ts:232</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L236">src/code-analysis/type-checker/index.ts:236</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitNextStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Next<wbr/>Statement</span><a href="#visitNextStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -415,7 +416,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitNextStatement">visitNextStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L170">src/code-analysis/type-checker/index.ts:170</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L174">src/code-analysis/type-checker/index.ts:174</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitObjectLiteralExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Object<wbr/>Literal<wbr/>Expression</span><a href="#visitObjectLiteralExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -429,7 +430,16 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitObjectLiteralExpression">visitObjectLiteralExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L349">src/code-analysis/type-checker/index.ts:349</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L353">src/code-analysis/type-checker/index.ts:353</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="visitPackageStatement" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>visit<wbr/>Package<wbr/>Statement</span><a href="#visitPackageStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="visitPackageStatement.visitPackageStatement-1"><span class="tsd-kind-call-signature">visit<wbr/>Package<wbr/>Statement</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#visitPackageStatement.visitPackageStatement-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitPackageStatement">visitPackageStatement</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L77">src/code-analysis/type-checker/index.ts:77</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitParenthesizedExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Parenthesized<wbr/>Expression</span><a href="#visitParenthesizedExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -443,7 +453,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitParenthesizedExpression">visitParenthesizedExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L340">src/code-analysis/type-checker/index.ts:340</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L344">src/code-analysis/type-checker/index.ts:344</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitPropertyAssignmentExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Property<wbr/>Assignment<wbr/>Expression</span><a href="#visitPropertyAssignmentExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -457,7 +467,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitPropertyAssignmentExpression">visitPropertyAssignmentExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L299">src/code-analysis/type-checker/index.ts:299</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L303">src/code-analysis/type-checker/index.ts:303</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitPropertyDeclarationStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Property<wbr/>Declaration<wbr/>Statement</span><a href="#visitPropertyDeclarationStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -471,7 +481,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitPropertyDeclarationStatement">visitPropertyDeclarationStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L84">src/code-analysis/type-checker/index.ts:84</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L88">src/code-analysis/type-checker/index.ts:88</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitRangeLiteralExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Range<wbr/>Literal<wbr/>Expression</span><a href="#visitRangeLiteralExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -485,7 +495,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitRangeLiteralExpression">visitRangeLiteralExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L383">src/code-analysis/type-checker/index.ts:383</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L387">src/code-analysis/type-checker/index.ts:387</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitReturnStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Return<wbr/>Statement</span><a href="#visitReturnStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -499,7 +509,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitReturnStatement">visitReturnStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L186">src/code-analysis/type-checker/index.ts:186</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L190">src/code-analysis/type-checker/index.ts:190</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitStringInterpolationExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>String<wbr/>Interpolation<wbr/>Expression</span><a href="#visitStringInterpolationExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -513,7 +523,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitStringInterpolationExpression">visitStringInterpolationExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L344">src/code-analysis/type-checker/index.ts:344</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L348">src/code-analysis/type-checker/index.ts:348</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitTernaryExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Ternary<wbr/>Expression</span><a href="#visitTernaryExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -527,7 +537,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitTernaryExpression">visitTernaryExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L327">src/code-analysis/type-checker/index.ts:327</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L331">src/code-analysis/type-checker/index.ts:331</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitTypeDeclarationStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Type<wbr/>Declaration<wbr/>Statement</span><a href="#visitTypeDeclarationStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -536,7 +546,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitTypeDeclarationStatement">visitTypeDeclarationStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L182">src/code-analysis/type-checker/index.ts:182</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L186">src/code-analysis/type-checker/index.ts:186</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitTypeOfExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Type<wbr/>Of<wbr/>Expression</span><a href="#visitTypeOfExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -550,7 +560,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitTypeOfExpression">visitTypeOfExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L264">src/code-analysis/type-checker/index.ts:264</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L268">src/code-analysis/type-checker/index.ts:268</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitUnaryExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Unary<wbr/>Expression</span><a href="#visitUnaryExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -564,7 +574,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitUnaryExpression">visitUnaryExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L322">src/code-analysis/type-checker/index.ts:322</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L326">src/code-analysis/type-checker/index.ts:326</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitUseStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Use<wbr/>Statement</span><a href="#visitUseStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -573,7 +583,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitUseStatement">visitUseStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L178">src/code-analysis/type-checker/index.ts:178</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L182">src/code-analysis/type-checker/index.ts:182</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitVariableAssignmentExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Variable<wbr/>Assignment<wbr/>Expression</span><a href="#visitVariableAssignmentExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -587,7 +597,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html">BoundExpression</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundExpression.html#visitVariableAssignmentExpression">visitVariableAssignmentExpression</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L305">src/code-analysis/type-checker/index.ts:305</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L309">src/code-analysis/type-checker/index.ts:309</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitVariableAssignmentStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Variable<wbr/>Assignment<wbr/>Statement</span><a href="#visitVariableAssignmentStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -601,7 +611,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitVariableAssignmentStatement">visitVariableAssignmentStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L223">src/code-analysis/type-checker/index.ts:223</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L227">src/code-analysis/type-checker/index.ts:227</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitVariableDeclarationStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>Variable<wbr/>Declaration<wbr/>Statement</span><a href="#visitVariableDeclarationStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -615,7 +625,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitVariableDeclarationStatement">visitVariableDeclarationStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L213">src/code-analysis/type-checker/index.ts:213</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L217">src/code-analysis/type-checker/index.ts:217</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="visitWhileStatement" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>visit<wbr/>While<wbr/>Statement</span><a href="#visitWhileStatement" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -629,7 +639,7 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Implementation of <a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html">BoundStatement</a>.<a href="src_code_analysis_parser_ast.default.Visitor.BoundStatement.html#visitWhileStatement">visitWhileStatement</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/82147f1/src/code-analysis/type-checker/index.ts#L197">src/code-analysis/type-checker/index.ts:197</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/p-programming-language/plang/blob/4fb6148/src/code-analysis/type-checker/index.ts#L201">src/code-analysis/type-checker/index.ts:201</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -675,6 +685,7 @@
 <li><a href="#visitNewExpression" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>New<wbr/>Expression</span></a></li>
 <li><a href="#visitNextStatement" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Next<wbr/>Statement</span></a></li>
 <li><a href="#visitObjectLiteralExpression" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Object<wbr/>Literal<wbr/>Expression</span></a></li>
+<li><a href="#visitPackageStatement" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Package<wbr/>Statement</span></a></li>
 <li><a href="#visitParenthesizedExpression" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Parenthesized<wbr/>Expression</span></a></li>
 <li><a href="#visitPropertyAssignmentExpression" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Property<wbr/>Assignment<wbr/>Expression</span></a></li>
 <li><a href="#visitPropertyDeclarationStatement" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>visit<wbr/>Property<wbr/>Declaration<wbr/>Statement</span></a></li>
