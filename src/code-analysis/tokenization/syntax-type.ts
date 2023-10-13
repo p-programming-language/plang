@@ -17,7 +17,7 @@ enum Syntax {
   Private, Protected, Static,
   TypeOf,
   Is, In,
-  Use, From,
+  Use, From, Package,
 
   Semicolon, Comma,
   At,

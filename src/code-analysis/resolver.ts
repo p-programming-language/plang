@@ -19,6 +19,7 @@ import type { AccessExpression } from "./parser/ast/expressions/access";
 import type { IsExpression } from "./parser/ast/expressions/is";
 import type { TypeOfExpression } from "./parser/ast/expressions/typeof";
 import type { IsInExpression } from "./parser/ast/expressions/is-in";
+import type { NewExpression } from "./parser/ast/expressions/new";
 import type { ExpressionStatement } from "./parser/ast/statements/expression";
 import type { VariableAssignmentStatement } from "./parser/ast/statements/variable-assignment";
 import type { VariableDeclarationStatement } from "../code-analysis/parser/ast/statements/variable-declaration";
@@ -29,19 +30,30 @@ import type { FunctionDeclarationStatement } from "./parser/ast/statements/funct
 import type { ReturnStatement } from "./parser/ast/statements/return";
 import type { UseStatement } from "./parser/ast/statements/use";
 import type { EveryStatement } from "./parser/ast/statements/every";
-import { NewExpression } from "./parser/ast/expressions/new";
-import { ClassBodyStatement } from "./parser/ast/statements/class-body";
-import { ClassDeclarationStatement } from "./parser/ast/statements/class-declaration";
-import { MethodDeclarationStatement } from "./parser/ast/statements/method-declaration";
-import { PropertyDeclarationStatement } from "./parser/ast/statements/property-declaration";
+import type { ClassBodyStatement } from "./parser/ast/statements/class-body";
+import type { ClassDeclarationStatement } from "./parser/ast/statements/class-declaration";
+import type { MethodDeclarationStatement } from "./parser/ast/statements/method-declaration";
+import type { PropertyDeclarationStatement } from "./parser/ast/statements/property-declaration";
+import type { PackageStatement } from "./parser/ast/statements/package";
 
 export default class Resolver implements AST.Visitor.Expression<void>, AST.Visitor.Statement<void> {
   public withinFunction = false;
   public scopeContext = ScopeContext.Global;
+  private declaredPackage = false;
   private scopes: Map<string, boolean>[] = []; // the boolean represents whether the variable is defined or not. a variable can be declared without being defined
 
   public constructor() {
     this.beginScope();
+  }
+
+  public visitPackageStatement(stmt: PackageStatement): void {
+    if (this.scopeContext !== ScopeContext.Global)
+      throw new ResolutionError("Package declarations can only be in the global scope", stmt.token);
+
+    if (this.declaredPackage)
+      throw new ResolutionError("Only one package declaration can be used per file", stmt.token);
+
+    this.declaredPackage = true;
   }
 
   public visitMethodDeclarationStatement(stmt: MethodDeclarationStatement): void {

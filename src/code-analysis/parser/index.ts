@@ -2,7 +2,6 @@
 import { Token } from "../tokenization/token";
 import { ParserSyntaxError } from "../../errors";
 import { fakeToken } from "../../utility";
-import type { ClassMember } from "./ast/classifications/class-member";
 import type P from "../../../tools/p";
 import type TypeAnalyzer from "./type-analyzer";
 
@@ -13,6 +12,9 @@ import AST from "./ast";
 
 import * as SyntaxSets from "../tokenization/syntax-sets";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
+
+import type { ClassMember } from "./ast/classifications/class-member";
+import type { Exportable } from "./ast/classifications/exportable";
 
 import { SingularTypeExpression } from "./ast/type-nodes/singular-type";
 import { LiteralTypeExpression } from "./ast/type-nodes/literal-type";
@@ -40,6 +42,7 @@ import { AccessExpression } from "./ast/expressions/access";
 import { TypeOfExpression } from "./ast/expressions/typeof";
 import { IsExpression } from "./ast/expressions/is";
 import { IsInExpression } from "./ast/expressions/is-in";
+import { NewExpression } from "./ast/expressions/new";
 import { ExpressionStatement } from "./ast/statements/expression";
 import { VariableAssignmentStatement } from "./ast/statements/variable-assignment";
 import { VariableDeclarationStatement } from "./ast/statements/variable-declaration";
@@ -57,12 +60,13 @@ import { ClassBodyStatement } from "./ast/statements/class-body";
 import { ClassDeclarationStatement } from "./ast/statements/class-declaration";
 import { PropertyDeclarationStatement } from "./ast/statements/property-declaration";
 import { MethodDeclarationStatement } from "./ast/statements/method-declaration";
-import { NewExpression } from "./ast/expressions/new";
+import { PackageStatement } from "./ast/statements/package";
 
 const negate = <T, U>(a: T[], b: U[]): T[] =>
   a.filter(item => !b.includes(<any>item));
 
 export interface ParseResult {
+  readonly packageDeclaration?: PackageStatement;
   readonly imports: UseStatement[];
   readonly program: AST.Statement[];
 }
@@ -85,8 +89,9 @@ export class Parser extends TokenStepper {
       statements.push(this.declaration());
 
     const imports = statements.filter((stmt): stmt is UseStatement => stmt instanceof UseStatement);
-    const program = negate(statements, imports);
-    return { imports, program };
+    const packageDeclaration = statements.find((stmt): stmt is PackageStatement => stmt instanceof PackageStatement);
+    const program = negate(negate(statements, imports), [packageDeclaration]);
+    return { packageDeclaration, imports, program };
   }
 
   /**
@@ -142,12 +147,18 @@ export class Parser extends TokenStepper {
     }
 
     if (this.match(Syntax.Return)) {
-      const keyword = this.previous<undefined>();
+      const keyword = this.previous<undefined, Syntax.Return>();
       const expr = this.checkSet([Syntax.Semicolon, Syntax.RBrace, Syntax.EOF]) ?
         new LiteralExpression(fakeToken<undefined>(Syntax.Undefined, "undefined"))
         : this.parseExpression();
 
       return new ReturnStatement(keyword, expr);
+    }
+
+    if (this.match(Syntax.Package)) {
+      const keyword = this.previous<undefined, Syntax.Package>();
+      const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier);
+      return new PackageStatement(keyword, name);
     }
 
     if (this.match(Syntax.LBrace))
@@ -160,28 +171,62 @@ export class Parser extends TokenStepper {
    * Parses a declaration statement like a class, variable, function, etc.
    */
   private declaration(): AST.Statement {
-    if (this.atVariableDeclaration)
-      return this.parseVariableDeclaration();
+    const isPrivate = this.check(Syntax.Private);
+    if (this.atVariableDeclaration() || (isPrivate && this.atVariableDeclaration(1))) {
+      if (isPrivate)
+        this.consume(Syntax.Private);
 
-    if (this.atFunctionDeclaration)
-      return this.parseFunctionDeclaration();
+      const declaration = this.parseVariableDeclaration();
+      this.runner.packager.addExport({
+        isPrivate, declaration
+      });
 
-    if (this.match(Syntax.Interface)) {
-      const declaration = this.parseInterfaceType();
-      this.consumeSemicolons();
-      return new TypeDeclarationStatement(declaration.name, declaration);
+      return declaration;
     }
 
-    if (this.match(Syntax.Class)) {
+    if (this.atFunctionDeclaration() || (isPrivate && this.atFunctionDeclaration(1)))
+      return this.parseFunctionDeclaration();
+
+    if (this.check(Syntax.Interface) || (isPrivate && this.check(Syntax.Interface, 1))) {
+      if (isPrivate)
+        this.consume(Syntax.Private);
+
+      const declaration = this.parseInterfaceType();
+      this.consumeSemicolons();
+      const typeDeclaration = new TypeDeclarationStatement(declaration.name, declaration);
+      this.runner.packager.addExport({
+        isPrivate,
+        declaration: typeDeclaration
+      });
+
+      return typeDeclaration;
+    }
+
+    if (this.check(Syntax.Class) || (isPrivate && this.check(Syntax.Class, 1))) {
+      if (isPrivate)
+        this.consume(Syntax.Private);
+
       const declaration = this.parseClassDeclaration();
+      this.runner.packager.addExport({
+        isPrivate, declaration
+      });
+
       this.consumeSemicolons();
       return declaration;
     }
 
-    if (this.check(Syntax.Identifier) && this.current.lexeme === "type") {
+    if ((this.check(Syntax.Identifier) && this.current.lexeme === "type") || (isPrivate && this.check(Syntax.Identifier, 1) && this.peek()?.lexeme === "type")) {
+      if (isPrivate)
+        this.consume(Syntax.Private);
+
       const [name, aliasedType] = this.parseTypeAlias();
+      const declaration = new TypeDeclarationStatement(name, aliasedType);
+      this.runner.packager.addExport({
+        isPrivate, declaration
+      });
+
       this.consumeSemicolons();
-      return new TypeDeclarationStatement(name, aliasedType);
+      return declaration;
     }
 
     const stmt = this.parseStatement();
@@ -189,13 +234,13 @@ export class Parser extends TokenStepper {
     return stmt;
   }
 
-  private get atFunctionDeclaration(): boolean {
-    if (this.check(Syntax.Mut))
+  private atFunctionDeclaration(offset = 0): boolean {
+    if (this.check(Syntax.Mut, offset))
       return false;
 
-    let offsetToFnKeyword = 0;
+    let offsetToFnKeyword = offset;
     let passedClosingParen = false;
-    if (this.checkType() && this.check(Syntax.LParen))
+    if (this.checkType(offset) && this.check(Syntax.LParen, offset))
       while (!this.check(Syntax.EOF, offsetToFnKeyword) && !this.check(Syntax.Function, offsetToFnKeyword)) {
         if (this.check(Syntax.RParen, offsetToFnKeyword))
           passedClosingParen = true;
@@ -205,31 +250,31 @@ export class Parser extends TokenStepper {
 
         offsetToFnKeyword++;
       }
-    else if (!this.checkType() && this.check(Syntax.Identifier))
+    else if (!this.checkType(offset) && this.check(Syntax.Identifier, offset))
       return false;
 
-    return this.checkType() && this.check(Syntax.Function, offsetToFnKeyword === 0 ? 1 : offsetToFnKeyword);
+    return this.checkType(offset) && this.check(Syntax.Function, offsetToFnKeyword === 0 ? 1 : offsetToFnKeyword);
   }
 
-  private get atVariableDeclaration(): boolean {
-    const isVariableDeclarationSyntax = (offset = 1) =>
+  private atVariableDeclaration(offset = 0): boolean {
+    const isVariableDeclarationSyntax = (o = offset + 1) =>
       this.checkSet([
         Syntax.Identifier, Syntax.Pipe,
         Syntax.LBracket, Syntax.RBracket,
         Syntax.RParen, Syntax.ColonColon
-      ], offset);
+      ], o);
 
-    const soFarSoGood = (this.check(Syntax.Mut) ? this.checkType(1) : this.checkType())
-      && !this.checkSet([Syntax.Dot], 1) && !this.checkSet([Syntax.Dot], 2)
+    const soFarSoGood = (this.check(Syntax.Mut, offset) ? this.checkType(offset + 1) : this.checkType(offset))
+      && !this.checkSet([Syntax.Dot], offset + 1) && !this.checkSet([Syntax.Dot], offset + 2)
       && (isVariableDeclarationSyntax() || isVariableDeclarationSyntax(2));
 
     if (soFarSoGood) {
-      let offset = 1;
-      while (!this.check(Syntax.EOF, offset) && (!this.check(Syntax.Equal, offset) || (this.check(Syntax.Identifier, offset) && !this.checkType(offset)))) {
-        if (this.checkSet([Syntax.Function, Syntax.Is], offset))
+      let o = offset + 1;
+      while (!this.check(Syntax.EOF, o) && (!this.check(Syntax.Equal, o) || (this.check(Syntax.Identifier, o) && !this.checkType(o)))) {
+        if (this.checkSet([Syntax.Function, Syntax.Is], o))
           return false;
 
-        offset++
+        o++
       }
     }
 
@@ -255,20 +300,17 @@ export class Parser extends TokenStepper {
 
   private parseImportPath(): string {
     let path = "";
-    const validFirstTokens = [Syntax.DotDot, Syntax.Dot, Syntax.Identifier];
-    if (!this.matchSet(validFirstTokens))
+    if (!this.match(Syntax.Identifier))
       throw new ParserSyntaxError(`Expected import path, got '${this.current.lexeme}'`, this.current);
 
     path += this.previous<undefined>().lexeme;
-    while (this.match(Syntax.Slash)) {
+    while (this.match(Syntax.Dot)) {
       path += this.previous<undefined>().lexeme;
-      if (!this.matchSet(validFirstTokens))
-        break;
-      else
-        path += this.previous<undefined>().lexeme;
+      const identifier = this.consume(Syntax.Identifier, "identifier");
+      path += identifier.lexeme;
     }
 
-    return path;
+    return path.replace(/\./g, "/");
   }
 
   private parseImport(): UseStatement {
@@ -299,7 +341,7 @@ export class Parser extends TokenStepper {
     const identifierToken = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier, "identifier");
     const parameters: VariableDeclarationStatement[] = [];
     if (this.match(Syntax.LParen)) {
-      if (this.atVariableDeclaration) {
+      if (this.atVariableDeclaration()) {
         parameters.push(this.parseVariableDeclaration());
         while (this.match(Syntax.Comma))
           parameters.push(this.parseVariableDeclaration());
@@ -814,10 +856,6 @@ export class Parser extends TokenStepper {
     );
   }
 
-  protected parseClassBody(): ClassBodyStatement {
-    throw new Error("Method not implemented.");
-  }
-
   protected parseClassMembers(): ClassMember[] {
     this.typeAnalyzer!.typeTracker.beginTypeScope();
     const members: ClassMember[] = [];
@@ -918,7 +956,7 @@ export class Parser extends TokenStepper {
     }];
   }
 
-  private parseNamedType(allowMutable = false) {
+  protected parseNamedType(allowMutable = false) {
     const isMutable = allowMutable ? this.match(Syntax.Mut) : false;
     const valueType = this.parseType();
     const identifier = this.consume<undefined>(Syntax.Identifier);

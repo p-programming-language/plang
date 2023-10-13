@@ -37,6 +37,7 @@ import type { ClassBodyStatement } from "./statements/class-body";
 import type { ClassDeclarationStatement } from "./statements/class-declaration";
 import type { PropertyDeclarationStatement } from "./statements/property-declaration";
 import type { MethodDeclarationStatement } from "./statements/method-declaration";
+import type { PackageStatement } from "./statements/package";
 
 import type BoundLiteralExpression from "../../binder/bound-expressions/literal";
 import type BoundStringInterpolationExpression from "../../binder/bound-expressions/string-interpolation";
@@ -74,6 +75,7 @@ import type BoundClassBodyStatement from "../../binder/bound-statements/class-bo
 import type BoundClassDeclarationStatement from "../../binder/bound-statements/class-declaration";
 import type BoundPropertyDeclarationStatement from "../../binder/bound-statements/property-declaration";
 import type BoundMethodDeclarationStatement from "../../binder/bound-statements/method-declaration";
+import type BoundPackageStatement from "../../binder/bound-statements/package";
 
 namespace AST {
   export abstract class Node {
@@ -116,6 +118,7 @@ namespace AST {
     }
 
     export abstract class Statement<R> {
+      public abstract visitPackageStatement(stmt: PackageStatement): R
       public abstract visitMethodDeclarationStatement(stmt: MethodDeclarationStatement): R
       public abstract visitPropertyDeclarationStatement(stmt: PropertyDeclarationStatement): R
       public abstract visitClassBodyStatement(stmt: ClassBodyStatement): R
@@ -158,6 +161,7 @@ namespace AST {
     }
 
     export abstract class BoundStatement<R> {
+      public abstract visitPackageStatement(stmt: BoundPackageStatement): R
       public abstract visitMethodDeclarationStatement(stmt: BoundMethodDeclarationStatement): R
       public abstract visitPropertyDeclarationStatement(stmt: BoundPropertyDeclarationStatement): R
       public abstract visitClassBodyStatement(stmt: BoundClassBodyStatement): R

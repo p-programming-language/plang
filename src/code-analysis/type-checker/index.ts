@@ -74,6 +74,10 @@ export interface InterfaceMemberSignature<T> {
 // NOTE: always call check() before assert()
 
 export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visitor.BoundStatement<void> {
+  public visitPackageStatement(): void {
+    // do nothing
+  }
+
   public visitMethodDeclarationStatement(stmt: BoundMethodDeclarationStatement): void {
     this.check(stmt.parameters);
     this.check(stmt.body);

@@ -57,8 +57,10 @@ import type { ClassDeclarationStatement } from "../parser/ast/statements/class-d
 import type { ClassBodyStatement } from "../parser/ast/statements/class-body";
 import type { MethodDeclarationStatement } from "../parser/ast/statements/method-declaration";
 import type { PropertyDeclarationStatement } from "../parser/ast/statements/property-declaration";
+import type { PackageStatement } from "../parser/ast/statements/package";
 
 import type { BoundClassMember } from "../parser/ast/classifications/class-member";
+
 import BoundLiteralExpression from "./bound-expressions/literal";
 import BoundStringInterpolationExpression from "./bound-expressions/string-interpolation";
 import BoundRangeLiteralExpression from "./bound-expressions/range-literal";
@@ -95,6 +97,7 @@ import BoundClassBodyStatement from "./bound-statements/class-body";
 import BoundClassDeclarationStatement from "./bound-statements/class-declaration";
 import BoundPropertyDeclarationStatement from "./bound-statements/property-declaration";
 import BoundMethodDeclarationStatement from "./bound-statements/method-declaration";
+import BoundPackageStatement from "./bound-statements/package";
 
 type IndexType = SingularType<"string"> | SingularType<"int">;
 type PropertyPair = [LiteralType<string>, InterfaceMemberSignature<Type>];
@@ -113,6 +116,10 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
     private readonly typeTracker: TypeTracker
   ) {
     this.beginScope();
+  }
+
+  public visitPackageStatement(stmt: PackageStatement): BoundPackageStatement {
+    return new BoundPackageStatement(stmt.token, stmt.name);
   }
 
   public visitMethodDeclarationStatement(stmt: MethodDeclarationStatement): BoundMethodDeclarationStatement {

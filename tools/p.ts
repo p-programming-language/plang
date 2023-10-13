@@ -6,6 +6,7 @@ import type { ValueType } from "../src/code-analysis/type-checker";
 import type { BoundStatement } from "../src/code-analysis/binder/bound-node";
 import type { Parser } from "../src/code-analysis/parser";
 import type AST from "../src/code-analysis/parser/ast";
+import Packager from "../src/code-analysis/packager";
 import PValue from "../src/runtime/values/value";
 import PHost from "./p-host";
 import REPL from "./repl";
@@ -20,6 +21,7 @@ interface PExecutionOptions {
 
 export default class P {
   private readonly hosts: PHost[] = [];
+  public readonly packager = new Packager;
   public readonly repl = new REPL(this);
   public readonly version = "v" + pkg.version;
   public readonly executionOptions: PExecutionOptions = {
@@ -43,7 +45,7 @@ export default class P {
     if (this.executionOptions.outputTokens)
       console.log(parser.input!.toString());
 
-    const { imports, program: ast } = parser.parse();
+    const { packageDeclaration, imports, program: ast } = parser.parse();
     if (this.executionOptions.outputAST)
       console.log((<AST.Statement[]>imports).concat(...ast).toString());
 
@@ -52,14 +54,25 @@ export default class P {
     this.host.typeChecker.check(boundImports);
     this.host.interpreter.evaluate(imports);
 
+    if (packageDeclaration)
+      this.host.resolver.resolve(packageDeclaration);
+
     this.host.resolver.resolve(ast);
+    if (packageDeclaration) {
+      this.packager.define(packageDeclaration.name.lexeme, this.host.interpreter.fileName);
+      const [boundDeclaration] = this.host.binder.bindStatements([packageDeclaration]);
+      this.host.typeChecker.check(boundDeclaration);
+    }
+
     const boundAST = this.host.binder.bindStatements(ast);
     if (this.executionOptions.outputBoundAST)
       console.log((<BoundStatement[]>boundImports).concat(...boundAST).toString());
 
     this.host.typeChecker.check(boundAST);
-    const result = this.host.interpreter.evaluate(ast);
+    if (packageDeclaration)
+      this.host.interpreter.evaluate(packageDeclaration);
 
+    const result = this.host.interpreter.evaluate(ast);
     if (this.executionOptions.outputResult) {
       const stringified = result instanceof PValue ?
         result.toString()

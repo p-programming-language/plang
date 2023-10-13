@@ -1,12 +1,12 @@
-import util from "util";
 import path from "path";
 
-import { IntrinsicRegistrationError, RuntimeError } from "../errors";
 import type { IndexValueType, ObjectType, TypeLiteralValueType, ValueType } from "../code-analysis/type-checker";
-import { Callable } from "./values/callable";
+import type { Constructable } from "./values/constructable";
 import type { Type } from "../code-analysis/type-checker/types/type";
+import { IntrinsicRegistrationError, RuntimeError } from "../errors";
 import { INTRINSIC_EXTENDED_LITERAL_VALUE_TYPES } from "../code-analysis/type-checker/types/type-sets";
 import { Token } from "../code-analysis/tokenization/token";
+import { Callable } from "./values/callable";
 import { Range } from "./values/range";
 import { fakeToken, fileExists, isDirectory } from "../utility";
 import type Binder from "../code-analysis/binder";
@@ -23,6 +23,7 @@ import Scope from "./scope";
 import HookedException from "./hooked-exceptions";
 import Intrinsics from "./intrinsics";
 import PFunction from "./values/function";
+import PClass from "./values/class";
 import Intrinsic from "./values/intrinsic";
 import IntrinsicExtension from "./intrinsics/value-extensions";
 import AST from "../code-analysis/parser/ast";
@@ -62,14 +63,6 @@ import type { ClassBodyStatement } from "../code-analysis/parser/ast/statements/
 import type { ClassDeclarationStatement } from "../code-analysis/parser/ast/statements/class-declaration";
 import type { MethodDeclarationStatement } from "../code-analysis/parser/ast/statements/method-declaration";
 import type { PropertyDeclarationStatement } from "../code-analysis/parser/ast/statements/property-declaration";
-import PClass from "./values/class";
-import PClassInstance from "./values/class-instance";
-import { Constructable } from "./values/constructable";
-
-enum Context {
-  Global,
-  Class
-}
 
 export default class Interpreter implements AST.Visitor.Expression<ValueType>, AST.Visitor.Statement<void> {
   public readonly globals = new Scope;
@@ -88,6 +81,10 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
     public fileName = "unnamed"
   ) {
     this.intrinsics.inject();
+  }
+
+  public visitPackageStatement(): void {
+    // do nothing
   }
 
   public visitMethodDeclarationStatement(stmt: MethodDeclarationStatement): PFunction {
