@@ -263,10 +263,63 @@ export default class Lexer extends ArrayStepper<string> {
   }
 
   private readString(): void {
+    let escaping = false;
     const delimiter = this.advance();
-    while (this.current !== delimiter)
-      if (this.advance(true) === "\n")
+    while (this.current !== delimiter || this.peek(-1) === "\\") {
+      if (this.current === "\\") {
+        this.advance();
+        this.currentLexemeCharacters.pop(); // kill the stupid "//"
+        escaping = true;
+      } else if (escaping) {
+        console.log("checking escape sequence: " + this.current)
+        let resultSequence = "";
+        const code = this.advance();
+        this.currentLexemeCharacters.pop(); // kill the isolated sequence code
+        switch (code) {
+          case "\"": {
+            resultSequence += "\"";
+            break;
+          }
+          case "'": {
+            resultSequence += "'";
+            break;
+          }
+          case "\\": {
+            resultSequence += "\\";
+            break;
+          }
+          case "n": {
+            resultSequence += "\n";
+            break;
+          }
+          case "t": {
+            resultSequence += "\t";
+            break;
+          }
+
+          case "e": {
+            if (this.current !== "[")
+              throw new LexerSyntaxError("Invalid escape sequence: \\e escape sequence contained no '[' character", this.line, this.column);
+
+            let contents = "";
+            this.advance();
+            this.currentLexemeCharacters.pop();
+            while (!this.match("m")) {
+              contents += this.advance();
+              this.currentLexemeCharacters.pop();
+            }
+
+            this.currentLexemeCharacters.pop();
+            resultSequence += `\e[${contents}m`;
+            break;
+          }
+        }
+
+        this.currentLexemeCharacters.push(resultSequence);
+        escaping = false;
+      } else if (this.advance(true) === "\n" || this.isFinished)
         throw new LexerSyntaxError("Unterminated string literal", this.line, this.column);
+    }
 
     this.advance(); // advance final delimiter
     const stringContents = this.currentLexeme.slice(1, -1);

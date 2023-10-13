@@ -131,18 +131,22 @@ export class TypeChecker implements AST.Visitor.BoundExpression<void>, AST.Visit
       if (!keyAssignable)
         throw new TypeError(`Iterable key type is not assignable to '${keyDecl.type.toString()}'`, keyDecl.token);
 
-      const valueAssignable = Array.from(iterableType.members.values())
-        .map(sig => sig.valueType)
-        .concat(Array.from(iterableType.indexSignatures.values()))
-        .every(type => type.isAssignableTo(valueDecl.type));
+      if (valueDecl) {
+        const valueAssignable = Array.from(iterableType.members.values())
+          .map(sig => sig.valueType)
+          .concat(Array.from(iterableType.indexSignatures.values()))
+          .every(type => type.isAssignableTo(valueDecl.type));
 
-      if (!valueAssignable)
-        throw new TypeError(`Iterable value type is not assignable to '${valueDecl.type.toString()}'`, valueDecl.token);
+        if (!valueAssignable)
+          throw new TypeError(`Iterable value type is not assignable to '${valueDecl.type.toString()}'`, valueDecl.token);
+      }
     } else if (iterableType instanceof ArrayType) {
       const [valueDecl, indexDecl] = stmt.elementDeclarations;
-      const indexAssignable = indexDecl.type.isAssignableTo(new SingularType("int"));
-      if (!indexAssignable)
-        throw new TypeError(`'${indexDecl.type.toString()}' is not assignable to array index type, 'int'`, valueDecl.token);
+      if (indexDecl) {
+        const indexAssignable = indexDecl.type.isAssignableTo(new SingularType("int"));
+        if (!indexAssignable)
+          throw new TypeError(`'${indexDecl.type.toString()}' is not assignable to array index type, 'int'`, valueDecl.token);
+      }
 
       const valueAssignable = valueDecl.type.isAssignableTo(iterableType.elementType);
       if (!valueAssignable)
