@@ -1,4 +1,4 @@
-use writeln from @std/io
+use writeln from @std.io
 use request from @http
 
 interface Response {

@@ -1,4 +1,4 @@
-use readln, writeln from @std/io
+use * from @std.io
 
 string answer = readln("am i cool? ")
 writeln(answer)

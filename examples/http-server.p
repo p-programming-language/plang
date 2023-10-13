@@ -1,4 +1,4 @@
-use writeln from @std/io
+use writeln from @std.io
 use Server from @http
 
 any server = new Server

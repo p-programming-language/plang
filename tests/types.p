@@ -1,4 +1,4 @@
-use writeln from @std/io
+use writeln from @std.io
 
 writeln(1 is int) ## true
 writeln(typeof 1) ## int

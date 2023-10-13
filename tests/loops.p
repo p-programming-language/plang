@@ -1,4 +1,4 @@
-use writeln from @std/io
+use writeln from @std.io
 
 every int i in 5
   writeln(i)

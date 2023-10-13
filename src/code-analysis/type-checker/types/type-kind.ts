@@ -2,6 +2,7 @@ enum TypeKind {
   Singular,
   Literal,
   Union,
+  Intersection,
   Array,
   Function,
   Interface,

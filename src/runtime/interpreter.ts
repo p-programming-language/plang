@@ -262,8 +262,9 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
           else if (!lib.propertyTypes[member.lexeme])
             throw new IntrinsicRegistrationError(`Failed to register intrinsic lib '${lib.name}': '${member.lexeme}' is not an intrinsic function, library, or class, yet it has no value in 'propertyTypes'`, member);
         }
-    } else
+    } else {
       throw new RuntimeError("Module imports are not supported yet", stmt.keyword);
+    }
   }
 
   private resolveIntrinsicLib(token: Token<undefined>, filePath: string): Intrinsic.Lib {

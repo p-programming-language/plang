@@ -14,7 +14,6 @@ import * as SyntaxSets from "../tokenization/syntax-sets";
 const { UNARY_SYNTAXES, LITERAL_SYNTAXES, COMPOUND_ASSIGNMENT_SYNTAXES } = SyntaxSets;
 
 import type { ClassMember } from "./ast/classifications/class-member";
-import type { Exportable } from "./ast/classifications/exportable";
 
 import { SingularTypeExpression } from "./ast/type-nodes/singular-type";
 import { LiteralTypeExpression } from "./ast/type-nodes/literal-type";
@@ -995,6 +994,23 @@ export class Parser extends TokenStepper {
 
     return this.parseUnionType();
   }
+
+  // protected parseIntersectionType(): AST.TypeRef {
+  //   let left = this.parseUnionType();
+
+  //   while (this.match(Syntax.Ampersand)) {
+  //     const singularTypes: (SingularTypeExpression | ArrayTypeExpression)[] = [];
+  //     if (left instanceof UnionTypeExpression)
+  //       singularTypes.push(...left.types);
+  //     else if (left instanceof SingularTypeExpression || left instanceof ArrayTypeExpression)
+  //       singularTypes.push(left);
+
+  //     singularTypes.push(this.parseSingularType());
+  //     left = new UnionTypeExpression(singularTypes);
+  //   }
+
+  //   return left;
+  // }
 
   protected parseUnionType(): AST.TypeRef {
     let left = this.parseArrayType();

@@ -1,4 +1,4 @@
-use writeln from @std/io
+use writeln from @std.io
 
 (string name) :: void fn greeter(string greeting = "Hello") {
   void fn greet(string name) {
