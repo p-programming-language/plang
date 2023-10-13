@@ -1,6 +1,7 @@
 import type { ValueType } from "../../../../code-analysis/type-checker";
 import type { Type } from "../../../../code-analysis/type-checker/types/type";
 import SingularType from "../../../../code-analysis/type-checker/types/singular-type";
+import ArrayType from "../../../../code-analysis/type-checker/types/array-type"; // Import ArrayType
 import Intrinsic from "../../../values/intrinsic";
 
 export default class ColorLib extends Intrinsic.Lib {
@@ -13,29 +14,36 @@ export default class ColorLib extends Intrinsic.Lib {
     "magenta",
     "cyan",
     "white",
-    "bbblack",
-    "bbred",
-    "bbgreen",
-    "bbyellow",
-    "bbblue",
-    "bbmagenta",
-    "bbcyan",
-    "bbwhite",
+    "bright_black",
+    "bright_red",
+    "bright_green",
+    "bright_yellow",
+    "bright_blue",
+    "bright_magenta",
+    "bright_cyan",
+    "bright_white",
   ];
 
   public get propertyTypes(): Record<string, Type> {
     const colorTypes: Record<string, Type> = {};
+    const colors: Type = new ArrayType(new SingularType("string"));
+
     for (const prefix of ["f", "b"]) {
       for (const color of this.commonColors) {
         const propertyName = `${prefix}${color}`;
         colorTypes[propertyName] = new SingularType("string");
       }
     }
-    return colorTypes;
+
+    return {
+      ...colorTypes,
+      colors,
+    };
   }
 
   public get members(): Record<string, ValueType> {
     const colorEscapeCodes: Record<string, ValueType> = {};
+
     for (const prefix of ["f", "b"]) {
       for (const [index, color] of this.commonColors.entries()) {
         const propertyName = `${prefix}${color}`;
@@ -45,6 +53,11 @@ export default class ColorLib extends Intrinsic.Lib {
 
     colorEscapeCodes["reset"] = "\x1b[0m";
 
-    return colorEscapeCodes;
+    const colors: string[] = this.commonColors; 
+
+    return {
+      ...colorEscapeCodes,
+      colors,
+    };
   }
 }
