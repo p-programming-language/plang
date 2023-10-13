@@ -38,6 +38,7 @@ export default class Intrinsics {
 
   public defineLib(name: string, IntrinsicLib: Intrinsic.LibCtor): void {
     const lib = new IntrinsicLib(this);
+    console.log(IntrinsicLib, lib.name, lib.members.time)
     this.defineLibFromInstance(name, lib);
   }
 

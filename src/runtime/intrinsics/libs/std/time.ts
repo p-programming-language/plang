@@ -1,10 +1,10 @@
 import toCamelCase from "to-camel-case";
 
-import type { ValueType } from "../../../../../code-analysis/type-checker";
-import type { Type } from "../../../../../code-analysis/type-checker/types/type";
-import SingularType from "../../../../../code-analysis/type-checker/types/singular-type";
-import Intrinsic from "../../../../values/intrinsic";
-import UnionType from "../../../../../code-analysis/type-checker/types/union-type";
+import type { ValueType } from "../../../../code-analysis/type-checker";
+import type { Type } from "../../../../code-analysis/type-checker/types/type";
+import SingularType from "../../../../code-analysis/type-checker/types/singular-type";
+import Intrinsic from "../../../values/intrinsic";
+import UnionType from "../../../../code-analysis/type-checker/types/union-type";
 
 export default class TimeLib extends Intrinsic.Lib {
   public get propertyTypes(): Record<string, Type> {

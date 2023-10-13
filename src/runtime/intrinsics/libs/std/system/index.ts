@@ -10,7 +10,6 @@ import LiteralType from "../../../../../code-analysis/type-checker/types/literal
 import SingularType from "../../../../../code-analysis/type-checker/types/singular-type";
 
 import EnvLib from "./env";
-import TimeLib from "./time";
 
 export default class SystemLib extends Intrinsic.Lib {
   public get propertyTypes(): Record<string, Type> {
@@ -37,7 +36,6 @@ export default class SystemLib extends Intrinsic.Lib {
       os: platform(),
 
       env: EnvLib,
-      time: TimeLib,
 
       // Executs a shell command
       exec: class Exec extends Intrinsic.Function {
