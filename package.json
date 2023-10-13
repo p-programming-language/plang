@@ -1,10 +1,14 @@
 {
-  "name": "plang",
+  "name": "@p-lang/plang",
   "version": "0.2.1a",
-  "description": "A general purpose, statically-typed, interpreted language.",
+  "description": "A general-purpose, statically-typed, interpreted language.",
   "displayName": "Plang",
   "icon": "https://avatars.githubusercontent.com/u/146694713?s=400&u=4e01b5afefbf7e40641702e5cbdf785ff183fe35&v=4",
   "main": "dist/src/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/p-programming-language/plang"
+  },
   "bin": {
     "pint": "dist/tools/binaries/pint.js"
   },
@@ -16,23 +20,16 @@
     "repl": "node dist/tools/binaries/repl.js",
     "ast-viewer": "node dist/tools/binaries/ast-viewer.js",
     "add-to-path": "npm run build -s && npm link",
-    "docs": "npx typedoc && echo 'api.p-lang.xyz' > docs/CNAME ",
+    "docs": "npx typedoc && echo 'api.p-lang.xyz' > docs/CNAME",
     "push": "npm run build -s && npm run test -s && npm run docs -s && git add . && git commit -m 'docs: (autogenerate)' && git pull && git push -u"
   },
-  "keywords": [
-    "p",
-    "plang",
-    "language"
-  ],
+  "keywords": ["p", "plang", "language"],
   "author": {
     "name": "KevinAlavik",
     "email": "kevin@alavik.se",
     "url": "https://github.com/KevinAlavik"
   },
-  "contributors": [
-    "runicly",
-    "pufferisadev"
-  ],
+  "contributors": ["runicly", "pufferisadev"],
   "license": "LGPL-2.1-or-later",
   "dependencies": {
     "@types/to-camel-case": "^1.0.0",
