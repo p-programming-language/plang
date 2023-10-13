@@ -196,9 +196,38 @@ export default class Lexer extends ArrayStepper<string> {
       case "'":
         return this.readString();
 
+      case "0": {
+        const radixSymbols = ["x", "b", "o"];
+        if ((this.peek() && !radixSymbols.includes(this.peek()!)) || !this.peek())
+          return this.readNumber();
+
+        this.advance();
+        switch (this.advance()) {
+          case "x": {
+            while (!this.isFinished && /[A-Fa-f0-9]$/.test(this.current))
+              this.advance();
+
+            return this.addToken(Syntax.Int, parseInt(this.currentLexeme.slice(2), 16));
+          }
+          case "o": {
+            while (!this.isFinished && /[0-7]/.test(this.current))
+              this.advance();
+
+            return this.addToken(Syntax.Int, parseInt(this.currentLexeme.slice(2), 8));
+          }
+          case "b": {
+            while (!this.isFinished && /^[01]+$/.test(this.current))
+              this.advance();
+
+            return this.addToken(Syntax.Int, parseInt(this.currentLexeme.slice(2), 2));
+          }
+        }
+      }
+
       default: {
         if (NUMERIC.test(char))
           return this.readNumber();
+
         else if (VALID_IDENTIFIER.test(char)) {
           const identifierLexeme = this.readIdentifier();
           const keywordSyntax = Object.keys(KEYWORDS).includes(identifierLexeme) ? KEYWORDS[<keyof typeof KEYWORDS>identifierLexeme] : false;
