@@ -43,21 +43,21 @@ export default class ColorLib extends Intrinsic.Lib {
 
   public get members(): Record<string, ValueType> {
     const colorEscapeCodes: Record<string, ValueType> = {};
-
+    const colors: ValueType[] = [];
+  
     for (const prefix of ["f", "b"]) {
       for (const [index, color] of this.commonColors.entries()) {
         const propertyName = `${prefix}${color}`;
         colorEscapeCodes[propertyName] = `\x1b[${30 + (prefix === "b" ? 10 : 0) + index}m`;
+        colors.push(colorEscapeCodes[propertyName]);
       }
     }
-
+  
     colorEscapeCodes["reset"] = "\x1b[0m";
-
-    const colors: string[] = this.commonColors; 
-
+  
     return {
       ...colorEscapeCodes,
       colors,
     };
-  }
+  }  
 }
