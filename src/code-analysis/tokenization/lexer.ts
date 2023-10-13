@@ -271,7 +271,6 @@ export default class Lexer extends ArrayStepper<string> {
         this.currentLexemeCharacters.pop(); // kill the stupid "//"
         escaping = true;
       } else if (escaping) {
-        console.log("checking escape sequence: " + this.current)
         let resultSequence = "";
         const code = this.advance();
         this.currentLexemeCharacters.pop(); // kill the isolated sequence code
@@ -304,13 +303,14 @@ export default class Lexer extends ArrayStepper<string> {
             let contents = "";
             this.advance();
             this.currentLexemeCharacters.pop();
-            while (!this.match("m")) {
+            while (<string>this.current !== "m") {
               contents += this.advance();
               this.currentLexemeCharacters.pop();
             }
 
+            this.advance();
             this.currentLexemeCharacters.pop();
-            resultSequence += `\e[${contents}m`;
+            resultSequence += `\x1b[${contents}m`;
             break;
           }
         }
