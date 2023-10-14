@@ -188,8 +188,9 @@ export class Parser extends TokenStepper {
 
     if (this.check(Syntax.Interface) || (isPrivate && this.check(Syntax.Interface, 1))) {
       if (isPrivate)
-        this.consume(Syntax.Private);
+        this.consume(Syntax.Private, "'private'");
 
+      this.consume(Syntax.Interface, "'interface'")
       const declaration = this.parseInterfaceType();
       this.consumeSemicolons();
       const typeDeclaration = new TypeDeclarationStatement(declaration.name, declaration);
@@ -606,7 +607,7 @@ export class Parser extends TokenStepper {
 
     if (this.match(Syntax.Dot)) {
       const accessToken = this.previous<undefined>();
-      const indexIdentifier = this.consume<string>(Syntax.Identifier);
+      const indexIdentifier = this.consume<string>(Syntax.Identifier, "identifier");
       indexIdentifier.syntax = Syntax.String;
       indexIdentifier.value = indexIdentifier.lexeme;
       indexIdentifier.lexeme = `"${indexIdentifier.lexeme}"`;
@@ -814,16 +815,16 @@ export class Parser extends TokenStepper {
 
   protected parseClassDeclaration(): ClassDeclarationStatement {
     const keyword = this.previous<undefined, Syntax.Class>();
-    const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier);
+    const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier, "identifier");
     let superclass: IdentifierExpression | undefined;
     if (this.match(Syntax.LT))
-      superclass = new IdentifierExpression(this.consume(Syntax.Identifier));
+      superclass = new IdentifierExpression(this.consume(Syntax.Identifier, "identifier"));
 
     const mixins: IdentifierExpression[] = [];
     if (this.match(Syntax.Mixin)) {
-      mixins.push(new IdentifierExpression(this.consume(Syntax.Identifier)));
+      mixins.push(new IdentifierExpression(this.consume(Syntax.Identifier, "identifier")));
       while (this.match(Syntax.Comma))
-        mixins.push(new IdentifierExpression(this.consume(Syntax.Identifier)));
+        mixins.push(new IdentifierExpression(this.consume(Syntax.Identifier, "identifier")));
     }
 
     const brace = this.consume<undefined>(Syntax.LBrace, "'{'");
@@ -871,7 +872,7 @@ export class Parser extends TokenStepper {
         const type = this.parseType();
         if (this.match(Syntax.Function)) {
           const keyword = this.previous<undefined, Syntax.Function>();
-          const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier);
+          const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier, "identifier");
           const parameters: VariableDeclarationStatement[] = [];
 
           if (this.match(Syntax.LParen) && !this.match(Syntax.RParen)) {
@@ -887,7 +888,7 @@ export class Parser extends TokenStepper {
           members.push(new MethodDeclarationStatement(modifiers, keyword, name, type, parameters, body));
         } else {
           const valueType = this.parseType();
-          const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier);
+          const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier, "identifier");
           const initializer = this.match(Syntax.Equal) ? this.parseExpression() : undefined;
           this.consumeSemicolons();
           members.push(new PropertyDeclarationStatement(modifiers, valueType, new IdentifierExpression(name), false, initializer));
@@ -910,7 +911,7 @@ export class Parser extends TokenStepper {
   }
 
   protected parseInterfaceType(): InterfaceTypeExpression {
-    const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier);
+    const name = this.consume<undefined, Syntax.Identifier>(Syntax.Identifier, "identifier");
     this.consume<undefined>(Syntax.LBrace, "'{'");
     const members = new Map<LiteralExpression<string>, InterfaceMemberSignature<AST.TypeRef>>();
     const indexSignatures = new Map<AST.TypeRef, AST.TypeRef>();
