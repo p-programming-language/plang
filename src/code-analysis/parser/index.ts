@@ -270,9 +270,12 @@ export class Parser extends TokenStepper {
 
     if (soFarSoGood) {
       let o = offset + 1;
-      while (!this.check(Syntax.EOF, o) && !this.check(Syntax.RParen, o) && (!this.check(Syntax.Equal, o) || (this.check(Syntax.Identifier, o) && !this.checkType(o)))) {
+      while (!this.check(Syntax.EOF, o) && (!this.check(Syntax.Equal, o) || (this.check(Syntax.Identifier, o) && !this.checkType(o)))) {
         if (this.checkSet([Syntax.Function, Syntax.Is], o))
           return false;
+
+        if (this.checkType(o) && this.check(Syntax.RParen, o))
+          break;
 
         o++
       }
