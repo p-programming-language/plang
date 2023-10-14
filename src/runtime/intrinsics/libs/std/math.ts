@@ -15,7 +15,7 @@ export default class MathLib extends Intrinsic.Lib {
   public get propertyTypes(): Record<string, Type> {
     return {
       pi: new SingularType("float"),
-      e: new SingularType("float")
+      e: new SingularType("float"),
     };
   }
 
@@ -87,6 +87,69 @@ export default class MathLib extends Intrinsic.Lib {
 
         public call(n: number): number {
           return Math.tanh(n);
+        }
+      },
+      abs: class Abs extends Intrinsic.Function {
+        public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = NUMBER_TYPE;
+        public readonly argumentTypes = { n: NUMBER_TYPE };
+
+        public call(n: number): number {
+          return Math.abs(n);
+        }
+      },
+      sqrt: class Sqrt extends Intrinsic.Function {
+        public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = NUMBER_TYPE;
+        public readonly argumentTypes = { n: NUMBER_TYPE };
+
+        public call(n: number): number {
+          return Math.sqrt(n);
+        }
+      },
+      exp: class Exp extends Intrinsic.Function {
+        public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = NUMBER_TYPE;
+        public readonly argumentTypes = { n: NUMBER_TYPE };
+
+        public call(n: number): number {
+          return Math.exp(n);
+        }
+      },
+      log: class Log extends Intrinsic.Function {
+        public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = NUMBER_TYPE;
+        public readonly argumentTypes = { n: NUMBER_TYPE, base: NUMBER_TYPE };
+      
+        public call(n: number, base: number): number {
+          return Math.log(n) / Math.log(base);
+        }
+      },
+      ceil: class Ceil extends Intrinsic.Function {
+        public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = NUMBER_TYPE;
+        public readonly argumentTypes = { n: NUMBER_TYPE };
+
+        public call(n: number): number {
+          return Math.ceil(n);
+        }
+      },
+      floor: class Floor extends Intrinsic.Function {
+        public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = NUMBER_TYPE;
+        public readonly argumentTypes = { n: NUMBER_TYPE };
+
+        public call(n: number): number {
+          return Math.floor(n);
+        }
+      },
+      pow: class Pow extends Intrinsic.Function {
+        public readonly name = `${libName}.${toCamelCase(this.constructor.name)}`;
+        public readonly returnType = NUMBER_TYPE;
+        public readonly argumentTypes = { base: NUMBER_TYPE, exp: NUMBER_TYPE };
+      
+        public call(base: number, exp: number): number {
+          return Math.pow(base, exp);
         }
       }
     };
