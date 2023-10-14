@@ -14,6 +14,7 @@ export default class ColorLib extends Intrinsic.Lib {
     "magenta",
     "cyan",
     "white",
+    "orange",
     "bright_black",
     "bright_red",
     "bright_green",
@@ -22,6 +23,8 @@ export default class ColorLib extends Intrinsic.Lib {
     "bright_magenta",
     "bright_cyan",
     "bright_white",
+    "bright_gray",
+    "bright_orange",
   ];
 
   public get propertyTypes(): Record<string, Type> {
