@@ -1,6 +1,8 @@
 import Syntax from "./syntax-type";
 
 export const KEYWORDS = {
+  protected: Syntax.Protected,
+  private: Syntax.Private,
   package: Syntax.Package,
   use: Syntax.Use,
   from: Syntax.From,
@@ -25,7 +27,6 @@ export const KEYWORDS = {
   until: Syntax.Until,
   else: Syntax.Else,
   mut: Syntax.Mut,
-  println: Syntax.Println,
   undefined: Syntax.Undefined,
   null: Syntax.Null
 }

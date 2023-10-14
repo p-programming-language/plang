@@ -7,7 +7,6 @@ enum Syntax {
 
   Mut,
   Identifier,
-  Println,
   If, Unless, Else,
   While, Until, Every,
   Function,

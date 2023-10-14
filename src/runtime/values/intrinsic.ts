@@ -10,6 +10,7 @@ import { generateAddress, getTypeFromTypeRef } from "../../utility";
 
 import type Intrinsics from "../intrinsics";
 import type Interpreter from "../interpreter";
+import type Injectable from "../intrinsics/injectable";
 import SingularType from "../../code-analysis/type-checker/types/singular-type";
 import InterfaceType from "../../code-analysis/type-checker/types/interface-type";
 import LiteralType from "../../code-analysis/type-checker/types/literal-type";
@@ -103,7 +104,7 @@ namespace Intrinsic {
     ) { super(); }
   }
 
-  export abstract class Lib extends Collection {
+  export abstract class Lib extends Collection implements Injectable {
     public static readonly intrinsicKind = Kind.Lib;
     public readonly name = (this.parentName ? this.parentName + "." : "") + toCamelCase(this.constructor.name.replace(/Lib/g, ""));
     public readonly address = generateAddress();

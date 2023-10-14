@@ -421,7 +421,6 @@ export default class Binder implements AST.Visitor.Expression<BoundExpression>, 
 
     // inferring interface type
     const indexSignatures = new Map<IndexType, Type>();
-
     const typeProperties = Array.from(properties.entries())
       .map(([key, value]): PropertyPair | undefined => {
         if (key instanceof LiteralType)

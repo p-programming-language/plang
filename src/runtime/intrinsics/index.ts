@@ -7,8 +7,9 @@ import type Interpreter from "../interpreter";
 import Syntax from "../../code-analysis/tokenization/syntax-type";
 import SingularType from "../../code-analysis/type-checker/types/singular-type";
 import Intrinsic from "../values/intrinsic";
+import Injectable from "./injectable";
 
-export default class Intrinsics {
+export default class Intrinsics implements Injectable {
   public constructor(
     public readonly interpreter: Interpreter
   ) {}
