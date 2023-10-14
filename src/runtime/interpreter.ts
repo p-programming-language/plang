@@ -243,7 +243,7 @@ export default class Interpreter implements AST.Visitor.Expression<ValueType>, A
         for (const member of stmt.members) {
           const libMember = lib.members[member.lexeme];
           if (!libMember)
-            throw new RuntimeError(`Import '${member.lexeme}' does not exist for '${stmt.location.path}'`, member);
+            throw new RuntimeError(`Import '${member.lexeme}' does not exist for '${stmt.location.path.replace(/\//g, ".")}'`, member);
 
           if (lib.propertyTypes[member.lexeme])
             this.intrinsics.define(member.lexeme, libMember, lib.propertyTypes[member.lexeme]);

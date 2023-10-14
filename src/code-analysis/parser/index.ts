@@ -256,12 +256,12 @@ export class Parser extends TokenStepper {
   }
 
   private atVariableDeclaration(offset = 0): boolean {
-    const isVariableDeclarationSyntax = (o = offset + 1) =>
+    const isVariableDeclarationSyntax = (o = 1) =>
       this.checkSet([
         Syntax.Identifier, Syntax.Pipe,
         Syntax.LBracket, Syntax.RBracket,
         Syntax.RParen, Syntax.ColonColon
-      ], o);
+      ], offset + o);
 
     const soFarSoGood = (this.check(Syntax.Mut, offset) ? this.checkType(offset + 1) : this.checkType(offset))
       && !this.checkSet([Syntax.Dot], offset + 1) && !this.checkSet([Syntax.Dot], offset + 2)
@@ -269,7 +269,7 @@ export class Parser extends TokenStepper {
 
     if (soFarSoGood) {
       let o = offset + 1;
-      while (!this.check(Syntax.EOF, o) && (!this.check(Syntax.Equal, o) || (this.check(Syntax.Identifier, o) && !this.checkType(o)))) {
+      while (!this.check(Syntax.EOF, o) && !this.check(Syntax.RParen, o) && (!this.check(Syntax.Equal, o) || (this.check(Syntax.Identifier, o) && !this.checkType(o)))) {
         if (this.checkSet([Syntax.Function, Syntax.Is], o))
           return false;
 
