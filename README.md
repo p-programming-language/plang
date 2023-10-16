@@ -1,9 +1,11 @@
-# PLang
+# Plang
 The P programming language
 
 ![Last Commit](https://img.shields.io/github/last-commit/p-programming-language/plang)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/p-programming-language/plang)
 ![GitHub top language](https://img.shields.io/github/languages/top/p-programming-language/plang)
+![npm](https://img.shields.io/npm/dt/%40p-lang/plang)
+
 
 ![license](https://img.shields.io/github/license/p-programming-language/plang)
 
