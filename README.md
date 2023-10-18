@@ -31,28 +31,10 @@ Check out **[examples/](https://github.com/p-programming-language/plang/tree/mai
     - Runs unit tests
 
 ## Installation
-### Unix:
+### NPM:
 ```bash
-curl -sSL https://raw.githubusercontent.com/p-programming-language/plang/main/install.sh | bash
-```
-### Windows:
-PowerShell:
-```powershell
-Invoke-Expression (Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/p-programming-language/plang/main/install.ps1').Content
-```
-Command Prompt:
-```bash
-powershell -command "& { Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/p-programming-language/plang/main/install.bat' -OutFile 'install.bat'; .\install.bat; Remove-Item -Path 'install.bat' }"
-```
-### Building from source:
-Simply run:
-```bash
-npm run build
-```
-or:
-```bash
-yarn run build
-```
+npm i -g @p-lang/plang
+``` 
 **Then you can access our [tools](https://github.com/p-programming-language/plang?tab=readme-ov-file#tools) using:**
 ```bash
 npm run <tool>
