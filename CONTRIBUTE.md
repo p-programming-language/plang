@@ -8,7 +8,8 @@ Examples:
 - `feat: create os() intrinsic function`
 - `test: add interpreter test for object indexing`
 ## Docs/Guides
-We currently don't have any documentation or guides for P other than [the API reference](https://docs.p-lang.xyz).
+- [The API reference](https://api.p-lang.xyz)
+- [The main P documentation](https://docs.p-lang.xyz)
 
 ## Project Hierarchy Guide
 ### src/
