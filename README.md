@@ -31,10 +31,18 @@ Check out **[examples/](https://github.com/p-programming-language/plang/tree/mai
     - Runs unit tests
 
 ## Installation
-### NPM:
+### Installation using NPM:
 ```bash
 npm i -g @p-lang/plang
 ``` 
+### Custom install / self building
+```bash
+git clone https://github.com/p-programming-language/plang && cd plang
+```
+now just run:
+```bash
+npm i && npm run build
+```
 **Then you can access our [tools](https://github.com/p-programming-language/plang?tab=readme-ov-file#tools) using:**
 ```bash
 npm run <tool>
