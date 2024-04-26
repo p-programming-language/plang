@@ -34,7 +34,7 @@ Check out **[examples/](https://github.com/p-programming-language/plang/tree/mai
 ### Installation using NPM:
 ```bash
 npm i -g @p-lang/plang
-``` 
+```
 ### Custom install / self building
 ```bash
 git clone https://github.com/p-programming-language/plang && cd plang
@@ -85,4 +85,4 @@ yarn run <tool>
 - Type casting (`value as T`)
 - Throw statement
 - Switch statement
-- Classes (in progress)
+- Classes (in progress, someone else do this shit)

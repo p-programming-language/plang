@@ -35,4 +35,4 @@ namespace HookedException {
   }
 }
 
-export default HookedException;
+export = HookedException;

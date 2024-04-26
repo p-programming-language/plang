@@ -1,8 +1,5 @@
-import { Range } from "./range";
-import { MethodDeclarationStatement } from "../../code-analysis/parser/ast/statements/method-declaration";
-import { generateAddress, getTypeFromTypeRef } from "../../utility";
+import { generateAddress } from "../../utility";
 import type { ValueType } from "../../code-analysis/type-checker";
-import type { VariableDeclarationStatement } from "../../code-analysis/parser/ast/statements/variable-declaration";
 import type PClass from "./class";
 import type Interpreter from "../interpreter";
 import type Scope from "../scope";

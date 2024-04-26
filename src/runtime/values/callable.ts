@@ -1,8 +1,8 @@
 import { ValueType } from "../../code-analysis/type-checker";
+import { generateAddress } from "../../utility";
 import type { Range } from "./range";
 import type Intrinsic from "./intrinsic";
 import PValue from "./value";
-import { generateAddress } from "../../utility";
 
 export const enum CallableType {
   Function,

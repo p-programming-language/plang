@@ -2,12 +2,11 @@ import toCamelCase from "to-camel-case";
 import util from "util";
 
 import { Callable, CallableType } from "./callable";
-import type { ClassMemberSignature, ObjectType, ValueType } from "../../code-analysis/type-checker";
-import type { Type } from "../../code-analysis/type-checker/types/type";
 import { Constructable, ConstructableType } from "./constructable";
 import { Range } from "./range";
 import { generateAddress, getTypeFromTypeRef } from "../../utility";
-
+import type { ClassMemberSignature, ObjectType, ValueType } from "../../code-analysis/type-checker";
+import type { Type } from "../../code-analysis/type-checker/types/type";
 import type Intrinsics from "../intrinsics";
 import type Interpreter from "../interpreter";
 import type Injectable from "../intrinsics/injectable";
