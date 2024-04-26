@@ -3,8 +3,8 @@ import { readFileSync, readdirSync } from "fs";
 import path from "path";
 import "should";
 
-import Resolver from "../../src/code-analysis/resolver";
 import { PError } from "../../src/errors";
+import Resolver from "../../src/code-analysis/resolver";
 import P from "../../tools/p";
 
 PError.testing = true;
